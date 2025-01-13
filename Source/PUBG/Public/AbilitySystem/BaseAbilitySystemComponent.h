@@ -38,8 +38,6 @@ public:
 	TArray<FGameplayAbilitySpecHandle> RecentGrantedAbilitySpecHandles;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Ability", meta = (AllowPrivateAccess = "true"))
-	bool bCancelInputReleased = true;
 
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void GrantAbility(TSubclassOf<UPlayerGameplayAbility> AbilityToGrant, int32 Level, FGameplayAbilitySpecHandle& OutGrantedAbilitySpecHandles);

@@ -52,6 +52,7 @@ APlayerCharacter::APlayerCharacter()
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
+			GetMesh()->SetLeaderPoseComponent(NewMesh);
 
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
