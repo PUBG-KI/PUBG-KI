@@ -15,13 +15,13 @@ class PUBG_API UPlayerGameplayAbility : public UBaseGameplayAbility
 	GENERATED_BODY()
 	
 public:
-	//UFUNCTION(BlueprintPure, Category = "Ability")
-	//APlayerCharacter* GetPlayerCharacterFromActorInfo();
+	UFUNCTION(BlueprintPure, Category = "Ability")
+	APlayerCharacter* GetPlayerCharacterFromActorInfo();
 
-	//UFUNCTION(BlueprintPure, Category = "Ability")
-	//ABasePlayerController* GetPlayerControllerFromActorInfo();
+	UFUNCTION(BlueprintPure, Category = "Ability")
+	ABasePlayerController* GetPlayerControllerFromActorInfo();
 	
 private:
-	//TWeakObjectPtr<APlayerCharacter> CachedPlayerCharacter;
-	//TWeakObjectPtr<ABasePlayerController> CachedPlayerController;
+	TWeakObjectPtr<APlayerCharacter> CachedPlayerCharacter;
+	TWeakObjectPtr<ABasePlayerController> CachedPlayerController;
 };
