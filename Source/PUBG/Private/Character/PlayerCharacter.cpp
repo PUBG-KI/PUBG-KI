@@ -134,24 +134,16 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 }
 
-void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag) const
+void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
 {
 	BaseAbilitySystemComponent->OnAbilityInputPressed(InputTag);
 }
 
-void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag) const
+void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 {
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
 
-void APlayerCharacter::Input_AbilityCTRLPressed(FGameplayTag InputTag) const
-{
-	CharacterMovement->Set
-}
-
-void APlayerCharacter::Input_AbilityCTRLReleased(FGameplayTag InputTag) const
-{
-}
 
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
