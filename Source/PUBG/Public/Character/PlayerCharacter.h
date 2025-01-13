@@ -77,6 +77,9 @@ protected:
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
 #pragma endregion
 	
-protected:
+	// Client only
+	virtual void OnRep_PlayerState() override;
+	
+public:
 	virtual void PossessedBy(AController* NewController) override;	
 };
