@@ -63,7 +63,7 @@ APlayerCharacter::APlayerCharacter()
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f; // 
 	
@@ -134,23 +134,16 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 }
 
-void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag) const
+void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ability Input Pressed"));
 	BaseAbilitySystemComponent->OnAbilityInputPressed(InputTag);
 }
 
-void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag) const
+void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ability Input Released"));
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
-}
-
-void APlayerCharacter::Input_AbilityCTRLPressed(FGameplayTag InputTag) const
-{
-	//CharacterMovement->Set
-}
-
-void APlayerCharacter::Input_AbilityCTRLReleased(FGameplayTag InputTag) const
-{
 }
 
 void APlayerCharacter::PossessedBy(AController* NewController)
