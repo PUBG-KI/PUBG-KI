@@ -13,5 +13,32 @@ UCLASS()
 class PUBG_API AGun_Base : public AWeapon_Base
 {
 	GENERATED_BODY()
+
+public:
+	AGun_Base();
+	
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	FName ScopeSocket;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	FName muzzleSocket;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	FName MagSocket;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	FName ChokeLoops;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	FName ShootProjectile;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	USkeletalMeshComponent* AttachablePart;
+
+
+public:
+	virtual void AttachPartsToSockets();
 	
 };

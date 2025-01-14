@@ -14,10 +14,14 @@ class PUBG_API AWeapon_Base : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AWeapon_Base();
+	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
+	USkeletalMeshComponent* WeaponSkeletalMeshComponent;
 	
 	
 };
