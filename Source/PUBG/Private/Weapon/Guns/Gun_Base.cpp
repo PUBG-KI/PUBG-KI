@@ -7,7 +7,3 @@ AGun_Base::AGun_Base()
 {
 	
 }
-
-void AGun_Base::AttachPartsToSockets()
-{
-}
