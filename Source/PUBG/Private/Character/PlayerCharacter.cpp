@@ -30,7 +30,7 @@ APlayerCharacter::APlayerCharacter()
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetRootComponent());
@@ -64,7 +64,7 @@ APlayerCharacter::APlayerCharacter()
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f; // 
 	
@@ -100,6 +100,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	UBaseInputComponent* BaseInputComponent = CastChecked<UBaseInputComponent>(PlayerInputComponent);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Jump);
 	
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed, &APlayerCharacter::Input_AbilityInputReleased);
 }
@@ -135,13 +136,20 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 }
 
+void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
+{
+	Jump();
+}
+
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ability Input Pressed"));
 	BaseAbilitySystemComponent->OnAbilityInputPressed(InputTag);
 }
 
 void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Ability Input Released"));
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
 
