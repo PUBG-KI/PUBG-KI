@@ -39,6 +39,6 @@ protected:
 
 
 public:
-	virtual void AttachPartsToSockets();
+
 	
 };
