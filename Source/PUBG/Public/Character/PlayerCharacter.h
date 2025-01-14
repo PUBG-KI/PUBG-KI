@@ -27,7 +27,6 @@ enum class EPlayerMeshType : uint8
 	Head UMETA(DisplayName = "Head"),
 	Top UMETA(DisplayName = "Top"),
 	Bottom UMETA(DisplayName = "Bottom"),
-	Shoes UMETA(DisplayName = "Shoes"),		
 };
 /**
  * 
@@ -80,6 +79,9 @@ protected:
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
 #pragma endregion
 	
-protected:
+	// Client only
+	virtual void OnRep_PlayerState() override;
+	
+public:
 	virtual void PossessedBy(AController* NewController) override;	
 };

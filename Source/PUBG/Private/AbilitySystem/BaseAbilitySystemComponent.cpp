@@ -115,3 +115,9 @@ void UBaseAbilitySystemComponent::GrantAbility(TSubclassOf<UPlayerGameplayAbilit
 	Spec.Level = Level;
 	OutGrantedAbilitySpecHandles = GiveAbility(Spec);
 }
+
+void UBaseAbilitySystemComponent::ReceiveDamage(UBaseAbilitySystemComponent* SourceASC, float UnmitigatedDamage,
+	float MitigatedDamage)
+{
+	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
+}

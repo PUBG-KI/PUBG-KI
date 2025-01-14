@@ -7,6 +7,9 @@
 #include "GameplayTagContainer.h"
 #include "BaseAbilitySystemComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FReceivedDamageDelegate, UBaseAbilitySystemComponent*, SourceASC, float, UnmitigatedDamage, float, MitigatedDamage);
+
+
 struct FPlayerAbilitySet;
 
 /**
@@ -37,10 +40,15 @@ public:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite, category = "Ability", meta = (AllowPrivateAccess = "true"))
 	TArray<FGameplayAbilitySpecHandle> RecentGrantedAbilitySpecHandles;
 
-
-
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void GrantAbility(TSubclassOf<UPlayerGameplayAbility> AbilityToGrant, int32 Level, FGameplayAbilitySpecHandle& OutGrantedAbilitySpecHandles);
+	
+public:
+	bool bCharacterAbilitiesGiven = false;
+	bool bStartupEffectsApplied = false;
 
+	FReceivedDamageDelegate ReceivedDamage;
 
+	// GDDamageExecCalculation에서 호출됩니다. 이 ASC가 피해를 받을 때마다 ReceiverdDamage를 방송합니다.
+	virtual void ReceiveDamage(UBaseAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
 };

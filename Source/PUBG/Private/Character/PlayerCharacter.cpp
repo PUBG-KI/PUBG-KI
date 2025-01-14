@@ -5,6 +5,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/ActorComponent.h"
+#include "PlayerState/BasePlayerState.h"
+#include "Controller/BasePlayerController.h"
 
 // 카메라
 #include "GameFramework/SpringArmComponent.h"
@@ -19,6 +21,7 @@
 // 어빌리티
 #include "AbilitySystem//BaseGameplayTag.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/BaseAttributeSet.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -39,7 +42,6 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	
 	// 메쉬 부착
 	UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
 	if (EnumPtr)
@@ -52,8 +54,7 @@ APlayerCharacter::APlayerCharacter()
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
-			GetMesh()->SetLeaderPoseComponent(NewMesh);
-
+			
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
 			CharacterEquipmentMap.Add(EnumValue, NewMesh);
@@ -149,11 +150,82 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if (!StartupData.IsNull())
+	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+	if (PS)
 	{
-		if (UDataAsset_StartupBase* LoadedData = StartupData.LoadSynchronous())
+		// 서버에 ASC를 설정합니다. 클라이언트는 OnRep_PlayerState()에서 이 작업을 수행합니다.
+		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
+		BaseAttributeSet = PS->GetAttributeSetBase();
+
+		// AI에는 PlayerController가 없으므로 확인을 위해 여기에서 다시 초기화할 수 있습니다. PlayerController가 있는 영웅을 두 번 초기화해도 아무런 해가 없습니다.
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
+
+		// 스타트업 데이터 할당
+		if (!StartupData.IsNull())
 		{
-			LoadedData->GiveToAbilitySystemComponent(GetBaseAbilitySystemComponent());
+			if (UDataAsset_StartupBase* LoadedData = StartupData.LoadSynchronous())
+			{
+				LoadedData->GiveToAbilitySystemComponent(BaseAbilitySystemComponent.Get());
+			}
 		}
-	}	
+
+		// 나중에 플레이어의 연결을 끊었다가 다시 합류하는 것을 처리하는 경우 다시 합류로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
+		// 지금은 소유 = 생성/재생이라고 가정합니다.
+		//InitializeAttributes();
+		
+		// 리스폰 관련 특정 작업을 종료합니다.
+		//AddStartupEffects();
+
+		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
+		//SetHealth(GetMaxHealth());
+		//SetStamina(GetMaxStamina());
+	}
 }
+
+void APlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+	if (PS)
+	{
+		// 클라이언트에 대한 ASC를 설정합니다. 서버는 PossessedBy에서 이 작업을 수행합니다.
+		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+
+	    // 클라이언트에 대한 ASC 행위자 정보를 초기화합니다. 서버는 새 액터를 보유할 때 ASC를 초기화합니다.
+		BaseAbilitySystemComponent->InitAbilityActorInfo(PS, this);
+		
+		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
+		BaseAttributeSet = PS->GetAttributeSetBase();
+
+		// 플레이어 입력을 AbilitySystemComponent에 바인딩합니다. 잠재적인 경쟁 조건으로 인해 SetupPlayerInputComponent에서도 호출됩니다.
+		//BindASCInput();
+
+
+	    // 나중에 플레이어 연결 끊김과 재참여를 처리하는 경우 재참여로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
+		// 지금은 소유 = 생성/재생이라고 가정합니다.
+		//InitializeAttributes();
+
+		// ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
+		// if (PC)
+		// {
+		// 	PC->CreateHUD();
+		// }
+		//
+		// // Simulated on proxies don't have their PlayerStates yet when BeginPlay is called so we call it again here
+		// InitializeFloatingStatusBar();
+		//
+		//
+		// // Respawn specific things that won't affect first possession.
+		//
+		// // Forcibly set the DeadTag count to 0
+		// AbilitySystemComponent->SetTagMapCount(DeadTag, 0);
+
+		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
+		//SetHealth(GetMaxHealth());
+		//SetStamina(GetMaxStamina());
+	}
+}
+
+
