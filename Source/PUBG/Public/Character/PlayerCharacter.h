@@ -24,7 +24,6 @@ enum class EPlayerMeshType : uint8
 	Head UMETA(DisplayName = "Head"),
 	Top UMETA(DisplayName = "Top"),
 	Bottom UMETA(DisplayName = "Bottom"),
-	Shoes UMETA(DisplayName = "Shoes"),		
 };
 /**
  * 

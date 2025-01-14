@@ -42,7 +42,6 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	
 	// 메쉬 부착
 	UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
 	if (EnumPtr)
@@ -55,8 +54,7 @@ APlayerCharacter::APlayerCharacter()
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
-			GetMesh()->SetLeaderPoseComponent(NewMesh);
-
+			
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
 			CharacterEquipmentMap.Add(EnumValue, NewMesh);
@@ -156,10 +154,13 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	{
 		// 서버에 ASC를 설정합니다. 클라이언트는 OnRep_PlayerState()에서 이 작업을 수행합니다.
 		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
+		BaseAttributeSet = PS->GetAttributeSetBase();
 
 		// AI에는 PlayerController가 없으므로 확인을 위해 여기에서 다시 초기화할 수 있습니다. PlayerController가 있는 영웅을 두 번 초기화해도 아무런 해가 없습니다.
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 
+		// 스타트업 데이터 할당
 		if (!StartupData.IsNull())
 		{
 			if (UDataAsset_StartupBase* LoadedData = StartupData.LoadSynchronous())
@@ -168,20 +169,16 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 			}
 		}
 
-		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
-		BaseAttributeSet = PS->GetAttributeSetBase();
-		
-
 		// 나중에 플레이어의 연결을 끊었다가 다시 합류하는 것을 처리하는 경우 다시 합류로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
-		InitializeAttributes();
+		//InitializeAttributes();
 		
 		// 리스폰 관련 특정 작업을 종료합니다.
-		AddStartupEffects();
+		//AddStartupEffects();
 
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
-		SetHealth(GetMaxHealth());
-		SetStamina(GetMaxStamina());
+		//SetHealth(GetMaxHealth());
+		//SetStamina(GetMaxStamina());
 	}
 }
 
@@ -207,7 +204,7 @@ void APlayerCharacter::OnRep_PlayerState()
 
 	    // 나중에 플레이어 연결 끊김과 재참여를 처리하는 경우 재참여로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
-		InitializeAttributes();
+		//InitializeAttributes();
 
 		// ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
 		// if (PC)
@@ -225,8 +222,8 @@ void APlayerCharacter::OnRep_PlayerState()
 		// AbilitySystemComponent->SetTagMapCount(DeadTag, 0);
 
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
-		SetHealth(GetMaxHealth());
-		SetStamina(GetMaxStamina());
+		//SetHealth(GetMaxHealth());
+		//SetStamina(GetMaxStamina());
 	}
 }
 
