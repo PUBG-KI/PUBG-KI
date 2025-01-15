@@ -17,6 +17,11 @@ ABaseCharacter::ABaseCharacter()
 
 }
 
+bool ABaseCharacter::IsAlive() const
+{
+	return GetHealth() > 0.0f;
+}
+
 float ABaseCharacter::GetHealth() const
 {
 	if (BaseAttributeSet.IsValid())
