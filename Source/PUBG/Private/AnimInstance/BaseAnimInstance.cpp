@@ -2,8 +2,11 @@
 
 
 #include "AnimInstance/BaseAnimInstance.h"
+
+#include "KismetAnimationLibrary.h"
 #include "Character/BaseCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "Character/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UBaseAnimInstance::NativeInitializeAnimation()
@@ -24,6 +27,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	Velocity = OwningCharacter->GetVelocity();
 	GroundSpeed = Velocity.Size2D();
+	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
 
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 
@@ -31,6 +35,16 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningMovementComponent->IsCrouching();
+	//bIsProne = Cast<APlayerCharacter>(OwningCharacter)->GetIsProne();
+
+	if (bIsFalling)
+	{
+		FallingTime += DeltaSeconds;
+	}
+	else
+	{
+		FallingTime =0.f;
+	}
 }
 
 bool UBaseAnimInstance::OwnerHasTag(FGameplayTag Tag) const

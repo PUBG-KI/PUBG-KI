@@ -27,6 +27,9 @@ public:
 	UCharacterMovementComponent* OwningMovementComponent;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
+	float Direction;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float GroundSpeed;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
@@ -43,6 +46,12 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	bool bIsCrouching;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
+	bool bIsProne;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
+	float FallingTime;
 	
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
