@@ -16,6 +16,14 @@ class UInputAction;
 
 struct FInputActionValue;
 
+//UENUM()
+// enum class EPlayerStance : uint8
+// {
+// 	Stand,
+// 	Crouch,
+// 	Prone
+// };
+
 UENUM(BlueprintType)
 enum class EPlayerMeshType : uint8
 {
@@ -75,7 +83,8 @@ protected:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
-
+	void Input_Crouch(const FInputActionValue& InputActionValue);
+	void Input_Prone(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
 #pragma endregion
@@ -84,5 +93,18 @@ protected:
 	virtual void OnRep_PlayerState() override;
 	
 public:
-	virtual void PossessedBy(AController* NewController) override;	
+	virtual void PossessedBy(AController* NewController) override;
+
+public:
+	// EPlayerStance PlayerStance;
+	// void SetPlayerStance(EPlayerStance CachedStance);
+	//FORCEINLINE EPlayerStance GetPlayerStance() const { return PlayerStance;}
+	
+	bool bIsProne;
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	bool GetIsProne() const { return bIsProne; }
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void SetIsProne(bool bIsProneNew) { bIsProne = bIsProneNew; }
 };
+
+

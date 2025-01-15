@@ -23,10 +23,11 @@ void UGA_Sprint::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 			FVector Velocity = MovementComp->Velocity;
 			bool bIsMovingBackward = FVector::DotProduct(Velocity, Player->GetActorForwardVector()) < 0.f;
 
-			// 뒤로 이동 중이 아니면 스프린트 속도를 600으로 설정
+			// 뒤로 이동 중이 아니면 스프린트 속도를 400으로 설정
 			if (!bIsMovingBackward)
 			{
-				MovementComp->MaxWalkSpeed = 600.f;
+				MovementComp->MaxWalkSpeed += 100.f;
+				MovementComp->MaxWalkSpeedCrouched += 100.f;
 			}
 		}
 	}
@@ -47,7 +48,8 @@ void UGA_Sprint::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 		UCharacterMovementComponent* MovementComp = Player->GetCharacterMovement();
 		if (MovementComp)
 		{
-			MovementComp->MaxWalkSpeed = 400.f;
+			MovementComp->MaxWalkSpeed -= 100.f;
+			MovementComp->MaxWalkSpeedCrouched -= 100.f;
 		}
 	}
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

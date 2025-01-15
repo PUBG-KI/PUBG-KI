@@ -6,6 +6,7 @@
 #include "KismetAnimationLibrary.h"
 #include "Character/BaseCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "Character/PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void UBaseAnimInstance::NativeInitializeAnimation()
@@ -34,6 +35,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningMovementComponent->IsCrouching();
+	//bIsProne = Cast<APlayerCharacter>(OwningCharacter)->GetIsProne();
 
 	if (bIsFalling)
 	{

@@ -22,6 +22,7 @@
 #include "AbilitySystem//BaseGameplayTag.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "AnimInstance/BaseAnimInstance.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -54,20 +55,22 @@ APlayerCharacter::APlayerCharacter()
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
-			
+
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
 			CharacterEquipmentMap.Add(EnumValue, NewMesh);
 		}
 	}
-	
+
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
-	GetCharacterMovement()->JumpZVelocity = 500.0f; // 
+	GetCharacterMovement()->JumpZVelocity = 500.0f;
+	//GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f;
 	
+	bIsProne = false;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -76,33 +79,39 @@ void APlayerCharacter::BeginPlay()
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
-{	
+{
 	return *CharacterEquipmentMap.Find(PlayerMeshType);
 }
 
 void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh)
-{	
-	if(USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
+{
+	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
+
 	checkf(InputConfigDataAsset, TEXT("Forgot to assign a valid data asset as input config"));
 
 	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
 	check(Subsystem);
 	Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 
 	UBaseInputComponent* BaseInputComponent = CastChecked<UBaseInputComponent>(PlayerInputComponent);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump, ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Jump);
-	
-	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed, &APlayerCharacter::Input_AbilityInputReleased);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
+	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look,
+	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump,
+	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Jump);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Crouch);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
+	//BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
+	                                          // &APlayerCharacter::Input_AbilityInputReleased);
 }
 
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
@@ -123,22 +132,39 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
-    const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
-    
-    if (LookAxisVector.X != 0.f)
-    {
-    	AddControllerYawInput(LookAxisVector.X);
-    }
-    if (LookAxisVector.Y != 0.f)
-    {
-    	AddControllerPitchInput(LookAxisVector.Y);
-    }
+	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 
+	if (LookAxisVector.X != 0.f)
+	{
+		AddControllerYawInput(LookAxisVector.X);
+	}
+	if (LookAxisVector.Y != 0.f)
+	{
+		AddControllerPitchInput(LookAxisVector.Y);
+	}
 }
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
 	Jump();
+}
+void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
+{
+	bIsCrouched = true;
+}
+
+void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
+{
+	bIsProne = true;
+	if (UBaseAnimInstance* PlayerAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		PlayerAnimInstance->bIsProne = true;
+		if (PlayerAnimInstance->bIsProne)
+			UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::Input_Prone - InputActionValue"));
+		
+	}
+		
+	
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
@@ -181,7 +207,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		// 나중에 플레이어의 연결을 끊었다가 다시 합류하는 것을 처리하는 경우 다시 합류로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
 		//InitializeAttributes();
-		
+
 		// 리스폰 관련 특정 작업을 종료합니다.
 		//AddStartupEffects();
 
@@ -194,16 +220,16 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 void APlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	
+
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
 	if (PS)
 	{
 		// 클라이언트에 대한 ASC를 설정합니다. 서버는 PossessedBy에서 이 작업을 수행합니다.
 		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 
-	    // 클라이언트에 대한 ASC 행위자 정보를 초기화합니다. 서버는 새 액터를 보유할 때 ASC를 초기화합니다.
+		// 클라이언트에 대한 ASC 행위자 정보를 초기화합니다. 서버는 새 액터를 보유할 때 ASC를 초기화합니다.
 		BaseAbilitySystemComponent->InitAbilityActorInfo(PS, this);
-		
+
 		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
 		BaseAttributeSet = PS->GetAttributeSetBase();
 
@@ -211,7 +237,7 @@ void APlayerCharacter::OnRep_PlayerState()
 		//BindASCInput();
 
 
-	    // 나중에 플레이어 연결 끊김과 재참여를 처리하는 경우 재참여로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
+		// 나중에 플레이어 연결 끊김과 재참여를 처리하는 경우 재참여로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
 		//InitializeAttributes();
 
@@ -236,4 +262,28 @@ void APlayerCharacter::OnRep_PlayerState()
 	}
 }
 
-
+// void APlayerCharacter::SetPlayerStance(EPlayerStance CachedStance)
+// {
+// 	PlayerStance = CachedStance;
+//
+// 	switch (PlayerStance)
+// 	{
+// 	case EPlayerStance::Stand:
+// 		GetCharacterMovement()->MaxWalkSpeed = 300.f;
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f);
+// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
+// 		break;
+// 		
+// 	case EPlayerStance::Prone:
+// 		GetCharacterMovement()->MaxWalkSpeed = 100.f;
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(30.0f);
+// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -30.0f));
+// 		break;
+// 		
+// 	case EPlayerStance::Crouch:
+// 		GetCharacterMovement()->MaxWalkSpeed = 200.f;
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(60.0f);
+// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -63.0f));
+// 		break;
+// 	}
+// }
