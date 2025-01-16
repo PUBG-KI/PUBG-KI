@@ -43,7 +43,7 @@ protected:
 	UStaticMeshComponent* LoopsMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
-	EFiremodes FireMode = EFiremodes::Single;
+	EFiremodes FireMode = EFiremodes::Auto;
 	
 
 public:
