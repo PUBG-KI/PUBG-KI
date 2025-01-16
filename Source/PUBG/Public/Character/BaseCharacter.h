@@ -20,6 +20,9 @@ public:
 	// Sets default values for this character's properties
 	ABaseCharacter();
 
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	virtual bool IsAlive() const;
 	/**
 	* Getters for attributes from GDAttributeSetBase
 	**/
