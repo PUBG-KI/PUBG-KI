@@ -8,6 +8,7 @@
 #include "BaseAnimInstance.generated.h"
 
 class ABaseCharacter;
+class APlayerCharacter;
 class UCharacterMovementComponent;
 /**
  * 
@@ -22,7 +23,9 @@ public:
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
 
 	UPROPERTY()
-	ABaseCharacter* OwningCharacter;	
+	ABaseCharacter* OwningCharacter;
+	UPROPERTY()
+	APlayerCharacter* OwningPlayer;
 	UPROPERTY()
 	UCharacterMovementComponent* OwningMovementComponent;
 	

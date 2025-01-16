@@ -156,15 +156,6 @@ void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
 	bIsProne = true;
-	if (UBaseAnimInstance* PlayerAnimInstance = Cast<UBaseAnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		PlayerAnimInstance->bIsProne = true;
-		if (PlayerAnimInstance->bIsProne)
-			UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::Input_Prone - InputActionValue"));
-		
-	}
-		
-	
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
