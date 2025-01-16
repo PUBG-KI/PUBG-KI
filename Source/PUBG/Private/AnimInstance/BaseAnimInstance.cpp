@@ -36,7 +36,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	bIsRun = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 250.f;
 
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsCrouching = OwningMovementComponent->IsCrouching();
+	bIsCrouching = OwningMovementComponent->bWantsToCrouch;
 	bIsProne = OwningPlayer->GetIsProne();
 
 	if (bIsFalling)

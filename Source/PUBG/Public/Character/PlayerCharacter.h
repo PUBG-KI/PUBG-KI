@@ -16,25 +16,18 @@ class UInputAction;
 
 struct FInputActionValue;
 
-//UENUM()
-// enum class EPlayerStance : uint8
-// {
-// 	Stand,
-// 	Crouch,
-// 	Prone
-// };
 
 UENUM(BlueprintType)
 enum class EPlayerMeshType : uint8
 {
 	// 플레이어 뼈대를 가진 파츠들 나열 ex) 머리, 손, 발, 상의, 하의 등등
 	// 바디는 기본 mesh로 설정 후 리더포즈컴포넌트로 다른 파츠들의 애니메이션 따라오게 만듬
-	EssentialBody UMETA(DisplayName = "EssentialBody"),
-	EssentialFace UMETA(DisplayName = "EssentialFace"),
-	EssentialHair UMETA(DisplayName = "EssentialHair"),
 	Head UMETA(DisplayName = "Head"),
 	Top UMETA(DisplayName = "Top"),
 	Bottom UMETA(DisplayName = "Bottom"),
+	Body UMETA(DisplayName = "Body"),
+	Face UMETA(DisplayName = "Face"),
+	Hair UMETA(DisplayName = "Hair"),
 };
 /**
  * 
@@ -71,6 +64,15 @@ private:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 #pragma endregion
+	FTimerHandle CollisionTimerHandle;
+
+	//0 ~ 1초동안 시가값으로 아래 변수 처리
+	//90 ~ 30
+	//-89 ~ -35
+	float TimerTime;
+
+	void UpdateProneCollsionSizeAndCharacterZpos();
+	void UpdateCrouchCollsionSizeAndCharacterZpos();
 	
 #pragma region Inputs
 private:
@@ -81,6 +83,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void Input_Move(const FInputActionValue& InputActionValue);
+	void Input_MoveReleased(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
 	void Input_Crouch(const FInputActionValue& InputActionValue);
@@ -96,15 +99,13 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
-	// EPlayerStance PlayerStance;
-	// void SetPlayerStance(EPlayerStance CachedStance);
-	//FORCEINLINE EPlayerStance GetPlayerStance() const { return PlayerStance;}
-	
 	bool bIsProne;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetIsProne() const { return bIsProne; }
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetIsProne(bool bIsProneNew) { bIsProne = bIsProneNew; }
 };
+
+
 
 
