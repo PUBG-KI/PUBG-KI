@@ -15,7 +15,9 @@ void UBaseAnimInstance::NativeInitializeAnimation()
 	if (OwningCharacter)
 	{
 		OwningMovementComponent = OwningCharacter->GetCharacterMovement();
+		OwningPlayer=Cast<APlayerCharacter>(OwningCharacter);
 	}
+	
 }
 
 void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
@@ -35,7 +37,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningMovementComponent->IsCrouching();
-	//bIsProne = Cast<APlayerCharacter>(OwningCharacter)->GetIsProne();
+	bIsProne = OwningPlayer->GetIsProne();
 
 	if (bIsFalling)
 	{
