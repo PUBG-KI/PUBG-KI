@@ -19,11 +19,14 @@
 #include "DataAsset/Input/DataAsset_InputConfig.h"
 
 // 어빌리티
+#include "FrameTypes.h"
 #include "AbilitySystem//BaseGameplayTag.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AnimInstance/BaseAnimInstance.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
+
+#include "Kismet/GameplayStatics.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -37,7 +40,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.0f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
-	CameraBoom->bUsePawnControlRotation = true;
+	CameraBoom->bUsePawnControlRotation = false;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -69,7 +72,7 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f;
 	//GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f;
-	
+
 	bIsProne = false;
 }
 
@@ -89,6 +92,58 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 }
 
+void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()
+{
+	if (TimerTime >= 1)
+	{
+		TimerTime = 0;
+
+		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+
+		return;
+	}
+
+	TimerTime += 0.01f;
+
+	//TODO:: Calc Zpos And CollsionSize
+	if (bIsProne)
+	{
+		GetCapsuleComponent()->SetCapsuleHalfHeight(FMath::FInterpTo(90.f, 20.f, TimerTime, 1.0f));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, FMath::FInterpTo(-93.f, -43.f, TimerTime, 1.0f)));
+	}
+	else if (!bIsProne)
+	{
+		GetCapsuleComponent()->SetCapsuleHalfHeight(FMath::FInterpTo(20.f, 90.f, TimerTime, 1.0f));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, FMath::FInterpTo(-43.f, -93.f, TimerTime, 1.0f)));
+	}
+}
+
+void APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos()
+{
+	if (TimerTime >= 1)
+	{
+		TimerTime = 0;
+
+		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+
+		return;
+	}
+
+	TimerTime += 0.01f;
+
+	//TODO:: Calc Zpos And CollsionSize
+	if (bIsCrouched)
+	{
+		GetCapsuleComponent()->SetCapsuleHalfHeight(FMath::FInterpTo(90.f, 60.f, TimerTime, 1.0f));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, FMath::FInterpTo(-93.f, -65.f, TimerTime, 1.0f)));
+	}
+	else if (!bIsCrouched)
+	{
+		GetCapsuleComponent()->SetCapsuleHalfHeight(FMath::FInterpTo(60.f, 90.f, TimerTime, 1.0f));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, FMath::FInterpTo(-65.f, -93.f, TimerTime, 1.0f)));
+	}
+}
+
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -104,18 +159,23 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	UBaseInputComponent* BaseInputComponent = CastChecked<UBaseInputComponent>(PlayerInputComponent);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
+											  ETriggerEvent::Completed, this, &APlayerCharacter::Input_MoveReleased);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look,
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump,
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Jump);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Crouch);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
-	//BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
-	                                          // &APlayerCharacter::Input_AbilityInputReleased);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
+	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
+	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
+	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
+	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
+	                                           &APlayerCharacter::Input_AbilityInputReleased);
 }
 
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
+	bUseControllerRotationYaw = true;
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	if (MovementVector.Y != 0.f)
@@ -129,7 +189,10 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
-
+void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionValue)
+{
+	bUseControllerRotationYaw = false;
+}
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
@@ -148,14 +211,47 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
 	Jump();
 }
+
 void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 {
-	bIsCrouched = true;
+	if (bIsCrouched && TimerTime == 0) //크라우칭 상태면
+	{
+		UnCrouch();
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		                                       &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f,
+		                                       true);
+		
+		
+	}
+	else if (!bIsCrouched && TimerTime == 0) //크라우칭 상태가 아니면
+	{
+		Crouch();
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		                                       &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f,
+		                                       true);
+		
+		UE_LOG(LogTemp, Warning, TEXT("Crouch"));
+		
+		
+	}
 }
 
 void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
-	bIsProne = true;
+	if (bIsProne && TimerTime == 0) //누워있는 상태면
+	{
+		bIsProne = false;
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		                                       &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+
+	}
+	else if (!bIsProne && TimerTime == 0) //누워있지 않으면
+	{
+		bIsProne = true;
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		                                       &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+
+	}
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
@@ -252,29 +348,3 @@ void APlayerCharacter::OnRep_PlayerState()
 		SetStamina(0);
 	}
 }
-
-// void APlayerCharacter::SetPlayerStance(EPlayerStance CachedStance)
-// {
-// 	PlayerStance = CachedStance;
-//
-// 	switch (PlayerStance)
-// 	{
-// 	case EPlayerStance::Stand:
-// 		GetCharacterMovement()->MaxWalkSpeed = 300.f;
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f);
-// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
-// 		break;
-// 		
-// 	case EPlayerStance::Prone:
-// 		GetCharacterMovement()->MaxWalkSpeed = 100.f;
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(30.0f);
-// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -30.0f));
-// 		break;
-// 		
-// 	case EPlayerStance::Crouch:
-// 		GetCharacterMovement()->MaxWalkSpeed = 200.f;
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(60.0f);
-// 		GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -63.0f));
-// 		break;
-// 	}
-// }
