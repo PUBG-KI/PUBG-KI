@@ -14,6 +14,23 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Crouch, "InputTag.Crouch");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Prone, "InputTag.Prone");
 
+	// Weapon Input Tag
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Equip, "InputTag.Weapon.Equip");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_UnEquip, "InputTag.Weapon.UnEquip");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Fire, "InputTag.Weapon.Fire");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Reload, "InputTag.Weapon.Reload");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_ChangeFireMode, "InputTag.Weapon.ChangeMode");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Zoom, "InputTag.Weapon.Zoom");
+
+	// Weapon Action Tag
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Equip, "Player.Ability.Weapon.Equip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_UnEquip, "Player.Ability.Weapon.UnEquip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Fire, "Player.Ability.Weapon.Fire");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Reload, "Player.Ability.Weapon.Reload");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_ChangeFireMode, "Player.Ability.Weapon.ChangeFireMode");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Zoom, "Player.Ability.Weapon.Zoom");
+	
+
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Prone, "Player.State.Prone");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Stand, "Player.State.Stand");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Crouch, "Player.State.Crouch");

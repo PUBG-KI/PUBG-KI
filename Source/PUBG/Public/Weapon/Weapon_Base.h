@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "BaseLibrary/BaseStructType.h"
+#include "GameplayAbilitySpecHandle.h"
 #include "Weapon_Base.generated.h"
 
 UCLASS()
@@ -22,6 +24,19 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
 	USkeletalMeshComponent* WeaponSkeletalMeshComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	FPlayerWeaponData WeaponData;
+	
+	UFUNCTION(BlueprintCallable)
+	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles);
+
+	UFUNCTION(BlueprintPure)
+	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+
+private:
+
+	TArray<FGameplayAbilitySpecHandle> GrantedAbilitySpecHandles;
 	
 	
 };

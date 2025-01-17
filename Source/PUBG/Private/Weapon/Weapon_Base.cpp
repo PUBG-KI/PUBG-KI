@@ -18,6 +18,15 @@ AWeapon_Base::AWeapon_Base()
 void AWeapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AWeapon_Base::AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles)
+{
+	GrantedAbilitySpecHandles = SpecHandles;
+}
+
+TArray<FGameplayAbilitySpecHandle> AWeapon_Base::GetGrantedAbilitySpecHandles() const
+{
+	return GrantedAbilitySpecHandles;
 }
 
