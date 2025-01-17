@@ -9,6 +9,14 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class EFiremodes : uint8
+{
+	Auto = 0,
+	Single,
+	Semi_Auto,
+};
+
 UCLASS()
 class PUBG_API AGun_Base : public AWeapon_Base
 {
@@ -20,25 +28,30 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
-	FName ScopeSocket;
+	UStaticMeshComponent* ScopeMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
-	FName muzzleSocket;
+	UStaticMeshComponent* MuzzleMesh;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
-	FName MagSocket;
+	UStaticMeshComponent* MagMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
-	FName ChokeLoops;
+	UStaticMeshComponent* GripMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	FName ShootProjectile;
+	UStaticMeshComponent* LoopsMesh;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
-	USkeletalMeshComponent* AttachablePart;
-
+	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
+	EFiremodes FireMode = EFiremodes::Auto;
+	
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "FireMode")
+	FORCEINLINE EFiremodes GetFireMode() const { return FireMode; }
+
+	UFUNCTION(BlueprintCallable, category = "FireMode")
+	void SetFiremode(EFiremodes Firemodes);
 
 	
 };
