@@ -5,7 +5,7 @@
 
 class UInputMappingContext;
 //class UPlayerGameplayAbility;
-//class UPlayerAnimInstance;
+class UPlayerAnimInstance;
 
 USTRUCT(BlueprintType)
 struct FPlayerAbilitySet
@@ -26,8 +26,8 @@ struct FPlayerWeaponData
 {
 	GENERATED_BODY()
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	//TSubclassOf<UPlayerAnimInstance> WeaponAnimLayerToLink;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UPlayerAnimInstance> WeaponAnimLayerToLink;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UAnimMontage* EquipAnimMontage = nullptr;

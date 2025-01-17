@@ -24,7 +24,7 @@ public:
 	void OnAbilityInputPressed(const FGameplayTag& InputTag);
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void OnAbilityInputReleased(const FGameplayTag& InputTag);
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Ability", meta = (Level = "1"))
 	void GrantPlayerWeaponAbilities(const TArray<FPlayerAbilitySet>& WeaponAbilities, int32 Level, TArray<FGameplayAbilitySpecHandle>& OutGrantedAbilitySpecHandles);
 
