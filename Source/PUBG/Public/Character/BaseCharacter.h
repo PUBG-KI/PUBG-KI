@@ -89,4 +89,5 @@ protected:
 
 	virtual void SetHealth(float Health);
 	virtual void SetStamina(float Stamina);
+	virtual void SetMoveSpeed(float MoveSpeed);
 };

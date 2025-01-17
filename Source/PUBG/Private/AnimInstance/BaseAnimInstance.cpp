@@ -36,7 +36,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	bIsRun = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 250.f;
 
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsCrouching = OwningMovementComponent->bWantsToCrouch;
+	bIsCrouching = OwningPlayer->GetIsCrouch();
 	bIsProne = OwningPlayer->GetIsProne();
 
 	if (bIsFalling)
@@ -47,6 +47,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	{
 		FallingTime =0.f;
 	}
+	
 }
 
 bool UBaseAnimInstance::OwnerHasTag(FGameplayTag Tag) const
