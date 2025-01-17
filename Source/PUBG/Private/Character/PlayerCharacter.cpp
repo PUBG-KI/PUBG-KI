@@ -120,16 +120,18 @@ void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()
 
 void APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos()
 {
+	
 	if (TimerTime >= 1)
 	{
 		TimerTime = 0;
 
 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+		
 
 		return;
 	}
 
-	TimerTime += 0.01f;
+	TimerTime += 0.005f;
 
 	//TODO:: Calc Zpos And CollsionSize
 	if (bIsCrouched)
@@ -164,7 +166,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look,
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump,
-	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Jump);
+	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Jump);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
@@ -209,12 +211,38 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	Jump();
+	UE_LOG(LogTemp, Warning, TEXT("Jump"))
+	if (!bIsProne&&!bIsCrouched)
+	{
+		Jump();
+	}
+	if (bIsCrouched)//크라우칭 상태면
+	{
+		UnCrouch();
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+											   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f,
+											   true);
+		UE_LOG(LogTemp, Warning, TEXT("Crouched"))
+		return;
+	}
+	if (bIsProne && TimerTime == 0) //누워있는 상태면
+	{
+		bIsProne = false;
+		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+											   &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		UE_LOG(LogTemp, Warning, TEXT("Proned"))
+		return;
+	}
+	
 }
 
 void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 {
-	if (bIsCrouched && TimerTime == 0) //크라우칭 상태면
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return;
+	}
+	if (bIsCrouched) //크라우칭 상태면
 	{
 		UnCrouch();
 		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
@@ -223,14 +251,14 @@ void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 		
 		
 	}
-	else if (!bIsCrouched && TimerTime == 0) //크라우칭 상태가 아니면
+	else if (!bIsCrouched) //크라우칭 상태가 아니면
 	{
 		Crouch();
 		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
 		                                       &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f,
 		                                       true);
 		
-		UE_LOG(LogTemp, Warning, TEXT("Crouch"));
+		
 		
 		
 	}
@@ -238,6 +266,10 @@ void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return;
+	}
 	if (bIsProne && TimerTime == 0) //누워있는 상태면
 	{
 		bIsProne = false;

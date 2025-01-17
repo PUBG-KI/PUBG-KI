@@ -91,7 +91,7 @@ protected:
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
 #pragma endregion
-	
+	    
 	// Client only
 	virtual void OnRep_PlayerState() override;
 	
