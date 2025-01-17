@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "GameFramework/Actor.h"
 #include "BaseItem.generated.h"
 
@@ -15,5 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	ABaseItem();
 
-
+protected:
+	FItemStruct Item;
 };
