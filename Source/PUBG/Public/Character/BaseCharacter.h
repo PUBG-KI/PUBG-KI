@@ -18,7 +18,7 @@ class PUBG_API ABaseCharacter : public ACharacter, public IAbilitySystemInterfac
 
 public:
 	// Sets default values for this character's properties
-	ABaseCharacter();
+	ABaseCharacter(const class FObjectInitializer& ObjectInitializer);
 
 
 	UFUNCTION(BlueprintCallable, Category = "Character")
