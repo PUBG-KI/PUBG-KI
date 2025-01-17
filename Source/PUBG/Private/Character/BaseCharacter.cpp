@@ -143,5 +143,13 @@ void ABaseCharacter::SetStamina(float Stamina)
 	}
 }
 
+void ABaseCharacter::SetMoveSpeed(float MoveSpeed)
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		BaseAttributeSet->SetMoveSpeed(MoveSpeed);
+	}
+}
+
 
 

@@ -26,7 +26,7 @@ void UGA_Sprint::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 			// 뒤로 이동 중이 아니면 스프린트 속도를 400으로 설정
 			if (!bIsMovingBackward)
 			{
-				MovementComp->MaxWalkSpeed += 100.f;
+				MovementComp->MaxWalkSpeed *= SprintScale;
 				MovementComp->MaxWalkSpeedCrouched += 100.f;
 			}
 		}

@@ -7,6 +7,8 @@
 #include "GameplayTagContainer.h"
 #include "PlayerCharacter.generated.h"
 
+
+
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -15,7 +17,6 @@ class UInputMappingContext;
 class UInputAction;
 
 struct FInputActionValue;
-
 
 UENUM(BlueprintType)
 enum class EPlayerMeshType : uint8
@@ -73,6 +74,8 @@ private:
 
 	void UpdateProneCollsionSizeAndCharacterZpos();
 	void UpdateCrouchCollsionSizeAndCharacterZpos();
+	void UpdateProneToCrouchCollsionSizeAndCharacterZpos();
+	void UpdateCrouchToProneCollsionSizeAndCharacterZpos();
 	
 #pragma region Inputs
 private:
@@ -90,6 +93,21 @@ protected:
 	void Input_Prone(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Crouch();
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_Crouch();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Prone();
+	// UFUNCTION(Client, Reliable)
+	// void Client_Prone();
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_Prone();
+	
+	
+	
 #pragma endregion
 	    
 	// Client only
@@ -99,11 +117,27 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
+	float StandCapsuleHalfHeight;
+	float CrouchCapsuleHalfHeight;
+	float ProneCapsuleHalfHeight;
+	float MeshRelativeLocationStandZ;
+	float MeshRelativeLocationCrouchZ;
+	float MeshRelativeLocationProneZ;
+
 	bool bIsProne;
+	bool bIsCrouch;
+	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetIsProne() const { return bIsProne; }
 	UFUNCTION(BlueprintCallable, Category = "Character")
-	void SetIsProne(bool bIsProneNew) { bIsProne = bIsProneNew; }
+	bool GetIsCrouch() const { return bIsCrouch; }
+
+	bool bIsSprint; //Sprint
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	bool GetIsSprint() const {return bIsSprint; }
+	bool bIsWalk;
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	bool GetbIsWalk() const {return bIsWalk; }
 };
 
 
