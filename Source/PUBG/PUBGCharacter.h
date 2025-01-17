@@ -20,6 +20,7 @@ class APUBGCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+protected:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -48,11 +49,11 @@ public:
 	APUBGCharacter();
 	
 
-protected:
+public:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
+	
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			

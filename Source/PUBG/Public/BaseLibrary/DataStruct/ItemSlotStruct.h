@@ -1,0 +1,23 @@
+#pragma once
+#include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "Engine/DataTable.h"
+
+#include "ItemSlotStruct.generated.h"
+
+
+enum class ItemEnum : uint8;
+
+USTRUCT(BlueprintType)
+struct FItemSlotStruct : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName ItemName;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int32 Quantity;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag Tag;
+
+};
