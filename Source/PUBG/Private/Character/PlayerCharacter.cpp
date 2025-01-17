@@ -28,7 +28,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
@@ -182,7 +182,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	{
 		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
 		AddMovementInput(ForwardDirection, MovementVector.Y);
-	}
+	}	
 	if (MovementVector.X != 0.f)
 	{
 		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
@@ -239,19 +239,17 @@ void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
 	if (bIsProne && TimerTime == 0) //누워있는 상태면
-	{
-		bIsProne = false;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		                                       &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
-
-	}
-	else if (!bIsProne && TimerTime == 0) //누워있지 않으면
-	{
-		bIsProne = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		                                       &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
-
-	}
+    {
+    	bIsProne = false;
+    	GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+    										   &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+    }
+    else if (!bIsProne && TimerTime == 0) //누워있지 않으면
+    {
+    	bIsProne = true;
+    	GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+    										   &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+    }
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)

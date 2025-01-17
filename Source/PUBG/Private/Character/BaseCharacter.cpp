@@ -5,8 +5,12 @@
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 
+// 무브먼트
+#include "Component/Movement/PlayerMovementComponent.h"
+
 // Sets default values
-ABaseCharacter::ABaseCharacter()
+ABaseCharacter::ABaseCharacter(const class FObjectInitializer& ObjectInitializer) :
+	Super(ObjectInitializer.SetDefaultSubobjectClass<UPlayerMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// 틱관련 기능 비활성화
 	PrimaryActorTick.bCanEverTick = false;
@@ -14,7 +18,6 @@ ABaseCharacter::ABaseCharacter()
 	
 	BaseAbilitySystemComponent = CreateDefaultSubobject<UBaseAbilitySystemComponent>(TEXT("BaseAbilitySystemComponent"));
 	BaseAttributeSet = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("BaseAttributeSet"));
-
 }
 
 bool ABaseCharacter::IsAlive() const

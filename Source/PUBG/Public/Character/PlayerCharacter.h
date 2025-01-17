@@ -38,7 +38,7 @@ class PUBG_API APlayerCharacter : public ABaseCharacter
 	GENERATED_BODY()
 	
 public:
-	APlayerCharacter();
+	APlayerCharacter(const class FObjectInitializer& ObjectInitializer);
 
 private:
 	virtual void BeginPlay() override;
