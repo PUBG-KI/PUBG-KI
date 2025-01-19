@@ -25,6 +25,7 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AnimInstance/BaseAnimInstance.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -78,12 +79,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	bIsCrouch = false;
 	bAnimationIsPlaying = false;
 	bIsSprint = false;
-	StandCapsuleHalfHeight = 90.f;
-	CrouchCapsuleHalfHeight = 60.f;
-	ProneCapsuleHalfHeight = 20.f;
-	MeshRelativeLocationStandZ = -93.f;
-	MeshRelativeLocationCrouchZ = -65.f;
-	MeshRelativeLocationProneZ = -43.f;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -102,111 +97,111 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 }
 
-void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()
-{
-	if (TimerTime >= 1)
-	{
-		TimerTime = 0;
-
-		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-		bAnimationIsPlaying = false;
-
-		return;
-	}
-
-	TimerTime += 0.01f;
-
-	//TODO:: Calc Zpos And CollsionSize
-	if (bIsProne)
-	{
-		GetCapsuleComponent()->SetCapsuleHalfHeight(
-			FMath::FInterpTo(StandCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
-		GetMesh()->SetRelativeLocation(
-			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
-	}
-	else if (!bIsProne)
-	{
-		GetCapsuleComponent()->SetCapsuleHalfHeight(
-			FMath::FInterpTo(ProneCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
-		GetMesh()->SetRelativeLocation(
-			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
-	}
-}
-
-void APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos()
-{
-	if (TimerTime >= 1)
-	{
-		TimerTime = 0;
-
-		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-		bAnimationIsPlaying = false;
-
-		return;
-	}
-
-	TimerTime += 0.05f;
-
-	//TODO:: Calc Zpos And CollsionSize
-	if (bIsCrouch)
-	{
-		GetCapsuleComponent()->SetCapsuleHalfHeight(
-			FMath::FInterpTo(StandCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
-		GetMesh()->SetRelativeLocation(FVector(
-			0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
-	}
-	else if (!bIsCrouch)
-	{
-		GetCapsuleComponent()->SetCapsuleHalfHeight(
-			FMath::FInterpTo(CrouchCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
-		GetMesh()->SetRelativeLocation(FVector(
-			0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
-	}
-}
-
-void APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos()
-{
-	if (TimerTime >= 1)
-	{
-		TimerTime = 0;
-		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-		bAnimationIsPlaying = false;
-
-
-		return;
-	}
-
-	TimerTime += 0.05f;
-
-	//TODO:: Calc Zpos And CollsionSize
-
-	GetCapsuleComponent()->SetCapsuleHalfHeight(
-		FMath::FInterpTo(ProneCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
-	GetMesh()->SetRelativeLocation(
-		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
-}
-
-void APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos()
-{
-	if (TimerTime >= 1)
-	{
-		TimerTime = 0;
-
-		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-
-		bAnimationIsPlaying = false;
-		return;
-	}
-
-	TimerTime += 0.05f;
-
-	//TODO:: Calc Zpos And CollsionSize
-
-	GetCapsuleComponent()->SetCapsuleHalfHeight(
-		FMath::FInterpTo(CrouchCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
-	GetMesh()->SetRelativeLocation(
-		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
-}
+// void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()
+// {
+// 	if (TimerTime >= 1)
+// 	{
+// 		TimerTime = 0;
+//
+// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+// 		bAnimationIsPlaying = false;
+//
+// 		return;
+// 	}
+//
+// 	TimerTime += 0.01f;
+//
+// 	//TODO:: Calc Zpos And CollsionSize
+// 	if (bIsProne)
+// 	{
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 			FMath::FInterpTo(StandCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
+// 		GetMesh()->SetRelativeLocation(
+// 			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
+// 	}
+// 	else if (!bIsProne)
+// 	{
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 			FMath::FInterpTo(ProneCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
+// 		GetMesh()->SetRelativeLocation(
+// 			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
+// 	}
+// }
+//
+// void APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos()
+// {
+// 	if (TimerTime >= 1)
+// 	{
+// 		TimerTime = 0;
+//
+// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+// 		bAnimationIsPlaying = false;
+//
+// 		return;
+// 	}
+//
+// 	TimerTime += 0.05f;
+//
+// 	//TODO:: Calc Zpos And CollsionSize
+// 	if (bIsCrouch)
+// 	{
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 			FMath::FInterpTo(StandCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
+// 		GetMesh()->SetRelativeLocation(FVector(
+// 			0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
+// 	}
+// 	else if (!bIsCrouch)
+// 	{
+// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 			FMath::FInterpTo(CrouchCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
+// 		GetMesh()->SetRelativeLocation(FVector(
+// 			0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
+// 	}
+// }
+//
+// void APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos()
+// {
+// 	if (TimerTime >= 1)
+// 	{
+// 		TimerTime = 0;
+// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+// 		bAnimationIsPlaying = false;
+//
+//
+// 		return;
+// 	}
+//
+// 	TimerTime += 0.05f;
+//
+// 	//TODO:: Calc Zpos And CollsionSize
+//
+// 	GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 		FMath::FInterpTo(ProneCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
+// 	GetMesh()->SetRelativeLocation(
+// 		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
+// }
+//
+// void APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos()
+// {
+// 	if (TimerTime >= 1)
+// 	{
+// 		TimerTime = 0;
+//
+// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
+//
+// 		bAnimationIsPlaying = false;
+// 		return;
+// 	}
+//
+// 	TimerTime += 0.05f;
+//
+// 	//TODO:: Calc Zpos And CollsionSize
+//
+// 	GetCapsuleComponent()->SetCapsuleHalfHeight(
+// 		FMath::FInterpTo(CrouchCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
+// 	GetMesh()->SetRelativeLocation(
+// 		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
+// }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -249,7 +244,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 
 	// 부드럽게 회전 (보간을 통해)
 	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
-
+	MoveForwardVecter.Y = MovementVector.Y;
 	// 회전 적용
 	SetActorRotation(InterpolatedRotation);
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
@@ -287,26 +282,29 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Jump"))
-	if (!bIsProne && !bIsCrouch && !bAnimationIsPlaying) //prone 및 crouch상태 아니면 점프가능
+	UBaseAbilitySystemComponent* ASC = UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(this);
+	// UE_LOG(LogTemp, Warning, TEXT("Prone: %s, Crouch: %s, AnimationIsPlaying: %s"),
+	// bIsProne ? TEXT("True") : TEXT("False"),
+	// bIsCrouch ? TEXT("True") : TEXT("False"),
+	// bAnimationIsPlaying ? TEXT("True") : TEXT("False"));
+	if (!bIsProne && !bIsCrouch&&!bAnimationIsPlaying) //prone 및 crouch상태 아니면 점프가능
 	{
 		Jump();
+		return;
 	}
 	if (bIsCrouch) //크라우칭 상태면
 	{
 		bIsCrouch = false;
-		bAnimationIsPlaying = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		                                       &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f,
-		                                       true);
+		//bAnimationIsPlaying = true;
+		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f, true);
 		UE_LOG(LogTemp, Warning, TEXT("Crouched"))
 		return;
 	}
-	if (bIsProne && TimerTime == 0) //누워있는 상태면
+	if (bIsProne) //누워있는 상태면
 	{
 		bIsProne = false;
-		bAnimationIsPlaying = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		                                       &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		//bAnimationIsPlaying = true;
+		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,&APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
 		UE_LOG(LogTemp, Warning, TEXT("Proned"))
 		return;
 	}
@@ -339,27 +337,25 @@ void APlayerCharacter::NetMulticast_Prone_Implementation()
 	{
 		return;
 	}
-	if (bIsProne && TimerTime == 0) //누워있는 상태면
+	if (bIsProne) //누워있는 상태면
 	{
 		bIsProne = false;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
 		return;
 	}
 	if (bIsCrouch)
 	{
 		bIsProne = true;
 		bIsCrouch = false;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos,
-											   0.01f, true);
+		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos,0.01f, true);
+                                                                          											   
+											  
 		return;
 	}
-	if (!bIsProne && TimerTime == 0) //누워있지 않으면
+	if (!bIsProne) //누워있지 않으면
 	{
 		bIsProne = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
 		return;
 	}
 }
@@ -396,27 +392,29 @@ void APlayerCharacter::NetMulticast_Crouch_Implementation()
 	if (bIsCrouch) //크라우칭 상태면
 	{
 		bIsCrouch = false;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
-											   true);
+		//bAnimationIsPlaying = false;
+		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		// 									   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
+		// 									   true);
 		return;
 	}
 	if (bIsProne && !bIsCrouch)
 	{
 		bIsProne = false;
 		bIsCrouch = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos,
-											   0.01f,
-											   true);
+		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		// 									   &APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos,
+		// 									   0.01f,
+		// 									   true);
 		return;
 	}
 	if (!bIsCrouch) //크라우칭 상태가 아니면
 	{
 		bIsCrouch = true;
-		GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-											   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
-											   true);
+		//bAnimationIsPlaying = false;
+		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
+		// 									   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
+		// 									   true);
 		return;
 	}
 }

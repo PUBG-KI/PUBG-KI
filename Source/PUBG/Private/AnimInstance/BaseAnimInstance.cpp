@@ -38,7 +38,6 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningPlayer->GetIsCrouch();
 	bIsProne = OwningPlayer->GetIsProne();
-
 	if (bIsFalling)
 	{
 		FallingTime += DeltaSeconds;

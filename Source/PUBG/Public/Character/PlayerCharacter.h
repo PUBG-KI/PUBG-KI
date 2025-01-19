@@ -117,27 +117,37 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 
 public:
-	float StandCapsuleHalfHeight;
-	float CrouchCapsuleHalfHeight;
-	float ProneCapsuleHalfHeight;
-	float MeshRelativeLocationStandZ;
-	float MeshRelativeLocationCrouchZ;
-	float MeshRelativeLocationProneZ;
+	// float StandCapsuleHalfHeight;
+	// float CrouchCapsuleHalfHeight;
+	// float ProneCapsuleHalfHeight;
+	// float MeshRelativeLocationStandZ;
+	// float MeshRelativeLocationCrouchZ;
+	// float MeshRelativeLocationProneZ;
 
 	bool bIsProne;
 	bool bIsCrouch;
 	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
+	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying){bAnimationIsPlaying = bNewAnimaitonIsPlaying;}
+	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetIsProne() const { return bIsProne; }
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetIsCrouch() const { return bIsCrouch; }
 
-	bool bIsSprint; //Sprint
+	bool bIsSprint; //Sprint설정 관련
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetIsSprint() const {return bIsSprint; }
-	bool bIsWalk;
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	bool SetIsSprint(bool NewSprint){return bIsSprint = NewSprint;}
+
+	bool bIsWalk; //Walk설정 관련
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	bool GetbIsWalk() const {return bIsWalk; }
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	bool SetbIsWalk(bool NewWalk) {return bIsWalk = NewWalk; }
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
+	FVector2D MoveForwardVecter;
 };
 
 
