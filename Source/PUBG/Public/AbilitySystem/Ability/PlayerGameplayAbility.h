@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/BaseGameplayAbility.h"
-#include "Weapon/Guns/Gun_Base.h"
+//#include "Weapon/Guns/Gun_Base.h"
 #include "PlayerGameplayAbility.generated.h"
 
 /**
@@ -22,10 +22,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	ABasePlayerController* GetPlayerControllerFromActorInfo();
 
-	//UFUNCTION(BlueprintPure, category = "Ability")
-	//bool GetPlayerEquipedWeapon();
 
-	
 private:
 	TWeakObjectPtr<APlayerCharacter> CachedPlayerCharacter;
 	TWeakObjectPtr<ABasePlayerController> CachedPlayerController;
