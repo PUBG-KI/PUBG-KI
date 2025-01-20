@@ -4,6 +4,7 @@
 #include "AbilitySystem/DamageExecCalculation.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 
 //캡처할 속성을 선언하고 소스 및 대상에서 캡처할 방법을 정의합니다.
 struct FDamageStatics
@@ -69,6 +70,8 @@ void UDamageExecCalculation::Execute_Implementation(const FGameplayEffectCustomE
 	float UnmitigatedDamage = Damage; // 여기에 데미지 부스터를 늘릴 수 있습니다.
 	
 	float MitigatedDamage = (UnmitigatedDamage) * (100 / (100 + Armor));
+
+	Debug::Print(TEXT("Damage"), Damage);
 
 	if (MitigatedDamage > 0.f)
 	{

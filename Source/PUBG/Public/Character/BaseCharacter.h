@@ -56,12 +56,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "StartupData")
 	TSoftObjectPtr<UDataAsset_StartupBase> StartupData;
 
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	virtual void PossessedBy(AController* NewController) override;
 	
 public:
 	//UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const { return BaseAbilitySystemComponent; }
-	//UBaseAttributeSet* GetBaseAttributeSet() const { return BaseAttributeSet; }
+	UBaseAttributeSet* GetBaseAttributeSet() const { return BaseAttributeSet.Get(); }
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	
 
