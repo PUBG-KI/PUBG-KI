@@ -5,6 +5,7 @@
 #include "Character/PlayerCharacter.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 #include "Net/UnrealNetwork.h"
 #include "Controller/BasePlayerController.h"
 
@@ -86,6 +87,7 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
+		
 		// 적중 결과를 추출해 봅니다.
 		FHitResult HitResult;
 		if (Context.GetHitResult())
@@ -95,6 +97,7 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 		// 피해량의 로컬 복사본을 저장하고 피해 속성을 지웁니다.
 		const float LocalDamageDone = GetDamage();
+		
 		SetDamage(0.f);
 	
 		if (LocalDamageDone > 0.0f)

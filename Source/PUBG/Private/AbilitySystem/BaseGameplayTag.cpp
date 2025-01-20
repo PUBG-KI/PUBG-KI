@@ -37,4 +37,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Stand, "Player.State.Stand");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Crouch, "Player.State.Crouch");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Turn, "Player.Ability.Turn");
+	
+	// Data Tag
+	UE_DEFINE_GAMEPLAY_TAG(Data_Damage, "Data.Damage");
 }
