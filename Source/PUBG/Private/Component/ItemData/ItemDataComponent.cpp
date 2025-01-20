@@ -44,21 +44,33 @@ FText UItemDataComponent::LookAt()
 	return FText::FromString("");
 }
 
-void UItemDataComponent::InteractWith_Implementation(ATestCharacter* Character)
+void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
 
 	if (UInventoryComponent* Inventory = Character->GetInventoryComponent())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *ItemID.RowName.ToString(), Quantity);
-		if (Inventory->AddToInventory(ItemID.RowName, Quantity, Weight) != 0)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Add"));
 
-			// for (int i = 0 ; i < Inventory->GetContent().Num(); i++)
-			// {
-			// 	Character->GetInventoryWidget()->AddNewChild();
-			// }
+		// 0이 아니면 인벤이 꽉 차서 아이템이 다 안들어간 것 
+		if (int32 RemainItem = Inventory->AddToInventory(ItemID.RowName, Quantity, Weight) != 0)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Add"));
+			
+			Character->GetInventoryWidget()->UpdateInventoryWidget();
+
+			AActor* Owner = GetOwner(); 
+			if (Owner)
+			{
+				if (AItemBase* ItemBase = Cast<AItemBase>(Owner))
+				{
+					ItemBase->GetItemStruct().Quantity = RemainItem;
+				}
+			}
+		}
+		// 0이라면 다 들어가서 바닥에 있는 아이템이 없어져야 함 
+		else
+		{
 			
 			Character->GetInventoryWidget()->UpdateInventoryWidget();
 			

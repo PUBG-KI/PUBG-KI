@@ -26,8 +26,13 @@
 #include "AnimInstance/BaseAnimInstance.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/WrapBox.h"
+#include "Interface/InteractInterface.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Widgets/Inventory/InventoryWidget.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -79,11 +84,49 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	bIsCrouch = false;
 	bAnimationIsPlaying = false;
 	bIsSprint = false;
+
+	// 이준수 
+	static ConstructorHelpers::FClassFinder<UInventoryWidget> InventoryWidgetAsset(TEXT("/Game/Blueprint/Widgets/Inventory/WBP_Inventory.WBP_Inventory_C"));
+
+	if (InventoryWidgetAsset.Succeeded())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		PlayerInventoryClass = InventoryWidgetAsset.Class;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
+	}
+
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 }
 
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 이준수
+	if (IsValid(PlayerInventoryClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		APlayerController* PlayerController = Cast<APlayerController>(GetController()); 
+		
+		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(PlayerController, PlayerInventoryClass));
+		if (InventoryWidget)
+		{
+			InventoryWidget->AddToViewport();
+			InventoryWidget->SetInventoryComponent(InventoryComponent);
+			InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
+	}
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
+	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -499,6 +542,93 @@ void APlayerCharacter::OnRep_PlayerState()
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
 		SetHealth(GetMaxHealth());
 		SetStamina(0);
+	}
+}
+
+void APlayerCharacter::InputModeUI()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		PlayerController->SetShowMouseCursor(true);
+		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, InventoryWidget, EMouseLockMode::DoNotLock, true);
+	}
+	
+	
+}
+
+void APlayerCharacter::InputModeGame()
+{
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		PlayerController->SetShowMouseCursor(false);
+		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
+	}
+}
+
+void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+	{
+		BeginOverlapCount +=1;
+		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
+	}
+	
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([this, OtherActor]()
+	{
+		FHitResult Hit;
+		FVector Start = GetFollowCamera()->K2_GetComponentLocation();
+		FVector End = Start + UKismetMathLibrary::GetForwardVector(FollowCamera->K2_GetComponentRotation()) * 380.0f;
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(this);
+		//ActorsToIgnore.Add(TestCharacter);
+		ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1);
+
+		if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		{
+			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0), FLinearColor (0, 1, 0, 1));
+			if (Hit.GetActor() != nullptr)
+			{
+				if (LookAtActor != Hit.GetActor())
+				{
+					LookAtActor = Hit.GetActor();
+					IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
+			
+					if (InteractInterface)
+					{
+						FText result = InteractInterface->LookAt();
+						//InteractInterface->InteractWith();
+					}
+					else
+					{
+						LookAtActor = nullptr;
+						InventoryComponent->SetItem(nullptr);
+					}
+				}
+				
+			}
+		}
+		
+	});
+
+	GetWorldTimerManager().SetTimer(BeginOverlapTimerHandle, TimerDelegate, 0.1f, true);
+
+	
+	
+}
+
+void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	BeginOverlapCount -=1;
+	UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
+	LookAtActor = nullptr;
+	InventoryComponent->SetItem(nullptr);
+	if (BeginOverlapCount == 0)
+	{
+		
+		GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
 	}
 }
 

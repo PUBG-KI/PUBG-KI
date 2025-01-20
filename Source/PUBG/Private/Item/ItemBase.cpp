@@ -12,6 +12,8 @@
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Character/PlayerCharacter.h"
+
 
 //int32 AItemBase::BeginOverlapCount = 0;
 
@@ -142,7 +144,7 @@ FText AItemBase::LookAt()
 	return Message;
 }
 
-void AItemBase::InteractWith_Implementation(ATestCharacter* Character)
+void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
 	

@@ -36,7 +36,7 @@ public:
 	UFUNCTION()
 	virtual FText LookAt() override;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void InteractWith(ATestCharacter* Character);
-	virtual void InteractWith_Implementation(ATestCharacter* Character) override;
+	void InteractWith(APlayerCharacter* Character);
+	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 	
 };
