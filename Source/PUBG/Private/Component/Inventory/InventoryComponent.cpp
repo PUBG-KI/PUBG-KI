@@ -310,6 +310,19 @@ void UInventoryComponent::PrintContents()
 	}
 }
 
+void UInventoryComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
+{
+	if (_CurrentWeapon == nullptr)
+	{
+		this->CurrentWeapon = nullptr;
+	}
+	else
+	{
+		this->CurrentWeapon = _CurrentWeapon;
+	}
+
+}
+
 void UInventoryComponent::Server_Interact_Implementation()
 {
 	if (Item != nullptr)

@@ -26,3 +26,8 @@ void AGun_Base::SetFiremode(EFiremodes Firemodes)
 {
 	this->FireMode = Firemodes;
 }
+
+void AGun_Base::SetMagToHandSocekt()
+{
+	//if (MagMesh->GetAttachParent())
+}

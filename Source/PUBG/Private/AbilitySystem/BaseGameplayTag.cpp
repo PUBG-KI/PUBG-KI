@@ -33,7 +33,12 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Reload, "Player.Ability.Weapon.Reload");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_ChangeFireMode, "Player.Ability.Weapon.ChangeFireMode");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Zoom, "Player.Ability.Weapon.Zoom");
-	
+
+	// Weapon Event Tag
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Equip, "Player.Event.Action.Equip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_UnEquip, "Player.Event.Action.UnEquip");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Reload, "Player.Event.Action.Reload");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_ReloadEnd, "Player.Event.Action.ReloadEnd");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Prone, "Player.State.Prone");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Stand, "Player.State.Stand");
