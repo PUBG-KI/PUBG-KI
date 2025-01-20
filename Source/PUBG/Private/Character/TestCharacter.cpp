@@ -14,6 +14,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Component/Inventory/InventoryComponent.h"
+#include "Component/NearArea/NearComponent.h"
 #include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
@@ -59,7 +60,7 @@ ATestCharacter::ATestCharacter()
 	}
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
-	
+	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
 	
 }
 

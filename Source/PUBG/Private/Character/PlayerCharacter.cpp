@@ -27,6 +27,7 @@
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Component/NearArea/NearComponent.h"
 #include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
 
@@ -99,6 +100,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	}
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
+
 }
 
 void APlayerCharacter::BeginPlay()

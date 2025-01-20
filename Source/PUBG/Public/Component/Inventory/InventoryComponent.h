@@ -45,8 +45,7 @@ public:
 	AItemBase* GetItem() const { return Item; }
 	
 	TArray<FItemSlotStruct> GetContent() { return Content; }
-
-	//
+	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();
 
