@@ -47,6 +47,7 @@ void UDamageExecCalculation::Execute_Implementation(const FGameplayEffectCustomE
 	AActor* SourceActor = SourceAbilitySystemComponent ? SourceAbilitySystemComponent->GetAvatarActor() : nullptr;
 	AActor* TargetActor = TargetAbilitySystemComponent ? TargetAbilitySystemComponent->GetAvatarActor() : nullptr;
 
+
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
 	// 어떤 버프를 사용해야 하는지에 영향을 미칠 수 있으므로 소스와 대상에서 태그를 수집합니다.
@@ -70,15 +71,14 @@ void UDamageExecCalculation::Execute_Implementation(const FGameplayEffectCustomE
 	float UnmitigatedDamage = Damage; // 여기에 데미지 부스터를 늘릴 수 있습니다.
 	
 	float MitigatedDamage = (UnmitigatedDamage) * (100 / (100 + Armor));
-
-	Debug::Print(TEXT("Damage"), Damage);
-
+	
 	if (MitigatedDamage > 0.f)
 	{
 		// 대상의 피해 메타 속성을 설정합니다.
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().DamageProperty, EGameplayModOp::Additive, MitigatedDamage));
 	}
 
+	
 	// Target ASC에 피해를 방송합니다.
 	UBaseAbilitySystemComponent* TargetASC = Cast<UBaseAbilitySystemComponent>(TargetAbilitySystemComponent);
 	if (TargetASC)

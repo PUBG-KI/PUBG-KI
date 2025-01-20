@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Actor.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 
 UApplyDamageToActor* UApplyDamageToActor::ApplyDamageToActor(UGameplayAbility* OwningAbility, FName TaskInstanceName, AActor* InSourceActor, AActor* InTargetActor, TSubclassOf<UGameplayEffect> InDamageGameplayEffect, float InDamage)
 {
@@ -18,7 +19,7 @@ UApplyDamageToActor* UApplyDamageToActor::ApplyDamageToActor(UGameplayAbility* O
 }
 
 void UApplyDamageToActor::Activate()
-{
+{	
 	if (!SourceActor || !TargetActor || !DamageGameplayEffect)
 	{
 		EndTask(); // 조건에 맞지 않으면 작업 종료

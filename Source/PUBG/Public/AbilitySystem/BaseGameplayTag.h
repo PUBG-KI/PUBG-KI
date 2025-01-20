@@ -35,4 +35,8 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Stand);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Crouch);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Turn);
+
+	// Data Tag
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage);
+	
 }
