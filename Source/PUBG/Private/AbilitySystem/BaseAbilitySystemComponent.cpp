@@ -121,3 +121,4 @@ void UBaseAbilitySystemComponent::ReceiveDamage(UBaseAbilitySystemComponent* Sou
 {
 	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
 }
+

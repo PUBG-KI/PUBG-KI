@@ -284,7 +284,11 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
 	bUseControllerRotationYaw = false;  
-
+	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
+	if (AbilitySystemComponent)
+	{
+		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
+	}
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 	const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
 	FRotator CurrentRotation = GetActorRotation(); // 현재 회전
@@ -319,6 +323,7 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X);
+		OnMouseMoved(LookAxisVector); // 마우스 무브를통해 턴 조건확인위한..
 	}
 	if (LookAxisVector.Y != 0.f)
 	{
@@ -367,6 +372,7 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
 	Server_Prone();
 }
+
 
 void APlayerCharacter::Server_Prone_Implementation()
 {
@@ -503,6 +509,37 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		SetStamina(0);
 	}
 }
+
+void APlayerCharacter::OnMouseMoved(FVector2D MouseMovement)
+{
+	CheckRotationForTurn();
+}
+
+void APlayerCharacter::CheckRotationForTurn()
+{
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator AimRotation = GetBaseAimRotation(); // 카메라나 타겟 방향
+
+	FRotator DeltaRotation = CurrentRotation - AimRotation;
+	if (DeltaRotation.Yaw >= 180.0f)
+	{
+		DeltaRotation.Yaw -= 360.0f;
+	}
+	else if (DeltaRotation.Yaw <= -180.0f)
+	{
+		DeltaRotation.Yaw += 360.0f;
+	}
+	if (DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw<=-90.f)
+	{
+		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->TryActivateAbilityByTagToRandom(BaseGameplayTag::Player_Ability_Turn);
+		}
+	}
+}
+
 
 void APlayerCharacter::OnRep_PlayerState()
 {
