@@ -217,16 +217,6 @@ int32 UInventoryComponent::GetMaxStackSize(FName ItemID)
 
 void UInventoryComponent::UpdateInventory()
 {
-	// FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
-	//
-	// UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
-	//
-	// FName Category = FName(TEXT("Category"));
-	// FName ItemID = FName(TEXT("WeaponType"));
-	//
-	// FItemStruct* RowWeaponType = DataTable->FindRow<FItemStruct>(Category, TEXT("Find Row"));
-	// FItemStruct* RowItemID = DataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
-
 		Content.Sort([](const FItemSlotStruct& LHS, const FItemSlotStruct& RHS)
 	{
 			FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");

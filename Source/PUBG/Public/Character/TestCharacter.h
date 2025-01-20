@@ -6,6 +6,7 @@
 #include "PUBG/PUBGCharacter.h"
 #include "TestCharacter.generated.h"
 
+class UNearComponent;
 class UInventoryComponent;
 class UInventoryWidget;
 /**
@@ -41,6 +42,7 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = "true"))
 	UInventoryWidget* InventoryWidget;
 
+
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	AActor* LookAtActor;
 
@@ -52,7 +54,9 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UNearComponent* NearComponent;
+	
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()

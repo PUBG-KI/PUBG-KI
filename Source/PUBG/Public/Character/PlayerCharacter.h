@@ -8,7 +8,8 @@
 #include "PlayerCharacter.generated.h"
 
 
-
+class UNearComponent;
+class AItemBase;
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -16,6 +17,7 @@ class UDataAsset_InputConfig;
 class UInputMappingContext;
 class UInputAction;
 class UInventoryComponent;
+class UInventoryWidget;
 
 struct FInputActionValue;
 
@@ -157,15 +159,25 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	// 이준수
-protected:
-
+public:
 	UFUNCTION(BlueprintCallable)
 	void InputModeUI();
 	UFUNCTION(BlueprintCallable)
 	void InputModeGame();
 
-public:
+
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	UNearComponent* GetNearComponent() const { return NearComponent; }
+	UFUNCTION(BlueprintCallable)
+	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
+	UFUNCTION(Blueprintable)
+	AActor* GetLookAtActor() const { return LookAtActor; }
+	
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UUserWidget> PlayerInventoryClass;
@@ -175,7 +187,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	AActor* LookAtActor;
-
+	
 	UPROPERTY()
 	int32 BeginOverlapCount = 0;
 	
@@ -184,15 +196,10 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UNearComponent* NearComponent;
+	
 
-	UFUNCTION()
-	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);	
-
-public:
-	UFUNCTION(BlueprintCallable)
-	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 };
 
 

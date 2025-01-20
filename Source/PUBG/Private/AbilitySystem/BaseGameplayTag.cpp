@@ -15,6 +15,8 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Prone, "InputTag.Prone");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Turn, "InputTag.Turn");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Punch, "InputTag.Punch");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Inventory, "InputTag.Inventory");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interaction, "InputTag.Interaction");
 
 	// Weapon Input Tag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Equip, "InputTag.Weapon.Equip");
