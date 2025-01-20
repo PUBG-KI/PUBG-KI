@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/PlayerCharacter.h"
 #include "UObject/Interface.h"
 #include "InteractInterface.generated.h"
 
@@ -26,5 +27,5 @@ public:
 	UFUNCTION()
 	virtual FText LookAt() = 0;
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void InteractWith(ATestCharacter* Character);
+	void InteractWith(APlayerCharacter* Character);
 };

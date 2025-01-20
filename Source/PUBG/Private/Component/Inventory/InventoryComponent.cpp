@@ -57,7 +57,7 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 	// 인벤이 가득 찼는지 검사, 현재 무게와 최대 무게 비교 false면 인벤에 넣을 수 있음 
 	bool IsFull = CurrentInventoryWeight + Weight > MaxInventoryWeight;
 	
-	for (int32 i = RemainingQuantity; i>0 && !IsFull; i--)
+	for (int32 i = RemainingQuantity; i>0 && !IsFull; i--, RemainingQuantity--)
 	{
 		IsFull = CurrentInventoryWeight >= MaxInventoryWeight;
 
@@ -76,7 +76,8 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 		}
 		
 	}
-	
+
+	UE_LOG(LogTemp, Warning, TEXT("CurrentRemainingQuantity : %d"), RemainingQuantity);
 	return RemainingQuantity;
 }
 
@@ -327,7 +328,7 @@ void UInventoryComponent::Server_Interact_Implementation()
 		ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
 
 		AActor* Owner = GetOwner();
-		if (ATestCharacter* Character = Cast<ATestCharacter>(Owner))
+		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
 		ItemDataComponent->InteractWith(Character);
 	}
 }

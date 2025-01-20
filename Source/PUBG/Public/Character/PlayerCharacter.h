@@ -15,6 +15,7 @@ class UCameraComponent;
 class UDataAsset_InputConfig;
 class UInputMappingContext;
 class UInputAction;
+class UInventoryComponent;
 
 struct FInputActionValue;
 
@@ -148,6 +149,50 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
+
+	// Getter
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	// 이준수
+protected:
+
+	UFUNCTION(BlueprintCallable)
+	void InputModeUI();
+	UFUNCTION(BlueprintCallable)
+	void InputModeGame();
+
+public:
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UUserWidget> PlayerInventoryClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = "true"))
+	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	AActor* LookAtActor;
+
+	UPROPERTY()
+	int32 BeginOverlapCount = 0;
+	
+	FTimerHandle BeginOverlapTimerHandle;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UInventoryComponent* InventoryComponent;
+
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);	
+
+public:
+	UFUNCTION(BlueprintCallable)
+	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 };
 
 

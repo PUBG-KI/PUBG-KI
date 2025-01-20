@@ -54,12 +54,15 @@ public:
 	virtual FText LookAt() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void InteractWith(ATestCharacter* Character);
-	virtual void InteractWith_Implementation(ATestCharacter* Character) override;
+	void InteractWith(APlayerCharacter* Character);
+	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 
 	//Getter
 	UFUNCTION()
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
 	UBoxComponent* GetBoxComponent() const { return BoxComponent; }
+	FItemStruct& GetItemStruct() { return Item; }
+	
+	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	
 };
