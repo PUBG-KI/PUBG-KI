@@ -71,11 +71,6 @@ private:
 	//90 ~ 30
 	//-89 ~ -35
 	float TimerTime;
-
-	void UpdateProneCollsionSizeAndCharacterZpos();
-	void UpdateCrouchCollsionSizeAndCharacterZpos();
-	void UpdateProneToCrouchCollsionSizeAndCharacterZpos();
-	void UpdateCrouchToProneCollsionSizeAndCharacterZpos();
 	
 #pragma region Inputs
 private:
@@ -93,6 +88,7 @@ protected:
 	void Input_Prone(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
+	
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_Crouch();
@@ -148,6 +144,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
+
+	void OnMouseMoved(FVector2D MouseMovement);
+	void CheckRotationForTurn();
 };
 
 
