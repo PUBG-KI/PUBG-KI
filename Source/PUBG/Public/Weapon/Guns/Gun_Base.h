@@ -53,5 +53,11 @@ public:
 	UFUNCTION(BlueprintCallable, category = "FireMode")
 	void SetFiremode(EFiremodes Firemodes);
 
+	UFUNCTION(BlueprintCallable, Category = "Mag")
+	UStaticMeshComponent* GetMagToHandSocekt() const {return MagMesh;};
+	
+	UFUNCTION(BlueprintCallable, Category = "Mag")
+	void SetMagToHandSocekt();
+
 	
 };

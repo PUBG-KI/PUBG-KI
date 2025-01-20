@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "BaseLibrary/DataStruct/ItemSlotStruct.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/Weapon_Base.h"
+#include "Weapon/Guns/Gun_Base.h"
 #include "InventoryComponent.generated.h"
 
 
@@ -81,6 +83,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PrintContents();
+
+
+	// 디버그용 CurrentWepaon변수
+	UPROPERTY(visibleAnywhere, BlueprintReadWrite, Category="Inventory")
+	AWeapon_Base* CurrentWeapon;
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetCurrentWeapon() const {return CurrentWeapon; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetCurrentWeapon(AWeapon_Base* _CurrentWeapon);
+
+	UFUNCTION(BlueprintCallable)
+	AGun_Base* GetCurrentWeapon_GunBase() const { return Cast<AGun_Base>(CurrentWeapon);}
+	
 };
 
 
