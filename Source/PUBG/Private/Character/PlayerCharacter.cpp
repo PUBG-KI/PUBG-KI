@@ -8,6 +8,8 @@
 #include "PlayerState/BasePlayerState.h"
 #include "Controller/BasePlayerController.h"
 
+#include "Component/Movement/PlayerMovementComponent.h"
+
 // 카메라
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -31,6 +33,7 @@
 #include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
 
+//
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Widgets/Inventory/InventoryWidget.h"
@@ -47,11 +50,11 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.0f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
-	CameraBoom->bUsePawnControlRotation = false;
+	CameraBoom->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-	FollowCamera->bUsePawnControlRotation = false;
+	//FollowCamera->bUsePawnControlRotation = false;
 
 	// 메쉬 부착
 	UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
@@ -74,6 +77,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
 	//BaseAttributeSet->SetMoveSpeed(300.f);
 	GetCharacterMovement()->MaxWalkSpeed =300.f;
@@ -82,9 +86,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f;
 
 	bIsProne = false;
-	bIsCrouch = false;
 	bAnimationIsPlaying = false;
-	bIsSprint = false;
 
 	// 이준수 
 	static ConstructorHelpers::FClassFinder<UInventoryWidget> InventoryWidgetAsset(TEXT("/Game/Blueprint/Widgets/Inventory/WBP_Inventory.WBP_Inventory_C"));
@@ -289,15 +291,18 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	{
 		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
 	}
-	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+	 const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+
+	
 	const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
 	FRotator CurrentRotation = GetActorRotation(); // 현재 회전
-
+	
 	// 부드럽게 회전 (보간을 통해)
 	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
 	MoveForwardVecter.Y = MovementVector.Y;
 	// 회전 적용
-	SetActorRotation(InterpolatedRotation);
+	Server_SetActorRotation(InterpolatedRotation);
+	
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	if (MovementVector.Y != 0.f)
 	{
@@ -309,6 +314,21 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+}
+
+void APlayerCharacter::Server_SetActorRotation_Implementation(FRotator Rotator)
+{
+	MultiCast_SetActorRotation(Rotator);
+}
+
+bool APlayerCharacter::Server_SetActorRotation_Validate(FRotator Rotator)
+{
+	return true;
+}
+
+void APlayerCharacter::MultiCast_SetActorRotation_Implementation(FRotator Rotator)
+{	
+	SetActorRotation(Rotator);
 }
 
 void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionValue)
@@ -339,14 +359,14 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	// bIsProne ? TEXT("True") : TEXT("False"),
 	// bIsCrouch ? TEXT("True") : TEXT("False"),
 	// bAnimationIsPlaying ? TEXT("True") : TEXT("False"));
-	if (!bIsProne && !bIsCrouch&&!bAnimationIsPlaying) //prone 및 crouch상태 아니면 점프가능
+	if (!bIsProne && !GetMovementComponent()->IsCrouching()&&!bAnimationIsPlaying) //prone 및 crouch상태 아니면 점프가능
 	{
 		Jump();
 		return;
 	}
-	if (bIsCrouch) //크라우칭 상태면
+	if (GetMovementComponent()->IsCrouching()) //크라우칭 상태면
 	{
-		bIsCrouch = false;
+		UnCrouch();
 		//bAnimationIsPlaying = true;
 		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f, true);
 		UE_LOG(LogTemp, Warning, TEXT("Crouched"))
@@ -364,55 +384,56 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
 {
-	Server_Crouch();
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return;
+	}
+
+	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
+	{
+		UnCrouch();
+		
+	}
+	else if (bIsProne && !GetCharacterMovement()->IsCrouching())
+	{
+		bIsProne = false;
+		Crouch();
+	}
+	else if (!GetCharacterMovement()->IsCrouching()) //크라우칭 상태가 아니면
+	{
+		Crouch();
+	}	
 }
 
 
 void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 {
-	Server_Prone();
-}
-
-
-void APlayerCharacter::Server_Prone_Implementation()
-{
-	NetMulticast_Prone();
-}
-
-bool APlayerCharacter::Server_Prone_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::NetMulticast_Prone_Implementation()
-{
 	if (GetCharacterMovement()->IsFalling())
 	{
 		return;
 	}
-	if (bIsProne) //누워있는 상태면
+
+	UPlayerMovementComponent* MovementComponent =  Cast<UPlayerMovementComponent>(GetMovementComponent());
+
+	
+	if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
-		bIsProne = false;
-		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		MovementComponent->StopProne();
 		return;
 	}
-	if (bIsCrouch)
+	if (GetMovementComponent()->IsCrouching())
 	{
-		bIsProne = true;
-		bIsCrouch = false;
-		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos,0.01f, true);
-                                                                          											   
+		MovementComponent->StartProne();
+		UnCrouch();                                                                         											   
 											  
 		return;
 	}
-	if (!bIsProne) //누워있지 않으면
+	if (!MovementComponent->RequestToStartProne) //누워있지 않으면
 	{
-		bIsProne = true;
-		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
+		MovementComponent->StartProne();
 		return;
 	}
 }
-
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
 {
@@ -425,53 +446,6 @@ void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 	UE_LOG(LogTemp, Warning, TEXT("Ability Input Released"));
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
-
-void APlayerCharacter::Server_Crouch_Implementation()
-{
-	NetMulticast_Crouch_Implementation();
-}
-
-bool APlayerCharacter::Server_Crouch_Validate()
-{
-	return true;
-}
-
-void APlayerCharacter::NetMulticast_Crouch_Implementation()
-{
-	if (GetCharacterMovement()->IsFalling())
-	{
-		return;
-	}
-	if (bIsCrouch) //크라우칭 상태면
-	{
-		bIsCrouch = false;
-		//bAnimationIsPlaying = false;
-		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		// 									   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
-		// 									   true);
-		return;
-	}
-	if (bIsProne && !bIsCrouch)
-	{
-		bIsProne = false;
-		bIsCrouch = true;
-		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		// 									   &APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos,
-		// 									   0.01f,
-		// 									   true);
-		return;
-	}
-	if (!bIsCrouch) //크라우칭 상태가 아니면
-	{
-		bIsCrouch = true;
-		//bAnimationIsPlaying = false;
-		// GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,
-		// 									   &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.05f,
-		// 									   true);
-		return;
-	}
-}
-
 
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
@@ -592,9 +566,7 @@ void APlayerCharacter::InputModeUI()
 	{
 		PlayerController->SetShowMouseCursor(true);
 		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, InventoryWidget, EMouseLockMode::DoNotLock, true);
-	}
-	
-	
+	}	
 }
 
 void APlayerCharacter::InputModeGame()

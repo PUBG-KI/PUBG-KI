@@ -9,7 +9,7 @@
 
 class ABaseCharacter;
 class APlayerCharacter;
-class UCharacterMovementComponent;
+class UPlayerMovementComponent;
 /**
  * 
  */
@@ -27,7 +27,7 @@ public:
 	UPROPERTY()
 	APlayerCharacter* OwningPlayer;
 	UPROPERTY()
-	UCharacterMovementComponent* OwningMovementComponent;
+	UPlayerMovementComponent* OwningMovementComponent;
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float Direction;

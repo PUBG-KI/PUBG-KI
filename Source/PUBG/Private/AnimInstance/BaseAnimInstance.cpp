@@ -4,17 +4,18 @@
 #include "AnimInstance/BaseAnimInstance.h"
 
 #include "KismetAnimationLibrary.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 #include "Character/BaseCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Character/PlayerCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 
 void UBaseAnimInstance::NativeInitializeAnimation()
 {
 	OwningCharacter = Cast<ABaseCharacter>(TryGetPawnOwner());
 	if (OwningCharacter)
 	{
-		OwningMovementComponent = OwningCharacter->GetCharacterMovement();
+		OwningMovementComponent = Cast<UPlayerMovementComponent>(OwningCharacter->GetCharacterMovement());
 		OwningPlayer=Cast<APlayerCharacter>(OwningCharacter);
 	}
 	
@@ -26,18 +27,23 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	{
 		return;
 	}
-
+	
 	Velocity = OwningCharacter->GetVelocity();
 	GroundSpeed = Velocity.Size2D();
 	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
 
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
+	bHasAcceleration = GroundSpeed > 0.f;
 
-	bIsRun = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 250.f;
+	bIsRun = GroundSpeed > 350.f;
 
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsCrouching = OwningPlayer->GetIsCrouch();
-	bIsProne = OwningPlayer->GetIsProne();
+	bIsCrouching = OwningMovementComponent->IsCrouching();
+	bIsProne = OwningMovementComponent->RequestToStartProne;
+
+	
+	
+	//bIsProne = OwningPlayer->GetIsProne();
 	if (bIsFalling)
 	{
 		FallingTime += DeltaSeconds;

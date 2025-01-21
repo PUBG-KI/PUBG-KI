@@ -91,21 +91,11 @@ protected:
 	void Input_Prone(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
-	
 
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_Crouch();
+	void Server_SetActorRotation(FRotator Rotator);
 	UFUNCTION(NetMulticast, Reliable)
-	void NetMulticast_Crouch();
-
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_Prone();
-	// UFUNCTION(Client, Reliable)
-	// void Client_Prone();
-	UFUNCTION(NetMulticast, Reliable)
-	void NetMulticast_Prone();
-	
-	
+	void MultiCast_SetActorRotation(FRotator Rotator);
 	
 #pragma endregion
 	    
@@ -124,26 +114,9 @@ public:
 	// float MeshRelativeLocationProneZ;
 
 	bool bIsProne;
-	bool bIsCrouch;
 	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying){bAnimationIsPlaying = bNewAnimaitonIsPlaying;}
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool GetIsProne() const { return bIsProne; }
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool GetIsCrouch() const { return bIsCrouch; }
-
-	bool bIsSprint; //Sprint설정 관련
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool GetIsSprint() const {return bIsSprint; }
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool SetIsSprint(bool NewSprint){return bIsSprint = NewSprint;}
-
-	bool bIsWalk; //Walk설정 관련
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool GetbIsWalk() const {return bIsWalk; }
-	UFUNCTION(BlueprintCallable, Category = "Character")
-	bool SetbIsWalk(bool NewWalk) {return bIsWalk = NewWalk; }
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
@@ -199,7 +172,6 @@ public:
 	void OnMouseMoved(FVector2D MouseMovement);
 	void CheckRotationForTurn();
 };
-
 
 
 
