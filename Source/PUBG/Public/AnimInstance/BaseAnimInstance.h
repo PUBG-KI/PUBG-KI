@@ -55,7 +55,12 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float FallingTime;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
+	float Yaw;
 	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
+	float Pitch;
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;

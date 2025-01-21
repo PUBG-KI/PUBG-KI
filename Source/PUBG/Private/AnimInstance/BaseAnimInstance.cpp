@@ -4,11 +4,17 @@
 #include "AnimInstance/BaseAnimInstance.h"
 
 #include "KismetAnimationLibrary.h"
+
 #include "BaseLibrary/BaseDebugHelper.h"
+
+#include "Kismet/KismetMathLibrary.h"
+#include "VectorTypes.h"
+
 #include "Character/BaseCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Character/PlayerCharacter.h"
 #include "Component/Movement/PlayerMovementComponent.h"
+
 
 void UBaseAnimInstance::NativeInitializeAnimation()
 {
@@ -52,6 +58,14 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	{
 		FallingTime =0.f;
 	}
+	//턴과 에임오프셋을 위한 Yaw,Pitch구하기
+	FRotator AimRotation =OwningPlayer->GetBaseAimRotation();
+	FRotator ActorRotation = OwningPlayer->GetActorRotation();
+
+	FRotator DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
+	Yaw = DeltaRotator.Yaw;
+	Pitch = DeltaRotator.Pitch;
+	
 	
 }
 
