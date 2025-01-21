@@ -8,14 +8,14 @@
 #include "Character/BaseCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Character/PlayerCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 
 void UBaseAnimInstance::NativeInitializeAnimation()
 {
 	OwningCharacter = Cast<ABaseCharacter>(TryGetPawnOwner());
 	if (OwningCharacter)
 	{
-		OwningMovementComponent = OwningCharacter->GetCharacterMovement();
+		OwningMovementComponent = Cast<UPlayerMovementComponent>(OwningCharacter->GetCharacterMovement());
 		OwningPlayer=Cast<APlayerCharacter>(OwningCharacter);
 	}
 	
@@ -38,8 +38,12 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	bIsRun = GroundSpeed > 350.f;
 
 	bIsFalling = OwningMovementComponent->IsFalling();
-	bIsCrouching = OwningPlayer->GetIsCrouch();
-	bIsProne = OwningPlayer->GetIsProne();
+	bIsCrouching = OwningMovementComponent->IsCrouching();
+	bIsProne = OwningMovementComponent->RequestToStartProne;
+
+	
+	
+	//bIsProne = OwningPlayer->GetIsProne();
 	if (bIsFalling)
 	{
 		FallingTime += DeltaSeconds;

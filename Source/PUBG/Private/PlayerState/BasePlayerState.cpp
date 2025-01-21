@@ -18,7 +18,7 @@ ABasePlayerState::ABasePlayerState()
 
 	// 혼합 모드는 GE가 시뮬레이션된 프록시에 복제되지 않고 GE만 자신에게 복제된다는 의미입니다. 다른 GDPlayerState(Hero)가 GE를 수신하면,
 	// 서버에서는 이에 대해 알려주지 않습니다. 속성, GameplayTags 및 GameplayCue는 계속해서 복제됩니다.
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Full);
 
 	// 속성 세트를 생성합니다. 이는 기본적으로 복제됩니다.
 	// AbilitySystemComponent를 소유한 액터의 하위 객체로 추가
