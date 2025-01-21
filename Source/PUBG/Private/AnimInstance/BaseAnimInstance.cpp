@@ -37,8 +37,6 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	bIsRun = GroundSpeed > 350.f;
 
-	Debug::Print(TEXT("GroundSpeed"), GroundSpeed);
-
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningPlayer->GetIsCrouch();
 	bIsProne = OwningPlayer->GetIsProne();
