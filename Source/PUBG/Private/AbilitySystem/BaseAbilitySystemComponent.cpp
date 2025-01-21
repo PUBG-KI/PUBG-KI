@@ -5,6 +5,8 @@
 #include "AbilitySystem/Ability/PlayerGameplayAbility.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "GameplayAbilitySpec.h"
+#include "AbilitySystem/BaseGameplayTag.h"
+
 
 void UBaseAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& InputTag)
 {
@@ -17,7 +19,22 @@ void UBaseAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& Inpu
 	{
 		if (!Spec.DynamicAbilityTags.HasTagExact(InputTag)) continue;
 
-		TryActivateAbility(Spec.Handle);
+		if (InputTag.MatchesTag(BaseGameplayTag::InputTag_Toggle))
+		{
+			//InputTag_Toggle 태그가 있으면 Toggle On/Off 처리 
+			if (Spec.IsActive())
+			{
+				CancelAbilityHandle(Spec.Handle);
+			}
+			else
+			{
+				TryActivateAbility(Spec.Handle);
+			}
+		}
+		else
+		{
+			TryActivateAbility(Spec.Handle);
+		}
 	}
 }
 
