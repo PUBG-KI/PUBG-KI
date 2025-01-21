@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/AbilityTask/FindFarmingItem.h"
 
+#include "UObject/FastReferenceCollector.h"
+
 UFindFarmingItem::UFindFarmingItem()
 {
 	bTickingTask = true;
@@ -18,13 +20,14 @@ void UFindFarmingItem::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
 	
+	
 	if (ShouldBroadcastAbilityTaskDelegates())
-		{
+	{
 		OnAbilityTaskTick.Broadcast(DeltaTime);
 	}
 	else
 	{
-		EndTask();
+		EndTask(); // Task 종료
 	}
 }
 
