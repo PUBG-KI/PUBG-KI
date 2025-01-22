@@ -13,5 +13,7 @@ UCLASS()
 class PUBG_API UPlayerAnimInstance : public UBaseAnimInstance
 {
 	GENERATED_BODY()
+
+
 	
 };

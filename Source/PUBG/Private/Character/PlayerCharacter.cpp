@@ -289,7 +289,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
 	if (AbilitySystemComponent)
 	{
-		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
+		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn); 
 	}
 	 const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
@@ -409,15 +409,20 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 	
 	if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
+		
 		MovementComponent->StopProne();
+		
 		return;
 	}	
 
 	if (GetMovementComponent()->IsCrouching())
 	{
 		UnCrouch();            
-	}	
+	}
+
 	MovementComponent->StartProne();
+	
+	
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
@@ -496,6 +501,47 @@ void APlayerCharacter::CheckRotationForTurn()
 		{
 			AbilitySystemComponent->TryActivateAbilityByTagToRandom(BaseGameplayTag::Player_Ability_Turn);
 		}
+	}
+}
+
+void APlayerCharacter::StandToProneCameraTimerSet()
+{
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	if (MovementComponent->RequestToStartProne)
+	{
+		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this, &APlayerCharacter::StandToProneCameraMovement, GetWorld()->GetDeltaSeconds(), true);
+	}
+}
+
+void APlayerCharacter::StandToProneCameraMovement()
+{
+		FVector ProneOffset = FVector(0.f, 55.f, 5.f);  // Prone 상태에서의 카메라 위치
+		CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, ProneOffset, GetWorld()->GetDeltaSeconds(), 10.f);
+
+	if (CameraBoom->SocketOffset.Equals(ProneOffset, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
+	}
+}
+
+void APlayerCharacter::ProneToStandCameraTimerSet()
+{
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	if (!MovementComponent->RequestToStartProne)
+	{
+		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this, &APlayerCharacter::ProneToStandCameraMovement, GetWorld()->GetDeltaSeconds(), true);
+	}
+	
+}
+
+void APlayerCharacter::ProneToStandCameraMovement()
+{
+		FVector StandOffset = FVector(0.f, 55.f, 65.f);  // Stand 상태에서의 카메라 위치
+		CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandOffset, GetWorld()->GetDeltaSeconds(), 10.f);
+
+	if (CameraBoom->SocketOffset.Equals(StandOffset, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
 	}
 }
 
