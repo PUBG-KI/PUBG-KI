@@ -20,11 +20,11 @@ void ABasePlayerController::Tick(float DeltaTime)
 
 void ABasePlayerController::SetHUDTexture(float DeltaTime)
 {
-	FHUDTexture HUDTexture;
+	//FHUDTexture HUDTexture;
 
 	HUD = Cast<ACrosshairHUD>(GetHUD());
 	if (HUD)
 	{
-		HUDTexture.Player_Crosshair_Center = 
+		//HUDTexture.Player_Crosshair_Center = 
 	}
 }
