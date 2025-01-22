@@ -42,6 +42,7 @@ class PUBG_API UPlayerMovementComponent : public UCharacterMovementComponent
 		uint8 SavedRequestToStartWalking : 1;
 		
 		// Prone
+		
 		uint8 SavedRequestToStartProne : 1;
 	};
 	
