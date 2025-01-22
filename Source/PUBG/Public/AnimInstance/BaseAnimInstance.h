@@ -61,6 +61,10 @@ public:
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	float Pitch;
+	UPROPERTY(BlueprintReadWrite, Category = "AimOffset")
+	float LeaningPressedValue;
+
+	
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;

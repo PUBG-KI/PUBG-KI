@@ -66,6 +66,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	Yaw = DeltaRotator.Yaw;
 	Pitch = DeltaRotator.Pitch;
 	
+	LeaningPressedValue = OwningPlayer->LeaningValue;
 	
 }
 

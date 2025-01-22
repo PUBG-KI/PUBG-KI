@@ -86,7 +86,7 @@ protected:
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_MoveReleased(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
-	void Input_Jump(const FInputActionValue& InputActionValue);
+	void Input_Jump(const FInputActionValue& InputActionValue);	
 	void Input_Crouch(const FInputActionValue& InputActionValue);
 	void Input_Prone(const FInputActionValue& InputActionValue);
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
@@ -174,6 +174,19 @@ protected:
 public:
 	void OnMouseMoved(FVector2D MouseMovement);
 	void CheckRotationForTurn();
+//Prone시 카메라 조정
+	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
+	void StandToProneCameraTimerSet();
+	FTimerHandle CameraMoveTimerHandle;
+	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
+	void StandToProneCameraMovement();
+	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
+	void ProneToStandCameraTimerSet();
+	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
+	void ProneToStandCameraMovement();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterLeaning")
+	float LeaningValue;
 };
 
 
