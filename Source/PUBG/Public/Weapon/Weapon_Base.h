@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "GameplayAbilitySpecHandle.h"
+#include "DataTable/DT_Weapon.h"
 #include "Weapon_Base.generated.h"
 
 UCLASS()
@@ -22,21 +23,40 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Weapon)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* WeaponSkeletalMeshComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
-	FPlayerWeaponData WeaponData;
+	FPlayerWeaponData PlayerWeaponData;
 	
 	UFUNCTION(BlueprintCallable)
 	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles);
 
 	UFUNCTION(BlueprintPure)
 	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FWeaponData WeaponDataAsset;
+
 
 private:
 
+	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> GrantedAbilitySpecHandles;
+
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "DataAsset")
+	FWeaponData GetWeaponDataAsset() const {return WeaponDataAsset;}
+
+	UFUNCTION(BlueprintCallable, Category = "DataAsset")
+	void SetWeaponDataAsset(FWeaponData WeaponData);
+	
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	
 	
 	
 };
+
+

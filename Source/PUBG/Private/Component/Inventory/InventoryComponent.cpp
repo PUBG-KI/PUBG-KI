@@ -45,7 +45,7 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
-
+	
 }
 
 int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 Weight)

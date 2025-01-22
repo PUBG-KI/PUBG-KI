@@ -40,10 +40,16 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Reload, "Player.Event.Action.Reload");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_ReloadEnd, "Player.Event.Action.ReloadEnd");
 
+	// player Event Tag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Prone, "Player.State.Prone");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Stand, "Player.State.Stand");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Crouch, "Player.State.Crouch");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Turn, "Player.Ability.Turn");
+	
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Hit, "Player.Event.Action.Hit");
+
+
+
 	
 	// Data Tag
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage, "Data.Damage");

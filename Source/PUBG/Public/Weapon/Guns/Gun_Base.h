@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon/Weapon_Base.h"
+#include "Weapon/DataTable/DT_Weapon.h"
 #include "Gun_Base.generated.h"
 
 /**
@@ -44,6 +45,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
 	EFiremodes FireMode = EFiremodes::Single;
+
+	UPROPERTY(EditDefaultsOnly)
+	float BulletArmo;
+
 	
 
 public:
@@ -59,5 +64,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Mag")
 	void SetMagToHandSocekt();
 
+	UFUNCTION(BlueprintCallable, Category = "DataAsset")
+	float GetBulletArmo() const {return BulletArmo;}
+
+	UFUNCTION(BlueprintCallable, Category = "DataAsset")
+	void SetBulletArom(float Armo);
 	
 };

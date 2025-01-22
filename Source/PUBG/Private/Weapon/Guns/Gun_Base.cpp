@@ -31,3 +31,8 @@ void AGun_Base::SetMagToHandSocekt()
 {
 	//if (MagMesh->GetAttachParent())
 }
+
+void AGun_Base::SetBulletArom(float Armo)
+{
+	this->BulletArmo = Armo;
+}

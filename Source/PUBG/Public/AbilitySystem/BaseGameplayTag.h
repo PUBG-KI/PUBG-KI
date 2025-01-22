@@ -37,6 +37,10 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_UnEquip);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Reload);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_ReloadEnd);
+
+	// Hit Event Tag
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Hit);
+	
 	
 	
 	
