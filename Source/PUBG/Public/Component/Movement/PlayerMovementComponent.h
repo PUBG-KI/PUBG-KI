@@ -42,6 +42,7 @@ class PUBG_API UPlayerMovementComponent : public UCharacterMovementComponent
 		uint8 SavedRequestToStartWalking : 1;
 		
 		// Prone
+		
 		uint8 SavedRequestToStartProne : 1;
 	};
 	
@@ -62,6 +63,7 @@ public:
 
 	uint8 RequestToStartSprinting : 1;
 	uint8 RequestToStartWalking : 1;
+	UPROPERTY(BlueprintReadWrite, Category = "Prone")
 	uint8 RequestToStartProne : 1;
 	
 	virtual float GetMaxSpeed() const override;
