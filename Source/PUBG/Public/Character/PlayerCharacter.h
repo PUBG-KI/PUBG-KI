@@ -189,6 +189,9 @@ private:
 	
 	FTimerHandle BeginOverlapTimerHandle;
 
+	// 가운데 점 크로스헤어 
+	UPROPERTY(EditAnywhere, Category="Crosshair")
+	class UTexture2D* CrosshairCenter;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;
