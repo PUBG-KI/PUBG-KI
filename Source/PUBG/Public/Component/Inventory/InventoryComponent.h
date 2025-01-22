@@ -84,7 +84,7 @@ public:
 	void PrintContents();
 
 
-	// 디버그용 CurrentWepaon변수
+	// 디버그용 CurrentWeapon변수
 	UPROPERTY(visibleAnywhere, BlueprintReadWrite, Category="Inventory")
 	AWeapon_Base* CurrentWeapon;
 

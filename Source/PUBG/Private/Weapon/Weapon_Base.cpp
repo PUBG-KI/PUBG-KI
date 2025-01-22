@@ -2,6 +2,7 @@
 
 
 #include "Weapon/Weapon_Base.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AWeapon_Base::AWeapon_Base()
@@ -11,6 +12,8 @@ AWeapon_Base::AWeapon_Base()
 
 	WeaponSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponSkeletalMeshComponent;
+
+	SetReplicates(true);
 
 }
 
@@ -29,4 +32,18 @@ TArray<FGameplayAbilitySpecHandle> AWeapon_Base::GetGrantedAbilitySpecHandles() 
 {
 	return GrantedAbilitySpecHandles;
 }
+
+void AWeapon_Base::SetWeaponDataAsset(FWeaponData WeaponData)
+{
+	this->WeaponDataAsset = WeaponData;
+}
+
+// inline void AWeapon_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+//  {
+//  	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+//  
+//  	DOREPLIFETIME(AWeapon_Base, PlayerWeaponData);
+//  	DOREPLIFETIME(AWeapon_Base, GrantedAbilitySpecHandles);
+//  	
+//  }
 
