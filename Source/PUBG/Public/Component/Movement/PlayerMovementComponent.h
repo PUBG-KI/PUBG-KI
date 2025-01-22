@@ -60,8 +60,12 @@ class PUBG_API UPlayerMovementComponent : public UCharacterMovementComponent
 public:
 	UPlayerMovementComponent();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	uint8 RequestToStartSprinting : 1;
 	uint8 RequestToStartWalking : 1;
+	
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	uint8 RequestToStartProne : 1;
 	
 	virtual float GetMaxSpeed() const override;

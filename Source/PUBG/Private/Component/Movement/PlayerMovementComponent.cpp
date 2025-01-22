@@ -5,9 +5,18 @@
 #include "Character/PlayerCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
+#include "Net/UnrealNetwork.h"
 
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
+	SetIsReplicatedByDefault(true); 
+}
+
+void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(UPlayerMovementComponent, RequestToStartProne);
 }
 
 float UPlayerMovementComponent::GetMaxSpeed() const
@@ -17,39 +26,30 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 
 	// if(Owner->IsSprint)
 	// 	sprint = 2.0f;
+	
+
+	// 뒤로 가기 할 때 는
 	// if(Owner->IsBack)
 	// {
-	// 	return 100.f;
+	//     BaseSpeed -= 100.f; // 이런식으로 빼면 됨
 	// }
 	
 	if (RequestToStartProne)
 	{
-		if (RequestToStartWalking)
-		{
-			return BaseSpeed - SubCTRLProne - SubProne; // PRONE+CTRL : 350 - 60 - 240 = 50; 
-		}
-		return BaseSpeed - SubProne; // PRONE : 350-240 = 110;
+		BaseSpeed -= SubProne; // PRONE : 350-240 = 110;
 	}
-	if (IsCrouching())
+	else if (IsCrouching())
 	{
-		if (RequestToStartSprinting)
-		{
-			return BaseSpeed + AddSHIFTSprint - Subcrouch; //Crouch+SHIFT : 350 + 150 - 100 = 400;
-		}
-		if (RequestToStartWalking)
-		{
-			return BaseSpeed - SubCTRLCrouch -Subcrouch; // Crouch+ctrl : 350 - 70 - 100 = 80;
-		}
-		return BaseSpeed - Subcrouch; // crouch : 350-100 = 250;
+		BaseSpeed -= Subcrouch; // crouch : 350-100 = 250;
 	}
 
 	if (RequestToStartSprinting)
 	{
-		return BaseSpeed + AddSHIFTSprint; //STAND+SHIFT : 350+150 = 500;
+		BaseSpeed += AddSHIFTSprint; //STAND+SHIFT : 350+150 = 500;
 	}
-	if (RequestToStartWalking)
+	else if (RequestToStartWalking)
 	{
-		return BaseSpeed - SubCTRLWalk; //STAND-CTRL : 350 - 200 = 150;
+		BaseSpeed -= SubCTRLWalk; //STAND-CTRL : 350 - 200 = 150;
 	}
 	
 	return BaseSpeed; //350

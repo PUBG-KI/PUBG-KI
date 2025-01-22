@@ -353,86 +353,71 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Jump"))
-	UBaseAbilitySystemComponent* ASC = UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(this);
-	// UE_LOG(LogTemp, Warning, TEXT("Prone: %s, Crouch: %s, AnimationIsPlaying: %s"),
-	// bIsProne ? TEXT("True") : TEXT("False"),
-	// bIsCrouch ? TEXT("True") : TEXT("False"),
-	// bAnimationIsPlaying ? TEXT("True") : TEXT("False"));
-	if (!bIsProne && !GetMovementComponent()->IsCrouching()&&!bAnimationIsPlaying) //prone 및 crouch상태 아니면 점프가능
+	if (bAnimationIsPlaying)
 	{
-		Jump();
 		return;
 	}
+	
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
 	if (GetMovementComponent()->IsCrouching()) //크라우칭 상태면
 	{
 		UnCrouch();
-		//bAnimationIsPlaying = true;
-		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this, &APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos, 0.01f, true);
-		UE_LOG(LogTemp, Warning, TEXT("Crouched"))
-		return;
 	}
-	if (bIsProne) //누워있는 상태면
+	else if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
-		bIsProne = false;
-		//bAnimationIsPlaying = true;
-		//GetWorld()->GetTimerManager().SetTimer(CollisionTimerHandle, this,&APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos, 0.01f, true);
-		UE_LOG(LogTemp, Warning, TEXT("Proned"))
-		return;
+		MovementComponent->StopProne();
 	}
-}
-
-void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
-{
-	if (GetCharacterMovement()->IsFalling())
+	else
 	{
-		return;
-	}
-
-	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
-	{
-		UnCrouch();
-		
-	}
-	else if (bIsProne && !GetCharacterMovement()->IsCrouching())
-	{
-		bIsProne = false;
-		Crouch();
-	}
-	else if (!GetCharacterMovement()->IsCrouching()) //크라우칭 상태가 아니면
-	{
-		Crouch();
+		Jump();
 	}	
 }
 
-
-void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
-{
-	if (GetCharacterMovement()->IsFalling())
+void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
+{	
+	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
 	{
 		return;
 	}
 
 	UPlayerMovementComponent* MovementComponent =  Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
+	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
+	{
+		UnCrouch();
+		return;
+	}	
 
+	if (MovementComponent->RequestToStartProne)
+	{
+		MovementComponent->StopProne();
+	}
+	
+	Crouch();
+}
+
+
+void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
+{
+	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
+	{
+		return;
+	}
+
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 	
 	if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
 		MovementComponent->StopProne();
 		return;
-	}
+	}	
+
 	if (GetMovementComponent()->IsCrouching())
 	{
-		MovementComponent->StartProne();
-		UnCrouch();                                                                         											   
-											  
-		return;
-	}
-	if (!MovementComponent->RequestToStartProne) //누워있지 않으면
-	{
-		MovementComponent->StartProne();
-		return;
-	}
+		UnCrouch();            
+	}	
+	MovementComponent->StartProne();
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
