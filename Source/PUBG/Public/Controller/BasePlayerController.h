@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UHudWidget;
 class UInventoryWidget;
 class ACrosshairHUD;
 
@@ -39,10 +40,14 @@ public:
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<UUserWidget> InventoryWidgetClass;
-
+	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 	UPROPERTY()
 	UInventoryWidget* InventoryWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UHudWidget> HudWidgetClass;
+	UPROPERTY()
+	UHudWidget* HudWidget;
 	
 };
 

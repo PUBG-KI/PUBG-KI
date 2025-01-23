@@ -82,7 +82,9 @@ UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 
 void ABaseCharacter::PossessedBy(AController* NewController)
 {
-	Super::PossessedBy(NewController);	
+	Super::PossessedBy(NewController);
+
+	
 }
 
 void ABaseCharacter::InitializeAttributes()
