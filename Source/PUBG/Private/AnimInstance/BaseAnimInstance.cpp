@@ -45,9 +45,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 
 	bIsFalling = OwningMovementComponent->IsFalling();
 	bIsCrouching = OwningMovementComponent->IsCrouching();
-	bIsProne = OwningMovementComponent->RequestToStartProne;
-
-	
+	bIsProne = OwningMovementComponent->RequestToStartProne;	
 	
 	//bIsProne = OwningPlayer->GetIsProne();
 	if (bIsFalling)
@@ -66,7 +64,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	Yaw = DeltaRotator.Yaw;
 	Pitch = DeltaRotator.Pitch;
 	
-	LeaningPressedValue = OwningPlayer->LeaningValue;
+	LeaningPressedValue = OwningMovementComponent->LeaningValue;
 	
 }
 

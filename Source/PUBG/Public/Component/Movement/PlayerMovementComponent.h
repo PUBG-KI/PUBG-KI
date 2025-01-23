@@ -41,9 +41,9 @@ class PUBG_API UPlayerMovementComponent : public UCharacterMovementComponent
 		// Walking
 		uint8 SavedRequestToStartWalking : 1;
 		
-		// Prone
-		
+		// Prone		
 		uint8 SavedRequestToStartProne : 1;
+		
 	};
 	
 	class FGDNetworkPredictionData_Client : public FNetworkPredictionData_Client_Character
@@ -68,6 +68,8 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	uint8 RequestToStartProne : 1;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	float LeaningValue;
 	
 	virtual float GetMaxSpeed() const override;
 	virtual void UpdateFromCompressedFlags(uint8 Flags) override;
@@ -90,6 +92,12 @@ public:
 	void StartProne();
 	UFUNCTION(BlueprintCallable, Category = "Prone")
 	void StopProne();
+	
+	// Prone
+	UFUNCTION(BlueprintCallable, Category = "Leaning")
+	void StartLeaning(float Value);
+	UFUNCTION(BlueprintCallable, Category = "Leaning")
+	void StopLeaning();
 	
 	float AddSHIFTSprint = 150.0f;
 	float SubProne = 240.0f;

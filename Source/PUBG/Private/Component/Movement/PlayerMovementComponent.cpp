@@ -17,6 +17,7 @@ void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(UPlayerMovementComponent, RequestToStartProne);
+	DOREPLIFETIME(UPlayerMovementComponent, LeaningValue);
 }
 
 float UPlayerMovementComponent::GetMaxSpeed() const
@@ -105,7 +106,7 @@ uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
 	{
 		Result |= FLAG_Custom_2;
 	}
-
+	
 	return Result;
 }
 
@@ -127,7 +128,7 @@ bool UPlayerMovementComponent::FGDSavedMove::CanCombineWith(const FSavedMovePtr&
 	{
 		return false;
 	}
-
+	
 	return Super::CanCombineWith(NewMove, Character, MaxDelta);
 }
 
@@ -141,7 +142,7 @@ void UPlayerMovementComponent::FGDSavedMove::SetMoveFor(ACharacter* Character, f
 	{
 		SavedRequestToStartSprinting = CharacterMovement->RequestToStartSprinting;
 		SavedRequestToStartWalking = CharacterMovement->RequestToStartWalking;
-		SavedRequestToStartProne = CharacterMovement->RequestToStartProne;		
+		SavedRequestToStartProne = CharacterMovement->RequestToStartProne;
 	}
 }
 
@@ -216,4 +217,14 @@ void UPlayerMovementComponent::StartProne()
 void UPlayerMovementComponent::StopProne()
 {
 	RequestToStartProne = false;
+}
+
+void UPlayerMovementComponent::StartLeaning(float Value)
+{
+	LeaningValue = Value;
+}
+
+void UPlayerMovementComponent::StopLeaning()
+{
+	LeaningValue = 0;
 }
