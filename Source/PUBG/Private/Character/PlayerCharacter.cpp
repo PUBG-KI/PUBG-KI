@@ -515,6 +515,12 @@ void APlayerCharacter::ProneToStandCameraMovement()
 	}
 }
 
+// void APlayerCharacter::StandToLeftLeanCameraMovement()
+// {
+// 	FVector LeftLeanOffset = FVector(-50.f, 55.f, 65.f);  // Stand 상태에서의 카메라 위치
+// 	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, LeftLeanOffset, GetWorld()->GetDeltaSeconds(), 10.f);
+// }
+
 
 void APlayerCharacter::OnRep_PlayerState()
 {

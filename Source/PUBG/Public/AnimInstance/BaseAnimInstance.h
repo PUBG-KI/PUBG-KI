@@ -61,7 +61,7 @@ public:
 	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	float Pitch;
-	UPROPERTY(BlueprintReadWrite, Category = "AimOffset")
+	UPROPERTY(BlueprintReadWrite, Replicated ,Category = "AimOffset")
 	float LeaningPressedValue;
 
 	

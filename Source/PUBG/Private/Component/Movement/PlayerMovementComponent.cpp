@@ -20,7 +20,7 @@ void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 }
 
 float UPlayerMovementComponent::GetMaxSpeed() const
-{
+{                                                                                                                             
 	APlayerCharacter* Owner = Cast<APlayerCharacter>(GetOwner());
 	float BaseSpeed = Owner->GetMoveSpeed();
 
