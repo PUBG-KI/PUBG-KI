@@ -28,6 +28,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* DoorCollisionBox;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* InteractionTriggerBox;
 
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 	virtual FText LookAt() override; 
