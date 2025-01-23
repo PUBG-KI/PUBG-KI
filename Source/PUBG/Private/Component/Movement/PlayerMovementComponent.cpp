@@ -45,11 +45,27 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 
 	if (RequestToStartSprinting)
 	{
-		BaseSpeed += AddSHIFTSprint; //STAND+SHIFT : 350+150 = 500;
+		if (!RequestToStartProne&&Owner->MoveForwardVecter.Y>0)
+		{
+		BaseSpeed += AddSHIFTSprint;	
+		}
+		 //STAND+SHIFT : 350+150 = 500;
 	}
 	else if (RequestToStartWalking)
 	{
-		BaseSpeed -= SubCTRLWalk; //STAND-CTRL : 350 - 200 = 150;
+		if (IsCrouching())
+		{
+			BaseSpeed -= SubCTRLCrouch;
+		}
+		else if (RequestToStartProne)
+		{
+			BaseSpeed -= SubCTRLProne;
+		}
+		else
+		{
+			BaseSpeed -= SubCTRLWalk;//STAND-CTRL : 350 - 200 = 150;	
+		}
+		
 	}
 	
 	return BaseSpeed; //350
