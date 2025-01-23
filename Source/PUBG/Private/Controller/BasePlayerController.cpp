@@ -7,6 +7,9 @@
 #include "Character/PlayerCharacter.h"
 #include "Components/WrapBox.h"
 #include "HUD/Crosshair/CrosshairHUD.h"
+#include "PlayerState/BasePlayerState.h"
+#include "Widgets/HUD/HudWidget.h"
+#include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 ABasePlayerController::ABasePlayerController()
@@ -25,35 +28,47 @@ void ABasePlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
 
-	if (IsLocalPlayerController())
+	if (!IsLocalPlayerController())
 	{
-		if (IsValid(InventoryWidgetClass))
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		return;
+	}
+
+	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+	if (!PS)
+	{
+		return;
+	}
+	
+	if (IsValid(InventoryWidgetClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
 		
-			InventoryWidget = Cast<UInventoryWidget>(CreateWidget(this, InventoryWidgetClass));
-			if (InventoryWidget != nullptr)
-			{
-				InventoryWidget->AddToViewport();
-				APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-				if (PlayerCharacter)
-				{
-					UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
-					InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
-				}
-				InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-				InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-			}
+		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
+		InventoryWidget->AddToViewport();
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+		if (PlayerCharacter)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+			InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
+			UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
 		}
+		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 	}
+		
+
+	if (IsValid(HudWidgetClass))
+	{
+		HudWidget = CreateWidget<UHudWidget>(this, HudWidgetClass);
+		HudWidget->AddToViewport();
+	}
+
+	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
+	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
 	
 }
 
@@ -68,4 +83,7 @@ void ABasePlayerController::InputModeGame()
 	SetShowMouseCursor(false);
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 }
+
+	
+
 
