@@ -27,6 +27,8 @@ private:
 	UProgressBar* ProgressBar_FillingGaguge;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_FillGaguge;
+	UPROPERTY(Transient, meta = (BindWidgetAnim), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UWidgetAnimation* Anim_ProgressBar_Health;
 
 	// Variable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))

@@ -53,5 +53,19 @@ void UPlayerStatusWidget::SetMaxHealth(float OutMaxHealth)
 
 void UPlayerStatusWidget::SetProgressBar_Health(float OutHealth)
 {
+	if (OutHealth < 50)
+	{
+		ProgressBar_Health->SetFillColorAndOpacity(FLinearColor(1.0f, 0.759928f, 0.348958f, 0.8f));
+	}
+	
+	if (OutHealth < 20)
+	{
+		ProgressBar_Health->SetFillColorAndOpacity(FLinearColor(1.0f, 0.0f, 0.008303f, 0.8f));
+	}
+	
+	if (OutHealth < 10)
+	{
+		PlayAnimation(Anim_ProgressBar_Health,0.0f,0.0f);
+	}
 	ProgressBar_Health->SetPercent(Health / MaxHealth);
 }
