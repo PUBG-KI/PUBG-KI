@@ -10,6 +10,7 @@
 #include "InteractDoor.generated.h"
 
 class UBoxComponent;
+class APlayerCharacter;
 
 UCLASS()
 class PUBG_API AInteractDoor : public AActor , public IInteractInterface
@@ -48,7 +49,10 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float DoorRotateAngle = 90.0f;
 
+	bool bDoorOnSameSide;
+
 	UFUNCTION()
 	void OpenDoor(float Value); 
-	
+
+	void SetDoorOnSameSide(APlayerCharacter* PlayerCharacter);
 };

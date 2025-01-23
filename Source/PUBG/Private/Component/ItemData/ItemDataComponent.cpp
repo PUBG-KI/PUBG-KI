@@ -60,10 +60,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 			// 몽타주 
 			//UE_LOG(LogTemp, Warning, TEXT("Add"));
 			
-			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(Character->GetController()))
-			{
-				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
-			}
+			
 
 			AActor* Owner = GetOwner(); 
 			if (Owner)
@@ -76,13 +73,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		}
 		// 0이라면 다 들어가서 바닥에 있는 아이템이 없어져야 함 
 		else
-		{
-			
-			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(Character->GetController()))
-			{
-				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
-			}
-			
+		{			
 			AActor* Owner = GetOwner(); 
 			if (Owner)
 			{

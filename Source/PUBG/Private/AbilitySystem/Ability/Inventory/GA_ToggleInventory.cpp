@@ -18,7 +18,7 @@
 UGA_ToggleInventory::UGA_ToggleInventory()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalOnly;	
+	//NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::	
 }
 
 void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -29,10 +29,11 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
     UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
-	InventoryWidget->UpdateInventoryWidget();
 
     if (InventoryWidget != nullptr)
     {
+    	InventoryWidget->UpdateInventoryWidget();
+
     	if (TickTask == nullptr)
     	{
     		TickTask = UFindFarmingItem::ExecuteTaskTick(this);
@@ -101,8 +102,8 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
         //
         // }
     }
-
 }
+
 
 void UGA_ToggleInventory::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
