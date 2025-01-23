@@ -12,17 +12,24 @@
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseGameplayTag.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 
 
+UGA_ToggleInventory::UGA_ToggleInventory()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalOnly;	
+}
 
 void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                           const FGameplayAbilityActorInfo* ActorInfo,
                                           const FGameplayAbilityActivationInfo ActivationInfo,
                                           const FGameplayEventData* TriggerEventData)
-{
+{	
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
     UInventoryWidget* InventoryWidget = GetPlayerCharacterFromActorInfo()->GetInventoryWidget();
+	InventoryWidget->UpdateInventoryWidget();
     if (InventoryWidget != nullptr)
     {
     	if (TickTask == nullptr)
@@ -92,6 +99,7 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
         //
         // }
     }
+
 }
 
 void UGA_ToggleInventory::EndAbility(const FGameplayAbilitySpecHandle Handle,

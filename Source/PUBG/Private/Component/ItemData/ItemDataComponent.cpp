@@ -57,7 +57,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Add"));
 			
-			Character->GetInventoryWidget()->UpdateInventoryWidget();
+			//Character->GetInventoryWidget()->UpdateInventoryWidget();
 
 			AActor* Owner = GetOwner(); 
 			if (Owner)
@@ -72,7 +72,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		else
 		{
 			
-			Character->GetInventoryWidget()->UpdateInventoryWidget();
+			//Character->GetInventoryWidget()->UpdateInventoryWidget();
 			
 			AActor* Owner = GetOwner(); 
 			if (Owner)

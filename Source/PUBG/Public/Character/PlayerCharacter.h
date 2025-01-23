@@ -19,6 +19,8 @@ class UInputAction;
 class UInventoryComponent;
 class UInventoryWidget;
 
+class UPlayerAnimInstance;
+
 struct FInputActionValue;
 
 UENUM(BlueprintType)
@@ -59,6 +61,13 @@ public:
 	void SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh);
 #pragma endregion
 
+#pragma region Animation
+	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Animation")
+	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
+	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
+	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
+
+#pragma endregion
 	
 private:
 #pragma region Components

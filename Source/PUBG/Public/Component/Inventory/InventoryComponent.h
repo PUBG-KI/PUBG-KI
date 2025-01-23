@@ -85,7 +85,7 @@ public:
 
 
 	// 디버그용 CurrentWeapon변수
-	UPROPERTY(visibleAnywhere, BlueprintReadWrite, Category="Inventory")
+	UPROPERTY(visibleAnywhere, Replicated, BlueprintReadWrite, Category="Inventory")
 	AWeapon_Base* CurrentWeapon;
 
 	UFUNCTION(BlueprintCallable)

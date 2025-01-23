@@ -14,6 +14,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
+// 애니메이션
+#include "AnimInstance/PlayerAnimInstance.h"
+
 // 입력값 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Component/Input/BaseInputComponent.h"
@@ -32,6 +35,7 @@
 #include "Component/NearArea/NearComponent.h"
 #include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
+
 
 //
 #include "Kismet/GameplayStatics.h"
@@ -143,6 +147,16 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 {
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
+}
+
+void APlayerCharacter::Server_SetAnimLayer_Implementation(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance)
+{
+	NetMulticast_SetAnimLayer(PlayerAnimInstance);
+}
+
+void APlayerCharacter::NetMulticast_SetAnimLayer_Implementation(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance)
+{
+	GetMesh()->LinkAnimClassLayers(PlayerAnimInstance);
 }
 
 // void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()

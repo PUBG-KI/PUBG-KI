@@ -45,6 +45,7 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(UInventoryComponent, CurrentWeapon, COND_OwnerOnly);
 	
 }
 
@@ -340,5 +341,7 @@ bool UInventoryComponent::Server_Interact_Validate()
 {
 	return true;
 }
+
+
 
 
