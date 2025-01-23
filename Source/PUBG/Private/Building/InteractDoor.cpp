@@ -13,12 +13,13 @@ AInteractDoor::AInteractDoor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
-	RootComponent = DoorMesh;
-	DoorCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollisionBox"));
-	DoorCollisionBox->SetupAttachment(DoorMesh);
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	InteractionTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionTriggerBox"));
-	InteractionTriggerBox->SetupAttachment(DoorMesh);
+	InteractionTriggerBox->SetupAttachment(RootComponent);
+	DoorCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollisionBox"));
+	DoorCollisionBox->SetupAttachment(RootComponent);
+	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
+	DoorMesh->SetupAttachment(RootComponent);
 }
 
 void AInteractDoor::BeginPlay()
