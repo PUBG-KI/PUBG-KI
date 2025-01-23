@@ -183,8 +183,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
 	void ProneToStandCameraMovement();
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "CharacterLeaning")
-	float LeaningValue;
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
 	void LeftLeanCameraTimerSet();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
