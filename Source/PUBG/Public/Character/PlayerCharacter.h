@@ -43,7 +43,7 @@ class PUBG_API APlayerCharacter : public ABaseCharacter
 	
 public:
 	APlayerCharacter(const class FObjectInitializer& ObjectInitializer);
-
+	
 private:
 	virtual void BeginPlay() override;
 	

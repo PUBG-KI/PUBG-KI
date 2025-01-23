@@ -37,6 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibary", meta = (Display = "Does Actor Has Tag", ExpandEnumAsExecs = "OutType"))
 	static void BP_HasTag(AActor* Actor, FGameplayTag Tag, EBaseConfirmType& OutType);
 
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static bool HasTag(AActor* Actor, FGameplayTag Tag);
+
 
 	
 };
