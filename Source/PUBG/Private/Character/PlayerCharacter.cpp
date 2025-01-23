@@ -89,18 +89,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	bAnimationIsPlaying = false;
 
 	// 이준수 
-	static ConstructorHelpers::FClassFinder<UInventoryWidget> InventoryWidgetAsset(TEXT("/Game/Blueprint/Widgets/Inventory/WBP_Inventory.WBP_Inventory_C"));
-
-	if (InventoryWidgetAsset.Succeeded())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-		PlayerInventoryClass = InventoryWidgetAsset.Class;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
-	}
-
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
 
@@ -111,27 +99,9 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// 이준수
-	if (IsValid(PlayerInventoryClass))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-		APlayerController* PlayerController = Cast<APlayerController>(GetController()); 
-		
-		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(PlayerController, PlayerInventoryClass));
-		if (InventoryWidget)
-		{
-			InventoryWidget->AddToViewport();
-			InventoryWidget->SetInventoryComponent(InventoryComponent);
-			InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
-	}
-
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
+	
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -591,23 +561,6 @@ void APlayerCharacter::OnRep_PlayerState()
 	}
 }
 
-void APlayerCharacter::InputModeUI()
-{
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		PlayerController->SetShowMouseCursor(true);
-		UWidgetBlueprintLibrary::SetInputMode_GameAndUIEx(PlayerController, InventoryWidget, EMouseLockMode::DoNotLock, true);
-	}	
-}
-
-void APlayerCharacter::InputModeGame()
-{
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		PlayerController->SetShowMouseCursor(false);
-		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PlayerController);
-	}
-}
 
 void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -650,7 +603,11 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 						InventoryComponent->SetItem(nullptr);
 					}
 				}
-				
+			}
+			else
+			{
+				LookAtActor = nullptr;
+				InventoryComponent->SetItem(nullptr);
 			}
 		}
 		

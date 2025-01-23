@@ -148,6 +148,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
 	
+	//UE_LOG(LogTemp, Display, TEXT("2"));
 	//UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
 
 	UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
