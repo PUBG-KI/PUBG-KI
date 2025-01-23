@@ -17,6 +17,8 @@ AInteractDoor::AInteractDoor()
 	RootComponent = DoorMesh;
 	DoorCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("DoorCollisionBox"));
 	DoorCollisionBox->SetupAttachment(DoorMesh);
+	InteractionTriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionTriggerBox"));
+	InteractionTriggerBox->SetupAttachment(DoorMesh);
 }
 
 void AInteractDoor::BeginPlay()
