@@ -123,6 +123,7 @@ public:
 	// float MeshRelativeLocationProneZ;
 
 	bool bIsProne;
+	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying){bAnimationIsPlaying = bNewAnimaitonIsPlaying;}
