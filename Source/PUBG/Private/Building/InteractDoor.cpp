@@ -4,7 +4,9 @@
 #include "Building/InteractDoor.h"
 
 #include "MaterialHLSLTree.h"
+#include "BaseLibrary/BaseDebugHelper.h"
 #include "Components/BoxComponent.h"
+#include "DynamicMesh/DynamicMesh3.h"
 #include "Math/UnitConversion.h"
 
 // Sets default values
@@ -44,9 +46,10 @@ void AInteractDoor::Tick(float DeltaTime)
 void AInteractDoor::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
-
+	
 	if (IsOpen == false)
-	{
+	{		
+		SetDoorOnSameSide(Character);
 		TimeLine.Play();
 		IsOpen = true;
 	}
@@ -64,7 +67,27 @@ FText AInteractDoor::LookAt()
 
 void AInteractDoor::OpenDoor(float Value)
 {
-	DoorMesh->SetWorldRotation(FRotator(0.0f, DoorRotateAngle * Value, 0.0f));
+	float Angle = bDoorOnSameSide ? DoorRotateAngle : -DoorRotateAngle;
+	DoorMesh->SetRelativeRotation(FRotator(0.0f, Angle * Value, 0.0f));
+}
+
+void AInteractDoor::SetDoorOnSameSide(APlayerCharacter* PlayerCharacter)
+{
+	if (PlayerCharacter)
+	{
+		FVector PlayerCharacterFV = PlayerCharacter->GetActorForwardVector();
+		FVector DoorFV = DoorMesh->GetForwardVector();
+
+		bDoorOnSameSide = (FVector::DotProduct(PlayerCharacterFV, DoorFV) >= 0);
+
+		if(bDoorOnSameSide)
+			Debug::Print(TEXT("True"));
+		else
+		{
+			Debug::Print(TEXT("False"));
+		}
+			
+	}
 }
 
 	
