@@ -6,6 +6,7 @@
 #include "Widgets/WidgetBase.h"
 #include "PlayerStatusWidget.generated.h"
 
+class APlayerCharacter;
 class UProgressBar;
 /**
  * 
@@ -15,8 +16,11 @@ class PUBG_API UPlayerStatusWidget : public UWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	virtual void NativePreConstruct() override;
 
 private:
+	// Widget Variable
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_Health;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
@@ -24,14 +28,20 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_FillGaguge;
 
-	UPROPERTY()
+	// Variable
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	APlayerCharacter* PlayerCharacter;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	float MaxHealth;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	float Health;
 public:
 	// Variable Setter
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerCharacter(APlayerCharacter* OutPlayerCharacter) { PlayerCharacter = OutPlayerCharacter; }
+	UFUNCTION(BlueprintCallable)
 	void SetHealth(float OutHealth);
+	UFUNCTION(BlueprintCallable)
 	void SetMaxHealth(float OutMaxHealth);
 	
 	//Widget Getter
@@ -39,6 +49,6 @@ public:
 	UProgressBar* GetProgressBar_Health() const { return ProgressBar_Health; }
 
 	//Widget Setter
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetProgressBar_Health(float OutHealth);
 };
