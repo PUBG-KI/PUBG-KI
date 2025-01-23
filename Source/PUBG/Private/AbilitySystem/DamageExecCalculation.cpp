@@ -78,6 +78,9 @@ void UDamageExecCalculation::Execute_Implementation(const FGameplayEffectCustomE
 		OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().DamageProperty, EGameplayModOp::Additive, MitigatedDamage));
 	}
 
+	Debug::Print(TEXT("Damage"), Damage);
+	Debug::Print(TEXT("MitigatedDamage"), MitigatedDamage);
+
 	
 	// Target ASC에 피해를 방송합니다.
 	UBaseAbilitySystemComponent* TargetASC = Cast<UBaseAbilitySystemComponent>(TargetAbilitySystemComponent);
