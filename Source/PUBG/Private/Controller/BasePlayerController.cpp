@@ -38,6 +38,8 @@ void ABasePlayerController::BeginPlayingState()
 	{
 		return;
 	}
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	
 	if (IsValid(InventoryWidgetClass))
 	{
@@ -45,7 +47,6 @@ void ABasePlayerController::BeginPlayingState()
 		
 		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
 		InventoryWidget->AddToViewport();
-		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 		if (PlayerCharacter)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
@@ -69,6 +70,7 @@ void ABasePlayerController::BeginPlayingState()
 
 	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
 	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
+	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
 	
 }
 
