@@ -57,6 +57,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		// 0이 아니면 인벤이 꽉 차서 아이템이 다 안들어간 것 
 		if (int32 RemainItem = Inventory->AddToInventory(ItemID.RowName, Quantity, Weight) != 0)
 		{
+			// 몽타주 
 			//UE_LOG(LogTemp, Warning, TEXT("Add"));
 			
 			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(Character->GetController()))
