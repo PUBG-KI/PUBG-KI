@@ -185,8 +185,11 @@ class FNetworkPredictionData_Client* UPlayerMovementComponent::GetPredictionData
 
 void UPlayerMovementComponent::StartSprinting()
 {
-	RequestToStartSprinting = true;
-	RequestToStartWalking = false;
+	if (!RequestToStartProne)
+	{
+		RequestToStartSprinting = true;
+		RequestToStartWalking = false;
+	}
 }
 
 void UPlayerMovementComponent::StopSprinting()

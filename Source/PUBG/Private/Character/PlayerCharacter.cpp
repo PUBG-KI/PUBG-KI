@@ -40,6 +40,7 @@
 //
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -283,7 +284,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	MoveForwardVecter.Y = MovementVector.Y;
 	// 회전 적용
 	Server_SetActorRotation(InterpolatedRotation);
-
+ 
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	if (MovementVector.Y != 0.f)
 	{
@@ -351,6 +352,18 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	}
 	else
 	{
+		// if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_LeftLeaning))
+		// {
+		// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+		// 	
+		// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_LeftLeaning);
+		// }
+		// else if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_RightLeaning))
+		// {
+		// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+		// 	
+		// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_RightLeaning);
+		// }
 		Jump();
 	}
 }
@@ -399,7 +412,18 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 	{
 		UnCrouch();
 	}
-
+	// if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_LeftLeaning))
+	// {
+	// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+	// 		
+	// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_LeftLeaning);
+	// }
+	// else if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_RightLeaning))
+	// {
+	// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+	// 		
+	// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_RightLeaning);
+	// }
 	MovementComponent->StartProne();
 }
 
