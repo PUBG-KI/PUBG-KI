@@ -129,16 +129,14 @@ public:
 
 	// 이준수
 public:
-	UFUNCTION(BlueprintCallable)
-	void InputModeUI();
-	UFUNCTION(BlueprintCallable)
-	void InputModeGame();
+	// UFUNCTION(BlueprintCallable)
+	// void InputModeUI();
+	// UFUNCTION(BlueprintCallable)
+	// void InputModeGame();
 
 
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	UNearComponent* GetNearComponent() const { return NearComponent; }
-	UFUNCTION(BlueprintCallable)
-	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 	UFUNCTION(Blueprintable)
 	AActor* GetLookAtActor() const { return LookAtActor; }
 	
@@ -146,14 +144,8 @@ public:
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
+
 private:
-	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<UUserWidget> PlayerInventoryClass;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Widget", meta = (AllowPrivateAccess = "true"))
-	UInventoryWidget* InventoryWidget;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	AActor* LookAtActor;
 	
@@ -162,9 +154,6 @@ private:
 	
 	FTimerHandle BeginOverlapTimerHandle;
 
-	// 가운데 점 크로스헤어 
-	UPROPERTY(EditAnywhere, Category="Crosshair")
-	class UTexture2D* CrosshairCenter;
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;

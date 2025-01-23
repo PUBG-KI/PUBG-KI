@@ -6,6 +6,7 @@
 #include "Character/TestCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Components/BoxComponent.h"
+#include "Controller/BasePlayerController.h"
 #include "Item/ItemBase.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
@@ -50,6 +51,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 
 	if (UInventoryComponent* Inventory = Character->GetInventoryComponent())
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("1"));
 		UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *ItemID.RowName.ToString(), Quantity);
 
 		// 0이 아니면 인벤이 꽉 차서 아이템이 다 안들어간 것 
@@ -57,7 +59,10 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Add"));
 			
-			Character->GetInventoryWidget()->UpdateInventoryWidget();
+			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(Character->GetController()))
+			{
+				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+			}
 
 			AActor* Owner = GetOwner(); 
 			if (Owner)
@@ -72,7 +77,10 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		else
 		{
 			
-			Character->GetInventoryWidget()->UpdateInventoryWidget();
+			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(Character->GetController()))
+			{
+				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+			}
 			
 			AActor* Owner = GetOwner(); 
 			if (Owner)

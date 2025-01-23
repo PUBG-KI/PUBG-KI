@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UInventoryWidget;
 class ACrosshairHUD;
 
 /**
@@ -21,15 +22,28 @@ protected:
 	ABasePlayerController();
 	
 	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlayingState() override;
 	
 private:
-	UPROPERTY(EditAnywhere)
-	ACrosshairHUD* HUD;
+	
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetHUDTexture(float DeltaTime);
+	void InputModeUI();
+	UFUNCTION(BlueprintCallable)
+	void InputModeGame();
 
+	//Getter
+	UFUNCTION(BlueprintCallable)
+	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UUserWidget> InventoryWidgetClass;
+
+	UPROPERTY()
+	UInventoryWidget* InventoryWidget;
+	
 };
 
 

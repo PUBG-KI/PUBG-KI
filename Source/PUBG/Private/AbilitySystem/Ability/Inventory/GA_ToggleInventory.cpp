@@ -12,7 +12,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseGameplayTag.h"
-
+#include "Controller/BasePlayerController.h"
 
 
 void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -22,7 +22,7 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-    UInventoryWidget* InventoryWidget = GetPlayerCharacterFromActorInfo()->GetInventoryWidget();
+    UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
     if (InventoryWidget != nullptr)
     {
     	if (TickTask == nullptr)
@@ -36,7 +36,8 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
     	if (InventoryWidget->GetVisibility() == ESlateVisibility::Collapsed)
     	{
     		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-    		GetPlayerCharacterFromActorInfo()->InputModeUI();
+    		GetPlayerControllerFromActorInfo()->InputModeUI();
+    		
     
     		// 새로운 TickTask 생성
     		if (TickTask)
@@ -98,13 +99,13 @@ void UGA_ToggleInventory::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	UInventoryWidget* InventoryWidget = GetPlayerCharacterFromActorInfo()->GetInventoryWidget();
+	UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
 	if (InventoryWidget != nullptr)
 	{
 		if (InventoryWidget->GetVisibility() == ESlateVisibility::Visible)
 		{
 			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-			GetPlayerCharacterFromActorInfo()->InputModeGame();
+			GetPlayerControllerFromActorInfo()->InputModeGame();
 			// 기존 TickTask 종료 처리
 			if (TickTask)
 			{
