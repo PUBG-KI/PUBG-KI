@@ -61,7 +61,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	//턴과 에임오프셋을 위한 Yaw,Pitch구하기
 	FRotator AimRotation =OwningPlayer->GetBaseAimRotation();
 	FRotator ActorRotation = OwningPlayer->GetActorRotation();
-
+	
 	FRotator DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
 	Yaw = DeltaRotator.Yaw;
 	Pitch = DeltaRotator.Pitch;

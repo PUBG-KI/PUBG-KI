@@ -80,7 +80,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
 	//BaseAttributeSet->SetMoveSpeed(300.f);
-	GetCharacterMovement()->MaxWalkSpeed =300.f;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f;
 	//GetCharacterMovement()->MaxWalkSpeedCrouched = 200.0f;
@@ -91,7 +91,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	// 이준수 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
-
 }
 
 void APlayerCharacter::BeginPlay()
@@ -101,7 +100,6 @@ void APlayerCharacter::BeginPlay()
 	// 이준수
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
-	
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -248,37 +246,36 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
-	
-
-	
 }
 
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
-	bUseControllerRotationYaw = false;  
-	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
+	bUseControllerRotationYaw = false;
+	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<
+		UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
 	if (AbilitySystemComponent)
 	{
-		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn); 
+		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
 	}
-	 const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
-	
+
 	const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
 	FRotator CurrentRotation = GetActorRotation(); // 현재 회전
-	
+
 	// 부드럽게 회전 (보간을 통해)
-	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
+	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(),
+	                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
 	MoveForwardVecter.Y = MovementVector.Y;
 	// 회전 적용
 	Server_SetActorRotation(InterpolatedRotation);
-	
+
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	if (MovementVector.Y != 0.f)
 	{
 		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
 		AddMovementInput(ForwardDirection, MovementVector.Y);
-	}	
+	}
 	if (MovementVector.X != 0.f)
 	{
 		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
@@ -297,7 +294,7 @@ bool APlayerCharacter::Server_SetActorRotation_Validate(FRotator Rotator)
 }
 
 void APlayerCharacter::MultiCast_SetActorRotation_Implementation(FRotator Rotator)
-{	
+{
 	SetActorRotation(Rotator);
 }
 
@@ -327,9 +324,9 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	{
 		return;
 	}
-	
+
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	
+
 	if (GetMovementComponent()->IsCrouching()) //크라우칭 상태면
 	{
 		UnCrouch();
@@ -341,29 +338,29 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	else
 	{
 		Jump();
-	}	
+	}
 }
 
 void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
-{	
+{
 	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
 	{
 		return;
 	}
 
-	UPlayerMovementComponent* MovementComponent =  Cast<UPlayerMovementComponent>(GetMovementComponent());
-	
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+
 	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
 	{
 		UnCrouch();
 		return;
-	}	
+	}
 
 	if (MovementComponent->RequestToStartProne)
 	{
 		MovementComponent->StopProne();
 	}
-	
+
 	Crouch();
 }
 
@@ -376,23 +373,20 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 	}
 
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	
+
 	if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
-		
 		MovementComponent->StopProne();
-		
+
 		return;
-	}	
+	}
 
 	if (GetMovementComponent()->IsCrouching())
 	{
-		UnCrouch();            
+		UnCrouch();
 	}
 
 	MovementComponent->StartProne();
-	
-	
 }
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)
@@ -463,9 +457,10 @@ void APlayerCharacter::CheckRotationForTurn()
 	{
 		DeltaRotation.Yaw += 360.0f;
 	}
-	if (DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw<=-90.f)
+	if (DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw <= -90.f)
 	{
-		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
+		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(
+			GetAbilitySystemComponent());
 
 		if (AbilitySystemComponent)
 		{
@@ -479,14 +474,17 @@ void APlayerCharacter::StandToProneCameraTimerSet()
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 	if (MovementComponent->RequestToStartProne)
 	{
-		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this, &APlayerCharacter::StandToProneCameraMovement, GetWorld()->GetDeltaSeconds(), true);
+		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
+		                                       &APlayerCharacter::StandToProneCameraMovement,
+		                                       GetWorld()->GetDeltaSeconds(), true);
 	}
 }
 
 void APlayerCharacter::StandToProneCameraMovement()
 {
-		FVector ProneOffset = FVector(0.f, 55.f, 5.f);  // Prone 상태에서의 카메라 위치
-		CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, ProneOffset, GetWorld()->GetDeltaSeconds(), 10.f);
+	FVector ProneOffset = FVector(0.f, 55.f, 5.f); // Prone 상태에서의 카메라 위치
+	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, ProneOffset, GetWorld()->GetDeltaSeconds(),
+	                                            10.f);
 
 	if (CameraBoom->SocketOffset.Equals(ProneOffset, 0.1f))
 	{
@@ -499,15 +497,17 @@ void APlayerCharacter::ProneToStandCameraTimerSet()
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 	if (!MovementComponent->RequestToStartProne)
 	{
-		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this, &APlayerCharacter::ProneToStandCameraMovement, GetWorld()->GetDeltaSeconds(), true);
+		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
+		                                       &APlayerCharacter::ProneToStandCameraMovement,
+		                                       GetWorld()->GetDeltaSeconds(), true);
 	}
-	
 }
 
 void APlayerCharacter::ProneToStandCameraMovement()
 {
-		FVector StandOffset = FVector(0.f, 55.f, 65.f);  // Stand 상태에서의 카메라 위치
-		CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandOffset, GetWorld()->GetDeltaSeconds(), 10.f);
+	FVector StandOffset = FVector(0.f, 55.f, 65.f); // Stand 상태에서의 카메라 위치
+	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandOffset, GetWorld()->GetDeltaSeconds(),
+	                                            10.f);
 
 	if (CameraBoom->SocketOffset.Equals(StandOffset, 0.1f))
 	{
@@ -515,11 +515,68 @@ void APlayerCharacter::ProneToStandCameraMovement()
 	}
 }
 
-// void APlayerCharacter::StandToLeftLeanCameraMovement()
-// {
-// 	FVector LeftLeanOffset = FVector(-50.f, 55.f, 65.f);  // Stand 상태에서의 카메라 위치
-// 	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, LeftLeanOffset, GetWorld()->GetDeltaSeconds(), 10.f);
-// }
+void APlayerCharacter::LeftLeanCameraTimerSet()
+{
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
+		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
+											   &APlayerCharacter::LeftLeanCameraMovement,
+											   GetWorld()->GetDeltaSeconds(), true);
+}
+
+void APlayerCharacter::LeftLeanCameraMovement()
+{
+	FVector LeftLeanOffset = FVector(0.f, 15.f, 65.f); // Stand 상태에서의 카메라 위치
+	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, LeftLeanOffset, GetWorld()->GetDeltaSeconds(),
+	                                            10.f);
+
+	if (CameraBoom->SocketOffset.Equals(LeftLeanOffset, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
+	}
+}
+
+void APlayerCharacter::DefaultCameraTimerSet()
+{
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
+	GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
+										   &APlayerCharacter::DefaultCameraMovement,
+										   GetWorld()->GetDeltaSeconds(), true);
+}
+
+void APlayerCharacter::DefaultCameraMovement()
+{
+	FVector StandardOffset = FVector(0.f, 55.f, 65.f); // Stand 상태에서의 카메라 위치
+	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandardOffset, GetWorld()->GetDeltaSeconds(),
+												10.f);
+
+	if (CameraBoom->SocketOffset.Equals(StandardOffset, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
+	}
+}
+
+void APlayerCharacter::RightLeanCameraTimerSet()
+{
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
+	GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
+										   &APlayerCharacter::RightLeanCameraMovement,
+										   GetWorld()->GetDeltaSeconds(), true);
+}
+
+void APlayerCharacter::RightLeanCameraMovement()
+{
+	FVector StandardOffset = FVector(0.f, 95.f, 65.f); // Stand 상태에서의 카메라 위치
+	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandardOffset, GetWorld()->GetDeltaSeconds(),
+												10.f);
+
+	if (CameraBoom->SocketOffset.Equals(StandardOffset, 0.1f))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
+	}
+}
 
 
 void APlayerCharacter::OnRep_PlayerState()
@@ -569,14 +626,15 @@ void APlayerCharacter::OnRep_PlayerState()
 
 
 void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                               const FHitResult& SweepResult)
 {
 	if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 	{
-		BeginOverlapCount +=1;
+		BeginOverlapCount += 1;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
 	}
-	
+
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([this, OtherActor]()
 	{
@@ -590,14 +648,16 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 		if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
-			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0), FLinearColor (0, 1, 0, 1));
+			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
+			                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
+			                                      FLinearColor(0, 1, 0, 1));
 			if (Hit.GetActor() != nullptr)
 			{
 				if (LookAtActor != Hit.GetActor())
 				{
 					LookAtActor = Hit.GetActor();
 					IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
-			
+
 					if (InteractInterface)
 					{
 						FText result = InteractInterface->LookAt();
@@ -616,26 +676,20 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 				InventoryComponent->SetItem(nullptr);
 			}
 		}
-		
 	});
 
 	GetWorldTimerManager().SetTimer(BeginOverlapTimerHandle, TimerDelegate, 0.1f, true);
-
-	
-	
 }
 
 void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	BeginOverlapCount -=1;
+	BeginOverlapCount -= 1;
 	UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
 	LookAtActor = nullptr;
 	InventoryComponent->SetItem(nullptr);
 	if (BeginOverlapCount == 0)
 	{
-		
 		GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
 	}
 }
-
