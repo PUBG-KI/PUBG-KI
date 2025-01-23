@@ -160,6 +160,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 		
 		 if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		 {
+		 	
 		 	ItemDataComponent->InteractWith(Character);
 		 }
 	}

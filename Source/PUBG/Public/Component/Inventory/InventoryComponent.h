@@ -43,6 +43,7 @@ private:
 // 함수 영역
 public:
 	// Setter, Getter
+	
 	void SetItem(AItemBase* OutItem) { Item = OutItem; }
 	AItemBase* GetItem() const { return Item; }
 	

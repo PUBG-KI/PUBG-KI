@@ -13,6 +13,7 @@ void UCompassWidget::NativePreConstruct()
 
 	Directional = Image_Compass->GetDynamicMaterial();
 	PlayerController = Cast<APlayerController>(GetOwningPlayer());
+	//PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
 	
 }
 
@@ -20,10 +21,11 @@ void UCompassWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	PlayerCharacter = Cast<APlayerCharacter>(PlayerController->GetPawn());
-	FRotator ControlRotation = PlayerCharacter->GetControlRotation();
+	
+	
+	FRotator ControlRotation = PlayerController->GetControlRotation();
 	float YawValue = ControlRotation.Yaw;
-
+	
 	
 	Directional->SetScalarParameterValue(FName("U"), YawValue / 360.0f);
 	Calculate(YawValue);
