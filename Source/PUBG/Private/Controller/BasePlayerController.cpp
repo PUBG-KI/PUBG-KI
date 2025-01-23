@@ -25,32 +25,36 @@ void ABasePlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
 
-	if (IsValid(InventoryWidgetClass))
+	if (IsLocalPlayerController())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-		
-		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(this, InventoryWidgetClass));
-		if (InventoryWidget != nullptr)
+		if (IsValid(InventoryWidgetClass))
 		{
-			InventoryWidget->AddToViewport();
-			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-			if (PlayerCharacter)
+			UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		
+			InventoryWidget = Cast<UInventoryWidget>(CreateWidget(this, InventoryWidgetClass));
+			if (InventoryWidget != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
-				InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+				InventoryWidget->AddToViewport();
+				APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+				if (PlayerCharacter)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+					InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
+				}
+				InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+				InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
-			}
-			InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
 		}
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
-	}
+	
 }
 
 void ABasePlayerController::InputModeUI()
