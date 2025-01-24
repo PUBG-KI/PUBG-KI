@@ -72,7 +72,9 @@ public:
 	void SetBulletArom(float Armo);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Mag")
+	void Server_SetBulletArom(float Armo);
 	
 };
 

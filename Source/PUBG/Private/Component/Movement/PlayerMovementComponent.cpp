@@ -18,6 +18,7 @@ void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	
 	DOREPLIFETIME(UPlayerMovementComponent, RequestToStartProne);
 	DOREPLIFETIME(UPlayerMovementComponent, LeaningValue);
+	DOREPLIFETIME(UPlayerMovementComponent, RequestToBackMovement);
 }
 
 float UPlayerMovementComponent::GetMaxSpeed() const
@@ -46,9 +47,12 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 
 	if (RequestToStartSprinting)
 	{
-		if (!RequestToStartProne&&Owner->MoveForwardVecter.Y>0)
+		if (!RequestToStartProne)
 		{
-		BaseSpeed += AddSHIFTSprint;	
+			if (!RequestToBackMovement)
+			{
+				BaseSpeed += AddSHIFTSprint;				
+			}	
 		}
 		 //STAND+SHIFT : 350+150 = 500;
 	}
@@ -93,6 +97,7 @@ void UPlayerMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 	RequestToStartSprinting = (Flags & FSavedMove_Character::FLAG_Custom_0) != 0;
 	RequestToStartWalking = (Flags & FSavedMove_Character::FLAG_Custom_1) != 0;
 	RequestToStartProne = (Flags & FSavedMove_Character::FLAG_Custom_2) != 0;	
+	RequestToBackMovement = (Flags & FSavedMove_Character::FLAG_Custom_3) != 0;	
 }
 
 void UPlayerMovementComponent::FGDSavedMove::Clear()
@@ -102,6 +107,7 @@ void UPlayerMovementComponent::FGDSavedMove::Clear()
 	SavedRequestToStartSprinting = false;
 	SavedRequestToStartWalking = false;
 	SavedRequestToStartProne = false;
+	SavedRequestToBackMovement = false;
 }
 
 uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
@@ -121,6 +127,11 @@ uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
 	if (SavedRequestToStartProne)
 	{
 		Result |= FLAG_Custom_2;
+	}
+	
+	if (SavedRequestToBackMovement)
+	{
+		Result |= FLAG_Custom_3;
 	}
 	
 	return Result;
@@ -145,6 +156,11 @@ bool UPlayerMovementComponent::FGDSavedMove::CanCombineWith(const FSavedMovePtr&
 		return false;
 	}
 	
+	if (SavedRequestToBackMovement != ((FGDSavedMove*)&NewMove)->SavedRequestToBackMovement)
+	{
+		return false;
+	}
+	
 	return Super::CanCombineWith(NewMove, Character, MaxDelta);
 }
 
@@ -159,6 +175,7 @@ void UPlayerMovementComponent::FGDSavedMove::SetMoveFor(ACharacter* Character, f
 		SavedRequestToStartSprinting = CharacterMovement->RequestToStartSprinting;
 		SavedRequestToStartWalking = CharacterMovement->RequestToStartWalking;
 		SavedRequestToStartProne = CharacterMovement->RequestToStartProne;
+		SavedRequestToBackMovement = CharacterMovement->RequestToBackMovement;
 	}
 }
 
@@ -243,4 +260,14 @@ void UPlayerMovementComponent::StartLeaning(float Value)
 void UPlayerMovementComponent::StopLeaning()
 {
 	LeaningValue = 0;
+}
+
+void UPlayerMovementComponent::StartBackMovement()
+{
+	RequestToBackMovement = true;
+}
+
+void UPlayerMovementComponent::StopBackMovement()
+{
+	RequestToBackMovement = false;
 }
