@@ -32,36 +32,7 @@ void UBaseFunctionLibrary::RemoveGameplayTagFromActor(AActor* Actor, FGameplayTa
 	}
 }
 
-bool UBaseFunctionLibrary::ApplyDamageToActor(ABaseCharacter* SourceActor, ABaseCharacter* TargetActor,
-	TSubclassOf<UGameplayEffect> DamageGameplayEffect, FHitResult& HitResult, float Damage)
-{
-	// if (!SourceActor || !TargetActor || !DamageGameplayEffect)
-	// {
-	// 	return false;
-	// }
-	//
-	// FGameplayEffectSpecHandle DamageEffectSpecHandle = UGameplayAbility::MakeOutgoingGameplayEffectSpec(DamageGameplayEffect, UGameplayAbility::GetAbilityLevel());
-	//
-	// if(DamageEffectSpecHandle.IsValid())
-	// {
-	// 	DamageEffectSpecHandle.Data.Get()->SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Damage")), Damage);
-	//
-	// 	FGameplayEffectContextHandle EffectContext = SourceActor->GetAbilitySystemComponent()->MakeEffectContext();
-	// 	if(EffectContext.IsValid())
-	// 	{
-	// 		EffectContext.AddInstigator(SourceActor, SourceActor); // 소스 액터를 Instigator로 추가
-	// 		EffectContext.AddHitResult(HitResult);   // 타겟 액터를 포함하는 HitResult 추가
-	//
-	// 		// Effect Context를 Spec에 설정
-	// 		DamageEffectSpecHandle.Data.Get()->SetContext(EffectContext);
-	// 		SourceActor->GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*DamageEffectSpecHandle.Data.Get(), TargetActor->GetAbilitySystemComponent());
-	//
-	// 		return true;
-	// 	}
-	// }
-	//
-	 return false;
-}
+
 
 bool UBaseFunctionLibrary::NativeActorHasTag(AActor* Actor, FGameplayTag Tag)
 {
@@ -77,4 +48,19 @@ void UBaseFunctionLibrary::BP_HasTag(AActor* Actor, FGameplayTag Tag, EBaseConfi
 bool UBaseFunctionLibrary::HasTag(AActor* Actor, FGameplayTag Tag)
 {UBaseAbilitySystemComponent* ASC = NativeGetBaseAbilitySystemComponentFromActor(Actor);
 	return ASC->HasMatchingGameplayTag(Tag);
+}
+
+FString UBaseFunctionLibrary::ReadFile(FString FilePath)
+{
+	FString DirectoryPath = FPaths::ProjectContentDir();
+	FString FullPath = DirectoryPath + "/" + FilePath;
+	FString Result;
+	IPlatformFile& File = FPlatformFileManager::Get().GetPlatformFile();
+
+	if(File.FileExists(*FullPath))
+	{
+		FFileHelper::LoadFileToString(Result,*FullPath);
+	}
+
+	return Result;
 }

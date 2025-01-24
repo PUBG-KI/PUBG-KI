@@ -67,7 +67,7 @@ FText AInteractDoor::LookAt()
 
 void AInteractDoor::OpenDoor(float Value)
 {
-	float Angle = bDoorOnSameSide ? DoorRotateAngle : -DoorRotateAngle;
+	float Angle = bDoorOnSameSide ? -DoorRotateAngle : DoorRotateAngle;
 	DoorMesh->SetRelativeRotation(FRotator(0.0f, Angle * Value, 0.0f));
 }
 

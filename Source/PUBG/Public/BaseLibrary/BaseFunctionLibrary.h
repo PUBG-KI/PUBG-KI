@@ -29,9 +29,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FuntionLibary")
 	static void RemoveGameplayTagFromActor(AActor* Actor, FGameplayTag Tag);
 	
-	UFUNCTION(BlueprintCallable, Category = "FuntionLibary")
-	static bool ApplyDamageToActor(ABaseCharacter* SourceActor, ABaseCharacter* TargetActor, TSubclassOf<UGameplayEffect> DamageGameplayEffect, FHitResult& HitResult, float Damage);
-
 	static bool NativeActorHasTag(AActor* Actor, FGameplayTag Tag);
 
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibary", meta = (Display = "Does Actor Has Tag", ExpandEnumAsExecs = "OutType"))
@@ -40,6 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
 	static bool HasTag(AActor* Actor, FGameplayTag Tag);
 
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static FString ReadFile(FString FilePath);
 
 	
 };
