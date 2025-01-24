@@ -6,24 +6,21 @@
 AGun_Base::AGun_Base()
 {
 	ScopeMesh = CreateDefaultSubobject<UStaticMeshComponent>("ScopeMesh");
-	//ScopeMesh->AttachToComponent(WeaponSkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("ScopeSocket"));
-	ScopeMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("ScopeSocket"));
+	ScopeMesh->SetupAttachment(WeaponSkeletalMeshComponent,FName("ScopeSocket"));
 
 	MagMesh = CreateDefaultSubobject<UStaticMeshComponent>("MagMesh");
-	//MagMesh->AttachToComponent(WeaponSkeletalMeshComponent, FAttachmentTransformRules::KeepRelativeTransform, FName("MagSocket"));
 	MagMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("MagSocket"));
-	
+
 	MuzzleMesh = CreateDefaultSubobject<UStaticMeshComponent>("MuzzleMesh");
-	//MuzzleMesh->AttachToComponent(WeaponSkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("MuzzleSocket"));
-	MuzzleMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("MuzzleSocket"));
+	MuzzleMesh->SetupAttachment(WeaponSkeletalMeshComponent,FName("MuzzleSocket"));
 
 	GripMesh = CreateDefaultSubobject<UStaticMeshComponent>("GripMesh");
-	//GripMesh->AttachToComponent(WeaponSkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("GripSocket"));
 	GripMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("GripSocket"));
 
 	LoopsMesh = CreateDefaultSubobject<UStaticMeshComponent>("LoopsMesh");
-	//LoopsMesh->AttachToComponent(WeaponSkeletalMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("LoopsSocket"));
 	LoopsMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("LoopsSocket"));
+
+	SetReplicates(true);
 	
 }
 
@@ -40,4 +37,11 @@ void AGun_Base::SetMagToHandSocekt()
 void AGun_Base::SetBulletArom(float Armo)
 {
 	this->BulletArmo = Armo;
+}
+
+void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGun_Base, BulletArmo);
 }
