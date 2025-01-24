@@ -45,3 +45,15 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AGun_Base, BulletArmo);
 }
+
+void AGun_Base::Server_SetBulletArom_Implementation(float Armo)
+{
+	SetBulletArom(Armo);
+}
+
+bool AGun_Base::Server_SetBulletArom_Validate(float Armo)
+{
+	return true;
+}
+
+

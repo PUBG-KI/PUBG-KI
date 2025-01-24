@@ -282,9 +282,18 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	// 부드럽게 회전 (보간을 통해)
 	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(),
 	                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
-	MoveForwardVecter.Y = MovementVector.Y;
 	// 회전 적용
 	Server_SetActorRotation(InterpolatedRotation);
+	
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	if (MovementVector.Y < 0.f)
+	{
+		MovementComponent->StartBackMovement();
+	}
+	else
+	{
+		MovementComponent->StopBackMovement();
+	}	
  
 	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	if (MovementVector.Y != 0.f)

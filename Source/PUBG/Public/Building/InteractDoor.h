@@ -43,6 +43,7 @@ public:
 protected:
 	
 	FTimeline TimeLine;
+	
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* CurveFloat;
 
