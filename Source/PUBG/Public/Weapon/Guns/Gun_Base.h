@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon_Base.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Gun_Base.generated.h"
@@ -46,7 +47,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
 	EFiremodes FireMode = EFiremodes::Single;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Replicated)
 	float BulletArmo;
 
 	
@@ -69,5 +70,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "DataAsset")
 	void SetBulletArom(float Armo);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	
 };
+
+
