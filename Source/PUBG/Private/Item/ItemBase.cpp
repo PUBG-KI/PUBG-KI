@@ -3,7 +3,7 @@
 
 #include "Item/ItemBase.h"
 
-#include "K2Node_GetDataTableRow.h"
+//#include "K2Node_GetDataTableRow.h"
 #include "Camera/CameraComponent.h"
 #include "Character/TestCharacter.h"
 #include "Components/BoxComponent.h"
@@ -33,6 +33,7 @@ AItemBase::AItemBase()
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
 
 	//BeginOverlapCount = 0;
+	bReplicates = true;
 }
 
 void AItemBase::BeginPlay()

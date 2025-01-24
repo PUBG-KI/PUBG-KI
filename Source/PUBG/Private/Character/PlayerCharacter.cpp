@@ -62,7 +62,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//FollowCamera->bUsePawnControlRotation = false;
 
 	// 메쉬 부착
-	UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
+	//UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
+	UEnum* EnumPtr = StaticEnum<EPlayerMeshType>();
 	if (EnumPtr)
 	{
 		for (int32 i = 0; i < EnumPtr->GetMaxEnumValue(); ++i)

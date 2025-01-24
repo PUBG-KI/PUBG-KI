@@ -13,7 +13,8 @@ AWeapon_Base::AWeapon_Base()
 	WeaponSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponSkeletalMeshComponent;
 
-	SetReplicates(true);
+	//SetReplicates(true);
+	bReplicates = true;
 
 }
 

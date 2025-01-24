@@ -21,7 +21,7 @@ UItemDataComponent::UItemDataComponent()
 	ItemID.RowName = NAME_None;
 	Quantity = 0;
 
-	this->SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 	
 }
 
@@ -33,10 +33,10 @@ void UItemDataComponent::BeginPlay()
 
 	// ...
 	
-	AActor* Owner = GetOwner(); 
-	if (Owner)
+	//AActor* Owner = GetOwner(); 
+	//if (Owner)
 	{
-		Owner->SetReplicates(true);
+	//	Owner->SetReplicates(true);
 	}
 }
 

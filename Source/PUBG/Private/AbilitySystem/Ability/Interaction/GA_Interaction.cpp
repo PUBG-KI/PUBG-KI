@@ -14,7 +14,7 @@ void UGA_Interaction::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (AActor* LookAtActor = Cast<AActor>(GetPlayerCharacterFromActorInfo()->GetLookAtActor()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *LookAtActor->GetActorLabel());
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *LookAtActor->GetActorLabel());
 
 		if (LookAtActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{

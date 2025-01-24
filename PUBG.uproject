@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.4",
+	"EngineAssociation": "{A9979D46-46DB-3D9D-5855-76BE99611A77}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -28,11 +28,11 @@
 			"Enabled": true
 		},
 		{
-			"Name": "PCG",
+			"Name": "Water",
 			"Enabled": true
 		},
 		{
-			"Name": "Water",
+			"Name": "PCG",
 			"Enabled": true
 		}
 	]
