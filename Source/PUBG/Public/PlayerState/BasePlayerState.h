@@ -54,6 +54,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMoveSpeed() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMagazine() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxMagazine() const;
 
 	
 protected:

@@ -77,6 +77,16 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "MoveSpeed", ReplicatedUsing = OnRep_MoveSpeed)
     FGameplayAttributeData MoveSpeed;
     ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MoveSpeed)
+	
+    // Magazine 캐릭터가 현재 장착중인 총기에 장전된 총알 수
+    UPROPERTY(BlueprintReadOnly, Category = "Magazine", ReplicatedUsing = OnRep_Magazine)
+    FGameplayAttributeData Magazine;
+    ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Magazine)
+	
+    // MaxMagazine 캐릭터가 현재 장착중인 총기에 장전할 수 있는 최대 총알 수
+    UPROPERTY(BlueprintReadOnly, Category = "Magazine", ReplicatedUsing = OnRep_MaxMagazine)
+    FGameplayAttributeData MaxMagazine;
+    ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMagazine)
 
 protected:
     // 연관된 최대 속성이 변경될 때 속성 값을 비례적으로 조정하는 도우미 함수입니다.
@@ -110,4 +120,10 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_MoveSpeed(const FGameplayAttributeData& OldMoveSpeed);
+	
+	UFUNCTION()
+	virtual void OnRep_Magazine(const FGameplayAttributeData& OldMagazine);
+	
+	UFUNCTION()
+	virtual void OnRep_MaxMagazine(const FGameplayAttributeData& OldMaxMagazine);
 };
