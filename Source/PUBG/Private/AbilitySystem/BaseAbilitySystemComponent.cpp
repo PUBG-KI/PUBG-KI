@@ -19,19 +19,19 @@ void UBaseAbilitySystemComponent::OnAbilityInputPressed(const FGameplayTag& Inpu
 	{
 		if (!Spec.DynamicAbilityTags.HasTagExact(InputTag)) continue;
 
-		if (InputTag.MatchesTag(BaseGameplayTag::InputTag_Toggle))
-		{
-			//InputTag_Toggle 태그가 있으면 Toggle On/Off 처리 
-			if (Spec.IsActive())
-			{
-				CancelAbilityHandle(Spec.Handle);
-			}
-			else
-			{
-				TryActivateAbility(Spec.Handle);
-			}
-		}
-		else
+		// if (InputTag.MatchesTag(BaseGameplayTag::InputTag_Toggle))
+		// {
+		// 	//InputTag_Toggle 태그가 있으면 Toggle On/Off 처리 
+		// 	if (Spec.IsActive())
+		// 	{
+		// 		CancelAbilityHandle(Spec.Handle);
+		// 	}
+		// 	else
+		// 	{
+		// 		TryActivateAbility(Spec.Handle);
+		// 	}
+		// }
+		// else
 		{
 			TryActivateAbility(Spec.Handle);
 		}
@@ -49,6 +49,7 @@ void UBaseAbilitySystemComponent::OnAbilityInputReleased(const FGameplayTag& Inp
 	{
 		if (Spec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *InputTag.ToString())
 			CancelAbilityHandle(Spec.Handle);
 		}
 	}

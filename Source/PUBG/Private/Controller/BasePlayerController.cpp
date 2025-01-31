@@ -15,6 +15,7 @@
 ABasePlayerController::ABasePlayerController()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	InventoryWidget = nullptr;
 }
 
 void ABasePlayerController::Tick(float DeltaTime)
@@ -41,25 +42,26 @@ void ABasePlayerController::BeginPlayingState()
 
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 	
-	if (IsValid(InventoryWidgetClass))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-		
-		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
-		InventoryWidget->AddToViewport();
-		if (PlayerCharacter)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
-			InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
-
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
-		}
-		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-	}
+	//
+	// if (IsValid(InventoryWidgetClass))
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+	// 	
+	// 	InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
+	// 	InventoryWidget->AddToViewport();
+	// 	if (PlayerCharacter)
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+	// 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+	//
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
+	// 	}
+	// 	InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+	// 	InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+	// }
 		
 
 	if (IsValid(HudWidgetClass))
@@ -86,6 +88,55 @@ void ABasePlayerController::InputModeGame()
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 }
 
+
+void ABasePlayerController::CreateInventoryWidget()
+{
+
+	if (InventoryWidget != nullptr)
+	{
+		InventoryWidget->RemoveFromParent();
+	}
+	
+	if (IsValid(InventoryWidgetClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		
+		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
+		
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
+
+		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+		InventoryWidget->GetWrapBox_Near()->ClearChildren();
+		InventoryWidget->AddToViewport();
+	}
+
+	// APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+	//
+	// if (PlayerCharacter)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+	// 	InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
+	// }
+	
+	// InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+	// InventoryWidget->AddToViewport();
+}
+
+void ABasePlayerController::DestroyInventoryWidget()
+{
+	if (InventoryWidget)
+	{
+		InventoryWidget->RemoveFromParent();
+		InventoryWidget = nullptr;
+	}
+}
 	
 
 

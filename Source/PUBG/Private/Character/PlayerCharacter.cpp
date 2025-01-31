@@ -38,6 +38,8 @@
 
 
 //
+#include "Component/ItemData/ItemDataComponent.h"
+#include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -97,6 +99,11 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	// 이준수 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
+
+	DetectionItem = CreateDefaultSubobject<UBoxComponent>(TEXT("DetectionItem"));
+	DetectionItem->SetupAttachment(GetRootComponent());
+	DetectionItem->SetBoxExtent(FVector(80.0f));
+	//DetectionItem->SetVisibility(true);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -106,6 +113,10 @@ void APlayerCharacter::BeginPlay()
 	// 이준수
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
+	DetectionItem->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemBeginOverlap);
+
+	DetectionItem->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -673,6 +684,7 @@ void APlayerCharacter::OnRep_PlayerState()
 }
 
 
+
 void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                                const FHitResult& SweepResult)
@@ -739,5 +751,47 @@ void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp
 	if (BeginOverlapCount == 0)
 	{
 		GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
+	}
+}
+
+void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hello~~~"));
+
+	if (AItemBase* ItemBase = Cast<AItemBase>(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemBase->GetName());
+		if (NearComponent != nullptr)
+		{
+			NearComponent->GetGroundItem().Add(ItemBase);
+			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
+			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItem().Num());
+			NearComponent->UpdateNear();
+
+			if (ABasePlayerController* BasePlayerController = Cast<ABasePlayerController>(GetController()))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Call UpdateNearItemSlotWidget"));
+				BasePlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+			}
+			
+		}
+	}
+}
+
+void APlayerCharacter::OnDetectionItemEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (AItemBase* ItemBase = Cast<AItemBase>(OtherActor))
+	{
+		for (int i = 0; i < NearComponent->GetGroundItem().Num(); i++)
+		{
+			if (ItemBase == NearComponent->GetGroundItem()[i])
+			{
+				NearComponent->GetGroundItem().RemoveAt(i);
+				break;
+			}
+		}
 	}
 }

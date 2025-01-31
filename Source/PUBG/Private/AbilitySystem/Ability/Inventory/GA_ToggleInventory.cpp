@@ -28,36 +28,59 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {	
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-    UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
+	// 1. 인벤토리 위젯 생성
+	if (GetPlayerControllerFromActorInfo()->GetInventoryWidget() == nullptr)
+	{
+		GetPlayerControllerFromActorInfo()->CreateInventoryWidget();
+		UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
+		InventoryWidget->UpdateInventoryWidget();
 
-    if (InventoryWidget != nullptr)
-    {
-    	InventoryWidget->UpdateInventoryWidget();
+		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-    	if (TickTask == nullptr)
-    	{
-    		TickTask = UFindFarmingItem::ExecuteTaskTick(this);
-    		TickTask->OnAbilityTaskTick.RemoveDynamic(this, &ThisClass::FindFarmingItem);
-    		TickTask->OnAbilityTaskTick.AddDynamic(this, &ThisClass::FindFarmingItem);
-    		TickTask->SetWaitingOnAvatar();  // Ability와 Task의 수명 연동
-    	}
-    	
-    	if (InventoryWidget->GetVisibility() == ESlateVisibility::Collapsed)
-    	{
-    		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
-    		GetPlayerControllerFromActorInfo()->InputModeUI();
-    		
-    
-    		// 새로운 TickTask 생성
-    		if (TickTask)
-    		{
-    			UE_LOG(LogTemp, Warning, TEXT("TickTask->OnAbilityTaskTick1"));
-    			TickTask->ReadyForActivation();
-    		}
+		
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NoCollision"));
+		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetPlayerControllerFromActorInfo()->DestroyInventoryWidget();
+		GetPlayerCharacterFromActorInfo()->GetNearComponent()->GetGroundItem().Empty();
+	}
 	
-    		//EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-    		//CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
-    	}
+
+	
+	//EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	
+    // UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
+    //
+    // if (InventoryWidget != nullptr)
+    // {
+    // 	InventoryWidget->UpdateInventoryWidget();
+    //
+    // 	if (TickTask == nullptr)
+    // 	{
+    // 		TickTask = UFindFarmingItem::ExecuteTaskTick(this);
+    // 		TickTask->OnAbilityTaskTick.RemoveDynamic(this, &ThisClass::FindFarmingItem);
+    // 		TickTask->OnAbilityTaskTick.AddDynamic(this, &ThisClass::FindFarmingItem);
+    // 		TickTask->SetWaitingOnAvatar();  // Ability와 Task의 수명 연동
+    // 	}
+    // 	
+    // 	if (InventoryWidget->GetVisibility() == ESlateVisibility::Collapsed)
+    // 	{
+    // 		InventoryWidget->SetVisibility(ESlateVisibility::Visible);
+    // 		GetPlayerControllerFromActorInfo()->InputModeUI();
+    // 		
+    //
+    // 		// 새로운 TickTask 생성
+    // 		if (TickTask)
+    // 		{
+    // 			UE_LOG(LogTemp, Warning, TEXT("TickTask->OnAbilityTaskTick1"));
+    // 			TickTask->ReadyForActivation();
+    // 		}
+	   //
+    // 		//EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+    // 		//CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
+    // 	}
     	
     	// if (TickTask == nullptr)
     	// {
@@ -101,7 +124,7 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
         // 	//CancelAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true);
         //
         // }
-    }
+    
 }
 
 
@@ -109,25 +132,30 @@ void UGA_ToggleInventory::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	bool bReplicateEndAbility, bool bWasCancelled)
 {
-	UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
-	if (InventoryWidget != nullptr)
-	{
-		if (InventoryWidget->GetVisibility() == ESlateVisibility::Visible)
-		{
-			InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-			GetPlayerControllerFromActorInfo()->InputModeGame();
-			// 기존 TickTask 종료 처리
-			if (TickTask)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("TickTask->OnAbilityTaskTick"));
-				TickTask->OnAbilityTaskTick.RemoveDynamic(this, &ThisClass::FindFarmingItem);
-				TickTask->EndTask();
-				TickTask = nullptr;  // null로 초기화
-			}
-			EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
-		}
-	}
+	UE_LOG(LogTemp, Warning, TEXT("EndAbility"));
+
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	
+	// UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
+	// if (InventoryWidget != nullptr)
+	// {
+	// 	if (InventoryWidget->GetVisibility() == ESlateVisibility::Visible)
+	// 	{
+	// 		InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
+	// 		GetPlayerControllerFromActorInfo()->InputModeGame();
+	// 		// 기존 TickTask 종료 처리
+	// 		if (TickTask)
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("TickTask->OnAbilityTaskTick"));
+	// 			TickTask->OnAbilityTaskTick.RemoveDynamic(this, &ThisClass::FindFarmingItem);
+	// 			TickTask->EndTask();
+	// 			TickTask = nullptr;  // null로 초기화
+	// 		}
+	// 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+	// 	}
+	// }
+	// Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 
@@ -198,6 +226,6 @@ void UGA_ToggleInventory::FindFarmingItem(float DeltaTime)
 				NearComponent->GetGroundItem().Add(Item);
 			}
 		}
-		NearComponent->UpdateInventory();
+		//NearComponent->UpdateInventory();
 	}
 }

@@ -11,6 +11,7 @@
  * 
  */
 
+class UNearComponent;
 class UItemSlotWidget;
 class UWrapBox;
 
@@ -24,11 +25,19 @@ private:
 	UPROPERTY(EditAnywhere)
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(EditAnywhere)
+	UNearComponent* NearComponent;
+	
+	UPROPERTY(EditAnywhere)
 	UItemSlotWidget* ItemSlotWidget;
-
+	UPROPERTY(EditAnywhere)
+	UItemSlotWidget* NearItemSlotWidget;
+	
 	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Inventory;
+	UPROPERTY(meta = (BindWidget))
+	UWrapBox* WrapBox_Near;
 
+	UClass* ItemSlotWidgetClass;
 
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);
@@ -38,12 +47,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
+	void UpdateNearItemSlotWidget();
+	UFUNCTION(BlueprintCallable)
 	void AddNewChild();
 
 	//Setter
 	void SetInventoryComponent(UInventoryComponent* OutInventoryComponent) { InventoryComponent = OutInventoryComponent; }
+	void SetNearComponent(UNearComponent* OutNearComponent) { NearComponent = OutNearComponent; }
 
 	//Getter
 	UItemSlotWidget* GetItemSlotWidget() const { return ItemSlotWidget; }
 	UWrapBox *GetWrapBox_Inventory() const { return WrapBox_Inventory;}
+	UWrapBox *GetWrapBox_Near() const { return WrapBox_Near;}
 };

@@ -32,7 +32,7 @@ void UNearComponent::AddToGroundItem()
 	
 }
 
-void UNearComponent::UpdateInventory()
+void UNearComponent::UpdateNear()
 {
 	GroundItem.Sort([](const AItemBase& LHS, const AItemBase& RHS)
 	{

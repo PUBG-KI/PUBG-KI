@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
 #include "GameplayTagContainer.h"
+#include "Components/BoxComponent.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -143,17 +144,25 @@ public:
 	// void InputModeUI();
 	// UFUNCTION(BlueprintCallable)
 	// void InputModeGame();
-
-
+	
+	//Getter
+	UFUNCTION(Blueprintable)
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 	UNearComponent* GetNearComponent() const { return NearComponent; }
 	UFUNCTION(Blueprintable)
 	AActor* GetLookAtActor() const { return LookAtActor; }
+	UFUNCTION(BlueprintCallable)
+	UBoxComponent* GetDetectionItem() const { return DetectionItem; }
 	
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	void OnDetectionItemEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
@@ -164,6 +173,9 @@ private:
 	
 	FTimerHandle BeginOverlapTimerHandle;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* DetectionItem;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;
@@ -173,6 +185,7 @@ protected:
 public:
 	void OnMouseMoved(FVector2D MouseMovement);
 	void CheckRotationForTurn();
+	
 //Prone시 카메라 조정
 	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
 	void StandToProneCameraTimerSet();

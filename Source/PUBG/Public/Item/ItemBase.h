@@ -62,7 +62,8 @@ public:
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
 	UBoxComponent* GetBoxComponent() const { return BoxComponent; }
 	FItemStruct& GetItemStruct() { return Item; }
-	
+
+	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	
 };

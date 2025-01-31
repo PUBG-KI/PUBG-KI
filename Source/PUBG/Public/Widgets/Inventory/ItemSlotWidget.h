@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/WidgetBase.h"
+#include "Component/NearArea/NearComponent.h"
 #include "ItemSlotWidget.generated.h"
 
 class UInventoryComponent;
@@ -20,7 +21,8 @@ UCLASS()
 class PUBG_API UItemSlotWidget : public UWidgetBase
 {
 	GENERATED_BODY()
-	
+
+	// Widget Variable
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UButton* Button_ItemSlot;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
@@ -32,12 +34,15 @@ class PUBG_API UItemSlotWidget : public UWidgetBase
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UTextBlock* TextBlock_Use;
 
+	// Variable
 	UPROPERTY()
 	FName ItemName;
 	UPROPERTY()
 	int32 Quantity;
 	UPROPERTY()
 	UInventoryComponent* InventoryComponent;
+	UPROPERTY()
+	UNearComponent* NearComponent;
 	UPROPERTY()
 	int32 Index;
 
@@ -56,8 +61,11 @@ public:
 	void SetItemName(FName OutItemName) { ItemName = OutItemName; }
 	void SetQuantity(int32 OutQuantity) { Quantity = OutQuantity; }
 	void SetInventoryComponent(UInventoryComponent* OutInventoryComponent) { InventoryComponent = OutInventoryComponent; }
+	void SetNearComponent(UNearComponent* OutNearComponent) { NearComponent = OutNearComponent; }
 	void SetIndex(int32 OutIndex) { Index = OutIndex; }
 
+	// Getter
+	UTextBlock* GetTextBlock_Use() const { return TextBlock_Use; }
 	UFUNCTION(BlueprintCallable)
 	void UpdateItemSlotWidget();
 

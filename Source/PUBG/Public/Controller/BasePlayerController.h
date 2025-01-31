@@ -38,7 +38,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
 
-
+	UFUNCTION(BlueprintCallable)
+	void CreateInventoryWidget();
+	UFUNCTION(BlueprintCallable)
+	void DestroyInventoryWidget();
+private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
 	UPROPERTY()

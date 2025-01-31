@@ -27,16 +27,17 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
 	TArray<AItemBase*> GroundItem;
+	//TArray<FItemSlotStruct> GroundItem;
 
 public:	
 	UFUNCTION(BlueprintCallable)
 	void AddToGroundItem();
 	UFUNCTION(BlueprintCallable)
-	void UpdateInventory();
+	void UpdateNear();
 	UFUNCTION(BlueprintCallable)
 	bool ShouldUpdate(AItemBase* ItemBase);
 
 	UFUNCTION(BlueprintCallable)
-	TArray<AItemBase*> GetGroundItem() { return GroundItem; }
+	TArray<AItemBase*>& GetGroundItem() { return GroundItem; }
 	
 };
