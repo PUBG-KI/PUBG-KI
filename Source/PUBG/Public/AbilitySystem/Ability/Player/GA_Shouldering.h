@@ -18,9 +18,9 @@ class PUBG_API UGA_Shouldering : public UPlayerGameplayAbility
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	                             const FGameplayAbilityActivationInfo ActivationInfo,
 	                             const FGameplayEventData* TriggerEventData);
-	void UpdateCameraBoomOffset();
+	
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	void ReturnCameraBoomOffset();
+	
 
 private:
 	FTimerHandle CameraBoomTimerHandle;
@@ -31,5 +31,4 @@ private:
 	FVector CurrentOffset;
 	FVector AddOffset;
 	FVector SubOffset;
-	float Duration;
 };

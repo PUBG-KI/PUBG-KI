@@ -456,6 +456,7 @@ void APlayerCharacter::ProneToStandCameraMovement()
 
 void APlayerCharacter::LeftLeanCameraMovement()
 {
+	CameraBoom->SetWanstReversePlaying(false);
 	FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
 	float Duration = 0.2f;
 	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
@@ -464,8 +465,10 @@ void APlayerCharacter::LeftLeanCameraMovement()
 
 void APlayerCharacter::LeftDefaultCameraMovement()
 {
+	UE_LOG(LogTemp, Warning, TEXT("PLAYREVERSE"))
 	//float OppositeDistance = CameraBoom->GetDistanceMoved();
-	FVector OffsetDelta = FVector(0.f, 0.f, 0.f);
+	CameraBoom->SetWanstReversePlaying(true);
+	FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
 	float Duration = 0.2f;
 	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 }
@@ -473,7 +476,8 @@ void APlayerCharacter::LeftDefaultCameraMovement()
 void APlayerCharacter::RightDefaultCameraMovement()
 {
 	//float OppositeDistance = CameraBoom->GetDistanceMoved();
-	FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
+	CameraBoom->SetWanstReversePlaying(true);
+	FVector OffsetDelta = FVector(0.f, 40.f, 0.f);
 	float Duration = 0.2f;
 	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 	
@@ -481,6 +485,7 @@ void APlayerCharacter::RightDefaultCameraMovement()
 
 void APlayerCharacter::RightLeanCameraMovement()
 {
+	CameraBoom->SetWanstReversePlaying(false);
 	FVector OffsetDelta = FVector(0.f, 40.f, 0.f);
 	float Duration = 0.2f;
 	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);

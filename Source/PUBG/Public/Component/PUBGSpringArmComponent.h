@@ -23,7 +23,7 @@ public:
 	void OnTimelineUpdate(float Alpha);
 	UFUNCTION()
 	void OnTimelineFinished();
-
+	FORCEINLINE void SetWanstReversePlaying(bool NewWantReversePlaying){WantReversePlaying = NewWantReversePlaying;}
 
 protected:
 	// 카메라 오프셋을 저장하는 변수
@@ -39,9 +39,9 @@ protected:
 	FVector TargettingOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	FVector InitialOffset;
-	float DistanceMoved;
-public:
-	FORCEINLINE float GetDistanceMoved(){return DistanceMoved;}
+
+	UPROPERTY()
+	bool WantReversePlaying = false;
 	
 };
 
