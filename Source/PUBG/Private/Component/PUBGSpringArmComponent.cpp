@@ -2,6 +2,8 @@
 
 
 #include "Component/PUBGSpringArmComponent.h"
+
+#include "AnimNodes/AnimNode_RandomPlayer.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/CurveFloat.h"
 #include "GameFramework/Actor.h"
@@ -12,9 +14,11 @@ UPUBGSpringArmComponent::UPUBGSpringArmComponent()
 	// 기본 스프링 암 컴포넌트 초기화
 	PrimaryComponentTick.bCanEverTick = true;
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>("TimelineComponent");
-	
-	InitialOffset =	SocketOffset;
-	
+	if (CurrentOffset.IsZero())
+	{
+		InitialOffset =	FVector(0.f,55.f,65.f);
+		CurrentOffset =	FVector(0.f,55.f,65.f);
+	}
 }
 
 FVector UPUBGSpringArmComponent::GetCurrentOffset() const
@@ -34,9 +38,8 @@ void UPUBGSpringArmComponent::AddOffset(const FVector& OffsetDelta)
 #pragma region TimelineComponent
 void UPUBGSpringArmComponent::TimelineAddOffset(FVector& OffsetDelta, float Duration)
 {
-	CurrentOffset = SocketOffset;
 	TargettingOffset = InitialOffset + OffsetDelta;
-
+	//UE_LOG(LogTemp, Warning, TEXT("TargettingOffset:%s"), *TargettingOffset.ToString());
 	// 타임라인에 사용할 곡선 생성
 	FloatCurve = NewObject<UCurveFloat>(this, UCurveFloat::StaticClass());              
 	FloatCurve->FloatCurve.AddKey(0.0f, 0.0f);  // 시작 점 (Alpha = 0)
@@ -54,15 +57,34 @@ void UPUBGSpringArmComponent::TimelineAddOffset(FVector& OffsetDelta, float Dura
 		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedCallback);
 
 		// 타임라인 시작
-		TimelineComponent->Play();
+		if (!WantReversePlaying)
+		{
+			TimelineComponent->Play();
+			
+		}
+		else
+		{
+			TimelineComponent->Reverse();
+			UE_LOG(LogTemp, Warning, TEXT("1PLAYREVERSE"))
+			
+		}
+		
 	}
 }
 
+
 void UPUBGSpringArmComponent::OnTimelineUpdate(float Alpha)//타임라인중 계속 실행되어야 할 함수
 {
-	FVector NewOffset = FMath::Lerp(CurrentOffset, TargettingOffset, Alpha);
-	//SetRelativeLocation(NewOffset);
-	SocketOffset = NewOffset;
+	
+
+		FVector NewOffset = FMath::Lerp(CurrentOffset, TargettingOffset, Alpha);
+		//UE_LOG(LogTemp, Warning, TEXT("CurrentOffset:%s"), *CurrentOffset.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("TargettingOffset:%s"), *TargettingOffset.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("NewOffset:%s"), *NewOffset.ToString());
+		//SetRelativeLocation(NewOffset);
+		SocketOffset = NewOffset;
+
+		
 	
 	//DistanceMoved = FVector::Dist(InitialOffset, NewOffset);
 	
@@ -70,12 +92,10 @@ void UPUBGSpringArmComponent::OnTimelineUpdate(float Alpha)//타임라인중 계
 
 void UPUBGSpringArmComponent::OnTimelineFinished() // 타임라인 완료 후 호출되는 함수
 {
-	// if (FVector::Dist(CurrentOffset, TargetOffset) > 0.1f)
-	// {
-	// 	// 원래 위치로 돌아가는 타임라인 시작
-	// 	FVector BackToOriginalOffset = InitialOffset; // 원래 위치
-	// 	TimelineAddOffset(BackToOriginalOffset, 0.2f); // 0.5초 안에 부드럽게 돌아오도록 설정
-	// }
+	
 }
+
+
+
 #pragma endregion
 
