@@ -10,7 +10,7 @@
 
 class UNearComponent;
 class AItemBase;
-class USpringArmComponent;
+class UPUBGSpringArmComponent;
 class UCameraComponent;
 
 class UDataAsset_InputConfig;
@@ -34,6 +34,12 @@ enum class EPlayerMeshType : uint8
 	Body UMETA(DisplayName = "Body"),
 	Face UMETA(DisplayName = "Face"),
 	Hair UMETA(DisplayName = "Hair"),
+};
+UENUM()
+enum class PlayerCameraMode : uint8
+{
+	FPPCamera UMETA(DisplayName = "TPP"),
+	TPPCamera UMETA(DisplayName = "FPP")
 };
 /**
  * 
@@ -72,18 +78,15 @@ public:
 private:
 #pragma region Components
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
+	UPUBGSpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* FirstPersonCamera;
 #pragma endregion
-	FTimerHandle CollisionTimerHandle;
-
-	//0 ~ 1초동안 시가값으로 아래 변수 처리
-	//90 ~ 30
-	//-89 ~ -35
-	float TimerTime;
-	
+public:
+	FORCEINLINE UCameraComponent* GetFollowCamera() {return FollowCamera;}
+	FORCEINLINE UCameraComponent* GetFirstPersonCamera(){return FirstPersonCamera;}
 #pragma region Inputs
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "CharacterData", meta = (AllowPrivateAccess = "true"))
@@ -132,9 +135,7 @@ public:
 	FVector2D MoveForwardVecter;
 
 	// Getter
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
+	FORCEINLINE class UPUBGSpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	// 이준수
@@ -185,17 +186,19 @@ public:
 	void ProneToStandCameraMovement();
 	
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
-	void LeftLeanCameraTimerSet();
-	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
 	void LeftLeanCameraMovement();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
-	void DefaultCameraTimerSet();
+	void LeftDefaultCameraMovement();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
-	void DefaultCameraMovement();
-	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
-	void RightLeanCameraTimerSet();
+	void RightDefaultCameraMovement();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
 	void RightLeanCameraMovement();
+
+private:
+	PlayerCameraMode CameraMode;
+public:
+	FORCEINLINE PlayerCameraMode GetCameraMode() const { return CameraMode; }
+	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) {CameraMode = NewCameraMode;}
 };
 
 

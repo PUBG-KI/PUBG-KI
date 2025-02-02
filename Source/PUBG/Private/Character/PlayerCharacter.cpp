@@ -13,6 +13,7 @@
 // 카메라
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Component/PUBGSpringArmComponent.h"
 
 // 애니메이션
 #include "AnimInstance/PlayerAnimInstance.h"
@@ -41,6 +42,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -51,14 +53,19 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<UPUBGSpringArmComponent>(TEXT("CameraBoom"));
+	
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.0f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
 	CameraBoom->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->SetupAttachment(CameraBoom, UPUBGSpringArmComponent::SocketName);
+	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	FirstPersonCamera->SetupAttachment(GetMesh(),TEXT("camera_fppSocket"));
+	FirstPersonCamera->Deactivate();
+	CameraMode = PlayerCameraMode::FPPCamera;
 	//FollowCamera->bUsePawnControlRotation = false;
 
 	// 메쉬 부착
@@ -128,112 +135,6 @@ void APlayerCharacter::NetMulticast_SetAnimLayer_Implementation(TSubclassOf<UPla
 {
 	GetMesh()->LinkAnimClassLayers(PlayerAnimInstance);
 }
-
-// void APlayerCharacter::UpdateProneCollsionSizeAndCharacterZpos()
-// {
-// 	if (TimerTime >= 1)
-// 	{
-// 		TimerTime = 0;
-//
-// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-// 		bAnimationIsPlaying = false;
-//
-// 		return;
-// 	}
-//
-// 	TimerTime += 0.01f;
-//
-// 	//TODO:: Calc Zpos And CollsionSize
-// 	if (bIsProne)
-// 	{
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 			FMath::FInterpTo(StandCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
-// 		GetMesh()->SetRelativeLocation(
-// 			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
-// 	}
-// 	else if (!bIsProne)
-// 	{
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 			FMath::FInterpTo(ProneCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
-// 		GetMesh()->SetRelativeLocation(
-// 			FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
-// 	}
-// }
-//
-// void APlayerCharacter::UpdateCrouchCollsionSizeAndCharacterZpos()
-// {
-// 	if (TimerTime >= 1)
-// 	{
-// 		TimerTime = 0;
-//
-// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-// 		bAnimationIsPlaying = false;
-//
-// 		return;
-// 	}
-//
-// 	TimerTime += 0.05f;
-//
-// 	//TODO:: Calc Zpos And CollsionSize
-// 	if (bIsCrouch)
-// 	{
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 			FMath::FInterpTo(StandCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
-// 		GetMesh()->SetRelativeLocation(FVector(
-// 			0, 0, FMath::FInterpTo(MeshRelativeLocationStandZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
-// 	}
-// 	else if (!bIsCrouch)
-// 	{
-// 		GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 			FMath::FInterpTo(CrouchCapsuleHalfHeight, StandCapsuleHalfHeight, TimerTime, 1.0f));
-// 		GetMesh()->SetRelativeLocation(FVector(
-// 			0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationStandZ, TimerTime, 1.0f)));
-// 	}
-// }
-//
-// void APlayerCharacter::UpdateProneToCrouchCollsionSizeAndCharacterZpos()
-// {
-// 	if (TimerTime >= 1)
-// 	{
-// 		TimerTime = 0;
-// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-// 		bAnimationIsPlaying = false;
-//
-//
-// 		return;
-// 	}
-//
-// 	TimerTime += 0.05f;
-//
-// 	//TODO:: Calc Zpos And CollsionSize
-//
-// 	GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 		FMath::FInterpTo(ProneCapsuleHalfHeight, CrouchCapsuleHalfHeight, TimerTime, 1.0f));
-// 	GetMesh()->SetRelativeLocation(
-// 		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationProneZ, MeshRelativeLocationCrouchZ, TimerTime, 1.0f)));
-// }
-//
-// void APlayerCharacter::UpdateCrouchToProneCollsionSizeAndCharacterZpos()
-// {
-// 	if (TimerTime >= 1)
-// 	{
-// 		TimerTime = 0;
-//
-// 		GetWorld()->GetTimerManager().ClearTimer(CollisionTimerHandle);
-//
-// 		bAnimationIsPlaying = false;
-// 		return;
-// 	}
-//
-// 	TimerTime += 0.05f;
-//
-// 	//TODO:: Calc Zpos And CollsionSize
-//
-// 	GetCapsuleComponent()->SetCapsuleHalfHeight(
-// 		FMath::FInterpTo(CrouchCapsuleHalfHeight, ProneCapsuleHalfHeight, TimerTime, 1.0f));
-// 	GetMesh()->SetRelativeLocation(
-// 		FVector(0, 0, FMath::FInterpTo(MeshRelativeLocationCrouchZ, MeshRelativeLocationProneZ, TimerTime, 1.0f)));
-// }
 
 void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -362,18 +263,6 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	}
 	else
 	{
-		// if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_LeftLeaning))
-		// {
-		// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
-		// 	
-		// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_LeftLeaning);
-		// }
-		// else if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_RightLeaning))
-		// {
-		// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
-		// 	
-		// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_RightLeaning);
-		// }
 		Jump();
 	}
 }
@@ -422,18 +311,7 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 	{
 		UnCrouch();
 	}
-	// if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_LeftLeaning))
-	// {
-	// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
-	// 		
-	// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_LeftLeaning);
-	// }
-	// else if (UBaseFunctionLibrary::NativeActorHasTag(this, BaseGameplayTag::InputTag_RightLeaning))
-	// {
-	// 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent());
-	// 		
-	// 	AbilitySystemComponent->OnAbilityInputReleased(BaseGameplayTag::InputTag_RightLeaning);
-	// }
+
 	MovementComponent->StartProne();
 }
 
@@ -563,67 +441,38 @@ void APlayerCharacter::ProneToStandCameraMovement()
 	}
 }
 
-void APlayerCharacter::LeftLeanCameraTimerSet()
-{
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	
-		GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
-											   &APlayerCharacter::LeftLeanCameraMovement,
-											   GetWorld()->GetDeltaSeconds(), true);
-}
+
 
 void APlayerCharacter::LeftLeanCameraMovement()
 {
-	FVector LeftLeanOffset = FVector(0.f, 15.f, 65.f); // Stand 상태에서의 카메라 위치
-	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, LeftLeanOffset, GetWorld()->GetDeltaSeconds(),
-	                                            10.f);
+	FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
+	float Duration = 0.2f;
+	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 
-	if (CameraBoom->SocketOffset.Equals(LeftLeanOffset, 0.1f))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
-	}
 }
 
-void APlayerCharacter::DefaultCameraTimerSet()
+void APlayerCharacter::LeftDefaultCameraMovement()
 {
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	//float OppositeDistance = CameraBoom->GetDistanceMoved();
+	FVector OffsetDelta = FVector(0.f, 0.f, 0.f);
+	float Duration = 0.2f;
+	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
+}
+
+void APlayerCharacter::RightDefaultCameraMovement()
+{
+	//float OppositeDistance = CameraBoom->GetDistanceMoved();
+	FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
+	float Duration = 0.2f;
+	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 	
-	GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
-										   &APlayerCharacter::DefaultCameraMovement,
-										   GetWorld()->GetDeltaSeconds(), true);
-}
-
-void APlayerCharacter::DefaultCameraMovement()
-{
-	FVector StandardOffset = FVector(0.f, 55.f, 65.f); // Stand 상태에서의 카메라 위치
-	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandardOffset, GetWorld()->GetDeltaSeconds(),
-												10.f);
-
-	if (CameraBoom->SocketOffset.Equals(StandardOffset, 0.1f))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
-	}
-}
-
-void APlayerCharacter::RightLeanCameraTimerSet()
-{
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	
-	GetWorld()->GetTimerManager().SetTimer(CameraMoveTimerHandle, this,
-										   &APlayerCharacter::RightLeanCameraMovement,
-										   GetWorld()->GetDeltaSeconds(), true);
 }
 
 void APlayerCharacter::RightLeanCameraMovement()
 {
-	FVector StandardOffset = FVector(0.f, 95.f, 65.f); // Stand 상태에서의 카메라 위치
-	CameraBoom->SocketOffset = FMath::VInterpTo(CameraBoom->SocketOffset, StandardOffset, GetWorld()->GetDeltaSeconds(),
-												10.f);
-
-	if (CameraBoom->SocketOffset.Equals(StandardOffset, 0.1f))
-	{
-		GetWorld()->GetTimerManager().ClearTimer(CameraMoveTimerHandle);
-	}
+	FVector OffsetDelta = FVector(0.f, 40.f, 0.f);
+	float Duration = 0.2f;
+	CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 }
 
 
