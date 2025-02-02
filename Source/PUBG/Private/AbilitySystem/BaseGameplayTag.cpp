@@ -18,6 +18,8 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Interaction, "InputTag.Interaction");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_LeftLeaning, "InputTag.LeftLeaning");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_RightLeaning, "InputTag.RightLeaning");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_CameraTransition, "InputTag.CameraTransition");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_RightShouldering, "InputTag.RightShouldering");
 
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
