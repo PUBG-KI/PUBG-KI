@@ -55,7 +55,7 @@ void UPUBGSpringArmComponent::TimelineAddOffset(FVector& OffsetDelta, float Dura
 		FOnTimelineEvent TimelineFinishedCallback;
 		TimelineFinishedCallback.BindDynamic(this, &UPUBGSpringArmComponent::OnTimelineFinished);
 		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedCallback);
-
+		
 		// 타임라인 시작
 		if (!WantReversePlaying)
 		{
