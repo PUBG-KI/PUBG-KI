@@ -22,6 +22,10 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetMaxHealthAttribute()) // GetMaxHealthAttribute는 헤더 상단에 정의된 매크로에서 나옵니다.
 	{
 		AdjustAttributeForMaxChange(Health, MaxHealth, NewValue, GetHealthAttribute());
+	}
+	else if (Attribute == GetMaxMagazineAttribute()) // GetMaxMagazineAttribute는 헤더 상단에 정의된 매크로에서 나옵니다.
+	{
+		//AdjustAttributeForMaxChange(Magazine, MaxMagazine, NewValue, GetMagazineAttribute());
 	}	
 	else if (Attribute == GetMoveSpeedAttribute())
 	{
@@ -148,6 +152,11 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		// 체력 변화를 처리합니다.
 		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
 	}
+	else if (Data.EvaluatedData.Attribute == GetMagazineAttribute())
+	{
+		// 장전된 총알 수 변경
+		SetMagazine(FMath::Clamp(GetMagazine(), 0.0f, GetMaxMagazine()));
+	}
 }
 
 void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -162,6 +171,8 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, StaminaRegenRate, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Armor, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MoveSpeed, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Magazine, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMagazine, COND_None, REPNOTIFY_Always);
 }
 
 void UBaseAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute,
@@ -217,4 +228,14 @@ void UBaseAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor)
 void UBaseAttributeSet::OnRep_MoveSpeed(const FGameplayAttributeData& OldMoveSpeed)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MoveSpeed, OldMoveSpeed);
+}
+
+void UBaseAttributeSet::OnRep_Magazine(const FGameplayAttributeData& OldMagazine)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Magazine, OldMagazine);
+}
+
+void UBaseAttributeSet::OnRep_MaxMagazine(const FGameplayAttributeData& OldMaxMagazine)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMagazine, OldMaxMagazine);
 }

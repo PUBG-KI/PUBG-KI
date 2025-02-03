@@ -41,6 +41,12 @@ public:
 	// Gets the Current value of MoveSpeed
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMoveSpeed() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMagazine() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetMaxMagazine() const;
 
 protected:
 	// TWeakObjectPtrs 대신 UPROPERTY() 하드 참조를 갖거나 참조가 전혀 없고 호출만 할 수도 있습니다.
@@ -90,4 +96,6 @@ protected:
 	virtual void SetHealth(float Health);
 	virtual void SetStamina(float Stamina);
 	virtual void SetMoveSpeed(float MoveSpeed);
+	virtual void SetMagazine(float Magazine);
+	virtual void SetMaxMagazine(float MaxMagazine);
 };

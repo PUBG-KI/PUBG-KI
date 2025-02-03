@@ -89,6 +89,16 @@ float ABasePlayerState::GetMoveSpeed() const
 	return AttributeSetBase->GetMoveSpeed();
 }
 
+float ABasePlayerState::GetMagazine() const
+{
+	return AttributeSetBase->GetMagazine();
+}
+
+float ABasePlayerState::GetMaxMagazine() const
+{
+	return AttributeSetBase->GetMaxMagazine();
+}
+
 void ABasePlayerState::BeginPlay()
 {
 	Super::BeginPlay();

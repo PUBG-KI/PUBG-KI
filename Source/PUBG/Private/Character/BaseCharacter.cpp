@@ -75,6 +75,26 @@ float ABaseCharacter::GetMoveSpeed() const
 	return 0.0f;
 }
 
+float ABaseCharacter::GetMagazine() const
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetMagazine();
+	}
+
+	return 0.0f;
+}
+
+float ABaseCharacter::GetMaxMagazine() const
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetMaxMagazine();
+	}
+
+	return 0.0f;
+}
+
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
 	return BaseAbilitySystemComponent.Get();
@@ -153,6 +173,22 @@ void ABaseCharacter::SetMoveSpeed(float MoveSpeed)
 	if (BaseAttributeSet.IsValid())
 	{
 		BaseAttributeSet->SetMoveSpeed(MoveSpeed);
+	}
+}
+
+void ABaseCharacter::SetMagazine(float Magazine)
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		BaseAttributeSet->SetMagazine(Magazine);
+	}
+}
+
+void ABaseCharacter::SetMaxMagazine(float MaxMagazine)
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		BaseAttributeSet->SetMaxMagazine(MaxMagazine);
 	}
 }
 
