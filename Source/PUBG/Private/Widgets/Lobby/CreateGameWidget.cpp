@@ -11,6 +11,11 @@
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "Kismet/GameplayStatics.h"
+
+UCreateGameWidget::UCreateGameWidget(const FObjectInitializer& ObjectInitializer)
+{
+}
 
 void UCreateGameWidget::NativeConstruct()
 {
@@ -19,6 +24,8 @@ void UCreateGameWidget::NativeConstruct()
 	Button_Create->OnButtonClicked.AddDynamic(this, &UCreateGameWidget::OnCreateButton_Clicked);
 	Text_MaxPlayer->OnTextChanged.AddDynamic(this, &UCreateGameWidget::OnText_Changed);
 	CheckBox_EnableLan->OnCheckStateChanged.AddDynamic(this, &UCreateGameWidget::OnCheckState_Changed);
+		
+	Button_Create->SetText(TEXT("Create"));	
 }
 
 void UCreateGameWidget::OnCreateButton_Clicked()
@@ -36,7 +43,12 @@ void UCreateGameWidget::OnCreateButton_Clicked()
 			SessionSettings.NumPublicConnections = MaxPlayer;
 			SessionSettings.bAllowJoinInProgress = true;
 
-			SessionInterface->CreateSession(0, FName("MyGameSession"), SessionSettings);
+			bool IsCreate = SessionInterface->CreateSession(0, FName("MyGameSession"), SessionSettings);
+
+			if (IsCreate)
+			{
+				UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName, true, FString("listen"));
+			}
 		}
 	}
 }
