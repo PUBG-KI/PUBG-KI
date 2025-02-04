@@ -17,18 +17,20 @@ class PUBG_API UPUBGSpringArmComponent : public USpringArmComponent
 public:
 	UPUBGSpringArmComponent();
 	FVector GetCurrentOffset() const;
+	FVector SetCurrentOffset(FVector NewVector);
 	void AddOffset(const FVector& OffsetDelta);
 	void TimelineAddOffset(FVector& OffsetDelta, float Duration);
 	UFUNCTION()
 	void OnTimelineUpdate(float Alpha);
 	UFUNCTION()
 	void OnTimelineFinished();
-	FORCEINLINE void SetWanstReversePlaying(bool NewWantReversePlaying){WantReversePlaying = NewWantReversePlaying;}
+
 
 protected:
 	// 카메라 오프셋을 저장하는 변수
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	FVector CurrentOffset;
+	
 	UPROPERTY()
 	UCurveFloat* FloatCurve;
 	
@@ -39,9 +41,6 @@ protected:
 	FVector TargettingOffset;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	FVector InitialOffset;
-
-	UPROPERTY()
-	bool WantReversePlaying = false;
 	
 };
 

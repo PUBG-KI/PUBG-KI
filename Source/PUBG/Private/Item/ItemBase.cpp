@@ -140,7 +140,8 @@ FText AItemBase::LookAt()
 	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, Message.ToString());
 	
 	//UK2Node_GetDataTableRow()
-
+	ItemOfZ = this->GetActorLocation().Z;
+	UE_LOG(LogTemp, Warning, TEXT("ItemofZ : %f"), ItemOfZ);
 	
 	return Message;
 }
@@ -154,6 +155,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 
 	UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
 	InventoryComponent->SetItem(this);
+	// ItemOfZ = this->GetActorLocation().Z;
 	
 	if (InventoryComponent->GetItem() != nullptr)
 	{

@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
 #include "Net/UnrealNetwork.h"
-
+#include "BaseLibrary/BaseFunctionLibrary.h"
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
 	SetIsReplicatedByDefault(true); 
@@ -245,11 +245,13 @@ void UPlayerMovementComponent::StopWalking()
 void UPlayerMovementComponent::StartProne()
 {
 	RequestToStartProne = true;
+	
 }
 
 void UPlayerMovementComponent::StopProne()
 {
 	RequestToStartProne = false;
+	
 }
 
 void UPlayerMovementComponent::StartLeaning(float Value)

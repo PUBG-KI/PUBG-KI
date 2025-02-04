@@ -42,6 +42,7 @@ enum class PlayerCameraMode : uint8
 	FPPCamera UMETA(DisplayName = "TPP"),
 	TPPCamera UMETA(DisplayName = "FPP")
 };
+
 /**
  * 
  */
@@ -86,8 +87,7 @@ private:
 	UCameraComponent* FirstPersonCamera;
 #pragma endregion
 public:
-	FORCEINLINE UCameraComponent* GetFollowCamera() {return FollowCamera;}
-	FORCEINLINE UCameraComponent* GetFirstPersonCamera(){return FirstPersonCamera;}
+	
 #pragma region Inputs
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "CharacterData", meta = (AllowPrivateAccess = "true"))
@@ -102,6 +102,8 @@ protected:
 	void Input_Jump(const FInputActionValue& InputActionValue);	
 	void Input_Crouch(const FInputActionValue& InputActionValue);
 	void Input_Prone(const FInputActionValue& InputActionValue);
+	void OnQkey();
+	void OnRightClick();
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
 
@@ -118,13 +120,6 @@ protected:
 public:
 	virtual void PossessedBy(AController* NewController) override;
 
-public:
-	// float StandCapsuleHalfHeight;
-	// float CrouchCapsuleHalfHeight;
-	// float ProneCapsuleHalfHeight;
-	// float MeshRelativeLocationStandZ;
-	// float MeshRelativeLocationCrouchZ;
-	// float MeshRelativeLocationProneZ;
 
 	bool bIsProne;
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
@@ -136,8 +131,10 @@ public:
 	FVector2D MoveForwardVecter;
 
 	// Getter
+	
 	FORCEINLINE class UPUBGSpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UCameraComponent* GetFirstPersonCamera(){return FirstPersonCamera;}
 
 	// 이준수
 public:
@@ -187,17 +184,6 @@ public:
 	void OnMouseMoved(FVector2D MouseMovement);
 	void CheckRotationForTurn();
 	
-//Prone시 카메라 조정
-	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
-	void StandToProneCameraTimerSet();
-	FTimerHandle CameraMoveTimerHandle;
-	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
-	void StandToProneCameraMovement();
-	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
-	void ProneToStandCameraTimerSet();
-	UFUNCTION(BlueprintCallable, Category = "CharacterProne")
-	void ProneToStandCameraMovement();
-	
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
 	void LeftLeanCameraMovement();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
@@ -209,10 +195,11 @@ public:
 
 private:
 	PlayerCameraMode CameraMode;
+	
 public:
 	FORCEINLINE PlayerCameraMode GetCameraMode() const { return CameraMode; }
 	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) {CameraMode = NewCameraMode;}
+	
 };
-
 
 
