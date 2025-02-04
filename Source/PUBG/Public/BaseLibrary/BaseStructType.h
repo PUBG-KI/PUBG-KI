@@ -33,6 +33,9 @@ struct FPlayerWeaponData
 	UAnimMontage* EquipAnimMontage = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag WeaponTag;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputMappingContext* WeaponInputMappingContext = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))

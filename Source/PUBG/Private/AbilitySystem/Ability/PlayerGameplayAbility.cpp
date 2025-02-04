@@ -24,3 +24,11 @@ ABasePlayerController* UPlayerGameplayAbility::GetPlayerControllerFromActorInfo(
 	}
 	return CachedPlayerController.IsValid() ? CachedPlayerController.Get() : nullptr;
 }
+
+void UPlayerGameplayAbility::OnAbilityStarted_Implementation()
+{
+}
+
+
+
+

@@ -4,7 +4,10 @@
 
 
 namespace BaseGameplayTag
-{	
+{
+
+
+	
 	//Input Tags
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Move, "InputTag.Move");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Look, "InputTag.Look");
@@ -20,6 +23,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_RightLeaning, "InputTag.RightLeaning");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_CameraTransition, "InputTag.CameraTransition");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_RightShouldering, "InputTag.RightShouldering");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_LeftShouldering, "InputTag.LeftShouldering");
 
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
@@ -54,7 +58,10 @@ namespace BaseGameplayTag
 	
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Hit, "Player.Event.Action.Hit");
 
-
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle, "Weapon.Rifle");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Melee, "Weapon.Melee");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Grenade,"Weapon.Grenade");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Unarmed,"Weapon.Unarmed");
 
 	
 	// Data Tag

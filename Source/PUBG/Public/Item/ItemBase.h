@@ -65,5 +65,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
+
+private:
+	UPROPERTY()
+	float ItemOfZ;
+public:
+	
+	FORCEINLINE void SetItemOfZ(float InItemOfZ) { ItemOfZ = InItemOfZ; }
+	FORCEINLINE float GetItemOfZ() const { return ItemOfZ; }
 	
 };

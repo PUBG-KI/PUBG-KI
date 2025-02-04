@@ -3,7 +3,8 @@
 #include "NativeGameplayTags.h"
 
 namespace BaseGameplayTag
-{	//Input Tag
+{
+	//Input Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
@@ -18,9 +19,7 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RightLeaning);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_CameraTransition);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RightShouldering);
-	
-	
-	
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_LeftShouldering);
 	
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle_Inventory);
@@ -49,6 +48,12 @@ namespace BaseGameplayTag
 
 	// Hit Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Hit);
+	
+	//Weapon Type Tag
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Rifle);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Melee);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Grenade);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Weapon_Unarmed);
 	
 	
 	

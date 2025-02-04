@@ -58,7 +58,6 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	float Yaw;
-	
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	float Pitch;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly ,Category = "AimOffset")

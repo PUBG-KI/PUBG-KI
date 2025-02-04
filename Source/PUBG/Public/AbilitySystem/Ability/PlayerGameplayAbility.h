@@ -22,7 +22,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	ABasePlayerController* GetPlayerControllerFromActorInfo();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Ability")
+	void OnAbilityStarted();
 
+	
 private:
 	TWeakObjectPtr<APlayerCharacter> CachedPlayerCharacter;
 	TWeakObjectPtr<ABasePlayerController> CachedPlayerController;
