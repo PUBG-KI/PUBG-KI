@@ -17,15 +17,19 @@ UCreateGameWidget::UCreateGameWidget(const FObjectInitializer& ObjectInitializer
 {
 }
 
+void UCreateGameWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+	Button_Create->SetText(TEXT("Create"));	
+}
+
 void UCreateGameWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	Button_Create->OnButtonClicked.AddDynamic(this, &UCreateGameWidget::OnCreateButton_Clicked);
 	Text_MaxPlayer->OnTextChanged.AddDynamic(this, &UCreateGameWidget::OnText_Changed);
-	CheckBox_EnableLan->OnCheckStateChanged.AddDynamic(this, &UCreateGameWidget::OnCheckState_Changed);
-		
-	Button_Create->SetText(TEXT("Create"));	
+	CheckBox_EnableLan->OnCheckStateChanged.AddDynamic(this, &UCreateGameWidget::OnCheckState_Changed);		
 }
 
 void UCreateGameWidget::OnCreateButton_Clicked()
@@ -42,6 +46,11 @@ void UCreateGameWidget::OnCreateButton_Clicked()
 			SessionSettings.bUsesPresence = true;
 			SessionSettings.NumPublicConnections = MaxPlayer;
 			SessionSettings.bAllowJoinInProgress = true;
+			FString ServerName = TEXT("BattleGround");
+			SessionSettings.Set(FName("SESSION_NAME"), ServerName, EOnlineDataAdvertisementType::ViaOnlineService);		
+			FString MapName = OpenLevelName.ToString();	
+			SessionSettings.Set(FName("MAP_NAME"), MapName, EOnlineDataAdvertisementType::ViaOnlineService);
+			
 
 			bool IsCreate = SessionInterface->CreateSession(0, FName("MyGameSession"), SessionSettings);
 

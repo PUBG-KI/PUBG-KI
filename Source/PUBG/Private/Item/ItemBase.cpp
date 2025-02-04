@@ -160,8 +160,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 		InventoryComponent->Server_Interact();
 		
 		 if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-		 {
-		 	
+		 {		 	
 		 	ItemDataComponent->InteractWith(Character);
 		 }
 	}

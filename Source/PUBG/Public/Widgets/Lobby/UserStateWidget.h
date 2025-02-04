@@ -3,43 +3,34 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OnlineSessionSettings.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "Widgets/WidgetBase.h"
-#include "ServerBrowserItemWidget.generated.h"
+#include "UserStateWidget.generated.h"
 
-class UBaseButtonWidget;
-class UTextBlock;
+class UGridPanel;
+class UWidgetSwitcher;
 
 /**
  * 
  */
 UCLASS()
-class PUBG_API UServerBrowserItemWidget : public UWidgetBase
+class PUBG_API UUserStateWidget : public UWidgetBase
 {
 	GENERATED_BODY()
 	
-public:	
+public:		
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable)
-	void OnJoinButton_Clicked();
-	
-	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	
-	void SetSession(const FOnlineSessionSearchResult& _SearchResult);	
+	void SetReadyState(bool IsReady);	
 	
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UBaseButtonWidget* Button_Join;
-	
+	UGridPanel* Panel_Host;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_SessionName;
+	UGridPanel* Panel_Player;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_Players;
+	UGridPanel* Panel_ReadyState;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_Ping;
-		
-	FOnlineSessionSearchResult SearchResult;
+	UWidgetSwitcher* WidgetSwitcher_State;		
 };

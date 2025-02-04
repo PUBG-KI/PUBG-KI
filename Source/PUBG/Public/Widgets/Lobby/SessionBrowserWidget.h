@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/WidgetBase.h"
-#include "BaseSessionWidget.generated.h"
+#include "SessionBrowserWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBackButton_Clicked);
 
@@ -13,20 +13,21 @@ class UBaseButtonWidget;
  * 
  */
 UCLASS()
-class PUBG_API UBaseSessionWidget : public UWidgetBase
+class PUBG_API USessionBrowserWidget : public UWidgetBase
 {
 	GENERATED_BODY()
 
 public:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 	
 	UFUNCTION(BlueprintCallable)
 	void OnBackButton_Clicked();
 	
-private:	
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UBaseButtonWidget* Button_Back;
-	
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnBackButton_Clicked OnBackButtonClicked;
+	
+private:	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UBaseButtonWidget* Button_Back;	
 };

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Widgets/Lobby/BaseSessionWidget.h"
+#include "Widgets/Lobby/SessionBrowserWidget.h"
 #include "CreateGameWidget.generated.h"
 
 class UCheckBox;
@@ -14,13 +14,14 @@ class UBaseButtonWidget;
  * 
  */
 UCLASS()
-class PUBG_API UCreateGameWidget : public UBaseSessionWidget
+class PUBG_API UCreateGameWidget : public USessionBrowserWidget
 {
 	GENERATED_BODY()
 	
 public:	
 	UCreateGameWidget(const FObjectInitializer& ObjectInitializer);
 	
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 
 	

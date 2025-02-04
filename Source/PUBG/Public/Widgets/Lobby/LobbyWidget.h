@@ -3,43 +3,41 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "OnlineSessionSettings.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "Widgets/WidgetBase.h"
-#include "ServerBrowserItemWidget.generated.h"
+#include "LobbyWidget.generated.h"
 
 class UBaseButtonWidget;
-class UTextBlock;
-
+class UWidgetSwitcher;
+class UCreateGameWidget;
+class UFindGameWidget;
 /**
  * 
  */
 UCLASS()
-class PUBG_API UServerBrowserItemWidget : public UWidgetBase
+class PUBG_API ULobbyWidget : public UWidgetBase
 {
 	GENERATED_BODY()
 	
-public:	
+public:		
 	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
-	
+
 	UFUNCTION(BlueprintCallable)
-	void OnJoinButton_Clicked();
-	
-	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
-	
-	void SetSession(const FOnlineSessionSearchResult& _SearchResult);	
-	
+	void OnCreateGameButton_Clicked();	
+	UFUNCTION(BlueprintCallable)
+	void OnFindGameButton_Clicked();	
+	UFUNCTION(BlueprintCallable)
+	void OnBackButton_Clicked();	
+
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UBaseButtonWidget* Button_Join;
-	
+	UBaseButtonWidget* Button_CreateGame;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_SessionName;
+	UBaseButtonWidget* Button_FindGame;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_Players;
+	UWidgetSwitcher* WidgetSwitcher_Session;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_Ping;
-		
-	FOnlineSessionSearchResult SearchResult;
+	UCreateGameWidget* CreateGameWidget;	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UFindGameWidget* FindGameWidget;	
 };
