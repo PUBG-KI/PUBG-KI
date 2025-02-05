@@ -34,23 +34,42 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
 	float CurrentInventoryWeight;
 	
-	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
+	UPROPERTY(ReplicatedUsing = OnRep_Content, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	TArray<FItemSlotStruct> Content;
+
 	
 	UPROPERTY(BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* Item;
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
+	AItemBase* NearItem;
 
 // 함수 영역
 public:
-	// Setter, Getter
+	// OnRep
+	UFUNCTION()
+	void OnRep_Content();
 	
+	// Setter
 	void SetItem(AItemBase* OutItem) { Item = OutItem; }
-	AItemBase* GetItem() const { return Item; }
+	void SetNearItem(AItemBase* OutNearItem) { NearItem = OutNearItem; }
+	UFUNCTION(BlueprintCallable)
+	void SetContent(TArray<FItemSlotStruct> OutContent) { Content = OutContent; }
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetNearItem(AItemBase* OutNearItem);
+	UFUNCTION(Server, Reliable)
+	void ServerSetContents(const TArray<FItemSlotStruct>& OutContnets);
 	
+	// Getter
+	AItemBase* GetItem() const { return Item; }
+	AItemBase* GetNearItem() const { return NearItem; }
 	TArray<FItemSlotStruct> GetContent() { return Content; }
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();
+	
+	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
+	void Server_InteractItem(AItemBase* OutItemBase);
 
 	UFUNCTION(BlueprintCallable)
 	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight);
@@ -66,26 +85,23 @@ public:
 	int32 GetMaxStackSize(FName ItemID);
 
 	// 아이템 먹었을 때 정렬되는 거 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable) 
 	void UpdateInventory();
-	
-	// =============================================
-	UFUNCTION(BlueprintCallable)
-	int32 AddToInventory1(FName ItemID, int32 Quantity);
-	UFUNCTION(BlueprintCallable)
-	int32 FindSlot(FName ItemID);
-	//UFUNCTION()
-	void AddToStack(int32 index, int32 Quantity);
-	UFUNCTION(BlueprintCallable)
-	int32 AnyEmptySlotsAvailable();
-	//UFUNCTION(BlueprintCallable)
-	bool CreateNewStack(FName ItemID, int32 Quantity);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerUpdateInventory();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ReplicateContent(const TArray<FItemSlotStruct>& OutContent);
 
+	
 	UFUNCTION(BlueprintCallable)
 	void PrintContents();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerPrintContents();
 
-
-	// 디버그용 CurrentWeapon변수
+	UFUNCTION(BlueprintCallable)
+	void TransferSlots();
+	
+	// 재윤, 디버그용 CurrentWeapon변수
 	UPROPERTY(visibleAnywhere, Replicated, BlueprintReadWrite, Category="Inventory")
 	AWeapon_Base* CurrentWeapon;
 

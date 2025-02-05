@@ -7,6 +7,9 @@
 #include "Component/NearArea/NearComponent.h"
 #include "ItemSlotWidget.generated.h"
 
+enum class EItemZoneType : uint8;
+class UVerticalBox;
+class UInventoryWidget;
 class UInventoryComponent;
 class UButton;
 class UImage;
@@ -17,6 +20,8 @@ class UDragItemWidget;
 /**
  * 
  */
+
+
 UCLASS()
 class PUBG_API UItemSlotWidget : public UWidgetBase
 {
@@ -46,8 +51,21 @@ class PUBG_API UItemSlotWidget : public UWidgetBase
 	UPROPERTY()
 	int32 Index;
 
+	// 드래그할 때 필요한 위젯들 
 	UPROPERTY()
 	UDragItemWidget* DragItemWidget;
+	UPROPERTY()
+	UInventoryWidget* InventoryWidget;
+
+	// 드래그 시작 영역 
+	UPROPERTY()
+	UVerticalBox* VerticalBox_Near;
+	UPROPERTY()
+	UVerticalBox* VerticalBox_Inventory;
+	UPROPERTY()
+	FPointerEvent StartMousePoint; // 드래그 시작 지점, 비어있는지 확인해야 함 (어떻게?)
+	// UPROPERTY()
+	// EItemZoneType ItemZoneType;
 	
 	// UPROPERTY()
 	// UDataTable* DataTable;
@@ -63,6 +81,7 @@ public:
 	void SetInventoryComponent(UInventoryComponent* OutInventoryComponent) { InventoryComponent = OutInventoryComponent; }
 	void SetNearComponent(UNearComponent* OutNearComponent) { NearComponent = OutNearComponent; }
 	void SetIndex(int32 OutIndex) { Index = OutIndex; }
+	void SetInventoryWidget(UInventoryWidget* OutInventoryWidget) { InventoryWidget = OutInventoryWidget; }
 
 	// Getter
 	UTextBlock* GetTextBlock_Use() const { return TextBlock_Use; }
@@ -73,9 +92,16 @@ public:
 	void OnButton_ItemSlotHovered();
 	UFUNCTION(BlueprintCallable)
 	void OnButton_ItemSlotUnHovered();
-
-	
 	
 	virtual FReply NativeOnPreviewMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent ) override;
 	virtual void NativeOnDragDetected( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation ) override;
+	
+	// virtual bool NativeOnDragOver( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
+	// virtual bool NativeOnDrop( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
+	//
+	// // 드래그 시 영역 확인
+	// EItemZoneType CheckItemZoneType(FPointerEvent InMousePoint);
+	// EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
 };
+
+

@@ -18,7 +18,7 @@
 UGA_ToggleInventory::UGA_ToggleInventory()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	//NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::	
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalOnly;
 }
 
 void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -27,16 +27,39 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
                                           const FGameplayEventData* TriggerEventData)
 {	
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	
+	// if (!GetPlayerControllerFromActorInfo()->IsLocalPlayerController())
+	// {
+	// 	return;
+	// }
+	
 	// 1. 인벤토리 위젯 생성
 	if (GetPlayerControllerFromActorInfo()->GetInventoryWidget() == nullptr)
 	{
-		GetPlayerControllerFromActorInfo()->CreateInventoryWidget();
+		GetPlayerControllerFromActorInfo()->ClientCreateInventoryWidget();
 		UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
+		//InventoryWidget->UpdateInventoryWidget();
+		
+		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+		//PlayerCharacter->GetInventoryComponent()->ServerUpdateInventory();
 		InventoryWidget->UpdateInventoryWidget();
 
-		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		
+		
+		if (!PlayerCharacter)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PlayerCharacter is NULL"));
+			return;
+		}
 
+		if (!PlayerCharacter->GetDetectionItem())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DetectionItem is NULL"));
+			return;
+		}
+		
+		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetPlayerControllerFromActorInfo()->InputModeUI();
 		
 	}
 	else
@@ -44,7 +67,8 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		UE_LOG(LogTemp, Warning, TEXT("NoCollision"));
 		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		GetPlayerControllerFromActorInfo()->DestroyInventoryWidget();
-		GetPlayerCharacterFromActorInfo()->GetNearComponent()->GetGroundItem().Empty();
+		GetPlayerCharacterFromActorInfo()->GetNearComponent()->GetGroundItems().Empty();
+		GetPlayerControllerFromActorInfo()->InputModeGame();
 	}
 	
 
@@ -208,7 +232,7 @@ void UGA_ToggleInventory::FindFarmingItem(float DeltaTime)
 		bShouldUpdate = NearComponent->ShouldUpdate(Item);
 		if (bShouldUpdate == false)
 		{
-			NearComponent->GetGroundItem().Empty();
+			NearComponent->GetGroundItems().Empty();
 			break;
 		}
 	}
@@ -223,7 +247,7 @@ void UGA_ToggleInventory::FindFarmingItem(float DeltaTime)
 		{
 			if ( NearComponent->ShouldUpdate(Item) == false)
 			{
-				NearComponent->GetGroundItem().Add(Item);
+				NearComponent->GetGroundItems().Add(Item);
 			}
 		}
 		//NearComponent->UpdateInventory();

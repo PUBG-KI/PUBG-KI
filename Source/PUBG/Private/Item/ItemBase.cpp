@@ -19,6 +19,8 @@
 
 AItemBase::AItemBase()
 {
+	bReplicates = true;
+	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
@@ -33,7 +35,6 @@ AItemBase::AItemBase()
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
 
 	//BeginOverlapCount = 0;
-	bReplicates = true;
 }
 
 void AItemBase::BeginPlay()
@@ -44,6 +45,14 @@ void AItemBase::BeginPlay()
 	
 	//BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AItemBase::OnComponentBeginOverlap);
 	//BoxComponent->OnComponentEndOverlap.AddDynamic(this, &AItemBase::OnComponentEndOverlap);
+	
+}
+
+void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AItemBase, ItemStruct);
 	
 }
 
@@ -161,11 +170,10 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 	{
 		InventoryComponent->Server_Interact();
 		
-		 if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-		 {
-		 	
-		 	ItemDataComponent->InteractWith(Character);
-		 }
+		 // if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		 // {
+		 // 	ItemDataComponent->InteractWith(Character);
+		 // }
 	}
 	
 	//Destroy();

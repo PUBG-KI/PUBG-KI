@@ -23,13 +23,25 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
-	TArray<AItemBase*> GroundItem;
+	UPROPERTY(ReplicatedUsing = OnRep_GroundItems, EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
+	TArray<AItemBase*> GroundItems;
+	
 	//TArray<FItemSlotStruct> GroundItem;
 
-public:	
+public:
+	// OnRep
+	UFUNCTION()
+	void OnRep_GroundItems();
+
+	// Setter
+
+	// Getter
+	UFUNCTION(BlueprintCallable)
+	TArray<AItemBase*>& GetGroundItems() { return GroundItems; }
+	
 	UFUNCTION(BlueprintCallable)
 	void AddToGroundItem();
 	UFUNCTION(BlueprintCallable)
@@ -37,7 +49,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool ShouldUpdate(AItemBase* ItemBase);
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRequestGroundItems();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRemoveGroundItem(int32 OutIndex);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerAddGroundItem(AItemBase* OutItemBase);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerGetGroundItem();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerUpdateNear();
+
 	UFUNCTION(BlueprintCallable)
-	TArray<AItemBase*>& GetGroundItem() { return GroundItem; }
-	
+	void PrintGroundItems();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerPrintGroundItems();
 };

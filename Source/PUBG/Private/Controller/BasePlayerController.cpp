@@ -91,6 +91,11 @@ void ABasePlayerController::InputModeGame()
 
 void ABasePlayerController::CreateInventoryWidget()
 {
+	if (!IsLocalController())  // 로컬 플레이어인지 확인
+	{
+		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		return;
+	}
 
 	if (InventoryWidget != nullptr)
 	{
@@ -127,6 +132,36 @@ void ABasePlayerController::CreateInventoryWidget()
 	
 	// InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
 	// InventoryWidget->AddToViewport();
+}
+
+void ABasePlayerController::ClientCreateInventoryWidget_Implementation()
+{
+	if (!IsLocalController())  // 로컬 플레이어인지 확인
+	{
+		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		return;
+	}
+
+	if (InventoryWidget != nullptr)
+	{
+		InventoryWidget->RemoveFromParent();
+	}
+	
+	if (IsValid(InventoryWidgetClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		
+		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
+		
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
+		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
+		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
+
+		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
+		InventoryWidget->GetWrapBox_Near()->ClearChildren();
+		InventoryWidget->AddToViewport();
+	}
 }
 
 void ABasePlayerController::DestroyInventoryWidget()

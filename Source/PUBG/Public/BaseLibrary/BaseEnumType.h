@@ -20,3 +20,13 @@ enum class EBaseSuccessType : uint8
 	Success,
 	Failed,
 };
+
+UENUM(BlueprintType)
+enum class EItemZoneType : uint8
+{
+	None = 0 UMETA(DisplayName = "None"),
+	NoneArea UMETA(DisplayName = "NoneArea"),
+	NearArea UMETA(DisplayName = "NearArea"),
+	InventoryArea UMETA(DisplayName = "InventoryArea"),
+	EquippedArea UMETA(DisplayName = "EquippedArea"),
+};
