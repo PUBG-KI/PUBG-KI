@@ -114,7 +114,8 @@ void APlayerCharacter::BeginPlay()
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
 	DetectionItem->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemBeginOverlap);
-
+	DetectionItem->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemEndOverlap);
+	
 	DetectionItem->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
@@ -722,6 +723,7 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 					{
 						FText result = InteractInterface->LookAt();
 						//InteractInterface->InteractWith();
+						
 					}
 					else
 					{
@@ -764,17 +766,19 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemBase->GetName());
 		if (NearComponent != nullptr)
 		{
-			NearComponent->GetGroundItem().Add(ItemBase);
+			//NearComponent->GetGroundItems().Add(ItemBase);
+			NearComponent->ServerAddGroundItem(ItemBase);
 			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
 			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
-			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItem().Num());
-			NearComponent->UpdateNear();
+			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItems().Num());
+			//NearComponent->UpdateNear();
+			NearComponent->ServerUpdateNear();
 
-			if (ABasePlayerController* BasePlayerController = Cast<ABasePlayerController>(GetController()))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Call UpdateNearItemSlotWidget"));
-				BasePlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
-			}
+			// if (ABasePlayerController* BasePlayerController = Cast<ABasePlayerController>(GetController()))
+			// {
+			// 	UE_LOG(LogTemp, Warning, TEXT("Call UpdateNearItemSlotWidget"));
+			// 	BasePlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+			// }
 			
 		}
 	}
@@ -783,13 +787,25 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
 void APlayerCharacter::OnDetectionItemEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : OnDetectionItemEndOverlap"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : OnDetectionItemEndOverlap"));
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("OnDetectionItemEndOverlap"));
+	
 	if (AItemBase* ItemBase = Cast<AItemBase>(OtherActor))
 	{
-		for (int i = 0; i < NearComponent->GetGroundItem().Num(); i++)
+		for (int i = 0; i < NearComponent->GetGroundItems().Num(); i++)
 		{
-			if (ItemBase == NearComponent->GetGroundItem()[i])
+			if (ItemBase == NearComponent->GetGroundItems()[i])
 			{
-				NearComponent->GetGroundItem().RemoveAt(i);
+				NearComponent->ServerRemoveGroundItem(i);
+				//NearComponent->ServerRequestGroundItems_Implementation();
 				break;
 			}
 		}

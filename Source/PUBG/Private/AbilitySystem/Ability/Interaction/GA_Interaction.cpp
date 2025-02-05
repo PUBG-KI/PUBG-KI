@@ -20,6 +20,9 @@ void UGA_Interaction::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		{
 			IInteractInterface::Execute_InteractWith(LookAtActor, GetPlayerCharacterFromActorInfo());
 		}
+
+		// IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
+		// InteractInterface->InteractWith(GetPlayerCharacterFromActorInfo());
 	}
 
 	EndAbility(Handle,ActorInfo, ActivationInfo, false, true);

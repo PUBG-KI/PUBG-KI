@@ -11,6 +11,7 @@
  * 
  */
 
+class UVerticalBox;
 class UNearComponent;
 class UItemSlotWidget;
 class UWrapBox;
@@ -22,6 +23,7 @@ class PUBG_API UInventoryWidget : public UWidgetBase
 
 
 private:
+	// Variable
 	UPROPERTY(EditAnywhere)
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(EditAnywhere)
@@ -31,11 +33,19 @@ private:
 	UItemSlotWidget* ItemSlotWidget;
 	UPROPERTY(EditAnywhere)
 	UItemSlotWidget* NearItemSlotWidget;
-	
+
+	UPROPERTY()
+	EItemZoneType ItemZoneType;
+
+	// Widget Variable
 	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Inventory;
 	UPROPERTY(meta = (BindWidget))
 	UWrapBox* WrapBox_Near;
+	UPROPERTY(meta = (BindWidget))
+	UVerticalBox* VerticalBox_Near;
+	UPROPERTY(meta = (BindWidget))
+	UVerticalBox* VerticalBox_Inventory;
 
 	UClass* ItemSlotWidgetClass;
 
@@ -57,6 +67,15 @@ public:
 
 	//Getter
 	UItemSlotWidget* GetItemSlotWidget() const { return ItemSlotWidget; }
-	UWrapBox *GetWrapBox_Inventory() const { return WrapBox_Inventory;}
-	UWrapBox *GetWrapBox_Near() const { return WrapBox_Near;}
+	UWrapBox *GetWrapBox_Inventory() const { return WrapBox_Inventory; }
+	UWrapBox *GetWrapBox_Near() const { return WrapBox_Near; }
+	UVerticalBox* GetVerticalBox_Inventory() const { return VerticalBox_Inventory; }
+	UVerticalBox* GetVerticalBox_Near() const { return VerticalBox_Near; }
+
+	virtual bool NativeOnDragOver( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
+	virtual bool NativeOnDrop( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
+
+	// 드래그 시 영역 확인
+	EItemZoneType CheckItemZoneType(FPointerEvent InMousePoint);
+	EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
 };

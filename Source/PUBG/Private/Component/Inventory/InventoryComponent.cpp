@@ -10,7 +10,9 @@
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
 //#include "Math/UnrealMathNeon.h"
+#include "Controller/BasePlayerController.h"
 #include "Net/UnrealNetwork.h"
+#include "Widgets/Inventory/InventoryWidget.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -18,7 +20,8 @@ UInventoryComponent::UInventoryComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	SetIsReplicated(true);
+	
 	MaxInventoryWeight = 50.0f;
 	CurrentInventoryWeight = 0.0f;
 }
@@ -44,23 +47,98 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	//DOREPLIFETIME(UInventoryComponent, Content);
+	
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UInventoryComponent, CurrentWeapon, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(UInventoryComponent, NearItem, COND_OwnerOnly);
 	
+}
+
+void UInventoryComponent::ServerSetNearItem_Implementation(AItemBase* OutNearItem)
+{
+    SetNearItem(OutNearItem);
+}
+
+
+
+void UInventoryComponent::Server_InteractItem_Implementation(AItemBase* OutItemBase)
+{
+	if (!Item && !NearItem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
+		return;
+	}
+	
+	if (Item != nullptr)
+	{
+		SetItem(OutItemBase);
+		UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
+		ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+
+		AActor* Owner = GetOwner();
+		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+		{
+			ItemDataComponent->InteractWith(Character);
+		}
+	}
+	
+	if (NearItem != nullptr)
+	{
+		SetNearItem(NearItem);
+		UE_LOG(LogTemp, Warning, TEXT("NearItem"));
+		
+		UItemDataComponent* ItemDataComponent = NearItem->GetItemDataComponent();
+		//ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+
+		AActor* Owner = GetOwner();
+		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+		{
+			ItemDataComponent->InteractWith(Character);
+		}
+	}
+
+	return;
+}
+
+bool UInventoryComponent::Server_InteractItem_Validate(AItemBase* OutItemBase)
+{
+	return true;
+}
+
+void UInventoryComponent::ServerSetContents_Implementation(const TArray<FItemSlotStruct>& OutContnets)
+{
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : SetContents "));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : SetContents "));
+	}
+	
+	SetContent(OutContnets);
 }
 
 int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 Weight)
 {
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AddToInventory "));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : AddToInventory "));
+	}
+	
 	int32 RemainingQuantity = Quantity;
 	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentInventoryWeight : %f"), CurrentInventoryWeight)
-	;
 	// 인벤이 가득 찼는지 검사, 현재 무게와 최대 무게 비교 false면 인벤에 넣을 수 있음 
 	bool IsFull = CurrentInventoryWeight + Weight > MaxInventoryWeight;
 	
-	for (int32 i = RemainingQuantity; i>0 && !IsFull; i--, RemainingQuantity--)
+	for (int32 i = RemainingQuantity; i > 0 && !IsFull; i--, RemainingQuantity--)
 	{
-		IsFull = CurrentInventoryWeight >= MaxInventoryWeight;
+		IsFull = CurrentInventoryWeight + Weight >= MaxInventoryWeight;
 
 		int32 SlotIndex = FindItemSlot(ItemID);
 		if (SlotIndex == -1)
@@ -78,7 +156,11 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 		
 	}
 
+	//SetContent(Content);
+	//ServerSetContents_Implementation(Content);
+	
 	UE_LOG(LogTemp, Warning, TEXT("CurrentRemainingQuantity : %d"), RemainingQuantity);
+	UE_LOG(LogTemp, Warning, TEXT("CurrentInventoryWeight : %f"), CurrentInventoryWeight);
 	return RemainingQuantity;
 }
 
@@ -150,60 +232,9 @@ void UInventoryComponent::AddToLastIndexNewStack(FName ItemID, int32 Quantity, i
 	UpdateInventory();
 }
 
-int32 UInventoryComponent::AddToInventory1(FName ItemID, int32 Quantity)
-{
-	int32 RemainQuantity = Quantity;
-	UE_LOG(LogTemp, Warning, TEXT("RemainQuantity: %d"), RemainQuantity);
 
-	bool HasFailed = false;
-
-	// 하나씩 인벤에 추가하는 구조
-	for (int32 i = RemainQuantity; i > 0 && !HasFailed; i--)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("i: %d"), i);
-
-		// 인벤의 빈 칸을 찾음 
-		int SlotIndex = FindSlot(ItemID);
-		UE_LOG(LogTemp, Warning, TEXT("SlotIndex: %d"), SlotIndex);
-		
-		if (SlotIndex != -1)
-		{
-			AddToStack(SlotIndex, 1);
-		}
-		else
-		{
-			if (AnyEmptySlotsAvailable() != -1)
-			{
-				if (CreateNewStack(ItemID, 1))
-				{
-					
-				}
-				else
-				{
-					HasFailed = true;
-				}
-			}
-		}
-	}
-	return RemainQuantity;
-}
 	
-int32 UInventoryComponent::FindSlot(FName ItemID)
-{
-	for (int Index = 0; Index < Content.Num(); Index++)
-	{
-		FItemSlotStruct ItemSlot = Content[Index];
-		
-		if (ItemID == ItemSlot.ItemName)
-		{
-			if (ItemSlot.Quantity < GetMaxStackSize(ItemID))
-			{
-				return Index;
-			}
-		}
-	}
-	return -1;
-}
+
 
 int32 UInventoryComponent::GetMaxStackSize(FName ItemID)
 {
@@ -215,6 +246,7 @@ int32 UInventoryComponent::GetMaxStackSize(FName ItemID)
 
 	return Row->StackSize;
 }
+
 
 void UInventoryComponent::UpdateInventory()
 {
@@ -255,59 +287,89 @@ void UInventoryComponent::UpdateInventory()
 	});
 }
 
-void UInventoryComponent::AddToStack(int32 index, int32 Quantity)
+void UInventoryComponent::ServerUpdateInventory_Implementation()
 {
-	FItemSlotStruct ItemSlot;
-	ItemSlot.ItemName = Content[index].ItemName;
-	ItemSlot.Quantity = Content[index].Quantity + Quantity;
+	UpdateInventory();
+}
 
-	Content[index] = ItemSlot;
+void UInventoryComponent::ReplicateContent_Implementation(const TArray<FItemSlotStruct>& OutContent)
+{
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : ReplicateContent_Implementation "));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ReplicateContent_Implementation "));
+	}
 
+	SetContent(OutContent);
 	
-}
-
-int32 UInventoryComponent::AnyEmptySlotsAvailable()
-{
-	for (int32 Index = 0; Index < Content.Num(); Index++)
-	{
-		const FItemSlotStruct& ItemStruct = Content[Index];
-		UE_LOG(LogTemp, Warning, TEXT("ItemSlot[%d]: %d"), Index, ItemStruct.Quantity);
-		if (ItemStruct.Quantity == 0)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Item at index %d has quantity 0"), Index);
-			return Index;
-		}
-	}
-	return -1;
-}
-
-bool UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity)
-{
-	int32 Index = AnyEmptySlotsAvailable();
-	UE_LOG(LogTemp, Warning, TEXT("CreateNewStack : %d"), Index);
-	if (Index != -1)
-	{
-		FGameplayTag Tag = FGameplayTag::EmptyTag;
-
-		FItemSlotStruct ItemSlot;
-		ItemSlot.ItemName = ItemID;
-		ItemSlot.Quantity = Quantity;
-		
-		Content[Index] = ItemSlot;
-
-		return true;
-	}
-	return false;
+	//Content = OutContent;  
+	UE_LOG(LogTemp, Warning, TEXT("Server: Content updated! New size: %d"), Content.Num());
+	
 }
 
 void UInventoryComponent::PrintContents()
 {
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("서버에서 실행됨"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 실행됨"));
+	}
+	
 	for (int32 Index = 0; Index < Content.Num(); ++Index)
 	{
 		FString Msg = Content[Index].ItemName.ToString();
 		int32 Quantity = Content[Index].Quantity;
 		
 		UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
+	}
+}
+
+void UInventoryComponent::ServerPrintContents_Implementation()
+{
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("서버에서 실행됨"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 실행됨"));
+	}
+	
+	for (int32 Index = 0; Index < Content.Num(); ++Index)
+	{
+		FString Msg = Content[Index].ItemName.ToString();
+		int32 Quantity = Content[Index].Quantity;
+		
+		UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
+	}
+}
+
+void UInventoryComponent::TransferSlots()
+{
+}
+
+void UInventoryComponent::OnRep_Content()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!"));
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	if (PlayerCharacter)
+	{
+		ABasePlayerController* PlayerController = Cast<ABasePlayerController>(PlayerCharacter->GetController());
+		if (PlayerController)
+		{
+			if (PlayerController->GetInventoryWidget())
+			{
+				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+				PlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+			}
+		}
 	}
 }
 
@@ -326,6 +388,14 @@ void UInventoryComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
 
 void UInventoryComponent::Server_Interact_Implementation()
 {
+	// set 
+	
+	if (!Item && !NearItem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
+		return;
+	}
+	
 	if (Item != nullptr)
 	{
 		UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
@@ -333,8 +403,26 @@ void UInventoryComponent::Server_Interact_Implementation()
 
 		AActor* Owner = GetOwner();
 		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
-		ItemDataComponent->InteractWith(Character);
+		{
+			ItemDataComponent->InteractWith(Character);
+		}
 	}
+	
+	if (NearItem != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NearItem"));
+		
+		UItemDataComponent* ItemDataComponent = NearItem->GetItemDataComponent();
+		//ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+
+		AActor* Owner = GetOwner();
+		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+		{
+			ItemDataComponent->InteractWith(Character);
+		}
+	}
+
+	return;
 }
 
 bool UInventoryComponent::Server_Interact_Validate()

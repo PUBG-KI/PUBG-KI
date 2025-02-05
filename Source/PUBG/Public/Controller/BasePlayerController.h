@@ -40,6 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateInventoryWidget();
+	UFUNCTION(Client, Reliable)
+	void ClientCreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
 	void DestroyInventoryWidget();
 private:

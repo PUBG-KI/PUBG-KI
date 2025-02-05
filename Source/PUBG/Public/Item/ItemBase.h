@@ -25,9 +25,12 @@ protected:
 	
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 // 변수 부분 
 private:
-	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct ItemStruct;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
@@ -63,7 +66,9 @@ public:
 	UBoxComponent* GetBoxComponent() const { return BoxComponent; }
 	FItemStruct& GetItemStruct() { return Item; }
 
+	// Setter
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
-	
+	UFUNCTION(BlueprintCallable)
+	void SetItemStruct(FItemStruct OutItemStruct) { ItemStruct = OutItemStruct; }
 };

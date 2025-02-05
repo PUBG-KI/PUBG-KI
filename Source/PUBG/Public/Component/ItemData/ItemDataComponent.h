@@ -21,17 +21,27 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
 	FDataTableRowHandle ItemID;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
+	UPROPERTY(ReplicatedUsing= OnRep_Quantity, EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
 	int32 Quantity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
 	float Weight;
 
 public:
+	// OnRep
+	UFUNCTION(BlueprintCallable)
+	void OnRep_Quantity();
+	
 	UFUNCTION()
 	FName GetItemRowName() const { return ItemID.RowName; }
+	UFUNCTION()
+	int32 GetQuantity() const { return Quantity; }
+	UFUNCTION()
+	float GetWeight() const { return Weight; }
 
 	UFUNCTION()
 	virtual FText LookAt() override;
