@@ -37,6 +37,8 @@
 #include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
 
+//자기장
+#include "Components/PostProcessComponent.h"
 
 //
 #include "Component/ItemData/ItemDataComponent.h"
@@ -111,6 +113,10 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	DetectionItem->SetupAttachment(GetRootComponent());
 	DetectionItem->SetBoxExtent(FVector(80.0f));
 	//DetectionItem->SetVisibility(true);
+
+	//자기장
+	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PlayerPostProcess"));
+	PostProcessComponent->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()

@@ -20,6 +20,9 @@ class UInputAction;
 class UInventoryComponent;
 class UInventoryWidget;
 
+//자기장
+class UPostProcessComponent;
+
 class UPlayerAnimInstance;
 
 struct FInputActionValue;
@@ -151,7 +154,13 @@ public:
 	AActor* GetLookAtActor() const { return LookAtActor; }
 	UFUNCTION(BlueprintCallable)
 	UBoxComponent* GetDetectionItem() const { return DetectionItem; }
-	
+
+	//자기장
+public:
+	UPROPERTY(VisibleAnywhere, Category="Post Process")
+	UPostProcessComponent* PostProcessComponent;
+
+	//
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
