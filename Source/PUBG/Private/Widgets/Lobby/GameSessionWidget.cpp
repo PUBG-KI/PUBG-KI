@@ -2,12 +2,18 @@
 
 
 #include "Widgets/Lobby/GameSessionWidget.h"
+#include "Components/HorizontalBox.h"
+#include "Widgets/Lobby/BaseButtonWidget.h"
+#include "Widgets/Lobby/UserStateWidget.h"
+
+#include "GameState/LobbyGameState.h"
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "GameMode/LobbyGameMode.h"
 #include "Interfaces/OnlineSessionInterface.h"
-#include "Widgets/Lobby/BaseButtonWidget.h"
+#include "PlayerState/LobbyPlayerState.h"
 
 
 void UGameSessionWidget::NativePreConstruct()
@@ -41,12 +47,26 @@ void UGameSessionWidget::OnStartButton_Clicked()
 	if (GetOwningPlayer()->HasAuthority())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnStartButton_Clicked"));
+		
+		if (APlayerController* PC = GetOwningPlayer())
+		{
+			if (ALobbyGameMode* GM = Cast<ALobbyGameMode>(PC->GetWorld()->GetAuthGameMode()))
+			{
+				//GM->ServerStartGame();
+			}
+		}
 	}
 }
 
 void UGameSessionWidget::OnReadyButton_Clicked()
 {
-	SetReady();
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		if (ALobbyPlayerState* PS = PC->GetPlayerState<ALobbyPlayerState>())
+		{
+			PS->ServerSetReady(!PS->bIsReady);
+		}
+	}
 }
 
 void UGameSessionWidget::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
@@ -85,15 +105,20 @@ void UGameSessionWidget::OnQuitButton_Clicked()
 	}
 }
 
-void UGameSessionWidget::SetReady()
+void UGameSessionWidget::UpdatePlayerList(TArray<ALobbyPlayerState*> PlayerList)
 {
-
-	GetOwningPlayerState();
+	APlayerController* PC = GetOwningPlayer();
 	
-	if (bIsReady)
-		bIsReady = false;
-	else
-		bIsReady = true;
+	UE_LOG(LogTemp, Warning, TEXT("UpdatePlayerList"));
+	HorizontalBox_PlayerList->ClearChildren(); // 기존 리스트 제거
+	for (ALobbyPlayerState* PS : PlayerList)
+	{
+		UUserStateWidget* UserStateWidget = CreateWidget<UUserStateWidget>(PC, UserStateWidgetClass);
+		UserStateWidget->InitializeUserState(PS);
+		HorizontalBox_PlayerList->AddChild(UserStateWidget);
+	}
 }
+
+
 
 

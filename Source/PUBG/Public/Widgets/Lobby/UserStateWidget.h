@@ -6,8 +6,10 @@
 #include "Widgets/WidgetBase.h"
 #include "UserStateWidget.generated.h"
 
+class ALobbyPlayerState;
 class UGridPanel;
-class UWidgetSwitcher;
+class UTextBlock;
+class UImage;
 
 /**
  * 
@@ -23,14 +25,14 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetReadyState(bool IsReady);	
+	UFUNCTION(BlueprintCallable)
+	void InitializeUserState(ALobbyPlayerState* LobbyPlayerState);	
 	
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UGridPanel* Panel_Host;	
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UGridPanel* Panel_Player;	
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UGridPanel* Panel_ReadyState;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UWidgetSwitcher* WidgetSwitcher_State;		
+	UTextBlock* Text_PlayerName;	
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UImage* Image_Host;	
 };

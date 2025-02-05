@@ -7,6 +7,9 @@
 #include "GameSessionWidget.generated.h"
 
 class UBaseButtonWidget;
+class UHorizontalBox;
+class UUserStateWidget;
+class ALobbyPlayerState;
 
 /**
  * 
@@ -33,16 +36,22 @@ public:
 	void OnQuitButton_Clicked();
 	
 	UFUNCTION(BlueprintCallable)
-	void SetReady();	
+	void UpdatePlayerList(TArray<ALobbyPlayerState*> PlayerList);
 
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UBaseButtonWidget* Button_Ready;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UBaseButtonWidget* Button_Quit;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UHorizontalBox* HorizontalBox_PlayerList;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	bool bIsReady;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	FString LeaveMapName;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UUserStateWidget> UserStateWidgetClass;	
 };
+
+
