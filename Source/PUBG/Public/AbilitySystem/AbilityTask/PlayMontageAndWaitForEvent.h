@@ -112,7 +112,7 @@ private:
 	void OnAbilityCancelled();
 	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 	void OnGameplayEvent(FGameplayTag EventTag, const FGameplayEventData* Payload);
-
+	
 	FOnMontageBlendingOutStarted BlendingOutDelegate;
 	FOnMontageEnded MontageEndedDelegate;
 	FDelegateHandle CancelledHandle;

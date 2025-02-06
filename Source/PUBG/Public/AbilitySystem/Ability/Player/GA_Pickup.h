@@ -9,6 +9,15 @@
 /**
  * 
  */
+
+UENUM()
+enum class EMontageType : uint8
+{
+	High UMETA(DisplayName = "High"),
+	Middle UMETA(DisplayName = "Middle"),
+	Low UMETA(DisplayName = "Low")
+};
+
 UCLASS()
 class PUBG_API UGA_Pickup : public UPlayerGameplayAbility
 {
@@ -30,6 +39,11 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupMontage")
 	TArray<UAnimMontage*> MeleePickupMontage;
+
+public:
+	UFUNCTION()
+	void OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
+
 	
 	
 };

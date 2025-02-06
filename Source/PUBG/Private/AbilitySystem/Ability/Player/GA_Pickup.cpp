@@ -22,7 +22,20 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
                                  const FGameplayEventData* TriggerEventData)
 {
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
-	float ItemOfZ = GetPlayerCharacterFromActorInfo()->GetInventoryComponent()->GetItem()->GetItemOfZ();
+	UInventoryComponent* InventoryComponent = PUBGPlayer->GetInventoryComponent();
+	if (!InventoryComponent)
+	{UE_LOG(LogTemp, Warning, TEXT("InventoryComponent is null!"));
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+	AItemBase* Item = InventoryComponent->GetItem();
+	if (!Item)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item is null!"));
+		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
+		return;
+	}
+	float ItemOfZ = Item->GetItemOfZ();
 	if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Rifle"))))
 	{
 	}
@@ -53,12 +66,16 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 				{
 					if (UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(PUBGPlayer))
 					{
-						if (UnarmedPickupMontage[1] != nullptr)
+						if (UnarmedPickupMontage[(uint8)EMontageType::Low] != nullptr)
 						{
 							UE_LOG(LogTemp, Warning, TEXT("dd"));
-							UAnimMontage* SelectedMontage = UnarmedPickupMontage[1];
+							UAnimMontage* SelectedMontage = UnarmedPickupMontage[(uint8)EMontageType::Low];
 							UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
+							Task->OnBlendOut.AddDynamic(this, &UGA_Pickup::OnCompleted);
+							Task->OnCompleted.AddDynamic(this, &UGA_Pickup::OnCompleted);
+							
 							Task->ReadyForActivation();
+							
 						}
 					}
 				}
@@ -66,6 +83,11 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		}
 	}
 	EndAbility(Handle,ActorInfo, ActivationInfo, false, true);
+}
+
+void UGA_Pickup::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+{
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 

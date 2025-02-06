@@ -258,3 +258,4 @@ void UPlayMontageAndWaitForEvent::OnGameplayEvent(FGameplayTag EventTag, const F
 		EventReceived.Broadcast(EventTag, TempData);
 	}
 }
+
