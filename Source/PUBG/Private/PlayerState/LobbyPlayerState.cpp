@@ -11,6 +11,9 @@ ALobbyPlayerState::ALobbyPlayerState()
 {
 	PlayerName = GetPlayerName();
 	bReplicates = true;
+
+	NetUpdateFrequency = 100.0f; // 기본값: 1~30, 값을 높이면 리플리케이션이 더 자주 발생
+	MinNetUpdateFrequency = 30.0f;
 }
 
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -33,11 +36,15 @@ void ALobbyPlayerState::OnRep_Player_Name()
 void ALobbyPlayerState::OnRep_IsReady()
 {
 	UE_LOG(LogTemp, Log, TEXT("Client : bIsReady : %s"), bIsReady ? TEXT("True") : TEXT("False"));
-	
-	ALobbyPlayerController* PC = Cast<ALobbyPlayerController>(GetOwner());
-	if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
+
+	if (ALobbyGameState* GS = Cast<ALobbyGameState>( GetWorld()->GetGameState()))
 	{
-		PC->UpdateWidget();
+		int Index = GS->PlayerList.Find((this));
+		
+		if (Index != -1)
+		{
+			GS->SetIndexPlayerToList(this, Index);
+		}
 	}
 }
 
@@ -46,28 +53,13 @@ void ALobbyPlayerState::OnRep_IsHost()
 	UE_LOG(LogTemp, Log, TEXT("Client : bIsHost : %s"), bIsHost ? TEXT("True") : TEXT("False"));
 }
 
-void ALobbyPlayerState::ServerSetReady_Implementation(bool bNewReady)
+void ALobbyPlayerState::ServerSetReady_Implementation()
 {
-	if (ALobbyGameState* GS = Cast<ALobbyGameState>( GetWorld()->GetGameState()))
-	{
-		
-		//GS->PlayerList
-		//TArray<ALobbyPlayerState*> Array = GS->PlayerList;
-		//int Index = Array.Find((this));
-		int Index = GS->PlayerList.Find((this));
-		bIsReady = bNewReady;
-		
-		if (Index != -1)
-		{
-			GS->SetIndexPlayerToList(this, Index);
-			//GS->PlayerList[Index] = this;
-			//GS->PlayerList = Array;			
-			//GS->OnRep_PlayerArray(GS->PlayerList);
-		}
-	}
+	bIsReady = !bIsReady;
+	OnRep_IsReady();
 }
 
-bool ALobbyPlayerState::ServerSetReady_Validate(bool bNewReady)
+bool ALobbyPlayerState::ServerSetReady_Validate()
 {
 	return true;
 }

@@ -29,7 +29,7 @@ public:
 	UFUNCTION()
 	void OnRep_IsHost();  // 클라이언트에서 UI 갱신
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerSetReady(bool bNewReady); // 서버에서 준비 상태 변경
+	void ServerSetReady(); // 서버에서 준비 상태 변경
 
 	UPROPERTY(ReplicatedUsing=OnRep_Player_Name)
 	FString PlayerName;  // 플레이어 이름

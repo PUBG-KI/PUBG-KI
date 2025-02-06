@@ -8,11 +8,12 @@
 
 #include "GameState/LobbyGameState.h"
 
-#include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "Components/EditableText.h"
+#include "Components/GridPanel.h"
+#include "Controller/LobbyPlayerController.h"
 #include "GameMode/LobbyGameMode.h"
-#include "Interfaces/OnlineSessionInterface.h"
 #include "PlayerState/LobbyPlayerState.h"
 
 
@@ -34,28 +35,54 @@ void UGameSessionWidget::NativeConstruct()
 	{
 		Button_Ready->SetText(TEXT("Start"));
 		Button_Ready->OnButtonClicked.AddDynamic(this, &UGameSessionWidget::UGameSessionWidget::OnStartButton_Clicked);
+		Panel_ConnectIP->SetVisibility(ESlateVisibility::Visible);
+		Text_ConnectIP->OnTextChanged.AddDynamic(this,  &UGameSessionWidget::UGameSessionWidget::UGameSessionWidget::OnText_ConnectIP_Changed);
+		ConnectIP = TEXT("127.0.0.1");
 	}
 	else
 	{
 		Button_Ready->SetText(TEXT("Ready"));
-		Button_Ready->OnButtonClicked.AddDynamic(this, &UGameSessionWidget::UGameSessionWidget::OnReadyButton_Clicked);
+		Button_Ready->OnButtonClicked.AddDynamic(this, &UGameSessionWidget::UGameSessionWidget::OnReadyButton_Clicked);		
+		Panel_ConnectIP->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld()))
+	{
+		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(FOnDestroySessionCompleteDelegate::CreateUObject(this, &UGameSessionWidget::OnDestroySessionComplete));
+			SessionInterface->AddOnSessionFailureDelegate_Handle(FOnSessionFailureDelegate::CreateUObject(this, &UGameSessionWidget::HandleSessionFailure));
+		}
 	}
 }
 
 void UGameSessionWidget::OnStartButton_Clicked()
 {
-	if (GetOwningPlayer()->HasAuthority())
+	ALobbyPlayerController* PC = Cast<ALobbyPlayerController>(GetOwningPlayer());
+
+	if (PC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnStartButton_Clicked"));
-		
-		if (APlayerController* PC = GetOwningPlayer())
+		if (PC->HasAuthority())
 		{
-			if (ALobbyGameMode* GM = Cast<ALobbyGameMode>(PC->GetWorld()->GetAuthGameMode()))
+			UE_LOG(LogTemp, Warning, TEXT("OnStartButton_Clicked"));
+
+			ALobbyGameState* GS = Cast<ALobbyGameState>(GetWorld()->GetGameState());
+			if (GS)
 			{
-				//GM->ServerStartGame();
-			}
+				if (GS->CheckAllPlayersReady())
+				{
+					UE_LOG(LogTemp, Warning, TEXT("All Ready"));
+					PC->MoveToDedicatedServer(ConnectIP, ConnectMap);							
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Not All Ready"));
+				}
+			}		
 		}
 	}
+	
 }
 
 void UGameSessionWidget::OnReadyButton_Clicked()
@@ -64,7 +91,25 @@ void UGameSessionWidget::OnReadyButton_Clicked()
 	{
 		if (ALobbyPlayerState* PS = PC->GetPlayerState<ALobbyPlayerState>())
 		{
-			PS->ServerSetReady(!PS->bIsReady);
+			PS->ServerSetReady();
+		}
+	}
+}
+
+void UGameSessionWidget::OnText_ConnectIP_Changed(const FText& Text)
+{
+	ConnectIP = Text.ToString();
+}
+
+void UGameSessionWidget::LeaveSession()
+{
+	if (IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld()))
+	{
+		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
+		
+		if (SessionInterface.IsValid())
+		{
+			SessionInterface->DestroySession(NAME_GameSession);
 		}
 	}
 }
@@ -87,22 +132,18 @@ void UGameSessionWidget::OnDestroySessionComplete(FName SessionName, bool bWasSu
 	}
 }
 
+void UGameSessionWidget::HandleSessionFailure(const FUniqueNetId& UserId, ESessionFailure::Type FailureType)
+{
+	if (FailureType == ESessionFailure::ServiceConnectionLost)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Network error detected. Leaving session..."));
+		LeaveSession();
+	}
+}
+
 void UGameSessionWidget::OnQuitButton_Clicked()
 {
-	if (IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld()))
-	{
-		IOnlineSessionPtr SessionInterface = Subsystem->GetSessionInterface();
-		if (SessionInterface.IsValid())
-		{
-			// 세션 제거
-
-			// 클라이언트가 세션을 나가려고 요청
-			//if (SessionInterface->GetSessionSettings(NAME_GameSession)->GetOwnerId() == SessionInterface->GetUniquePlayerId(0))
-				// 호스트에서만 세션 종료 요청이 가능
-			SessionInterface->DestroySession(NAME_GameSession, FOnDestroySessionCompleteDelegate::CreateUObject(this, &UGameSessionWidget::OnDestroySessionComplete));
-			SessionInterface->DestroySession(NAME_GameSession, FOnDestroySessionCompleteDelegate::CreateUObject(this, &UGameSessionWidget::OnDestroySessionComplete));
-		}
-	}
+	LeaveSession();
 }
 
 void UGameSessionWidget::UpdatePlayerList(TArray<ALobbyPlayerState*> PlayerList)

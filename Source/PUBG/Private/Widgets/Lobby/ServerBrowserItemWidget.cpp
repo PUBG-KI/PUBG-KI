@@ -40,7 +40,7 @@ void UServerBrowserItemWidget::OnJoinButton_Clicked()
 			FString ServerName = TEXT("Unknown");			
 			if (SearchResult.Session.SessionSettings.Get(FName("SESSION_NAME"), ServerName))
 			{
-				bool JoinSuccess = SessionInterface->JoinSession(0, *ServerName, SearchResult);
+				bool JoinSuccess = SessionInterface->JoinSession(0, NAME_GameSession, SearchResult);
 				
 				if (JoinSuccess)
 				{

@@ -22,10 +22,15 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 			{
 				PS->bIsHost = false;
 			}
+
+			// 이름 추가
+			// FString PlayerName;
+			// if (FParse::Value(*GetWorld()->URL.ToString(), TEXT("PlayerName="), PlayerName))
+			// {
+			// 	PS->PlayerName = PlayerName;
+			// }
+			
 			GS->AddPlayerToList(PS);
-			//GS->PlayerList.Add(PS);
-			//ForceNetUpdate();
-			//GS->OnRep_PlayerArray();  // 클라이언트 UI 갱신
 		}
 	}
 }
@@ -39,9 +44,6 @@ void ALobbyGameMode::Logout(AController* ExitingPlayer)
 		if (ALobbyPlayerState* PS = ExitingPlayer->GetPlayerState<ALobbyPlayerState>())
 		{
 			GS->RemovePlayerToList(PS);
-			//GS->PlayerList.Remove(PS);
-			//ForceNetUpdate();
-			//GS->OnRep_PlayerArray();  // 클라이언트 UI 갱신
 		}
 	}
 }

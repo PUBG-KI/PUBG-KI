@@ -28,7 +28,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnCreateButton_Clicked();	
 	UFUNCTION(BlueprintCallable)
-	void OnText_Changed(const FText& Text);
+	void OnText_SessionName_Changed(const FText& Text);
+	UFUNCTION(BlueprintCallable)
+	void OnText_MaxPlayer_Changed(const FText& Text);
 	UFUNCTION(BlueprintCallable)
 	void OnCheckState_Changed(bool IsChecked);
 	
@@ -38,8 +40,12 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UCheckBox* CheckBox_EnableLan;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UEditableText* Text_SessionName;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UEditableText* Text_MaxPlayer;
 	
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	FString SessionName;	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	int MaxPlayer;	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))

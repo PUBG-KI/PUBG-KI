@@ -18,7 +18,7 @@ class PUBG_API ALobbyGameState : public AGameStateBase
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;	
 	
-	UPROPERTY(ReplicatedUsing=OnRep_PlayerArray)
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerList)
 	TArray<ALobbyPlayerState*> PlayerList;  // 플레이어 목록
 
 	void AddPlayerToList(ALobbyPlayerState* PlayerState);
@@ -26,18 +26,10 @@ public:
 	void SetIndexPlayerToList(ALobbyPlayerState* PlayerState, int Index);
 	
 	UFUNCTION()
-	void OnRep_PlayerArray();  // UI 갱신
+	void OnRep_PlayerList();  // UI 갱신
 
 	void UpdateLobbyWidget();
 
 	// 모든 플레이어가 준비되었는지 확인하는 함수
-	void CheckAllPlayersReady();
-
-	// 모든 플레이어가 준비 완료되었는지 여부 (Replicated)
-	UPROPERTY(ReplicatedUsing=OnRep_AllReady)
-	bool bAllPlayersReady;
-
-	UFUNCTION()
-	void OnRep_AllReady() const;  // 클라이언트 UI 업데이트
-
+	bool CheckAllPlayersReady();
 };

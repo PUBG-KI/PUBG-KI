@@ -6,6 +6,7 @@
 #include "Components/CheckBox.h"
 #include "Components/EditableText.h"
 #include "Widgets/Lobby/BaseButtonWidget.h"
+#include "Controller/LobbyPlayerController.h"
 
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
@@ -28,12 +29,13 @@ void UCreateGameWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	Button_Create->OnButtonClicked.AddDynamic(this, &UCreateGameWidget::OnCreateButton_Clicked);
-	Text_MaxPlayer->OnTextChanged.AddDynamic(this, &UCreateGameWidget::OnText_Changed);
+	Text_MaxPlayer->OnTextChanged.AddDynamic(this, &UCreateGameWidget::OnText_MaxPlayer_Changed);
+	Text_SessionName->OnTextChanged.AddDynamic(this, &UCreateGameWidget::OnText_SessionName_Changed);
 	CheckBox_EnableLan->OnCheckStateChanged.AddDynamic(this, &UCreateGameWidget::OnCheckState_Changed);		
 }
 
 void UCreateGameWidget::OnCreateButton_Clicked()
-{
+{	
 	IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
 	if (Subsystem)
 	{
@@ -46,14 +48,14 @@ void UCreateGameWidget::OnCreateButton_Clicked()
 			SessionSettings.bUsesPresence = true;
 			SessionSettings.NumPublicConnections = MaxPlayer;
 			SessionSettings.bAllowJoinInProgress = true;
-			FString ServerName = TEXT("BattleGround");
+			FString ServerName = SessionName;
 			SessionSettings.Set(FName("SESSION_NAME"), ServerName, EOnlineDataAdvertisementType::ViaOnlineService);		
 			FString MapName = OpenLevelName.ToString();	
 			SessionSettings.Set(FName("MAP_NAME"), MapName, EOnlineDataAdvertisementType::ViaOnlineService);
 			
-
-			bool IsCreate = SessionInterface->CreateSession(0, FName("MyGameSession"), SessionSettings);
-
+	
+			bool IsCreate = SessionInterface->CreateSession(0, NAME_GameSession, SessionSettings);
+	
 			if (IsCreate)
 			{
 				UGameplayStatics::OpenLevel(GetWorld(), OpenLevelName, true, FString("listen"));
@@ -62,7 +64,7 @@ void UCreateGameWidget::OnCreateButton_Clicked()
 	}
 }
 
-void UCreateGameWidget::OnText_Changed(const FText& Text)
+void UCreateGameWidget::OnText_MaxPlayer_Changed(const FText& Text)
 {
 	FString Temp = Text.ToString();
 	
@@ -70,6 +72,11 @@ void UCreateGameWidget::OnText_Changed(const FText& Text)
 	{
 		MaxPlayer = FCString::Atoi(*Temp);
 	}
+}
+
+void UCreateGameWidget::OnText_SessionName_Changed(const FText& Text)
+{
+	SessionName = Text.ToString();
 }
 
 void UCreateGameWidget::OnCheckState_Changed(bool IsChecked)

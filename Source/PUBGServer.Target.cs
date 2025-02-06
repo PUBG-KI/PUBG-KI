@@ -14,7 +14,7 @@ public class PUBGServerTarget : TargetRules
 		
 		if (Target.Platform == UnrealTargetPlatform.Win64)
 		{
-			bUsesSteam = true;  // Steam 활성화 (필요 없는 경우 삭제 가능)
+			//bUsesSteam = true;  // Steam 활성화 (필요 없는 경우 삭제 가능)
 		}
 	}
 }

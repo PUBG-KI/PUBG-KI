@@ -17,26 +17,24 @@ void ALobbyGameState::AddPlayerToList(ALobbyPlayerState* PlayerState)
 {	
 	PlayerList.Add(PlayerState);
 	ForceNetUpdate();	
-	OnRep_PlayerArray();
+	OnRep_PlayerList();
 }
 
 void ALobbyGameState::RemovePlayerToList(ALobbyPlayerState* PlayerState)
 {
 	PlayerList.Remove(PlayerState);
 	ForceNetUpdate();	
-	OnRep_PlayerArray();
+	OnRep_PlayerList();
 }
 
 void ALobbyGameState::SetIndexPlayerToList(ALobbyPlayerState* PlayerState, int Index)
 {
-	PlayerList[Index] = PlayerState;	
-	ForceNetUpdate();
-	OnRep_PlayerArray();
+	PlayerList[Index] = PlayerState;
+	OnRep_PlayerList();
 }
 
-void ALobbyGameState::OnRep_PlayerArray()
+void ALobbyGameState::OnRep_PlayerList()
 {
-	UE_LOG(LogTemp, Log, TEXT("OnRep_PlayerArray!!"));
 	// 로비 위젯 업데이트
 	// 게임 상태에서 모든 플레이어가 준비되었는지 확인	
 	//CheckAllPlayersReady();	
@@ -58,27 +56,22 @@ void ALobbyGameState::UpdateLobbyWidget()
 	}
 }
 
-void ALobbyGameState::CheckAllPlayersReady()
+bool ALobbyGameState::CheckAllPlayersReady()
 {
 	bool bAllReady = true;
 
 	for (ALobbyPlayerState* PS : PlayerList)
 	{
-		if (!PS->bIsReady)
+		if (PS->bIsHost == false)
 		{
-			bAllReady = false;
-			break;
-		}		
+			if (!PS->bIsReady)
+			{
+				bAllReady = false;
+				break;
+			}				
+		}	
 	}
 
-	if (HasAuthority())
-	{
-		bAllPlayersReady = bAllReady;
-		OnRep_AllReady();
-	}
+	return bAllReady;
 }
 
-void ALobbyGameState::OnRep_AllReady() const
-{
-	UE_LOG(LogTemp, Log, TEXT("Players : %s"), bAllPlayersReady ? TEXT("All Ready!") : TEXT("Not All Ready"));
-}
