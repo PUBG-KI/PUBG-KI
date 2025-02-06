@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "ItemSpawnerComponent.generated.h"
 
+class AItemBase;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UItemSpawnerComponent : public UActorComponent
 {
@@ -44,5 +46,7 @@ public:
 	//스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
-		
+
+private:
+	FName GetRandomItemRowName();
 };
