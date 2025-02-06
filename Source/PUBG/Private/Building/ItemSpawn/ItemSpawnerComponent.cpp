@@ -69,35 +69,17 @@ void UItemSpawnerComponent::SpawnItems()
 		}
 		
 	}
-	
 }
 
-// FName UItemSpawnerComponent::GetRandomItemRowName()
+// bool UItemSpawnerComponent::GetRandomItemRowName(FItemStruct& Output)
 // {
 // 	TArray<FName> RowNames = SpawnItemTable->GetRowNames();
 // 	FName RandomRowName = RowNames[FMath::RandRange(0,RowNames.Num()-1)];
-// 	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(RandomRowName);
-// 	return RandomRowName;
 //
-// 	// bool UItemSpawnerComponent::GetRandomItemStruct(FItemStruct& OutItem)
-// 	// {
-// 	// 	if (!ItemDataTable) return false;
-// 	//
-// 	// 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
-// 	// 	if (RowNames.Num() == 0) return false;
-// 	//
-// 	// 	FName RandomRowName = RowNames[FMath::RandRange(0, RowNames.Num() - 1)];
-// 	// 	static const FString ContextString(TEXT("Item Spawn Lookup"));
-// 	//
-// 	// 	// 데이터 테이블에서 해당 행을 찾음
-// 	// 	FItemStruct* FoundItem = ItemDataTable->FindRow<FItemStruct>(RandomRowName, ContextString);
-// 	//
-// 	// 	// 아이템을 찾지 못한 경우 실패
-// 	// 	if (!FoundItem) return false;
-// 	//
-// 	// 	// 찾은 아이템 데이터를 반환할 `OutItem`에 복사
-// 	// 	OutItem = *FoundItem;
-// 	// 	return true; // 정상적으로 아이템을 가져왔으면 `true` 반환
-// 	// }
+// 	static const FString ContextString(TEXT("Item Spawn Lookup"));
+// 	
+// 	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(RandomRowName,ContextString);
+// 	
+// 	return ;
 // }
 
