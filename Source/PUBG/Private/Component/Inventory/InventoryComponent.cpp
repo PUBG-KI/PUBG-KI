@@ -300,14 +300,13 @@ void UInventoryComponent::ReplicateContent_Implementation(const TArray<FItemSlot
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ReplicateContent_Implementation "));
+		UE_LOG(LogTemp, Warning, TEXT("ServerUpdateInventory_Implementation"));
 	}
 
-	SetContent(OutContent);
+	Content.Add(FItemSlotStruct());
+	Content.Pop();
 	
-	//Content = OutContent;  
-	UE_LOG(LogTemp, Warning, TEXT("Server: Content updated! New size: %d"), Content.Num());
-	
+	UE_LOG(LogTemp, Warning, TEXT("Execute Client : ReplicateContent_Implementation "));
 }
 
 void UInventoryComponent::PrintContents()

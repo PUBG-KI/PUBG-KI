@@ -13,6 +13,8 @@ struct FItemSlotStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	FItemSlotStruct() : ItemName(NAME_None), Quantity(0), Tag(FGameplayTag()) {}
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName ItemName;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

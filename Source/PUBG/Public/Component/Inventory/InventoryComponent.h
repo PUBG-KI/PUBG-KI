@@ -67,7 +67,6 @@ public:
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();
-	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_InteractItem(AItemBase* OutItemBase);
 

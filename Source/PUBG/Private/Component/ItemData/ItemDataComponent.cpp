@@ -118,7 +118,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 
 					
 					
-					//Character->GetInventoryComponent()->ReplicateContent(Character->GetInventoryComponent()->GetContent());
+					Character->GetInventoryComponent()->ReplicateContent(Character->GetInventoryComponent()->GetContent());
 					//Character->GetInventoryComponent()->ServerSetContents_Implementation(Character->GetInventoryComponent()->GetContent());
 				}
 			}
