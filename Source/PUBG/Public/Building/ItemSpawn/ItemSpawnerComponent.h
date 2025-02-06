@@ -24,21 +24,25 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//스폰존 생성 위치
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnLocation")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<FVector> SpawnLocations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnItem")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AActor> BP_Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnItemCount")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 SpawnItemCount;
 
 	//아이템 스폰 반경
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnItemRadius")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 ItemSpawnRadius;
+
+	//아이템 데이터테이블
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UDataTable* SpawnItemTable;
 	
 	//스폰시킬 함수
-	UFUNCTION(BlueprintCallable, Category = "SpawnItems")
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
 		
 };

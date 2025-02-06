@@ -40,7 +40,6 @@ private:
 	UItemDataComponent* ItemDataComponent;
 	
 	FTimerHandle BeginOverlapTimerHandle;
-	
 	//static int32 BeginOverlapCount;
 
 // 함수 부분
