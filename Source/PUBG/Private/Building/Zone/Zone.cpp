@@ -30,7 +30,7 @@ AZone::AZone()
 void AZone::NotifySize()
 {
 	// 사이즈 알리기
-	UE_LOG(LogTemp, Warning, TEXT("Notify!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Notify!"));
 
 	//현재 원의 반지름
 	CurrentRadius = GetCurrentRadius();	
@@ -49,10 +49,10 @@ void AZone::NotifySize()
 	TargetScale = FMath::Clamp(CurrentScale * 0.5f,0,CurrentScale);
 
 
-	UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
-	UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
-	UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
+	// UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
 
 	
 	if(CurrentScale <= 0)
@@ -63,7 +63,7 @@ void AZone::NotifySize()
 	if (CurveFloat)
 	{
 		//줄어드는 함수 호출
-		UE_LOG(LogTemp, Warning, TEXT("ShrinkStart"));
+		//UE_LOG(LogTemp, Warning, TEXT("ShrinkStart"));
 		TimelineComponent->PlayFromStart();
 	}
 	
@@ -91,8 +91,8 @@ void AZone::UpdateShrinkZone(float Value)
 	SetActorLocation(TempLocation);
 	
 	
-	UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
-	UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
+	// UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
 
 }
 
@@ -156,7 +156,7 @@ void AZone::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 void AZone::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s has first Endoverlapped with the component!"), *OtherActor->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s has first Endoverlapped with the component!"), *OtherActor->GetName());
 	
 	 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 

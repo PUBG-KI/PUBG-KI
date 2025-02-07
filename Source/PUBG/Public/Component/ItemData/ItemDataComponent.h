@@ -38,6 +38,11 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void InteractWith(APlayerCharacter* Character);
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
-	
+
+	//Setter
+	void SetItemID(FName ItemIdName);
+	void SetItemWeigt(int32 ItemWeigt);
+	void SetItemQuantity(float ItemQuantity);
+
 	
 };

@@ -171,6 +171,11 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 	//Destroy();
 }
 
+void AItemBase::SetMesh(UStaticMesh* NewMesh)
+{
+	StaticMesh->SetStaticMesh(NewMesh);
+}
+
 
 
 

@@ -7,6 +7,7 @@
 #include "ItemSpawnerComponent.generated.h"
 
 class AItemBase;
+struct FItemStruct;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UItemSpawnerComponent : public UActorComponent
@@ -43,10 +44,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	UDataTable* SpawnItemTable;
 	
-	//스폰시킬 함수
+	//TestItem 스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
 
+	UFUNCTION(BlueprintCallable, Category="Item Spawn")
+	void SetRandomMesh(AItemBase* Item, FName ItemRowName);
+
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FName GetRandomItemRowName();
+
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	void SetRandomProperties(AItemBase* Item, FName ItemRowName);
+	
 private:
-	//bool GetRandomItemRowName();
+	//bool SetItemStruct(FItemStruct& Output);
+	
 };

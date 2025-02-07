@@ -65,6 +65,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 
+	UFUNCTION()
+	void SetMesh(UStaticMesh* NewMesh);
+	
+
 private:
 	UPROPERTY()
 	float ItemOfZ;
