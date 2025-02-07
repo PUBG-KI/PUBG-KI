@@ -47,7 +47,6 @@ namespace BaseGameplayTag
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Pickup,"Player.Ability.Pickup");
 
-
 	// Weapon Equip
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Equip, "Player.Ability.Weapon.Equip");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_UnEquip, "Player.Ability.Weapon.UnEquip");

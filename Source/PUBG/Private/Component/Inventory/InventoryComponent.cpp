@@ -47,6 +47,7 @@ void UInventoryComponent::BeginPlay()
 	// 	Slot.Tag = FGameplayTag(); // 빈 태그로 초기화
 	// }
 	
+
 }
 
 void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
