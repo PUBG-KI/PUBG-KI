@@ -44,6 +44,7 @@ void UCreateGameWidget::OnCreateButton_Clicked()
 		{
 			FOnlineSessionSettings SessionSettings;
 			SessionSettings.bIsLANMatch = bIsUseLan;  // LAN 테스트용 (Steam/EOS는 false)
+			SessionSettings.bIsDedicated = false; // 리슨 서버
 			SessionSettings.bShouldAdvertise = true;
 			SessionSettings.bUsesPresence = true;
 			SessionSettings.NumPublicConnections = MaxPlayer;

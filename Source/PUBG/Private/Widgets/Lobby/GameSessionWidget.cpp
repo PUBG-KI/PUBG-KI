@@ -73,7 +73,8 @@ void UGameSessionWidget::OnStartButton_Clicked()
 				if (GS->CheckAllPlayersReady())
 				{
 					UE_LOG(LogTemp, Warning, TEXT("All Ready"));
-					PC->MoveToDedicatedServer(ConnectIP, ConnectMap);							
+					//PC->MoveToDedicatedServer(ConnectIP, ConnectMap);
+					PC->ServerMoveAllClientsToDedicatedServer(ConnectIP, ConnectMap);
 				}
 				else
 				{

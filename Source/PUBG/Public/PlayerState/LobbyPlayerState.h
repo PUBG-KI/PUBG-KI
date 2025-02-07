@@ -36,6 +36,6 @@ public:
 	
 	UPROPERTY(ReplicatedUsing=OnRep_IsReady)
 	bool bIsReady = false;
-	UPROPERTY(Replicated=OnRep_IsHost)
+	UPROPERTY(ReplicatedUsing=OnRep_IsHost)
 	bool bIsHost = false;
 };

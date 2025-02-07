@@ -46,4 +46,6 @@ void ALobbyGameMode::Logout(AController* ExitingPlayer)
 			GS->RemovePlayerToList(PS);
 		}
 	}
+
+	
 }
