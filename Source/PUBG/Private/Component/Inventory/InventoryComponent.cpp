@@ -21,7 +21,7 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
-	
+
 	MaxInventoryWeight = 50.0f;
 	CurrentInventoryWeight = 0.0f;
 }
@@ -41,6 +41,8 @@ void UInventoryComponent::BeginPlay()
 	// 	Slot.Quantity = 0;
 	// 	Slot.Tag = FGameplayTag(); // 빈 태그로 초기화
 	// }
+	
+	
 }
 
 void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -292,7 +294,7 @@ void UInventoryComponent::ServerUpdateInventory_Implementation()
 	UpdateInventory();
 }
 
-void UInventoryComponent::ReplicateContent_Implementation(const TArray<FItemSlotStruct>& OutContent)
+void UInventoryComponent::ReplicateContent_Implementation()
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
@@ -306,7 +308,9 @@ void UInventoryComponent::ReplicateContent_Implementation(const TArray<FItemSlot
 	Content.Add(FItemSlotStruct());
 	Content.Pop();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Execute Client : ReplicateContent_Implementation "));
+
+	//OnRep_Content();
+	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!!"));
 }
 
 void UInventoryComponent::PrintContents()
@@ -367,6 +371,7 @@ void UInventoryComponent::OnRep_Content()
 			{
 				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
 				PlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+				UE_LOG(LogTemp, Warning, TEXT("OnRep_Content : Widget Update!"));
 			}
 		}
 	}

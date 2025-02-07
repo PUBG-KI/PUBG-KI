@@ -646,7 +646,8 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
 		{
 			//NearComponent->GetGroundItems().Add(ItemBase);
 			NearComponent->ServerAddGroundItem(ItemBase);
-			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 
 			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItems().Num());

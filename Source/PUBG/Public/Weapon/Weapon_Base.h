@@ -7,17 +7,17 @@
 #include "BaseLibrary/BaseStructType.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "DataTable/DT_Weapon.h"
+#include "Item/EquipableItem.h"
 #include "Weapon_Base.generated.h"
 
 UCLASS()
-class PUBG_API AWeapon_Base : public AActor
+class PUBG_API AWeapon_Base : public AEquipableItem
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	AWeapon_Base();
-	
 
 protected:
 	// Called when the game starts or when spawned

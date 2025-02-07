@@ -5,9 +5,11 @@
 
 #include "Character/TestCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
+#include "Component/NearArea/NearComponent.h"
 #include "Components/BoxComponent.h"
 #include "Controller/BasePlayerController.h"
 #include "Item/ItemBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 // Sets default values for this component's properties
@@ -39,6 +41,16 @@ void UItemDataComponent::BeginPlay()
 	{
 	//	Owner->SetReplicates(true);
 	}
+
+	AActor* MyOwner = GetOwner(); // 이 컴포넌트가 속한 액터 가져오기
+	if (MyOwner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyComponent's Owner: %s"), *MyOwner->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("MyComponent's Owner is NULL!"));
+	}
 }
 
 void UItemDataComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -54,6 +66,78 @@ void UItemDataComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 void UItemDataComponent::OnRep_Quantity()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnRep_Quantity Replicate!"));
+
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		if (PlayerController)
+		{
+			if (ABasePlayerController* BasePlayerController = Cast<ABasePlayerController>(PlayerController))
+			{
+				if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(BasePlayerController->GetCharacter()))
+				{
+					TArray<AItemBase*>& FoundGroundItems = PlayerCharacter->GetNearComponent()->GetGroundItems();
+					
+					for (AItemBase* Item : FoundGroundItems)
+					{
+						if (Item == GetOwner())
+						{
+							if (BasePlayerController->GetInventoryWidget())
+							{
+								BasePlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+								BasePlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+								UE_LOG(LogTemp, Warning, TEXT("OnRep_Quantity : Widget Update!"))
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// 블루프린트 클래스 로드
+	// FString BlueprintPath = TEXT("/Game/Blueprint/Character/BP_PlayerCharacter.BP_PlayerCharacter_C");
+	// UClass* BlueprintClass = StaticLoadClass(AActor::StaticClass(), nullptr, *BlueprintPath);
+	//
+	// if (BlueprintClass)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Blueprint class loaded successfully!"));
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Failed to load blueprint class!"));
+	// }
+	//
+	// if (BlueprintClass)
+	// {
+	// 	TArray<AActor*> FoundActors;
+	// 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BlueprintClass, FoundActors);
+	//
+	// 	for (AActor* Actor : FoundActors)
+	// 	{
+	// 		if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(Actor))
+	// 		{
+	// 			TArray<AItemBase*>& FoundGroundItems = PlayerCharacter->GetNearComponent()->GetGroundItems();
+	//
+	// 			for (AItemBase* Item : FoundGroundItems)
+	// 			{
+	// 				if (Item == GetOwner())
+	// 				{
+	// 					if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(PlayerCharacter->GetController()))
+	// 					{
+	// 						if (PlayerController->GetInventoryWidget())
+	// 						{
+	// 							PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+	// 							PlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+	// 							UE_LOG(LogTemp, Warning, TEXT("OnRep_Quantity : Widget Update!"));
+	//
+	// 						}
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	
 }
@@ -109,6 +193,16 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 					UE_LOG(LogTemp, Warning, TEXT("RemainItemQuantity : %d"), RemainItemQuantity);
 					
 					Quantity = RemainItemQuantity; // 리플리케이트되는 시간이 안맞아서 밑에서 강제로 리플리케이트 시킴
+					Character->ForceNetUpdate();
+					AActor* MyOwner = GetOwner(); // 이 컴포넌트가 속한 액터 가져오기
+					if (MyOwner)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("MyComponent's Owner: %s"), *MyOwner->GetName());
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("MyComponent's Owner is NULL!"));
+					}
 					
 					ItemBase->GetItemStruct().Quantity = RemainItemQuantity;
 
@@ -118,8 +212,9 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 
 					
 					
-					Character->GetInventoryComponent()->ReplicateContent(Character->GetInventoryComponent()->GetContent());
+					//Character->GetInventoryComponent()->ReplicateContent();
 					//Character->GetInventoryComponent()->ServerSetContents_Implementation(Character->GetInventoryComponent()->GetContent());
+					
 				}
 			}
 		}

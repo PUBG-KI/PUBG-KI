@@ -20,6 +20,7 @@
 AItemBase::AItemBase()
 {
 	bReplicates = true;
+	bReplicateUsingRegisteredSubObjectList = true;
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	RootComponent = StaticMesh;
@@ -33,6 +34,8 @@ AItemBase::AItemBase()
 	InteractionComponent->InitBoxExtent(FVector(20.0f));
 
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
+	//ItemDataComponent->bReplicates = true;
+	//RegisterReplicatedSubObject(ItemDataComponent);
 
 	//BeginOverlapCount = 0;
 }
@@ -53,7 +56,10 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AItemBase, ItemStruct);
+	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	
+	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
+	//DOREPLIFETIME_CONDITION(AItemBase, ItemStruct, COND_OwnerOnly);
 }
 
 // void AItemBase::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -140,6 +146,11 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 // 	}
 // 	
 // }
+
+void AItemBase::OnRep_ItemDataComponent()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
+}
 
 FText AItemBase::LookAt()
 {

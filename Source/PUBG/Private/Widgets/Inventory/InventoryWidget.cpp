@@ -82,7 +82,7 @@ void UInventoryWidget::UpdateInventoryWidget()
 void UInventoryWidget::UpdateNearItemSlotWidget()
 {
 	GetWrapBox_Near()->ClearChildren();
-	NearComponent->ServerGetGroundItem();
+	//NearComponent->ServerGetGroundItem();
 	TArray<AItemBase*> ItemSlot = NearComponent->GetGroundItems();
 	
 	UE_LOG(LogTemp, Warning, TEXT("ItemSlot Num : %d"), ItemSlot.Num());
@@ -97,21 +97,26 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 			NearItemSlotWidget = CreateWidget<UItemSlotWidget>(GetWorld(), ItemSlotWidgetClass);
 			if (NearItemSlotWidget != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemStruct().Name.ToString());
-				NearItemSlotWidget->SetItemName(ItemSlot[i]->GetItemStruct().Name);
-				//NearItemSlotWidget->SetQuantity(ItemSlot[i]->GetItemStruct().Quantity);
-				NearItemSlotWidget->SetQuantity(ItemSlot[i]->GetItemDataComponent()->GetQuantity());
-				NearItemSlotWidget->SetNearComponent(NearComponent);
-				//NearItemSlotWidget->SetInventoryComponent(InventoryComponent);
-				NearItemSlotWidget->SetIndex(i);
-				NearItemSlotWidget->SetInventoryWidget(this);
-				
-				FString text = TEXT("줍기");
-				NearItemSlotWidget->GetTextBlock_Use()->SetText(FText::FromString(text));
-				//NearItemSlotWidget->GetTextBlock_Use()->SetText(LOCTEXT("UseText", "사용"));
-				
-				NearItemSlotWidget->UpdateItemSlotWidget();
-				GetWrapBox_Near()->AddChildToWrapBox(NearItemSlotWidget);
+				if (ItemSlot[i] != nullptr)
+				{
+					//UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemStruct().Name.ToString());
+					UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemDataComponent()->GetItemRowName().ToString());
+					//NearItemSlotWidget->SetItemName(ItemSlot[i]->GetItemStruct().Name);
+					NearItemSlotWidget->SetItemName(ItemSlot[i]->GetItemDataComponent()->GetItemRowName());
+					//NearItemSlotWidget->SetQuantity(ItemSlot[i]->GetItemStruct().Quantity);
+					NearItemSlotWidget->SetQuantity(ItemSlot[i]->GetItemDataComponent()->GetQuantity());
+					NearItemSlotWidget->SetNearComponent(NearComponent);
+					//NearItemSlotWidget->SetInventoryComponent(InventoryComponent);
+					NearItemSlotWidget->SetIndex(i);
+					NearItemSlotWidget->SetInventoryWidget(this);
+					
+					FString text = TEXT("줍기");
+					NearItemSlotWidget->GetTextBlock_Use()->SetText(FText::FromString(text));
+					//NearItemSlotWidget->GetTextBlock_Use()->SetText(LOCTEXT("UseText", "사용"));
+					
+					NearItemSlotWidget->UpdateItemSlotWidget();
+					GetWrapBox_Near()->AddChildToWrapBox(NearItemSlotWidget);
+				}
 			}
 		}
 		else
@@ -120,7 +125,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 		}
 	}
 	
-	
+	ItemSlot.Empty();
 }
 
 void UInventoryWidget::AddNewChild()

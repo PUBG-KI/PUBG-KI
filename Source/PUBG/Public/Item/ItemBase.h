@@ -39,7 +39,7 @@ private:
 	UBoxComponent* BoxComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* InteractionComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_ItemDataComponent, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UItemDataComponent* ItemDataComponent;
 	
 	FTimerHandle BeginOverlapTimerHandle;
@@ -54,12 +54,9 @@ private:
 	// void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);	
 
 public:
-	virtual FText LookAt() override;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void InteractWith(APlayerCharacter* Character);
-	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
-
+	// OnRep
+	UFUNCTION(BlueprintCallable)
+	void OnRep_ItemDataComponent();
 	//Getter
 	UFUNCTION()
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
@@ -71,6 +68,12 @@ public:
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	UFUNCTION(BlueprintCallable)
 	void SetItemStruct(FItemStruct OutItemStruct) { ItemStruct = OutItemStruct; }
+	virtual FText LookAt() override;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void InteractWith(APlayerCharacter* Character);
+	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
+
 
 private:
 	UPROPERTY()

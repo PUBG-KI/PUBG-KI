@@ -20,6 +20,8 @@ struct FItemStruct : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UStaticMesh* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<AActor> BP_Item;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* Image;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float Weight;

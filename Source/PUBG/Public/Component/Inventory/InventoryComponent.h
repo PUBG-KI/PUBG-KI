@@ -89,7 +89,7 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerUpdateInventory();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ReplicateContent(const TArray<FItemSlotStruct>& OutContent);
+	void ReplicateContent();
 
 	
 	UFUNCTION(BlueprintCallable)

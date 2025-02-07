@@ -43,8 +43,6 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 		//PlayerCharacter->GetInventoryComponent()->ServerUpdateInventory();
 		InventoryWidget->UpdateInventoryWidget();
-
-		
 		
 		if (!PlayerCharacter)
 		{
@@ -67,7 +65,8 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		UE_LOG(LogTemp, Warning, TEXT("NoCollision"));
 		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		GetPlayerControllerFromActorInfo()->DestroyInventoryWidget();
-		GetPlayerCharacterFromActorInfo()->GetNearComponent()->GetGroundItems().Empty();
+		//GetPlayerCharacterFromActorInfo()->GetNearComponent()->GetGroundItems().Empty();
+		GetPlayerCharacterFromActorInfo()->GetNearComponent()->ServerEmptyGroundItem();
 		GetPlayerControllerFromActorInfo()->InputModeGame();
 	}
 	

@@ -40,7 +40,7 @@ public:
 
 	// Getter
 	UFUNCTION(BlueprintCallable)
-	TArray<AItemBase*>& GetGroundItems() { return GroundItems; }
+	FORCEINLINE TArray<AItemBase*>& GetGroundItems() { return GroundItems; }
 	
 	UFUNCTION(BlueprintCallable)
 	void AddToGroundItem();
@@ -59,6 +59,8 @@ public:
 	void ServerGetGroundItem();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerUpdateNear();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerEmptyGroundItem();
 
 	UFUNCTION(BlueprintCallable)
 	void PrintGroundItems();

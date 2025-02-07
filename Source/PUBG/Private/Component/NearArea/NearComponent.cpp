@@ -128,6 +128,11 @@ void UNearComponent::ServerUpdateNear_Implementation()
 	UpdateNear();
 }
 
+void UNearComponent::ServerEmptyGroundItem_Implementation()
+{
+	GroundItems.Empty();
+}
+
 void UNearComponent::PrintGroundItems()
 {
 	if (GetOwner() && GetOwner()->HasAuthority())

@@ -30,6 +30,8 @@ private:
 	int32 Quantity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
 	float Weight;
+	
+	
 
 public:
 	// OnRep
