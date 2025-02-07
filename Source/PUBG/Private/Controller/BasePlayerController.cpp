@@ -74,7 +74,8 @@ void ABasePlayerController::BeginPlayingState()
 	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
 	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
 	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
-	
+
+	InputModeGame();	
 }
 
 void ABasePlayerController::InputModeUI()
