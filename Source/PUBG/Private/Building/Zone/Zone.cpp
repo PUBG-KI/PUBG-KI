@@ -8,6 +8,7 @@
 #include "Chaos/ChaosPerfTest.h"
 #include "Components/PostProcessComponent.h"
 #include "Components/SphereComponent.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 
 // Sets default values
 AZone::AZone()
@@ -48,11 +49,10 @@ void AZone::NotifySize()
 	//다음 원의 스케일
 	TargetScale = FMath::Clamp(CurrentScale * 0.5f,0,CurrentScale);
 
-
-	UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
-	UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
-	UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
+	// UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
+	// UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
 
 	
 	if(CurrentScale <= 0)
@@ -66,7 +66,7 @@ void AZone::NotifySize()
 		UE_LOG(LogTemp, Warning, TEXT("ShrinkStart"));
 		TimelineComponent->PlayFromStart();
 	}
-	
+
 }
 
 float AZone::GetMeshWorldScale() const
@@ -78,6 +78,17 @@ float AZone::GetMeshWorldScale() const
 	}
 
 	return 1.0f;
+}
+
+void AZone::UpdateZoneDamage(APlayerCharacter* PlayerCharacter)
+{
+	if (PlayerCharacter)
+	{
+		UBaseAbilitySystemComponent* ASC = Cast<UBaseAbilitySystemComponent>(PlayerCharacter->GetAbilitySystemComponent());
+
+		FGameplayEffectSpecHandle GameplayEffectSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level,ASC->MakeEffectContext());
+		ASC->ModifyGameplayEffectLevel(GameplayEffectSpecHandle, Level);		
+	}
 }
 
 void AZone::UpdateShrinkZone(float Value)
@@ -108,6 +119,14 @@ void AZone::TimelineFinishedFunction()
 	UE_LOG(LogTemp, Warning, TEXT("Finished Event Called."));
 
 	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, 1.0f);
+
+	Level++;
+
+	TArray<APlayerCharacter*> PlayerCharacters = UBaseFunctionLibrary::GetAllPlayersInWorld(GetWorld());
+	for (APlayerCharacter* PlayerCharacter : PlayerCharacters)
+	{
+		UpdateZoneDamage(PlayerCharacter);		
+	}	
 }
 
 FVector AZone::GetRandomPointInCircle(FVector OriginCenter,float RandomRange) //랜덤위치

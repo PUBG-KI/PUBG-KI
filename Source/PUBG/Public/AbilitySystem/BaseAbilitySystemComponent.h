@@ -56,4 +56,5 @@ public:
 
 	// GDDamageExecCalculation에서 호출됩니다. 이 ASC가 피해를 받을 때마다 ReceiverdDamage를 방송합니다.
 	virtual void ReceiveDamage(UBaseAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
+	void ModifyGameplayEffectLevel(const FGameplayEffectSpecHandle& EffectHandle, float NewLevel);
 };

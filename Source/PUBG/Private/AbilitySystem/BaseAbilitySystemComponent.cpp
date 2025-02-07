@@ -166,3 +166,29 @@ void UBaseAbilitySystemComponent::ReceiveDamage(UBaseAbilitySystemComponent* Sou
 	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
 }
 
+void UBaseAbilitySystemComponent::ModifyGameplayEffectLevel(const FGameplayEffectSpecHandle& EffectHandle, float NewLevel)
+{
+	if (!EffectHandle.IsValid() || !EffectHandle.Data || !EffectHandle.Data->Def)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Invalid GameplayEffectSpecHandle!"));
+		return;
+	}
+
+	// 현재 활성화된 `GameplayEffect` 찾기
+	FGameplayEffectQuery Query = FGameplayEffectQuery::MakeQuery_MatchAllEffectTags(FGameplayTagContainer());
+	TArray<FActiveGameplayEffectHandle> ActiveEffects = GetActiveEffects(Query);
+
+	for (const FActiveGameplayEffectHandle& Effect : ActiveEffects)
+	{
+		const FActiveGameplayEffect* ActiveEffect = GetActiveGameplayEffect(Effect);
+		if (ActiveEffect && ActiveEffect->Spec.Def == EffectHandle.Data->Def)
+		{
+			SetActiveGameplayEffectLevel(Effect, NewLevel);
+
+			UE_LOG(LogTemp, Warning, TEXT("Increased GameplayEffect Level: %f"), NewLevel);
+			return;
+		}
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No active GameplayEffect found matching the given handle."));
+}

@@ -9,6 +9,7 @@
 #include "Zone.generated.h"
 
 class UGameplayEffect;
+class APlayerCharacter;
 
 UCLASS()
 class PUBG_API AZone : public AActor
@@ -41,6 +42,9 @@ public:
 
 	UFUNCTION()
 	float GetMeshWorldScale() const;
+
+	UFUNCTION()
+	void UpdateZoneDamage(APlayerCharacter* PlayerCharacter);
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

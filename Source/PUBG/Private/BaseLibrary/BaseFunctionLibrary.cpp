@@ -5,8 +5,10 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "EngineUtils.h"
 #include "Abilities/GameplayAbility.h"
 #include "Character/BaseCharacter.h"
+#include "Character/PlayerCharacter.h"
 
 UBaseAbilitySystemComponent* UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(AActor* Actor)
 {
@@ -63,4 +65,23 @@ FString UBaseFunctionLibrary::ReadFile(FString FilePath)
 	}
 
 	return Result;
+}
+
+TArray<APlayerCharacter*> UBaseFunctionLibrary::GetAllPlayersInWorld(UWorld* World)
+{
+	TArray<APlayerCharacter*> PlayerCharacters;
+
+	if (World)
+	{
+		for (TActorIterator<APlayerCharacter> It(World); It; ++It)
+		{
+			APlayerCharacter* PlayerCharacter = *It;
+			if (PlayerCharacter)
+			{
+				PlayerCharacters.Add(PlayerCharacter);
+			}
+		}
+	}
+
+	return PlayerCharacters;
 }
