@@ -43,7 +43,6 @@ private:
 	UItemDataComponent* ItemDataComponent;
 	
 	FTimerHandle BeginOverlapTimerHandle;
-	
 	//static int32 BeginOverlapCount;
 
 // 함수 부분
@@ -74,6 +73,10 @@ public:
 	void InteractWith(APlayerCharacter* Character);
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 
+
+	UFUNCTION()
+	void SetMesh(UStaticMesh* NewMesh);
+	
 
 private:
 	UPROPERTY()

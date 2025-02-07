@@ -242,3 +242,19 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		}
 	}
 }
+
+void UItemDataComponent::SetItemID(FName ItemIdName)
+{
+	ItemID.RowName = ItemIdName;
+}
+
+void UItemDataComponent::SetItemWeigt(int32 ItemWeigt)
+{
+	Weight = ItemWeigt;
+}
+
+void UItemDataComponent::SetItemQuantity(float ItemQuantity)
+{
+	Quantity = ItemQuantity;
+}
+
