@@ -39,11 +39,17 @@ void AGun_Base::SetBulletArom(float Armo)
 	this->BulletArmo = Armo;
 }
 
+FVector AGun_Base::GetWeaponMagSocketLocation() const
+{
+	return WeaponSkeletalMeshComponent->GetSocketLocation(FName("ProjectileSocket"));
+}
+
 void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGun_Base, BulletArmo);
+	DOREPLIFETIME(AGun_Base, MagMesh);
 }
 
 void AGun_Base::Server_SetBulletArom_Implementation(float Armo)

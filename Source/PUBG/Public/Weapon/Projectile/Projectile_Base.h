@@ -9,6 +9,8 @@
 
 class USphereComponent;
 class UProjectileMovementComponent;
+class APlayerCharacter;
+class UBulletSystemComponent;
 
 UCLASS()
 class PUBG_API AProjectile_Base : public AActor
@@ -28,9 +30,30 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	UStaticMeshComponent* ProjectileMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Projectile")
-	USphereComponent* CollisionComponent;
+	UPROPERTY(EditDefaultsOnly, category = Projectile)
+	UBulletSystemComponent* BulletSystemComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Projectile")
-	UProjectileMovementComponent* ProjectileMovement;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	float BulletDamage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	float BulletSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	float BulletMass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	float BulletCrossSection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	float DragCoefficiency;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	APlayerCharacter* PlayerCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	FVector VelocityVector;
+
+	UFUNCTION(BlueprintNativeEvent, Category = "MyCategory")
+	void MyFunction(AActor* TargetActor, FGameplayTag EventTag, FGameplayEventData Payload);
 };

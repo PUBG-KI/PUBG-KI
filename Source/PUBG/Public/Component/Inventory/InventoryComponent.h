@@ -42,6 +42,7 @@ private:
 	AItemBase* Item;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* NearItem;
+	
 
 // 함수 영역
 public:
@@ -99,21 +100,62 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TransferSlots();
+
 	
 	// 재윤, 디버그용 CurrentWeapon변수
-	UPROPERTY(visibleAnywhere, Replicated, BlueprintReadWrite, Category="Inventory")
+	UPROPERTY(visibleAnywhere, Replicated, Category="Inventory")
 	AWeapon_Base* CurrentWeapon;
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Inventory")
+	AWeapon_Base* LastCurrentWeapon;
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Inventory")
+	AWeapon_Base* PrimarySlot;
+	
+	UPROPERTY(visibleAnywhere, Replicated, Category="Inventory")
+	AWeapon_Base* SecondarySlot;
 
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetCurrentWeapon() const {return CurrentWeapon; }
+	
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetLastCurrentWeapon() const { return LastCurrentWeapon; }
 
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetPrimarySlotWeapon() const { return PrimarySlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetSecondarySlot() const { return SecondarySlot; }
+	
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentWeapon(AWeapon_Base* _CurrentWeapon);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetLastCurrentWeapon(AWeapon_Base* _LastCurrentWeapon);
 
 	UFUNCTION(BlueprintCallable)
+	void SetPrimarySlotWeapon(AWeapon_Base* _PrimarySlot);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetSecondarySlotWeapon(AWeapon_Base* _Secondary);
+
+	// ------------- gun base casting 반환
+	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetCurrentWeapon_GunBase() const { return Cast<AGun_Base>(CurrentWeapon);}
+
+	UFUNCTION(BlueprintCallable)
+	AGun_Base* GetLastCurrentWeapon_GunBase() const { return Cast<AGun_Base>(LastCurrentWeapon);}
+	
+	UFUNCTION(BlueprintCallable)
+	AGun_Base* GetPrimary_GunBase() const { return Cast<AGun_Base>(PrimarySlot);}
+	
+	UFUNCTION(BlueprintCallable)
+	AGun_Base* GetSecondary_GunBase() const { return Cast<AGun_Base>(SecondarySlot);}
+
+
 	
 };
+
 
 
 
