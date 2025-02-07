@@ -118,6 +118,32 @@ bool UBaseAbilitySystemComponent::TryActivateAbilityByTagToRandom(FGameplayTag T
 	return false;
 }
 
+bool UBaseAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag Tag)
+{
+	check(Tag.IsValid());
+
+	TArray<FGameplayAbilitySpec*> AbilitySpecs;
+
+	// �� �Լ��� Ȱ��ȭ ������ ��� ���� �����Ƽ ������ �����´�
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(Tag.GetSingleTagContainer(), AbilitySpecs);
+
+	// abilityspecs �迭�� ���� �����Ͱ� ������
+	if (!AbilitySpecs.IsEmpty())
+	{
+		FGameplayAbilitySpec* AbilitySpec = AbilitySpecs[0];
+
+		check(AbilitySpec);
+
+		if (!AbilitySpec->IsActive())
+		{
+			return TryActivateAbility(AbilitySpec->Handle);
+		}
+
+	}
+	return false;
+}
+
+
 void UBaseAbilitySystemComponent::TryCancelAbilityByTag(FGameplayTag Tag)
 {
 	check(Tag.IsValid());

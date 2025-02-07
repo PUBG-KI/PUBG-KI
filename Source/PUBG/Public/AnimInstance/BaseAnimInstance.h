@@ -62,6 +62,7 @@ public:
 	float Pitch;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly ,Category = "AimOffset")
 	float LeaningPressedValue;
+	
 
 	
 protected:

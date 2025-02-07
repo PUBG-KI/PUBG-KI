@@ -39,6 +39,7 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Reload);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_ChangeFireMode);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Zoom);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Pickup);
 
 	// Weapon Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Equip);
