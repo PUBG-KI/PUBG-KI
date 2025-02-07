@@ -3,7 +3,7 @@
 
 #include "Component/ItemData/ItemDataComponent.h"
 
-#include "Character/TestCharacter.h"
+#include "Character/PlayerCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Component/NearArea/NearComponent.h"
 #include "Components/BoxComponent.h"
@@ -11,6 +11,7 @@
 #include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Widgets/Inventory/InventoryWidget.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 
 // Sets default values for this component's properties
 UItemDataComponent::UItemDataComponent()
@@ -24,8 +25,6 @@ UItemDataComponent::UItemDataComponent()
 	ItemID.DataTable = nullptr;
 	ItemID.RowName = NAME_None;
 	Quantity = 0;
-
-	
 }
 
 
@@ -35,11 +34,11 @@ void UItemDataComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 	//AActor* Owner = GetOwner(); 
 	//if (Owner)
 	{
-	//	Owner->SetReplicates(true);
+		//	Owner->SetReplicates(true);
 	}
 
 	AActor* MyOwner = GetOwner(); // 이 컴포넌트가 속한 액터 가져오기
@@ -60,7 +59,6 @@ void UItemDataComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(UItemDataComponent, Quantity);
 
 	//DOREPLIFETIME_CONDITION(UItemDataComponent, Quantity, COND_OwnerOnly);
-
 }
 
 void UItemDataComponent::OnRep_Quantity()
@@ -140,6 +138,7 @@ void UItemDataComponent::OnRep_Quantity()
 	// }
 
 	
+
 }
 
 FText UItemDataComponent::LookAt()
@@ -161,7 +160,6 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 	}
 
 
-	
 	if (UInventoryComponent* Inventory = Character->GetInventoryComponent())
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("1"));
@@ -169,14 +167,24 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 
 		// 0이 아니면 인벤이 꽉 차서 아이템이 다 안들어간 것 
 		int32 RemainItemQuantity = Inventory->AddToInventory(ItemID.RowName, Quantity, Weight);
+
+		if (Quantity != RemainItemQuantity)
+		{
+			UAbilitySystemComponent* AbilitySystemComponent = Character->GetAbilitySystemComponent();
+			UBaseAbilitySystemComponent* BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent);
+			if (BaseAbilitySystemComponent)
+			{
+				BaseAbilitySystemComponent->TryActivateAbilityByTag(FGameplayTag::RequestGameplayTag(FName("Player.Ability.Pickup")));
+			}
+		}
+
 		if (RemainItemQuantity != 0)
 		{
-
 			// 몽타주
-			
+
 			//UE_LOG(LogTemp, Warning, TEXT("Remain Item : %s, %d"), *ItemID.RowName.ToString(), Quantity);
-			
-			AActor* Owner = GetOwner(); 
+
+			AActor* Owner = GetOwner();
 			if (Owner)
 			{
 				if (GetOwner() && GetOwner()->HasAuthority())
@@ -187,12 +195,14 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Execute Client : RemainItemQuantity "));
 				}
-				
+
 				if (AItemBase* ItemBase = Cast<AItemBase>(Owner))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("RemainItemQuantity : %d"), RemainItemQuantity);
-					
+
+
 					Quantity = RemainItemQuantity; // 리플리케이트되는 시간이 안맞아서 밑에서 강제로 리플리케이트 시킴
+
 					Character->ForceNetUpdate();
 					AActor* MyOwner = GetOwner(); // 이 컴포넌트가 속한 액터 가져오기
 					if (MyOwner)
@@ -204,15 +214,18 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 						UE_LOG(LogTemp, Warning, TEXT("MyComponent's Owner is NULL!"));
 					}
 					
+
 					ItemBase->GetItemStruct().Quantity = RemainItemQuantity;
 
 					UE_LOG(LogTemp, Warning, TEXT("Before Quantity : %d"), Quantity);
 
 					UE_LOG(LogTemp, Warning, TEXT("After Quantity : %d"), Quantity);
 
+
 					
 					
 					//Character->GetInventoryComponent()->ReplicateContent();
+
 					//Character->GetInventoryComponent()->ServerSetContents_Implementation(Character->GetInventoryComponent()->GetContent());
 					
 				}
@@ -220,8 +233,8 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		}
 		// 0이라면 다 들어가서 바닥에 있는 아이템이 없어져야 함 
 		else
-		{			
-			AActor* Owner = GetOwner(); 
+		{
+			AActor* Owner = GetOwner();
 			if (Owner)
 			{
 				Owner->Destroy();
@@ -229,9 +242,3 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		}
 	}
 }
-
-
-
-
-
-

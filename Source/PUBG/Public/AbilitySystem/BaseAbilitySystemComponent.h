@@ -7,7 +7,9 @@
 #include "GameplayTagContainer.h"
 #include "BaseAbilitySystemComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FReceivedDamageDelegate, UBaseAbilitySystemComponent*, SourceASC, float, UnmitigatedDamage, float, MitigatedDamage);
+class UPlayerGameplayAbility;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FReceivedDamageDelegate, UBaseAbilitySystemComponent*, SourceASC, float,
+                                               UnmitigatedDamage, float, MitigatedDamage);
 
 
 struct FPlayerAbilitySet;
@@ -34,6 +36,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	bool TryActivateAbilityByTagToRandom(FGameplayTag Tag);
 
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	bool TryActivateAbilityByTag(FGameplayTag Tag);
+	
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void TryCancelAbilityByTag(FGameplayTag Tag);
 

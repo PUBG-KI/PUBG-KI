@@ -22,7 +22,12 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 
-	MaxInventoryWeight = 50.0f;
+
+	//MaxInventoryWeight = 50.0f;
+
+	
+	MaxInventoryWeight = 1000.0f; //임시값(1000)
+
 	CurrentInventoryWeight = 0.0f;
 }
 

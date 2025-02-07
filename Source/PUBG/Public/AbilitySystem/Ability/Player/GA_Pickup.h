@@ -13,9 +13,15 @@
 UENUM()
 enum class EMontageType : uint8
 {
-	High UMETA(DisplayName = "High"),
-	Middle UMETA(DisplayName = "Middle"),
-	Low UMETA(DisplayName = "Low")
+	StandHigh UMETA(DisplayName = "StandHigh"),
+	StandMiddle UMETA(DisplayName = "StandMiddle"),
+	StandLow UMETA(DisplayName = "StandLow"),
+	CrouchHigh UMETA(DisplayName = "CrouchHigh"),
+	CrouchMiddle UMETA(DisplayName = "CrouchMiddle"),
+	CrouchLow UMETA(DisplayName = "CrouchLow"),
+	ProneHigh UMETA(DisplayName = "ProneHigh"),
+	ProneMiddle UMETA(DisplayName = "ProneMiddle"),
+	ProneLow UMETA(DisplayName = "ProneLow")
 };
 
 UCLASS()
@@ -40,9 +46,21 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "PickupMontage")
 	TArray<UAnimMontage*> MeleePickupMontage;
 
+	float DefaultStandHeight;
+	float DefaultStandHeightHalf;
+	float DefaultCrouchHeight;
+	float DefaultCrouchHeightHalf;
+	float DefaultProneHeight;
+	float DefaultProneHeightHalf;
+	
 public:
 	UFUNCTION()
 	void OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
+	UFUNCTION()
+	void UnarmedSelectedMontagePlay(EMontageType MontageType);
+	void RifleSelectedMontagePlay(EMontageType MontageType);
+	void GrenadeSelectedMontagePlay(EMontageType MontageType);
+	void MeleeSelectedMontagePlay(EMontageType MontageType);
 
 	
 	
