@@ -10,6 +10,7 @@
 
 class UBaseAbilitySystemComponent;
 class ABaseCharacter;
+class APlayerCharacter;
 /**
  * 
  */
@@ -39,6 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
 	static FString ReadFile(FString FilePath);
-
+	
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static TArray<APlayerCharacter*> GetAllPlayersInWorld(UWorld* World);
 	
 };
