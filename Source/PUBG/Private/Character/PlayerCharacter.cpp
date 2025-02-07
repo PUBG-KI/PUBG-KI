@@ -130,6 +130,41 @@ void APlayerCharacter::BeginPlay()
 	DetectionItem->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemEndOverlap);
 	
 	DetectionItem->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+
+	//- 무기 스폰 후 등에 Attach (Server)
+	// AActor* OwnerActor = GetOwner();
+	// if (OwnerActor && OwnerActor->HasAuthority())
+	// {
+		// UClass* BlueprintClass = LoadClass<AActor>(nullptr, TEXT("/Game/Blueprint/Weapon/BP_AK.BP_AK"));
+		// USkeletalMeshComponent* MeshComponent = Cast<APlayerCharacter>(GetOwner())->GetMesh();
+		// if (BlueprintClass && MeshComponent)
+		// {
+		// 	// 스폰 위치와 회전값 설정
+		// 	FVector SpawnLocation = MeshComponent->GetSocketLocation(FName("slot_primarySocket"));
+		// 	FRotator SpawnRotation = MeshComponent->GetSocketRotation(FName("slot_primarySocket"));
+		//
+		// 	// 스폰 파라미터 설정
+		// 	FActorSpawnParameters SpawnParams;
+		// 	SpawnParams.Owner = GetOwner(); // 소유자 설정
+		// 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		//
+		// 	// 액터 스폰
+		// 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(BlueprintClass, SpawnLocation, SpawnRotation, SpawnParams);
+		//
+		// 	if (SpawnedActor)
+		// 	{
+		// 		InventoryComponent->SetPrimarySlotWeapon(Cast<AWeapon_Base>(SpawnedActor));
+		//
+		// 		if (InventoryComponent->GetPrimarySlotWeapon())
+		// 		{
+		// 			// 스폰된 액터를 Attach
+		// 			FName SocketName = TEXT("slot_primarySocket"); // 소켓 이름 (예: 등에 해당하는 소켓)
+		// 			InventoryComponent->GetPrimarySlotWeapon()->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+		// 		}
+		// 	}
+		// }
+		//
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)

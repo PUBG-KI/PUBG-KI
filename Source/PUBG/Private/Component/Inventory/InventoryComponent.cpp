@@ -47,7 +47,6 @@ void UInventoryComponent::BeginPlay()
 	// 	Slot.Tag = FGameplayTag(); // 빈 태그로 초기화
 	// }
 	
-	
 }
 
 void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -57,8 +56,11 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	//DOREPLIFETIME(UInventoryComponent, Content);
 	
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(UInventoryComponent, CurrentWeapon, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UInventoryComponent, NearItem, COND_OwnerOnly);
+	DOREPLIFETIME(UInventoryComponent, CurrentWeapon);
+	DOREPLIFETIME(UInventoryComponent, LastCurrentWeapon);
+	DOREPLIFETIME(UInventoryComponent, PrimarySlot);
+	DOREPLIFETIME(UInventoryComponent, SecondarySlot);
 	
 }
 
@@ -384,16 +386,24 @@ void UInventoryComponent::OnRep_Content()
 
 void UInventoryComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
 {
-	if (_CurrentWeapon == nullptr)
-	{
-		this->CurrentWeapon = nullptr;
-	}
-	else
-	{
-		this->CurrentWeapon = _CurrentWeapon;
-	}
-
+	this->CurrentWeapon = _CurrentWeapon;
 }
+
+void UInventoryComponent::SetLastCurrentWeapon(AWeapon_Base* _LastCurrentWeapon)
+{
+	this->LastCurrentWeapon = _LastCurrentWeapon;
+}
+
+void UInventoryComponent::SetPrimarySlotWeapon(AWeapon_Base* _PrimarySlot)
+{
+	this->PrimarySlot = _PrimarySlot;
+}
+
+void UInventoryComponent::SetSecondarySlotWeapon(AWeapon_Base* _Secondary)
+{
+	this->SecondarySlot = _Secondary;
+}
+
 
 void UInventoryComponent::Server_Interact_Implementation()
 {

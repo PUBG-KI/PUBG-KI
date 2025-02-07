@@ -35,7 +35,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
 	UStaticMeshComponent* MuzzleMesh;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts", replicated)
 	UStaticMeshComponent* MagMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
@@ -50,7 +50,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	float BulletArmo;
 
-	
+	UPROPERTY(EditDefaultsOnly, Replicated)
+	FVector WeaponProjectileSocketLocation;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "FireMode")
@@ -70,6 +71,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "DataAsset")
 	void SetBulletArom(float Armo);
+
+	UFUNCTION(BlueprintCallable, Category = "Mag")
+	FVector GetWeaponMagSocketLocation() const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

@@ -3,6 +3,7 @@
 
 #include "Controller/BasePlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
 #include "Components/WrapBox.h"
@@ -86,6 +87,18 @@ void ABasePlayerController::InputModeGame()
 {
 	SetShowMouseCursor(false);
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
+}
+
+void ABasePlayerController::HitEventServer_Implementation(AActor* TargetActor, FGameplayTag HitTag,
+	FGameplayEventData payload)
+{
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, HitTag, payload);
+}
+
+bool ABasePlayerController::HitEventServer_Validate(AActor* TargetActor, FGameplayTag HitTag,
+	FGameplayEventData payload)
+{
+	return true;
 }
 
 
