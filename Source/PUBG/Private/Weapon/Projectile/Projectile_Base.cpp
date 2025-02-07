@@ -3,9 +3,8 @@
 
 #include "Weapon/Projectile/Projectile_Base.h"
 
-#include "Components/BoxComponent.h"
-#include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
+#include "Abilities/GameplayAbilityTypes.h"
+#include "Weapon/Component/BulletSystemComponent.h"
 
 // Sets default values
 AProjectile_Base::AProjectile_Base()
@@ -16,17 +15,9 @@ AProjectile_Base::AProjectile_Base()
 	// 프로젝타일 메쉬 설정
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh"));
 	RootComponent = ProjectileMesh;
-	
-	// 콜리전 설정
-	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
-	CollisionComponent->SetupAttachment(RootComponent);
-	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	CollisionComponent->InitSphereRadius(15.0f);
 
-	// movementcomponent
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
-	ProjectileMovement->MaxSpeed = 1000.0f;
-	//ProjectileMovement->
+	// bulletSystemComponent
+	BulletSystemComponent = CreateDefaultSubobject<UBulletSystemComponent>(TEXT("BulletSystemComponent"));
 	
 }
 
@@ -34,5 +25,9 @@ AProjectile_Base::AProjectile_Base()
 void AProjectile_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+
+void AProjectile_Base::MyFunction_Implementation(AActor* TargetActor, FGameplayTag EventTag, FGameplayEventData Payload)
+{
+	UE_LOG(LogTemp, Warning, TEXT("MyFunction called in C++!"));
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
@@ -34,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InputModeGame();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void HitEventServer(AActor* TargetActor, FGameplayTag HitTag, FGameplayEventData payload);
+	
 	//Getter
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }

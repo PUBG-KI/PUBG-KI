@@ -20,7 +20,10 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_CameraTransition);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_RightShouldering);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_LeftShouldering);
-	
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_PrimaryWeapon);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SecondaryWeapon);
+
+	// Inventory Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle_Inventory);
 
@@ -33,19 +36,29 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Zoom);
 
 	// Weapon Action Tag
-	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Equip);
-	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_UnEquip);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Fire);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Reload);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_ChangeFireMode);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Zoom);
+
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Pickup);
+
+
+	
+	// Weapon Equip
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Equip);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_UnEquip);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Primary);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Secondary);
+	
 
 	// Weapon Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Equip);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_UnEquip);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Reload);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_ReloadEnd);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_HideMag);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_VisibleMag);
 
 	// Hit Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Hit);
