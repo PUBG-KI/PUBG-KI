@@ -19,8 +19,8 @@ UItemDataComponent::UItemDataComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-	//SetIsReplicatedByDefault(true);
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
+	
 
 	ItemID.DataTable = nullptr;
 	ItemID.RowName = NAME_None;

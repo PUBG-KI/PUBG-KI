@@ -143,7 +143,7 @@ void ABasePlayerState::MaxHealthChanged(const FOnAttributeChangeData& Data)
 	//	UFloatingStatusBarWidget* PlayerFloatingStatusBar = Player->GetFloatingStatusBar();
 	//	if (PlayerFloatingStatusBar)
 	//	{
-	//		PlayerFloatingStatusBar->SetHealthPercentage(GetHealth() / MaxHealth);
+	//		PlayerFloatingStatusBar->SetHealthPercentage(GetHealth() / MaxHealth);n
 	//	}
 	//}
 
@@ -191,12 +191,12 @@ void ABasePlayerState::StaminaChanged(const FOnAttributeChangeData& Data)
 	// }
 }
 
-void ABasePlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)
+void ABasePlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)  
 {
 	float MaxStamina = Data.NewValue;
 
 	// Update floating status bar
-	//APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
+	APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
 	//if (Player)
 	//{
 	//	UFloatingStatusBarWidget* PlayerFloatingStatusBar = Player->GetFloatingStatusBar();

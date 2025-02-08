@@ -27,7 +27,7 @@ public:
 	UFUNCTION()
 	void OnRep_IsReady();  // 클라이언트에서 UI 갱신
 	UFUNCTION()
-	void OnRep_IsHost();  // 클라이언트에서 UI 갱신
+	void OnRep_IsHost() const;  // 클라이언트에서 UI 갱신
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerSetReady(); // 서버에서 준비 상태 변경
 
