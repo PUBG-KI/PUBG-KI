@@ -39,7 +39,7 @@ void ALobbyPlayerState::OnRep_IsReady()
 
 	if (ALobbyGameState* GS = Cast<ALobbyGameState>( GetWorld()->GetGameState()))
 	{
-		int Index = GS->PlayerList.Find((this));
+		const int Index = GS->PlayerList.Find((this));
 		
 		if (Index != -1)
 		{
@@ -48,7 +48,7 @@ void ALobbyPlayerState::OnRep_IsReady()
 	}
 }
 
-void ALobbyPlayerState::OnRep_IsHost()
+void ALobbyPlayerState::OnRep_IsHost() const
 {
 	UE_LOG(LogTemp, Log, TEXT("Client : bIsHost : %s"), bIsHost ? TEXT("True") : TEXT("False"));
 }
