@@ -619,6 +619,7 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 		if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
+			
 			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
 			                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
 			                                      FLinearColor(0, 1, 0, 1));

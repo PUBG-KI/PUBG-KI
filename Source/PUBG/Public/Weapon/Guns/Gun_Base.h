@@ -45,6 +45,9 @@ protected:
 	UStaticMeshComponent* LoopsMesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
+	EFiremodes IgnoreMode;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FireMode")
 	EFiremodes FireMode = EFiremodes::Single;
 
 	UPROPERTY(EditDefaultsOnly, Replicated)
@@ -59,6 +62,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, category = "FireMode")
 	void SetFiremode(EFiremodes Firemodes);
+
+	UFUNCTION(BlueprintCallable, category = "FireMode")
+	void ChangeFiremode_AR(EFiremodes _Firemode);
 
 	UFUNCTION(BlueprintCallable, Category = "Mag")
 	UStaticMeshComponent* GetMagToHandSocekt() const {return MagMesh;};

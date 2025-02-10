@@ -82,12 +82,19 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 		EndLocation = (BulletVelocity * DeltaSeconds) + StartLocation;
 
 		FHitResult HitResult;
+		ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel3);
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(GetOwner());
+		ActorsToIgnore.Add(Projectile->PlayerCharacter);
 	
-		FCollisionQueryParams CollisionParams;
-		CollisionParams.AddIgnoredActor(Projectile->PlayerCharacter); // 자기 자신은 제외
+		//FCollisionQueryParams CollisionParams;
+		//CollisionParams.AddIgnoredActor(GetOwner()); // 총알 액터는 제외
+		//CollisionParams.AddIgnoredActor(Projectile->PlayerCharacter); // 발사한 자기자신은 제외
 
-		GetWorld()->LineTraceSingleByChannel(HitResult,StartLocation, EndLocation, ECollisionChannel::ECC_GameTraceChannel3, CollisionParams);
-		UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, FLinearColor::Green, 1, 1.0f);
+		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartLocation, EndLocation, TraceType, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor(1, 0, 0, 0),
+												  FLinearColor(0, 1, 0, 1), 0.05);
+		//GetWorld()->LineTraceSingleByChannel(HitResult,StartLocation, EndLocation, ECollisionChannel::ECC_GameTraceChannel3, CollisionParams);
+		//UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, FLinearColor::Green, 1, 1.0f);
 
 		// 충돌 판정
 		if (HitResult.bBlockingHit)
