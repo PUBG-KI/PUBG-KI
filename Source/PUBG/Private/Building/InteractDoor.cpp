@@ -46,7 +46,6 @@ void AInteractDoor::Tick(float DeltaTime)
 void AInteractDoor::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
-	
 	if (IsOpen == false)
 	{		
 		SetDoorOnSameSide(Character);

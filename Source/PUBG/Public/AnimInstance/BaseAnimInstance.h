@@ -62,6 +62,10 @@ public:
 	float Pitch;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly ,Category = "AimOffset")
 	float LeaningPressedValue;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
+	bool OntheVehicle;
+
 	
 
 	
