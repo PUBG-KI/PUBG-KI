@@ -24,12 +24,26 @@ public:
 	int32 RemainingTime;
 
 	// 플레이어 수
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
+	UPROPERTY(ReplicatedUsing=OnRep_PlayerCount, BlueprintReadOnly, Category = "Game State")
 	int32 PlayerCount;
-		
+	
+	UPROPERTY(ReplicatedUsing=OnRep_IsPlayStart, BlueprintReadOnly, Category = "Game State")
+	bool bIsPlayStart;
+
+
+	UFUNCTION()
+	void OnRep_PlayerCount();  // UI 갱신
+	UFUNCTION()
+	void OnRep_IsPlayStart();  // UI 갱신
+	
+	void UpdateWidget();
+	
 	// 게임 상태 업데이트
 	void UpdateRemainingTime(int32 NewTime);
 	
 	// 플레이어 수 업데이트
 	void UpdatePlayerCount();
+	int32 GetPlayerCount();
 };
+
+

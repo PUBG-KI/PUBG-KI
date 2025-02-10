@@ -48,6 +48,8 @@ public:
 	void ClientCreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
 	void DestroyInventoryWidget();
+	UFUNCTION(BlueprintCallable)
+	void UpdateCurrentPlayer(int32 CurrentPlayer);
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
