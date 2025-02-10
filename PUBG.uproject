@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"GameplayAbilities",
 				"Engine",
-				"EnhancedInput"
+				"EnhancedInput",
+				"ChaosVehicles"
 			]
 		}
 	],
@@ -37,6 +38,10 @@
 		},
 		{
 			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
+		},
+		{
+			"Name": "ChaosVehiclesPlugin",
 			"Enabled": true
 		}
 	]

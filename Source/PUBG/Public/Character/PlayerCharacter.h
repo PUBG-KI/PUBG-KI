@@ -209,7 +209,8 @@ private:
 public:
 	FORCEINLINE PlayerCameraMode GetCameraMode() const { return CameraMode; }
 	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) {CameraMode = NewCameraMode;}
-	
+
+	bool OntheVehicle = false;
 };
 
 
