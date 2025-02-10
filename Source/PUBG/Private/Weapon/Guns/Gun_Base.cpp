@@ -29,6 +29,18 @@ void AGun_Base::SetFiremode(EFiremodes Firemodes)
 	this->FireMode = Firemodes;
 }
 
+void AGun_Base::ChangeFiremode_AR(EFiremodes _Firemode)
+{
+	if (IgnoreMode == _Firemode)
+	{
+		this->FireMode = EFiremodes::Semi_Auto;
+	}
+	else
+	{
+		this->FireMode = _Firemode;
+	}
+}
+
 void AGun_Base::SetMagToHandSocekt()
 {
 	//if (MagMesh->GetAttachParent())
