@@ -8,6 +8,7 @@
 #include "EquippedComponent.generated.h"
 
 
+enum class EEquippedItemCategory : uint8;
 class AWeaponItem;
 enum class EItemCategory : uint8;
 struct FItemSlotStruct;
@@ -32,19 +33,23 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
-
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UDataTable* ItemDataTable;
 	
 	// 무기 5칸, 방어구(헬멧, 가방, 조끼, 길리슈트) 4칸, 의상 (머리, 안경, 마스크, 셔츠, 겉옷, 한벌 옷, 바지, 신발) 8칸 총 17칸
 	// 01 = 주무기, 2 = 보조무기 , 3 = 근접무기, 4 = 투척무기, 5 = 헬멧, 6 = 가방, 7 = 조끼, 8 = 길리, 9 ~ 16 의상
-	TArray<AItemBase*> EquippedItems[16];
+	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
+	TArray<AEquipableItem*> EquippedItems; // 생성자에서 크기 지정
+	
 
-	TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
+	//TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
+	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
+	TArray<AWeapon_Base*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
 	AItemBase* EquippedSubWeapon; // 보조 무기
-	AItemBase* MeleeWeapon; // 근접 무기 
+	AItemBase* MeleeWeapon; // 근접 무기
+
+
 
 public:
 
@@ -66,7 +71,12 @@ public:
 	void EquipMainWeapon(int32 InIndex, AWeaponItem* MainWeapon);
 	UFUNCTION(Server, Reliable)
 	void ServerEquipItem(int32 InIndex, AWeaponItem* MainWeapon);
-	// 메인 무기 스왑
+	UFUNCTION(Server, Reliable)
+	void ServerEquipMainItem(AItemBase* Item);
+	// 메인 무기 스왑 (바닥에 있는 아이템과 슬롯에 있는 무기를 스왑) 
+	void SwapMainWeapon(AWeaponItem* MainWeapon);
+	// 메인 무기 바닥에 버리기
+	void DropMainWeapon(AWeapon_Base* MainWeapon);
 
 	
 	// 재윤 ======================================
