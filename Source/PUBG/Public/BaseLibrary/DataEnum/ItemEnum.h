@@ -3,7 +3,7 @@
 #include "ItemEnum.generated.h"
 
 UENUM(BlueprintType)
-enum class ItemEnum : uint8
+enum class EItemCategory : uint8
 {
 	MainWeapon = 0 UMETA(Display = "MainWeapon"),
 	SubWeapon UMETA(Display = "SubWeapon"),

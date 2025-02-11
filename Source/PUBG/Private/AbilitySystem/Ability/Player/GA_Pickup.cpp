@@ -43,9 +43,21 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;
 	}
+	InventoryComponent->ServerGetItem();
 	AItemBase* Item = InventoryComponent->GetItem();
 	if (!Item)
 	{
+		if (GetPlayerCharacterFromActorInfo()->HasAuthority())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Server : GA_Pickup"));
+
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Client : GA_Pickup"));
+
+		}
+		
 		UE_LOG(LogTemp, Warning, TEXT("Item is null!"));
 		EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 		return;

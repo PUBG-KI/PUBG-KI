@@ -20,6 +20,10 @@
 AItemBase::AItemBase()
 {
 	bReplicates = true;
+	SetReplicates(true);
+	//SetReplicateMovement(true); // 위치 변화를 동기화하려면 추가
+	NetDormancy = DORM_Initial; // 네트워크 동기화 활성화
+	
 	bReplicateUsingRegisteredSubObjectList = true;
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
@@ -56,6 +60,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AItemBase, ItemStruct);
+	DOREPLIFETIME(AItemBase, Item);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
@@ -152,6 +157,16 @@ void AItemBase::OnRep_ItemDataComponent()
 	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
 }
 
+void AItemBase::ServerSetItem_Implementation(FItemStruct const& OutItem)
+{
+	Item = OutItem;
+}
+
+void AItemBase::ServerSetItemStruct_Implementation(FItemStruct OutItemStruct)
+{
+	ItemStruct = OutItemStruct;
+}
+
 FText AItemBase::LookAt()
 {
 	checkf(ItemDataComponent, TEXT("ItemDataComponent is Null"));
@@ -169,23 +184,68 @@ FText AItemBase::LookAt()
 void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	IInteractInterface::InteractWith_Implementation(Character);
-	
-	//UE_LOG(LogTemp, Display, TEXT("2"));
-	//UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
 
-	UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
-	InventoryComponent->SetItem(this);
-	// ItemOfZ = this->GetActorLocation().Z;
-	
-	if (InventoryComponent->GetItem() != nullptr)
+	if (HasAuthority()) // 서버
 	{
-		InventoryComponent->Server_Interact();
+		 UE_LOG(LogTemp, Warning, TEXT("Execute Server : ItemBase InteractWith_Implementation"));
 		
-		 // if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-		 // {
-		 // 	ItemDataComponent->InteractWith(Character);
-		 // }
+		// UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
+		// //UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
+		//
+		// UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
+		// InventoryComponent->SetItem(this);
+		// InventoryComponent->ServerSetItem(this);
+		// // ItemOfZ = this->GetActorLocation().Z;
+		//
+		// if (InventoryComponent->GetItem() != nullptr)
+		// {
+		// 	InventoryComponent->Server_Interact();
+		//
+		// 	// if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		// 	// {
+		// 	// 	ItemDataComponent->InteractWith(Character);
+		// 	// }
+		// }
 	}
+	else // 클라 
+	{
+		 UE_LOG(LogTemp, Warning, TEXT("Execute Client : ItemBase InteractWith_Implementation"));
+		
+		UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
+		//UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
+		
+		UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
+		InventoryComponent->SetItem(this); // 리플리케이트가 느림
+		InventoryComponent->ServerSetItem(this);
+		// ItemOfZ = this->GetActorLocation().Z;
+		
+		if (InventoryComponent->GetItem() != nullptr)
+		{
+			InventoryComponent->Server_Interact();
+		
+			// if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+			// {
+			// 	ItemDataComponent->InteractWith(Character);
+			// }
+		}
+	}
+	
+	// UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
+	// //UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
+	//
+	// UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
+	// InventoryComponent->SetItem(this);
+	// // ItemOfZ = this->GetActorLocation().Z;
+	//
+	// if (InventoryComponent->GetItem() != nullptr)
+	// {
+	// 	InventoryComponent->Server_Interact();
+	// 	
+	// 	 // if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+	// 	 // {
+	// 	 // 	ItemDataComponent->InteractWith(Character);
+	// 	 // }
+	// }
 	
 	//Destroy();
 }

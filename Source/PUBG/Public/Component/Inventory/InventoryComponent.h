@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "BaseLibrary/DataStruct/ItemSlotStruct.h"
 #include "Components/ActorComponent.h"
 #include "Weapon/Weapon_Base.h"
@@ -38,20 +39,26 @@ private:
 	TArray<FItemSlotStruct> Content;
 
 	
-	UPROPERTY(BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
+	UPROPERTY(ReplicatedUsing= OnRep_Item, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* Item;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* NearItem;
-	
+
+	UPROPERTY()
+	UDataTable* ItemDataTable;
 
 // 함수 영역
 public:
 	// OnRep
 	UFUNCTION()
 	void OnRep_Content();
+	UFUNCTION()
+	void OnRep_Item();
 	
 	// Setter
 	void SetItem(AItemBase* OutItem) { Item = OutItem; }
+	UFUNCTION(Server, Reliable)
+	void ServerSetItem(AItemBase* OutItem);
 	void SetNearItem(AItemBase* OutNearItem) { NearItem = OutNearItem; }
 	UFUNCTION(BlueprintCallable)
 	void SetContent(TArray<FItemSlotStruct> OutContent) { Content = OutContent; }
@@ -69,7 +76,9 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
-	void Server_InteractItem(AItemBase* OutItemBase);
+	void Server_InteractItem(AItemBase* OutItemBase); // 바닥에 있는 아이템
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerGetItem();
 
 	UFUNCTION(BlueprintCallable)
 	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight);
@@ -83,6 +92,9 @@ public:
 	void AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight);
 	UFUNCTION(BlueprintCallable)
 	int32 GetMaxStackSize(FName ItemID);
+	// 아이템 카테고리 분류하고 함수 실행
+	EItemCategory GetEquippedItemCategory(AItemBase* InItem);
+	void InteractionsByCategory(AItemBase* InItem);
 
 	// 아이템 먹었을 때 정렬되는 거 
 	UFUNCTION(BlueprintCallable) 
@@ -100,6 +112,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TransferSlots();
+
 
 	
 	// 재윤, 디버그용 CurrentWeapon변수

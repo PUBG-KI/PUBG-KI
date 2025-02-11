@@ -10,6 +10,7 @@
 #include "PlayerCharacter.generated.h"
 
 
+class UEquippedComponent;
 class UNearComponent;
 class AItemBase;
 class UPUBGSpringArmComponent;
@@ -155,6 +156,8 @@ public:
 	AActor* GetLookAtActor() const { return LookAtActor; }
 	UFUNCTION(BlueprintCallable)
 	UBoxComponent* GetDetectionItem() const { return DetectionItem; }
+	UFUNCTION(BlueprintCallable)
+	UEquippedComponent* GetEquippedComponent() const { return EquippedComponent;}
 
 	//자기장
 public:
@@ -189,6 +192,8 @@ protected:
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UNearComponent* NearComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UEquippedComponent* EquippedComponent;
 	
 public:
 	void OnMouseMoved(FVector2D MouseMovement);

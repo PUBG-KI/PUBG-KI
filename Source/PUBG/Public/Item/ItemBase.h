@@ -32,6 +32,8 @@ protected:
 private:
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct ItemStruct;
+	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	FItemStruct Item;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
@@ -65,8 +67,13 @@ public:
 	// Setter
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSetItem(FItemStruct const &OutItem);
 	UFUNCTION(BlueprintCallable)
 	void SetItemStruct(FItemStruct OutItemStruct) { ItemStruct = OutItemStruct; }
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSetItemStruct(FItemStruct OutItemStruct);
+	
 	virtual FText LookAt() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
