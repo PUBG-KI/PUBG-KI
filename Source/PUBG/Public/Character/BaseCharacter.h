@@ -63,7 +63,7 @@ protected:
 	TSoftObjectPtr<UDataAsset_StartupBase> StartupData;
 
 	virtual void PossessedBy(AController* NewController) override;
-	
+
 public:
 	//UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent() const { return BaseAbilitySystemComponent; }
 	UBaseAttributeSet* GetBaseAttributeSet() const { return BaseAttributeSet.Get(); }

@@ -64,7 +64,10 @@ public:
 	float LeaningPressedValue;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
-	bool OntheVehicle;
+	bool PlayerOntheVehicle;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
+	bool VehicleFacetoBackward;
 
 	
 
