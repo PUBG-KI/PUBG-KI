@@ -15,6 +15,8 @@ enum class EGunType : uint8
 	SMG,
 	SG,
 	Pistol,
+	Melee,
+	Throwable,
 };
 
 UENUM(BlueprintType)

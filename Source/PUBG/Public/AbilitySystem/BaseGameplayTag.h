@@ -22,6 +22,9 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_LeftShouldering);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_PrimaryWeapon);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_SecondaryWeapon);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_PistolWeapon);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_MeleeWeapon);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ThrowableWeapon);
 
 	// Inventory Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle);
@@ -50,6 +53,9 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_UnEquip);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Primary);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Secondary);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Pistol);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Melee);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Throwable);
 	
 
 	// Weapon Event Tag

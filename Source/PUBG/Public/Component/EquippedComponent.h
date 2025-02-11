@@ -71,29 +71,50 @@ public:
 	
 	// 재윤 ======================================
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
-	AWeapon_Base* CurrentWeapon;
+	AWeapon_Base* CurrentWeapon;	// 현재 장착 무기
 
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
-	AWeapon_Base* LastCurrentWeapon;
+	AWeapon_Base* LastCurrentWeapon;// 무기 넣었을 시 넣기 이전 장착했었던 무기
 
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
-	AWeapon_Base* PrimarySlot;
+	AWeapon_Base* PrimarySlot;		// 첫번쨰 무기 슬롯
 	
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
-	AWeapon_Base* SecondarySlot;
+	AWeapon_Base* SecondarySlot;	// 두번째 무기 슬롯
 
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* SideArmSlot;		// 권총 슬롯
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* MeleeSlot;		// 근점 무기 슬롯
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* ThrowableSlot;	// 투척물 슬롯
+
+
+	// Getter
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetCurrentWeapon() const {return CurrentWeapon; }
 	
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetLastCurrentWeapon() const { return LastCurrentWeapon; }
-
+	
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetPrimarySlotWeapon() const { return PrimarySlot; }
-
+	
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetSecondarySlot() const { return SecondarySlot; }
-	
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetSideArmSlot() const { return SideArmSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetMeleeSlot() const { return MeleeSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
+
+	// setter
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentWeapon(AWeapon_Base* _CurrentWeapon);
 	
@@ -105,6 +126,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetSecondarySlotWeapon(AWeapon_Base* _Secondary);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSideArmSlotWeapon(AWeapon_Base* _SideArm);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMeleeSlotWeapon(AWeapon_Base* _Melee);
+
+	UFUNCTION(BlueprintCallable)
+	void SetThrowableSlotWeapon(AWeapon_Base* _Throwable);
 
 	// ------------- gun base casting 반환
 	UFUNCTION(BlueprintCallable)

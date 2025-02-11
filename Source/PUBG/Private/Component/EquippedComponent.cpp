@@ -285,6 +285,21 @@ void UEquippedComponent::SetSecondarySlotWeapon(AWeapon_Base* _Secondary)
 	this->SecondarySlot = _Secondary;
 }
 
+void UEquippedComponent::SetSideArmSlotWeapon(AWeapon_Base* _SideArm)
+{
+	this->SideArmSlot = _SideArm;
+}
+
+void UEquippedComponent::SetMeleeSlotWeapon(AWeapon_Base* _Melee)
+{
+	this->MeleeSlot = _Melee;
+}
+
+void UEquippedComponent::SetThrowableSlotWeapon(AWeapon_Base* _Throwable)
+{
+	this->ThrowableSlot = _Throwable;
+}
+
 
 
 

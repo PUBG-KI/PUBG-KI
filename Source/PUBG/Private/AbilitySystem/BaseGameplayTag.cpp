@@ -26,6 +26,9 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_LeftShouldering, "InputTag.LeftShouldering");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_PrimaryWeapon, "InputTag.PrimaryWeapon");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_SecondaryWeapon, "InputTag.SecondaryWeapon");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_PistolWeapon, "InputTag.PistolWeapon");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_MeleeWeapon, "InputTag.MeleeWeapon");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_ThrowableWeapon, "InputTag.ThrowableWeapon");
 
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
@@ -52,6 +55,9 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_UnEquip, "Player.Ability.Weapon.UnEquip");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Primary, "Player.Ability.Weapon.Primary");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Secondary, "Player.Ability.Weapon.Secondary");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Pistol, "Player.Ability.Weapon.Pistol");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Melee, "Player.Ability.Weapon.Melee");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Throwable, "Player.Ability.Weapon.Throwable");
 
 
 	// Weapon Event Tag
