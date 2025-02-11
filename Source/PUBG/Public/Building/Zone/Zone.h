@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/TimelineComponent.h"
 #include "Zone.generated.h"
 
@@ -18,9 +17,6 @@ class PUBG_API AZone : public AActor
 	
 public:
 
-	FTimerHandle NotifyTimerHandle;
-	FTimerHandle ShrinkTimerHandle;
-	
 	// Sets default values for this actor's properties
 	AZone();
 
@@ -52,25 +48,23 @@ public:
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void BeginPlay() override;
 	
-	FTimeline Timeline;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+
+	void UpdateCurrentZone();
+	void UpdateNextZone();
+	void StartShrinkZone();
+
+
+private:		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UTimelineComponent* TimelineComponent;
 
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* CurveFloat;
-
-
-private:
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* SphereZoneMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* CapsuleCollision;
+	UStaticMeshComponent* ZoneMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayEffect> GameplayEffectClass;
@@ -81,15 +75,18 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int Timer;
 
-	float CurrentRadius;
-	float NextRadius;
-	
-	float TargetScale;
+	float NextScale;
 	float CurrentScale;
 	
 	FVector CurrentLocation;
 	FVector NextLocation;
 	
+	bool bIsVisibiltyNextZone;	
+	
+	FTimerHandle NotifyTimerHandle;
+	FTimerHandle ShrinkTimerHandle;
+	float ShrinkFactor;
+
 };
 
 
