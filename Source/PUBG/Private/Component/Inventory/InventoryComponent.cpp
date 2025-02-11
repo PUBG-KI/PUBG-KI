@@ -67,6 +67,7 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UInventoryComponent, LastCurrentWeapon);
 	DOREPLIFETIME(UInventoryComponent, PrimarySlot);
 	DOREPLIFETIME(UInventoryComponent, SecondarySlot);
+	DOREPLIFETIME(UInventoryComponent, SideArmSlot);
 	
 }
 
@@ -505,6 +506,21 @@ void UInventoryComponent::SetPrimarySlotWeapon(AWeapon_Base* _PrimarySlot)
 void UInventoryComponent::SetSecondarySlotWeapon(AWeapon_Base* _Secondary)
 {
 	this->SecondarySlot = _Secondary;
+}
+
+void UInventoryComponent::SetSideArmSlotWeapon(AWeapon_Base* _SideArm)
+{
+	this->SideArmSlot = _SideArm;
+}
+
+void UInventoryComponent::SetMeleeSlotWeapon(AWeapon_Base* _Melee)
+{
+	this->MeleeSlot = _Melee;
+}
+
+void UInventoryComponent::SetThrowableSlotWeapon(AWeapon_Base* _Throwable)
+{
+	this->ThrowableSlot = _Throwable;
 }
 
 

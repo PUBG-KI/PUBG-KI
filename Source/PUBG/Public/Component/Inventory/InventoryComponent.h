@@ -128,6 +128,17 @@ public:
 	UPROPERTY(visibleAnywhere, Replicated, Category="Inventory")
 	AWeapon_Base* SecondarySlot;
 
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* SideArmSlot;		// 권총 슬롯
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* MeleeSlot;		// 근점 무기 슬롯
+
+	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	AWeapon_Base* ThrowableSlot;	// 투척물 슬롯
+
+	
+
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetCurrentWeapon() const {return CurrentWeapon; }
 	
@@ -139,6 +150,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetSecondarySlot() const { return SecondarySlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetSideArmSlot() const { return SideArmSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetMeleeSlot() const { return MeleeSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
+
+	//-
 	
 	UFUNCTION(BlueprintCallable)
 	void SetCurrentWeapon(AWeapon_Base* _CurrentWeapon);
@@ -151,6 +173,17 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetSecondarySlotWeapon(AWeapon_Base* _Secondary);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSideArmSlotWeapon(AWeapon_Base* _SideArm);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMeleeSlotWeapon(AWeapon_Base* _Melee);
+
+	UFUNCTION(BlueprintCallable)
+	void SetThrowableSlotWeapon(AWeapon_Base* _Throwable);
+
+	
 
 	// ------------- gun base casting 반환
 	UFUNCTION(BlueprintCallable)
