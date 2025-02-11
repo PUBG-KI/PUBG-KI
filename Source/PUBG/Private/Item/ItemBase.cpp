@@ -216,7 +216,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 		
 		UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
 		InventoryComponent->SetItem(this); // 리플리케이트가 느림
-		InventoryComponent->ServerSetItem(this);
+		InventoryComponent->ServerSetItem(this); // 이것만 있으면 클라이언트에서 아이템이 없다고 함 
 		// ItemOfZ = this->GetActorLocation().Z;
 		
 		if (InventoryComponent->GetItem() != nullptr)

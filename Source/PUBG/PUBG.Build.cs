@@ -11,6 +11,9 @@ public class PUBG : ModuleRules
 		
 		PublicDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks", "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "Slate", "SlateCore", "UMG", "OnlineSubsystem", "OnlineSubsystemSteam"});
 
-		PublicIncludePaths.Add("/Pugs");
+		PublicIncludePaths.Add("/Pubg");
+		
+		
+
 	}
 }

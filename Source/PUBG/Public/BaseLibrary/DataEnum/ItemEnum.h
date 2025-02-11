@@ -6,7 +6,7 @@ UENUM(BlueprintType)
 enum class EItemCategory : uint8
 {
 	MainWeapon = 0 UMETA(Display = "MainWeapon"),
-	SubWeapon UMETA(Display = "SubWeapon"),
+	SubWeapon  = 2 UMETA(Display = "SubWeapon"),
 	MeleeWeapon UMETA(Display = "MeleeWeapon"),
 	Throw UMETA(Display = "Throw"),
 	
@@ -22,7 +22,7 @@ enum class EItemCategory : uint8
 	
 	WeaponPart UMETA(Display = "WeaponPart"),
 
-	Head UMETA(Display = "Head"),
+	Head = 9 UMETA(Display = "Head"),
 	Mask UMETA(Display = "Mask"),
 	Glasses UMETA(Display = "Glasses"),
 
@@ -33,4 +33,17 @@ enum class EItemCategory : uint8
 
 	Pants UMETA(Display = "Pants"),
 	Shoes UMETA(Display = "Shoes"),
+};
+
+UENUM(BlueprintType)
+enum class EEquippedItemCategory : uint8
+{
+	PrimarySlot = 0 UMETA(Display = "PrimarySlot"),
+	SecondarySlot UMETA(Display = "SecondarySlot"),
+	SubWeapon UMETA(Display = "SubWeapon"),
+	MeleeWeapon UMETA(Display = "MellWeapon"),
+	Throw UMETA(Display = "Throw"),
+	
+	
+	
 };
