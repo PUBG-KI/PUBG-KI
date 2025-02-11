@@ -12,7 +12,7 @@
 				"GameplayAbilities",
 				"Engine",
 				"EnhancedInput",
-				"ChaosVehicles"
+				"ChaosVehicles",
 				"CoreUObject"
 
 			]
