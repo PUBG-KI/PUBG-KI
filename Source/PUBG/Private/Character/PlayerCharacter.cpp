@@ -41,6 +41,7 @@
 #include "Components/PostProcessComponent.h"
 
 //
+#include "BaseLibrary/BaseDebugHelper.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -117,6 +118,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//자기장
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PlayerPostProcess"));
 	PostProcessComponent->SetupAttachment(RootComponent);
+	
 }
 
 void APlayerCharacter::BeginPlay()
@@ -128,7 +130,7 @@ void APlayerCharacter::BeginPlay()
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
 	DetectionItem->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemBeginOverlap);
 	DetectionItem->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemEndOverlap);
-	
+
 	DetectionItem->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
@@ -136,35 +138,35 @@ void APlayerCharacter::BeginPlay()
 	// AActor* OwnerActor = GetOwner();
 	// if (OwnerActor && OwnerActor->HasAuthority())
 	// {
-		// UClass* BlueprintClass = LoadClass<AActor>(nullptr, TEXT("/Game/Blueprint/Weapon/BP_AK.BP_AK"));
-		// USkeletalMeshComponent* MeshComponent = Cast<APlayerCharacter>(GetOwner())->GetMesh();
-		// if (BlueprintClass && MeshComponent)
-		// {
-		// 	// 스폰 위치와 회전값 설정
-		// 	FVector SpawnLocation = MeshComponent->GetSocketLocation(FName("slot_primarySocket"));
-		// 	FRotator SpawnRotation = MeshComponent->GetSocketRotation(FName("slot_primarySocket"));
-		//
-		// 	// 스폰 파라미터 설정
-		// 	FActorSpawnParameters SpawnParams;
-		// 	SpawnParams.Owner = GetOwner(); // 소유자 설정
-		// 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		//
-		// 	// 액터 스폰
-		// 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(BlueprintClass, SpawnLocation, SpawnRotation, SpawnParams);
-		//
-		// 	if (SpawnedActor)
-		// 	{
-		// 		InventoryComponent->SetPrimarySlotWeapon(Cast<AWeapon_Base>(SpawnedActor));
-		//
-		// 		if (InventoryComponent->GetPrimarySlotWeapon())
-		// 		{
-		// 			// 스폰된 액터를 Attach
-		// 			FName SocketName = TEXT("slot_primarySocket"); // 소켓 이름 (예: 등에 해당하는 소켓)
-		// 			InventoryComponent->GetPrimarySlotWeapon()->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-		// 		}
-		// 	}
-		// }
-		//
+	// UClass* BlueprintClass = LoadClass<AActor>(nullptr, TEXT("/Game/Blueprint/Weapon/BP_AK.BP_AK"));
+	// USkeletalMeshComponent* MeshComponent = Cast<APlayerCharacter>(GetOwner())->GetMesh();
+	// if (BlueprintClass && MeshComponent)
+	// {
+	// 	// 스폰 위치와 회전값 설정
+	// 	FVector SpawnLocation = MeshComponent->GetSocketLocation(FName("slot_primarySocket"));
+	// 	FRotator SpawnRotation = MeshComponent->GetSocketRotation(FName("slot_primarySocket"));
+	//
+	// 	// 스폰 파라미터 설정
+	// 	FActorSpawnParameters SpawnParams;
+	// 	SpawnParams.Owner = GetOwner(); // 소유자 설정
+	// 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	//
+	// 	// 액터 스폰
+	// 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(BlueprintClass, SpawnLocation, SpawnRotation, SpawnParams);
+	//
+	// 	if (SpawnedActor)
+	// 	{
+	// 		InventoryComponent->SetPrimarySlotWeapon(Cast<AWeapon_Base>(SpawnedActor));
+	//
+	// 		if (InventoryComponent->GetPrimarySlotWeapon())
+	// 		{
+	// 			// 스폰된 액터를 Attach
+	// 			FName SocketName = TEXT("slot_primarySocket"); // 소켓 이름 (예: 등에 해당하는 소켓)
+	// 			InventoryComponent->GetPrimarySlotWeapon()->AttachToComponent(MeshComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+	// 		}
+	// 	}
+	// }
+	//
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -217,6 +219,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
 }
+
 
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
@@ -285,7 +288,7 @@ void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionVa
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
-
+	
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X);
@@ -299,11 +302,10 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	
-	 if (GetCharacterMovement()->IsFalling())
-	 {
-	 	return;
-	 }
+	if (GetCharacterMovement()->IsFalling())
+	{
+		return;
+	}
 
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 
@@ -473,6 +475,7 @@ void APlayerCharacter::CheckRotationForTurn()
 	FRotator AimRotation = GetBaseAimRotation(); // 카메라나 타겟 방향
 
 	FRotator DeltaRotation = CurrentRotation - AimRotation;
+
 	if (DeltaRotation.Yaw >= 180.0f)
 	{
 		DeltaRotation.Yaw -= 360.0f;
@@ -481,14 +484,27 @@ void APlayerCharacter::CheckRotationForTurn()
 	{
 		DeltaRotation.Yaw += 360.0f;
 	}
-	if (DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw <= -90.f)
+	if (!OntheVehicle)
 	{
 		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(
 			GetAbilitySystemComponent());
 
-		if (AbilitySystemComponent)
+		if (AbilitySystemComponent && DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw <= -90.f)
 		{
 			AbilitySystemComponent->TryActivateAbilityByTagToRandom(BaseGameplayTag::Player_Ability_Turn);
+		}
+	}
+	else if (OntheVehicle)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OntheVehicle "));
+		if (DeltaRotation.Yaw >= -180.0f && DeltaRotation.Yaw <= -90.0f)
+		{
+			VehicleFacetoBackward = true;
+			UE_LOG(LogTemp, Warning, TEXT("Player Movement"));
+		}
+		else
+		{
+			VehicleFacetoBackward = false;
 		}
 	}
 }
@@ -619,7 +635,6 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 		if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
-			
 			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
 			                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
 			                                      FLinearColor(0, 1, 0, 1));
@@ -636,7 +651,6 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 					{
 						FText result = InteractInterface->LookAt();
 						//InteractInterface->InteractWith();
-						
 					}
 					else
 					{
@@ -683,9 +697,11 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
 			//NearComponent->GetGroundItems().Add(ItemBase);
 			NearComponent->ServerAddGroundItem(ItemBase);
 			//UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
-			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
+			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"),
+			       *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 
-			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"), *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
+			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"),
+			       *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItems().Num());
 			//NearComponent->UpdateNear();
 			NearComponent->ServerUpdateNear();
@@ -695,7 +711,6 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
 			// 	UE_LOG(LogTemp, Warning, TEXT("Call UpdateNearItemSlotWidget"));
 			// 	BasePlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
 			// }
-			
 		}
 	}
 }
@@ -711,9 +726,9 @@ void APlayerCharacter::OnDetectionItemEndOverlap(UPrimitiveComponent* Overlapped
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execute Client : OnDetectionItemEndOverlap"));
 	}
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("OnDetectionItemEndOverlap"));
-	
+
 	if (AItemBase* ItemBase = Cast<AItemBase>(OtherActor))
 	{
 		for (int i = 0; i < NearComponent->GetGroundItems().Num(); i++)

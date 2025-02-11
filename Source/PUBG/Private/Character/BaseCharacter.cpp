@@ -13,8 +13,8 @@ ABaseCharacter::ABaseCharacter(const class FObjectInitializer& ObjectInitializer
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UPlayerMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// 틱관련 기능 비활성화
-	PrimaryActorTick.bCanEverTick = false;
-	PrimaryActorTick.bStartWithTickEnabled = false;
+	 PrimaryActorTick.bCanEverTick = false;
+	 PrimaryActorTick.bStartWithTickEnabled = false;
 	
 	BaseAbilitySystemComponent = CreateDefaultSubobject<UBaseAbilitySystemComponent>(TEXT("BaseAbilitySystemComponent"));
 	BaseAttributeSet = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("BaseAttributeSet"));

@@ -99,6 +99,7 @@ private:
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_MoveReleased(const FInputActionValue& InputActionValue);
@@ -210,7 +211,17 @@ public:
 	FORCEINLINE PlayerCameraMode GetCameraMode() const { return CameraMode; }
 	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) {CameraMode = NewCameraMode;}
 
-	bool OntheVehicle = false;
+	//차랑관련
+private:
+	bool OntheVehicle = false; // 탈것 스테이트 머신 전환
+	bool VehicleFacetoBackward = false; //90~180도면 스테이트머신의 애니메이션 변경을 위해서
+	
+public:
+	FORCEINLINE bool GetOnTheVehicle() const { return OntheVehicle; }
+	FORCEINLINE void SetOnTheVehicle(bool NewOnTheVehicle) {OntheVehicle = NewOnTheVehicle;}
+	FORCEINLINE bool GetVehicleFacetoBackward() const { return VehicleFacetoBackward; }
+	FORCEINLINE void SetVehicleFacetoBackward(bool NewOnTheVehicle) {VehicleFacetoBackward = NewOnTheVehicle;}
+	
 };
 
 

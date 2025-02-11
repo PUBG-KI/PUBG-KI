@@ -24,7 +24,6 @@ void UBaseAnimInstance::NativeInitializeAnimation()
 		OwningMovementComponent = Cast<UPlayerMovementComponent>(OwningCharacter->GetCharacterMovement());
 		OwningPlayer=Cast<APlayerCharacter>(OwningCharacter);
 	}
-	OntheVehicle = false;
 	
 }
 
@@ -66,7 +65,8 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	Pitch = DeltaRotator.Pitch;
 	
 	LeaningPressedValue = OwningMovementComponent->LeaningValue;
-	OntheVehicle = OwningPlayer->OntheVehicle;
+	PlayerOntheVehicle = OwningPlayer->GetOnTheVehicle();
+	VehicleFacetoBackward = OwningPlayer->GetVehicleFacetoBackward();
 }
 
 bool UBaseAnimInstance::OwnerHasTag(FGameplayTag Tag) const

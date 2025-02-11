@@ -4,6 +4,7 @@
 #include "Components/BoxComponent.h"
 #include "Component/PUBGSpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/ArrowComponent.h"
 
 AVehicleBase::AVehicleBase()
 {
@@ -19,14 +20,18 @@ AVehicleBase::AVehicleBase()
 	InteractionComponent->InitBoxExtent(FVector(20.0f));
 
 	CameraBoom = CreateDefaultSubobject<UPUBGSpringArmComponent>(TEXT("CameraBoom"));
-
+	
 	CameraBoom->SetupAttachment(GetMesh(), "RootComponent");
-	CameraBoom->TargetArmLength = 650.0f;
-	CameraBoom->SocketOffset = FVector(0.f, 0.f, 0.f);
 	CameraBoom->bUsePawnControlRotation = true;
-
+	CameraBoom->TargetArmLength = 600.0f;
+	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
+	
+	
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, UPUBGSpringArmComponent::SocketName);
+
+	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
+	ArrowComponent->SetupAttachment(GetMesh(), "RootComponent");
 
 	
 	
