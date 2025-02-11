@@ -13,6 +13,7 @@ UCLASS()
 class PUBG_API UGA_Interaction : public UPlayerGameplayAbility
 {
 	GENERATED_BODY()
+	UGA_Interaction();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData);
 

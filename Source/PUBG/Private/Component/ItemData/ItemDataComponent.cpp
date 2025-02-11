@@ -159,7 +159,9 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		UE_LOG(LogTemp, Warning, TEXT("Execute Client ItemDataComponent::InteractWith_Implementation"));
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent!"));
 
+	
 	if (UInventoryComponent* Inventory = Character->GetInventoryComponent())
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("1"));
@@ -174,6 +176,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 			UBaseAbilitySystemComponent* BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent);
 			if (BaseAbilitySystemComponent)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("TryActivateAbilityByTag : Player.Ability.Pickup "));
 				BaseAbilitySystemComponent->TryActivateAbilityByTag(FGameplayTag::RequestGameplayTag(FName("Player.Ability.Pickup")));
 			}
 		}

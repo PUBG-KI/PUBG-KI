@@ -41,6 +41,7 @@
 #include "Components/PostProcessComponent.h"
 
 //
+#include "Component/EquippedComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -51,6 +52,8 @@
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	//bReplicates = true;
+	
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
 	bUseControllerRotationPitch = false;
@@ -108,6 +111,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	// 이준수 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	NearComponent = CreateDefaultSubobject<UNearComponent>(TEXT("Near"));
+	EquippedComponent = CreateDefaultSubobject<UEquippedComponent>(TEXT("EquippedComponent"));
 
 	DetectionItem = CreateDefaultSubobject<UBoxComponent>(TEXT("DetectionItem"));
 	DetectionItem->SetupAttachment(GetRootComponent());

@@ -10,7 +10,9 @@
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
 //#include "Math/UnrealMathNeon.h"
+#include "Component/EquippedComponent.h"
 #include "Controller/BasePlayerController.h"
+#include "Item/WeaponItem.h"
 #include "Net/UnrealNetwork.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
@@ -27,6 +29,9 @@ UInventoryComponent::UInventoryComponent()
 	
 	MaxInventoryWeight = 1000.0f; //임시값(1000)
 	CurrentInventoryWeight = 0.0f;
+
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 }
 
 
@@ -56,6 +61,8 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UInventoryComponent, NearItem, COND_OwnerOnly);
+	DOREPLIFETIME(UInventoryComponent, Item);
+	
 	DOREPLIFETIME(UInventoryComponent, CurrentWeapon);
 	DOREPLIFETIME(UInventoryComponent, LastCurrentWeapon);
 	DOREPLIFETIME(UInventoryComponent, PrimarySlot);
@@ -72,6 +79,9 @@ void UInventoryComponent::ServerSetNearItem_Implementation(AItemBase* OutNearIte
 
 void UInventoryComponent::Server_InteractItem_Implementation(AItemBase* OutItemBase)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Server_InteractItem_Implementation!"));
+
+	
 	if (!Item && !NearItem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
@@ -126,6 +136,11 @@ void UInventoryComponent::ServerSetContents_Implementation(const TArray<FItemSlo
 	}
 	
 	SetContent(OutContnets);
+}
+
+void UInventoryComponent::ServerGetItem_Implementation()
+{
+	GetItem();
 }
 
 int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 Weight)
@@ -363,6 +378,82 @@ void UInventoryComponent::TransferSlots()
 {
 }
 
+EItemCategory UInventoryComponent::GetEquippedItemCategory(AItemBase* InItem)
+{
+	FName ItemID = Item->GetItemDataComponent()->GetItemRowName();
+
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+
+	return Row->Category;
+}
+
+void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	UEquippedComponent* EquippedComponent = PlayerCharacter->GetEquippedComponent();
+	
+	int32 ItemCategory = static_cast<int>(GetEquippedItemCategory(InItem));
+	
+	// 2. 카테고리에 따라 장착 
+	switch (ItemCategory)
+	{
+	case 0: // MainWeapon
+		{
+			// 아이템을 무기로 변환 
+			AWeaponItem* MainWeapon = Cast<AWeaponItem>(Item);
+			// 1. 빈 슬롯 찾기
+			int32 InIndex = EquippedComponent->FindSlotMainWeapon();
+			if (InIndex != -1)
+			{
+				EquippedComponent->ServerEquipItem(InIndex, MainWeapon);
+				
+			}
+			
+			break;
+		}
+	case 1: // SubWeapon
+		{
+			break;
+		}
+	case 2: // MeleeWeapon
+		{
+			break;
+		}
+	case 3: // Throw
+		{
+			break;
+		}
+	case 4: // Helmet
+		{
+			break;
+		}
+	case 5: // Bag
+		{
+			break;
+		}
+	case 6: // Vest
+		{
+			break;
+		}
+	case 7: // Bag
+		{
+			break;
+		}
+	default:
+		{
+			UItemDataComponent* ItemDataComponent = InItem->GetItemDataComponent();
+			ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+
+			AActor* Owner = GetOwner();
+			if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+			{
+				ItemDataComponent->InteractWith(Character);
+			}
+			break;
+		}
+	}
+}
+
 void UInventoryComponent::OnRep_Content()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!"));
@@ -381,6 +472,19 @@ void UInventoryComponent::OnRep_Content()
 			}
 		}
 	}
+}
+
+void UInventoryComponent::OnRep_Item()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Item Replicate!"));
+
+}
+
+void UInventoryComponent::ServerSetItem_Implementation(AItemBase* OutItem)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ServerSetItem!!"));
+	Item = OutItem;
+	GetOwner()->ForceNetUpdate();
 }
 
 void UInventoryComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
@@ -407,7 +511,8 @@ void UInventoryComponent::SetSecondarySlotWeapon(AWeapon_Base* _Secondary)
 void UInventoryComponent::Server_Interact_Implementation()
 {
 	// set 
-	
+	UE_LOG(LogTemp, Warning, TEXT("InventoryComponent!"));
+
 	if (!Item && !NearItem)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
@@ -416,28 +521,37 @@ void UInventoryComponent::Server_Interact_Implementation()
 	
 	if (Item != nullptr)
 	{
-		UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
-		ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("Item : InteractionsByCategory"));
+		InteractionsByCategory(Item);
 
-		AActor* Owner = GetOwner();
-		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
-		{
-			ItemDataComponent->InteractWith(Character);
-		}
+		// UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
+		// ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+		//
+		// AActor* Owner = GetOwner();
+		// if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+		// {
+		// 	ItemDataComponent->InteractWith(Character);
+		// }
+		// break;
 	}
 	
 	if (NearItem != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NearItem"));
-		
-		UItemDataComponent* ItemDataComponent = NearItem->GetItemDataComponent();
-		//ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+		UE_LOG(LogTemp, Warning, TEXT("NearItem : InteractionsByCategory"));
 
-		AActor* Owner = GetOwner();
-		if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
-		{
-			ItemDataComponent->InteractWith(Character);
-		}
+		InteractionsByCategory(NearItem);
+
+		
+		// UE_LOG(LogTemp, Warning, TEXT("NearItem"));
+		//
+		// UItemDataComponent* ItemDataComponent = NearItem->GetItemDataComponent();
+		// //ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+		//
+		// AActor* Owner = GetOwner();
+		// if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+		// {
+		// 	ItemDataComponent->InteractWith(Character);
+		// }
 	}
 
 	return;

@@ -6,7 +6,9 @@
 #include "ItemStruct.generated.h"
 
 
-enum class ItemEnum : uint8;
+class AEquipableItem;
+
+enum class EItemCategory : uint8;
 
 USTRUCT(BlueprintType)
 struct FItemStruct : public FTableRowBase
@@ -20,13 +22,13 @@ struct FItemStruct : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UStaticMesh* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AActor> BP_Item;
+	TSubclassOf<AEquipableItem> BP_Item;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* Image;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float Weight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	ItemEnum Category;
+	EItemCategory Category;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool IsStackAble;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

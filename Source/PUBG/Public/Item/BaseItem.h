@@ -17,7 +17,7 @@ public:
 	ABaseItem();
 
 protected:
-	FItemStruct Item;
+	
 
 
 };
