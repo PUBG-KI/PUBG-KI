@@ -11,6 +11,7 @@
 #include "PlayerState/BasePlayerState.h"
 #include "Widgets/HUD/HudWidget.h"
 #include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
+#include "Widgets/HUD/GameStatus/CurrentPlayerWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 ABasePlayerController::ABasePlayerController()
@@ -184,6 +185,18 @@ void ABasePlayerController::DestroyInventoryWidget()
 	{
 		InventoryWidget->RemoveFromParent();
 		InventoryWidget = nullptr;
+	}
+}
+
+void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
+{
+	if (HudWidget)
+	{		
+		UCurrentPlayerWidget* CurrentPlayerWidget = HudWidget->GetCurrentPlayerWidget();
+		if (CurrentPlayerWidget)
+		{
+			CurrentPlayerWidget->UpdateCurrentPlayer(CurrentPlayer);
+		}
 	}
 }
 	

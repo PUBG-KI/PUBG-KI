@@ -26,7 +26,7 @@ private:
 
 	//스폰할 액터의 클래스
 	UPROPERTY(EditAnywhere,Category = "Zone Spawner")
-	TSubclassOf<AActor> zoneActorClass;
+	TSubclassOf<AActor> ZoneActorClass;
 	
 protected:
 	// Called when the game starts or when spawned

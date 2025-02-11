@@ -18,7 +18,7 @@ AZoneSpawner::AZoneSpawner()
 
 void AZoneSpawner::SpawnZone()
 {
-	if (zoneActorClass)
+	if (ZoneActorClass)
 	{
 		FVector BoxLocation = SpawnArea->GetComponentLocation();
 
@@ -33,7 +33,7 @@ void AZoneSpawner::SpawnZone()
 		SpawnTransform.SetScale3D(FVector(30.0f, 30.0f, 30.0f));
 
 		//액터 스폰
-		AActor* SpawnedZone = GetWorld()->SpawnActor<AActor>(zoneActorClass, SpawnTransform);
+		AActor* SpawnedZone = GetWorld()->SpawnActor<AActor>(ZoneActorClass, SpawnTransform);
 
 		if (SpawnedZone)
 		{

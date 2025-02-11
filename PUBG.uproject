@@ -13,6 +13,8 @@
 				"Engine",
 				"EnhancedInput",
 				"ChaosVehicles"
+				"CoreUObject"
+
 			]
 		}
 	],

@@ -20,8 +20,8 @@ AGun_Base::AGun_Base()
 	LoopsMesh = CreateDefaultSubobject<UStaticMeshComponent>("LoopsMesh");
 	LoopsMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("LoopsSocket"));
 
-	SetReplicates(true);
-	
+	//SetReplicates(true);
+	bReplicates = true;
 }
 
 void AGun_Base::SetFiremode(EFiremodes Firemodes)

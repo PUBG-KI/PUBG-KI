@@ -9,6 +9,7 @@
 #include "Components/PostProcessComponent.h"
 #include "Components/SphereComponent.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "GameState/BaseGameState.h"
 
 // Sets default values
 AZone::AZone()
@@ -16,44 +17,41 @@ AZone::AZone()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	
-	SphereZoneMesh = CreateDefaultSubobject<UStaticMeshComponent>("Sphere Zone Mesh");
-	SphereZoneMesh->SetupAttachment(RootComponent);
+	ZoneMesh = CreateDefaultSubobject<UStaticMeshComponent>("Sphere Zone Mesh");
+	RootComponent = ZoneMesh;
 	
-	CapsuleCollision = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleCollision"));
-	CapsuleCollision->SetupAttachment(SphereZoneMesh);
-
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
-	
+
+	ShrinkFactor = 0.5f;	
+	bIsVisibiltyNextZone = false;
+	Timer = 3.0f;
+
+	ZoneMesh->SetIsReplicated(true);
+	SetReplicates(true);
+    SetReplicateMovement(true);
 }
 
 void AZone::NotifySize()
 {
 	// 사이즈 알리기
-	UE_LOG(LogTemp, Warning, TEXT("Notify!"));
-
-	//현재 원의 반지름
-	CurrentRadius = GetCurrentRadius();	
-	//현재 원의 중심
-	CurrentLocation = GetActorLocation();
+	//UE_LOG(LogTemp, Warning, TEXT("Notify!"));
 
 	//다음 원의 반지름
-	NextRadius = CurrentRadius * 0.5f;
-	
+	NextScale = FMath::Clamp(CurrentScale * ShrinkFactor,0,CurrentScale);
 	//다음 원의 중심
-	NextLocation = GetRandomPointInCircle(CurrentLocation,CurrentRadius - NextRadius);
+	NextLocation = GetRandomPointInCircle(CurrentLocation,GetCurrentRadius() * (1 - ShrinkFactor) );	
 	
-	//현재 원의 스케일
-	CurrentScale = GetActorScale().X;
-	//다음 원의 스케일
-	TargetScale = FMath::Clamp(CurrentScale * 0.5f,0,CurrentScale);
+	bIsVisibiltyNextZone = true;
 
-	// UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
-	// UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
-	// UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
-	// UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
+	 UE_LOG(LogTemp, Warning, TEXT("GetExtent();: %s") , *ZoneMesh->GetStaticMesh()->GetBounds().BoxExtent.ToString());
+	 //UE_LOG(LogTemp, Warning, TEXT("CurrentRadius: %f") , CurrentRadius);
+	 //UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
+	 //UE_LOG(LogTemp, Warning, TEXT("NextRadius: %f") , NextRadius);
+	 //UE_LOG(LogTemp, Warning, TEXT("NextLocation: %s") , *NextLocation.ToString());
 
+	UpdateNextZone();
 	
 	if(CurrentScale <= 0)
 	{
@@ -63,18 +61,18 @@ void AZone::NotifySize()
 	if (CurveFloat)
 	{
 		//줄어드는 함수 호출
-		UE_LOG(LogTemp, Warning, TEXT("ShrinkStart"));
+		//UE_LOG(LogTemp, Warning, TEXT("ShrinkStart"));
 		TimelineComponent->PlayFromStart();
 	}
 
+	
 }
 
 float AZone::GetMeshWorldScale() const
 {
-	if (SphereZoneMesh)
+	if (ZoneMesh)
 	{
-		return GetActorScale().X;
-		//SphereZoneMesh->GetStaticMesh()->GetBounds().Exte;
+		return GetActorScale3D().X;
 	}
 
 	return 1.0f;
@@ -93,17 +91,20 @@ void AZone::UpdateZoneDamage(APlayerCharacter* PlayerCharacter)
 
 void AZone::UpdateShrinkZone(float Value)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Update!  CurrentSize: %f") , CurrentSize);
+	if (HasAuthority())
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("Update!  CurrentSize: %f") , CurrentSize);
 	
-	float TempSize = FMath::Lerp(CurrentScale, TargetScale, Value);
-	FVector TempLocation = FMath::Lerp(CurrentLocation, NextLocation, Value);
+		float TempSize = FMath::Lerp(CurrentScale, NextScale, Value);
+		FVector TempLocation = FMath::Lerp(CurrentLocation, NextLocation, Value);
 
-	SetActorScale3D(FVector(TempSize, TempSize ,GetActorScale().Z));
-	SetActorLocation(TempLocation);
-	
-	
-	UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
-	UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
+		SetActorScale3D(FVector(TempSize, TempSize ,GetActorScale3D().Z));
+		SetActorLocation(TempLocation);
+
+		UpdateCurrentZone();
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
+	//UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
 
 }
 
@@ -111,14 +112,20 @@ void AZone::TimelineFinishedFunction()
 {
 	//UpdateShrinkZone(1.0f);
 
-	//다음 원의 중심
-	NextLocation = FVector::ZeroVector;
-		//다음 원의 반지름
-	NextRadius = 0.f;
+	CurrentLocation = NextLocation;
+	CurrentScale = NextScale;
 	
-	UE_LOG(LogTemp, Warning, TEXT("Finished Event Called."));
+	NextLocation = FVector::ZeroVector;
+	NextScale = 0.0f;
+	
+	bIsVisibiltyNextZone = false;
 
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, 1.0f);
+	UpdateCurrentZone();
+	UpdateNextZone();
+	
+	//UE_LOG(LogTemp, Warning, TEXT("Finished Event Called."));
+
+	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, Timer, false, .0f);
 
 	Level++;
 
@@ -129,7 +136,7 @@ void AZone::TimelineFinishedFunction()
 	}	
 }
 
-FVector AZone::GetRandomPointInCircle(FVector OriginCenter,float RandomRange) //랜덤위치
+FVector AZone::GetRandomPointInCircle(FVector OriginCenter, float RandomRange) //랜덤위치
 {
 	float DistanceFromCenter = FMath::RandRange(0.0f, RandomRange);
 
@@ -145,8 +152,9 @@ FVector AZone::GetRandomPointInCircle(FVector OriginCenter,float RandomRange) //
 
 float AZone::GetCurrentRadius()
  {
- 	float MeshSizeX = SphereZoneMesh->GetStaticMesh()->GetBounds().BoxExtent.X;
-	float Radius = MeshSizeX / 2;
+ 	float MeshSizeX = ZoneMesh->GetStaticMesh()->GetBounds().BoxExtent.X;
+	
+	float Radius = (MeshSizeX * CurrentScale) / 2;
  
  	return Radius;
  }
@@ -154,7 +162,7 @@ float AZone::GetCurrentRadius()
 void AZone::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s has overlapped with the component!"), *OtherActor->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s has overlapped with the component!"), *OtherActor->GetName());
 
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 
@@ -175,7 +183,7 @@ void AZone::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 void AZone::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%s has first Endoverlapped with the component!"), *OtherActor->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("%s has first Endoverlapped with the component!"), *OtherActor->GetName());
 	
 	 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor);
 
@@ -187,7 +195,7 @@ void AZone::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				UGameplayEffect* GameplayEffect = GameplayEffectClass->GetDefaultObject<UGameplayEffect>();  
 				//적용할 대상, 적용할 게임 이펙트, 레벨, 이펙트 컨텍스트 
 				ASC->ApplyGameplayEffectToSelf(GameplayEffect, Level, ASC->MakeEffectContext());
-
+				
 				PlayerCharacter->PostProcessComponent->SetVisibility(true);
 			}
 		}
@@ -198,13 +206,12 @@ void AZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TargetScale = GetMeshWorldScale();
+	CurrentLocation = GetActorLocation();
+	CurrentScale = GetMeshWorldScale();
 	
 	//이벤트 연결
-	SphereZoneMesh->OnComponentBeginOverlap.AddDynamic(this,&AZone::OnComponentBeginOverlap);
-	SphereZoneMesh->OnComponentEndOverlap.AddDynamic(this,&AZone::OnComponentEndOverlap);
-
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, 1.0f);
+	ZoneMesh->OnComponentBeginOverlap.AddDynamic(this,&AZone::OnComponentBeginOverlap);
+	ZoneMesh->OnComponentEndOverlap.AddDynamic(this,&AZone::OnComponentEndOverlap);
 
 	if (CurveFloat)
 	{
@@ -220,15 +227,41 @@ void AZone::BeginPlay()
 		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedEvent);
 
 		//TimelineComponent->SetLooping(true);
-		UE_LOG(LogTemp, Warning, TEXT("Binding Findshed!"));
+		//UE_LOG(LogTemp, Warning, TEXT("Binding Findshed!"));
 		
 	}
 }
 
-void AZone::Tick(float DeltaTime)
+void AZone::UpdateCurrentZone()
 {
-	Super::Tick(DeltaTime);
-
-	//TimelineComponent.Tick(DeltaTime);
+	if (HasAuthority())
+	{
+		FVector Location = GetActorLocation();
+		float Scale = GetMeshWorldScale();
+		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+		if (GameState && GameState->HasAuthority())
+		{
+			GameState->UpdateCurrentZone(Location, Scale); 
+		}
+	}
 }
+
+void AZone::UpdateNextZone()
+{
+	if (HasAuthority())
+	{		
+		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+		if (GameState && GameState->HasAuthority())
+		{
+			GameState->UpdateNextZone(NextLocation, NextScale, bIsVisibiltyNextZone); 
+		}
+	}
+}
+
+void AZone::StartShrinkZone()
+{	
+	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, Timer * 2.0f, false, 0.0f);
+}
+
+
 
