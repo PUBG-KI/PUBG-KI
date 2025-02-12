@@ -20,11 +20,22 @@ public:
 	ASupplyDrop();
 	
 	//랜드스케이프
-	// UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "Landscape")
-	// ALandscape* TargetLandscape;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Landscape", meta = (AllowPrivateAccess = "true"))
+	// TSoftObjectPtr<ALandscape> TargetLandscape;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Landscape", meta = (AllowPrivateAccess = "true"))
-	TSoftObjectPtr<ALandscape> TargetLandscape;
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* Smoke;
+	
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UParticleSystemComponent* ParticleComp;
+	
+	UPROPERTY(EditAnywhere, Category = "Effects")
+	UParticleSystem* ParticleEffect;
+
+	UPROPERTY()
+	UParticleSystemComponent* AttachedEffect;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* DropMesh;
@@ -32,12 +43,19 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Balloon;
 
+	FTimerHandle StopEffectHandle;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+			   FVector NormalImpulse, const FHitResult& Hit);
+
+	// UFUNCTION()
+	//void StopEffet();
 };
-
-

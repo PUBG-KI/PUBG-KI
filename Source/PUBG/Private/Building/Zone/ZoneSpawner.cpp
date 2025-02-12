@@ -21,7 +21,6 @@ void AZoneSpawner::SpawnZone()
 	if (zoneActorClass)
 	{
 		FVector BoxLocation = SpawnArea->GetComponentLocation();
-
 		FVector BoxExtent = SpawnArea->GetUnscaledBoxExtent();
 
 		//박스 내 랜덤한 위치 생성
