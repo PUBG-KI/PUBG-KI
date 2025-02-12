@@ -6,7 +6,6 @@
 #include "Controller/BasePlayerController.h"
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
-#include "Kismet/GameplayStatics.h"
 
 ABaseGameState::ABaseGameState()
 {
@@ -29,6 +28,10 @@ void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseGameState, NextZoneCenter);
 	DOREPLIFETIME(ABaseGameState, NextZoneScale);
 	DOREPLIFETIME(ABaseGameState, bIsVisibiltyNextZone);
+	DOREPLIFETIME(ABaseGameState, CurrentAirplaneLocation);
+	DOREPLIFETIME(ABaseGameState, StartAirplanePoint);
+	DOREPLIFETIME(ABaseGameState, EndAirplanePoint);
+	DOREPLIFETIME(ABaseGameState, bIsVisibiltyAirplane);
 }
 
 void ABaseGameState::SetGameStartNotification(bool bNewValue)
@@ -57,38 +60,58 @@ void ABaseGameState::OnRep_PlayerCount()
 
 void ABaseGameState::OnRep_RemainingTime()
 {
-	UE_LOG(LogTemp, Warning, TEXT("RemainingTime = %d"), RemainingTime);
+	//UE_LOG(LogTemp, Warning, TEXT("RemainingTime = %d"), RemainingTime);
 }
 
 void ABaseGameState::OnRep_GameStartNotification()
 {
-	UE_LOG(LogTemp, Log, TEXT("Game has started!"));
+	//UE_LOG(LogTemp, Log, TEXT("Game has started!"));
 }
 
 void ABaseGameState::OnRep_BoardPlaneNotification()
 {
-	UE_LOG(LogTemp, Log, TEXT("Board the plane!"));
+	//UE_LOG(LogTemp, Log, TEXT("Board the plane!"));
 }
 
 
 void ABaseGameState::OnRep_CurrentZoneScale()
 {	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
 }
 
 void ABaseGameState::OnRep_IsVisibiltyNextZone()
 {	
-	UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
-	UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
+	//UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
+	//UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
 	if (bIsVisibiltyNextZone)
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
+		//UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
 	}
 	else
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
+		//UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
 	}
+}
+
+void ABaseGameState::OnRep_CurrentAirplaneLocation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("CurrentAirplaneLocation : %s"), *CurrentAirplaneLocation.ToString());	
+}
+
+void ABaseGameState::OnRep_IsVisibiltyAirplane()
+{
+	UE_LOG(LogTemp, Warning, TEXT("StartAirplanePoint : %s"), *StartAirplanePoint.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("EndAirplanePoint : %s"), *EndAirplanePoint.ToString());
+	
+	if (bIsVisibiltyAirplane)
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = true"));
+	}
+	else
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = false"));
+	}	
 }
 
 void ABaseGameState::UpdateWidget()
@@ -112,17 +135,30 @@ void ABaseGameState::UpdateRemainingTime(int32 NewTime)
 	OnRep_RemainingTime(); //리슨 서버용
 }
 
-void ABaseGameState::UpdateCurrentZone(FVector _CurrentZoneCenter, float _CurrentZoneScale)
+void ABaseGameState::UpdateCurrentZone(FVector NewCurrentZoneCenter, float NewCurrentZoneScale)
 {
-	CurrentZoneCenter = _CurrentZoneCenter;
-	CurrentZoneScale = _CurrentZoneScale;
+	CurrentZoneCenter = NewCurrentZoneCenter;
+	CurrentZoneScale = NewCurrentZoneScale;
 }
 
-void ABaseGameState::UpdateNextZone(FVector _NextZoneCenter, float _NextZoneScale, bool _bIsVisibiltyNextZone)
+void ABaseGameState::UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone)
 {
-	NextZoneCenter = _NextZoneCenter;
-	NextZoneScale = _NextZoneScale;
-	bIsVisibiltyNextZone = _bIsVisibiltyNextZone;
+	NextZoneCenter = NewNextZoneCenter;
+	NextZoneScale = NewNextZoneScale;
+	bIsVisibiltyNextZone = NewbIsVisibiltyNextZone;
+}
+
+void ABaseGameState::UpdateCurrentAirplaneLocation(FVector NewCurrentAirplaneLocation)
+{
+	CurrentAirplaneLocation = NewCurrentAirplaneLocation;
+}
+
+void ABaseGameState::UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint,
+	bool NewbIsVisibiltyAirplane)
+{
+	StartAirplanePoint = NewStartAirplanePoint;
+	EndAirplanePoint = NewEndAirplanePoint;
+	bIsVisibiltyAirplane = NewbIsVisibiltyAirplane;
 }
 
 

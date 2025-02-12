@@ -36,17 +36,24 @@ public:
 	void OnRep_CurrentZoneScale();
 	UFUNCTION()
 	void OnRep_IsVisibiltyNextZone();
+	UFUNCTION()
+	void OnRep_CurrentAirplaneLocation();
+	UFUNCTION()
+	void OnRep_IsVisibiltyAirplane();
 	
 	void UpdateWidget();
 	
 	// 게임 상태 업데이트
 	void UpdateRemainingTime(int32 NewTime);
-	void UpdateCurrentZone(FVector CurrentZoneCenter, float CurrentZoneScale);
-	void UpdateNextZone(FVector NextZoneCenter, float NextZoneScale, bool bIsVisibiltyNextZone);
+	void UpdateCurrentZone(FVector NewCurrentZoneCenter, float NewCurrentZoneScale);
+	void UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone);
+	void UpdateCurrentAirplaneLocation(FVector NewCurrentAirplaneLocation);
+	void UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint, bool NewbIsVisibiltyAirplane);
 	
 	// 플레이어 수 업데이트
 	void UpdatePlayerCount();
 	int32 GetPlayerCount();
+	
 	bool GetIsGameStarted();
 
 	void initalize();
@@ -87,6 +94,21 @@ private:
 	// 다음 원을 표시할 것인지
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyNextZone, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyNextZone;
+	
+	/** 현재 비행기의 위치 */
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentAirplaneLocation, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	FVector CurrentAirplaneLocation;
+
+	/** 비행기의 시작점 */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	FVector StartAirplanePoint;
+	/** 비행기의 끝점 */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	FVector EndAirplanePoint;
+	
+	// 비행기를 표시할 것인지
+	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	bool bIsVisibiltyAirplane;
 };
 
 

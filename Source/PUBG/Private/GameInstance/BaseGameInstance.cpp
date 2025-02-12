@@ -3,7 +3,9 @@
 
 #include "GameInstance/BaseGameInstance.h"
 
+#include "Manager/AirplaneManager.h"
 #include "Manager/GameEventManager.h"
+#include "Manager/LandscapeManager.h"
 #include "Manager/TimeManager.h"
 #include "Manager/ZoneManager.h"
 
@@ -21,6 +23,10 @@ void UBaseGameInstance::Init()
 	TimeManager->InitializeManager();
 	GameEventManager = NewObject<UGameEventManager>(this, UGameEventManager::StaticClass());
 	GameEventManager->InitializeManager();
+	LandscapeManager = NewObject<ULandscapeManager>(this, ULandscapeManager::StaticClass());
+	LandscapeManager->InitializeManager();
 	ZoneManager = NewObject<UZoneManager>(this, ZoneManagerClass);
 	ZoneManager->InitializeManager();
+	AirplaneManager = NewObject<UAirplaneManager>(this, AirplaneManagerClass);
+	AirplaneManager->InitializeManager();
 }

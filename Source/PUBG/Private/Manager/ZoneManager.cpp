@@ -3,7 +3,10 @@
 
 #include "Manager/ZoneManager.h"
 
-#include "Building/Zone/Zone.h"
+#include "GameInstance/BaseGameInstance.h"
+#include "GameplayActor/Zone/Zone.h"
+#include "Kismet/GameplayStatics.h"
+#include "Manager/LandscapeManager.h"
 
 UZoneManager::UZoneManager()
 {
@@ -15,16 +18,31 @@ void UZoneManager::InitializeManager()
 	{
 		SpawnedZone->Destroy();
 	}
+	
+	SpawnedZone = nullptr;
 }
 
 void UZoneManager::SpawnZone()
 {
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(FVector(0, 0, 0));
-	SpawnTransform.SetRotation(FQuat::Identity);
-	SpawnTransform.SetScale3D(FVector(50.0f, 50.0f, 50.0f));
+	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	//액터 스폰
-	SpawnedZone = GetWorld()->SpawnActor<AZone>(ZoneClass, SpawnTransform);
-	SpawnedZone->StartShrinkZone();
+	if (GI)
+	{		
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(FVector(0, 0, 0));
+		SpawnTransform.SetRotation(FQuat::Identity);	
+		SpawnTransform.SetScale3D(FVector(1.0f, 1.0f, 1.0f));
+
+		//액터 스폰
+		SpawnedZone = GetWorld()->SpawnActor<AZone>(ZoneClass, SpawnTransform);
+		
+		FBox ZoneBox = SpawnedZone->GetComponentsBoundingBox();		
+		FBox LandscapeBox = GI->GetLandscapeManager()->GetLandscapeBoundingBox();
+
+		SpawnedZone->SetActorScale3D(FVector(LandscapeBox.Max.X / ZoneBox.Max.X, LandscapeBox.Max.Y / ZoneBox.Max.Y, LandscapeBox.Max.Z / ZoneBox.Max.Z * 2) );
+
+		UE_LOG(LogTemp, Warning, TEXT("SpawnedZone->GetActorScale3D() : %s"), *SpawnedZone->GetActorScale3D().ToString());
+
+		SpawnedZone->StartShrinkTimer();
+	}
 }

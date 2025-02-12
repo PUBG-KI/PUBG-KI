@@ -5,6 +5,7 @@
 
 #include "GameInstance/BaseGameInstance.h"
 #include "GameState/BaseGameState.h"
+#include "Manager/LandscapeManager.h"
 #include "Manager/TimeManager.h"
 
 ABaseGameMode::ABaseGameMode()
@@ -14,6 +15,18 @@ ABaseGameMode::ABaseGameMode()
 void ABaseGameMode::StartPlay()
 {
 	Super::StartPlay();
+}
+
+void ABaseGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
+	
+	if (GI )
+	{
+		GI->GetLandscapeManager()->FindLandscape();
+	}
 }
 
 void ABaseGameMode::PostLogin(APlayerController* NewPlayer)

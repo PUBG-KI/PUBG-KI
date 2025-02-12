@@ -6,6 +6,7 @@
 #include "GameInstance/BaseGameInstance.h"
 #include "GameState/BaseGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Manager/AirplaneManager.h"
 #include "Manager/ZoneManager.h"
 
 UTimeManager::UTimeManager()
@@ -20,8 +21,9 @@ void UTimeManager::InitializeManager()
 	UE_LOG(LogTemp, Log, TEXT("TimeManager Initialized"));
 	
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+	
 	TickTime = 1.f;
-	StartGameTime = 10;
+	StartGameTime = 5;
 	CurrentGameTime = StartGameTime;
 }
 
@@ -70,11 +72,11 @@ void UTimeManager::GameStartCountdown()
 	if (CurrentGameTime <= 0)
 	{
 		InitializeManager();
-		StartPlaneDeparture();
+		StartGameFlow();
 	}
 }
 
-void UTimeManager::StartPlaneDeparture()
+void UTimeManager::StartGameFlow()
 {
 	NotifyClientsToBoardPlane();
 	
@@ -82,10 +84,17 @@ void UTimeManager::StartPlaneDeparture()
 
 	if (GI)
 	{
+		// 자기장 생성
 		UZoneManager* ZoneManager = GI->GetZoneManager();
 		if (ZoneManager)
 		{
 			ZoneManager->SpawnZone();
+		}
+        // 비행기 탑승
+		UAirplaneManager* AirplaneManager = GI->GetAirplaneManager();
+		if (AirplaneManager)
+		{
+			AirplaneManager->NotifyStartToMoveAirplane();
 		}
 	}	
 }
