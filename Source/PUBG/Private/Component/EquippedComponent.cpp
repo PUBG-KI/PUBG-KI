@@ -66,7 +66,7 @@ void UEquippedComponent::EquipItem(AItemBase* Item)
 {
 	// 1. 아이템 카테고리 찾기
 	EItemCategory ItemCategory = GetEquippedItemCategory(Item);
-	int32 ItemCategory = static_cast<int>(GetEquippedItemCategory(Item));
+	//int32 ItemCategory = static_cast<int>(GetEquippedItemCategory(Item));
 
 	FName ItemID = Item->GetItemDataComponent()->GetItemRowName();
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
