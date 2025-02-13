@@ -2,6 +2,8 @@
 
 
 #include "Weapon/Weapon_Base.h"
+
+#include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -16,6 +18,8 @@ AWeapon_Base::AWeapon_Base()
 	//SetReplicates(true);
 	bReplicates = true;
 
+	// 이준수
+	EquipSlot = EEquippedItemCategory::PrimarySlot;
 }
 
 // Called when the game starts or when spawned

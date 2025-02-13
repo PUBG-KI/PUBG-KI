@@ -406,7 +406,7 @@ void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
 			int32 InIndex = EquippedComponent->FindSlotMainWeapon();
 			if (InIndex != -1)
 			{
-				EquippedComponent->ServerEquipItem(InIndex, MainWeapon);
+				//EquippedComponent->ServerEquipItem(InIndex, MainWeapon);
 				
 			}
 			

@@ -55,7 +55,9 @@ public:
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	
-	
+	// 이준수
+	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
+
 	
 };
 

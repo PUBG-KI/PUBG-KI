@@ -42,14 +42,15 @@ private:
 	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
 	TArray<AEquipableItem*> EquippedItems; // 생성자에서 크기 지정
 	
-
+	
+	
 	//TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
 	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
 	TArray<AWeapon_Base*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
 	AItemBase* EquippedSubWeapon; // 보조 무기
 	AItemBase* MeleeWeapon; // 근접 무기
 
-
+	
 
 public:
 
@@ -68,16 +69,25 @@ public:
 	// 메인 무기 빈 슬롯 찾기
 	int32 FindSlotMainWeapon();
 	// 메인 무기 장착
-	void EquipMainWeapon(int32 InIndex, AWeaponItem* MainWeapon);
-	UFUNCTION(Server, Reliable)
-	void ServerEquipItem(int32 InIndex, AWeaponItem* MainWeapon);
 	UFUNCTION(Server, Reliable)
 	void ServerEquipMainItem(AItemBase* Item);
-	// 메인 무기 스왑 (바닥에 있는 아이템과 슬롯에 있는 무기를 스왑) 
-	void SwapMainWeapon(AWeaponItem* MainWeapon);
 	// 메인 무기 바닥에 버리기
-	void DropMainWeapon(AWeapon_Base* MainWeapon);
+	int32 DropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr);
+	// 스태틱 메인 무기 소환
+	UFUNCTION(Server, Reliable)
+	void ServerSpawnStaticMesh(AGun_Base* OutCurrentWeapon);
+	
+	template <typename T>
+	AGun_Base* ConvertToEquippable(T* Input)
+	{
+		return Cast<AGun_Base>(Input);
+	}
 
+	
+	// 데이터 테이블 행 인덱스 가져오기
+	int32 GetRowIndex(UDataTable* DataTable, FName TargetRowName);
+	// Drop 위치 가져오기
+	FVector DropLocation();
 	
 	// 재윤 ======================================
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
@@ -159,6 +169,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetSecondary_GunBase() const { return Cast<AGun_Base>(SecondarySlot);}
 };
+
+
 
 
 

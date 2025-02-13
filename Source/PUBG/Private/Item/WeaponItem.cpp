@@ -7,6 +7,12 @@
 #include "Component/Inventory/InventoryComponent.h"
 
 
+AWeaponItem::AWeaponItem()
+{
+	bReplicates = true;
+	SetReplicates(true);
+}
+
 void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	//Super::InteractWith_Implementation(Character);

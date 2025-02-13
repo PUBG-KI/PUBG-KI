@@ -89,9 +89,16 @@ private:
 	UPROPERTY()
 	float ItemOfZ;
 
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 TableIndex;
 public:
 	
 	FORCEINLINE void SetItemOfZ(float InItemOfZ) { ItemOfZ = InItemOfZ; }
 	FORCEINLINE float GetItemOfZ() const { return ItemOfZ; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetTableIndex(int32 OutTableIndex) { TableIndex = OutTableIndex; }
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int32 GetTableIndex() const { return TableIndex; }
 	
 };

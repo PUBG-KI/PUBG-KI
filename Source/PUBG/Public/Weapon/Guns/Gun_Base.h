@@ -85,6 +85,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Mag")
 	void Server_SetBulletArom(float Armo);
+
+	// 이준수
+	// 이준수
+	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 	
 };
 

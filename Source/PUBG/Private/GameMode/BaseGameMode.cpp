@@ -29,7 +29,7 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 			if (GI)
 			{
 				// 게임 시작 타이머 실행
-				GI->GetTimeManager()->StartGameTimer();
+				//GI->GetTimeManager()->StartGameTimer();
 			}
 		}	
 	}
