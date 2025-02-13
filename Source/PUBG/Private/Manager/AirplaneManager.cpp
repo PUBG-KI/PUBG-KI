@@ -3,14 +3,10 @@
 
 #include "Manager/AirplaneManager.h"
 
-#include "AbilitySystem/BaseAbilitySystemComponent.h"
-#include "GameFramework/GameStateBase.h"
-#include "GameFramework/PlayerState.h"
 #include "GameInstance/BaseGameInstance.h"
 #include "GameplayActor/Airplane/Airplane.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/LandscapeManager.h"
-#include "PlayerState/BasePlayerState.h"
 
 void UAirplaneManager::InitializeManager()
 {
@@ -26,7 +22,6 @@ void UAirplaneManager::NotifyStartToMoveAirplane()
 {
 	SpwanAirplane();
 	StartToMoveAirplane();
-	SetViewTargetToPlane();
 }
 
 void UAirplaneManager::SpwanAirplane()
@@ -45,54 +40,6 @@ void UAirplaneManager::SpwanAirplane()
 	SpawnedPlane = GetWorld()->SpawnActor<AAirplane>(PlaneClass, SpawnTransform, SpawnParams);
 }
 
-void UAirplaneManager::SetViewTargetToPlane()
-{
-	// 생성한 비행기에 사람 탑승 시키기
-	AGameStateBase* GS = GetWorld()->GetGameState<AGameStateBase>();
-	
-	if (!GS || !SpawnedPlane)
-	{
-		return;
-	}
-
-	for (APlayerState* PS : GS->PlayerArray)
-	{
-		if (PS)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PS: %s"), *PS->GetName());
-			APlayerController* PC = PS->GetOwner<APlayerController>();
-			if (PC)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("플레이어 컨트롤러: %s"), *PC->GetName());
-				PC->SetViewTargetWithBlend(SpawnedPlane, 1.0f);
-			}
-
-			GrantPlayerAirplaneAbilites(PS);
-		}
-	}
-}
-
-void UAirplaneManager::GrantPlayerAirplaneAbilites(APlayerState* PlayerState)
-{
-	ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
-	UBaseAbilitySystemComponent* ASC =  Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
-
-	if (ASC)
-	{
-
-		APlayerController* PC = PS->GetOwner<APlayerController>();
-		if (PC)
-		{
-			//PC->Get
-		}
-		
-		
-		// 능력 부여
-		//TArray<FGameplayAbilitySpecHandle> OutGrantedAbilitySpecHandles;
-		//ASC->GrantPlayerWeaponAbilities(SpawnedPlane->AirplaneData.AirplaneAbilities, 1, OutGrantedAbilitySpecHandles);
-		//SpawnedPlane->AssignGrantedAbilitySpecHandles(OutGrantedAbilitySpecHandles);
-	}
-}
 
 void UAirplaneManager::StartToMoveAirplane()
 {
@@ -112,7 +59,7 @@ void UAirplaneManager::StartToMoveAirplane()
 			float MaxY = Bounds.Max.Y * ScaleFactor;
 			float MinX = Bounds.Min.X * ScaleFactor;
 			float MinY = Bounds.Min.Y * ScaleFactor;
-			float Z = Bounds.Max.Z * ScaleFactor;;
+			float Z = Bounds.Max.Z * ScaleFactor + 10000.f;
 
 			// 랜덤하게 모서리 점 선택
 			TArray<FVector> StartPoints = {

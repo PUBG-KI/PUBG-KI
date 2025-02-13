@@ -3,11 +3,20 @@
 
 #include "GameplayActor/Airplane/Airplane.h"
 
-#include "GameplayAbilitySpecHandle.h"
 #include "Camera/CameraComponent.h"
-#include "Components/TimelineComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+
+#include "Components/TimelineComponent.h"
+
 #include "GameState/BaseGameState.h"
+#include "GameFramework/PlayerState.h"
+#include "PlayerState/BasePlayerState.h"
+
+#include "EnhancedInputSubsystems.h"
+#include "GameplayAbilitySpecHandle.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "Controller/BasePlayerController.h"
+
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -33,7 +42,7 @@ AAirplane::AAirplane()
 	
 	TimelineComponent =CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
 
-	Duration = 180.f;
+	Duration = 5.f;
 
 	
 
@@ -85,7 +94,7 @@ void AAirplane::Tick(float DeltaTime)
 
 void AAirplane::OnRep_ServerLocation()
 {	
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_ServerLocation: %s"), *ServerLocation.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("OnRep_ServerLocation: %s"), *ServerLocation.ToString());
 }
 
 void AAirplane::MovePlane(FVector Start, FVector End)
@@ -95,8 +104,11 @@ void AAirplane::MovePlane(FVector Start, FVector End)
 
 	SetActorLocation(StartLocation);
 	SetActorRotation((End - Start).GetSafeNormal().Rotation());
+	ServerLocation = StartLocation;
 	
 	UpdateIsVisibiltyAirplane(true);
+
+	SetViewTargetToPlane();
 
 	// 타임라인 초기화
 	TimelineComponent->PlayFromStart();
@@ -118,6 +130,17 @@ void AAirplane::OnPlaneMoveFinished()
 {	
 	UE_LOG(LogTemp, Warning, TEXT("비행기 이동 완료!"));
 	UpdateIsVisibiltyAirplane(false);
+
+	if (HasAuthority())
+	{
+		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+		if (GameState && GameState->HasAuthority())
+		{
+			GameState->FinishMoveAirplane(); 
+		}
+	}
+
+	Destroy();
 }
 
 void AAirplane::UpdateCurrentLocation()
@@ -145,12 +168,69 @@ void AAirplane::UpdateIsVisibiltyAirplane(bool bIsVisibiltyAirplane)
 	}
 }
 
+void AAirplane::Multicast_SetControlledAirplane_Implementation(ABasePlayerController* PC)
+{
+	if (PC)
+	{
+		PC->Client_AddMappingContext(this, this->AirplaneData.WeaponInputMappingContext);
+	}
+}
+
+void AAirplane::GrantPlayerAirplaneAbilites(APlayerState* _PS)
+{
+	
+	ABasePlayerState* PS = Cast<ABasePlayerState>(_PS);
+	UBaseAbilitySystemComponent* ASC =  Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+
+	if (ASC)
+	{
+		ABasePlayerController* PC = PS->GetOwner<ABasePlayerController>();
+		if (PC)
+		{
+			//Multicast_SetControlledAirplane_Implementation(PC);
+			PC->Client_AddMappingContext(this, this->AirplaneData.WeaponInputMappingContext);
+		}
+		
+		// 능력 부여
+		TArray<FGameplayAbilitySpecHandle> OutGrantedAbilitySpecHandles;
+		ASC->GrantPlayerWeaponAbilities(this->AirplaneData.AirplaneAbilities, 1, OutGrantedAbilitySpecHandles);
+		this->AssignGrantedAbilitySpecHandles(OutGrantedAbilitySpecHandles);
+	}
+}
+
+void AAirplane::SetViewTargetToPlane()
+{
+	// 생성한 비행기에 사람 탑승 시키기
+	AGameStateBase* GS = GetWorld()->GetGameState<AGameStateBase>();
+	
+	if (!GS)
+	{
+		return;
+	}
+
+	for (APlayerState* PS : GS->PlayerArray)
+	{
+		if (PS)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PS: %s"), *PS->GetName());
+			APlayerController* PC = PS->GetOwner<APlayerController>();
+			if (PC)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("플레이어 컨트롤러: %s"), *PC->GetName());
+				PC->SetViewTargetWithBlend(this, 1.0f);
+			}
+
+			GrantPlayerAirplaneAbilites(PS);
+		}
+	}
+}
+
 void AAirplane::AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles)
 {
 	GrantedAbilitySpecHandles = SpecHandles;
 }
 
-TArray<FGameplayAbilitySpecHandle> AAirplane::GetGrantedAbilitySpecHandles() const
+TArray<FGameplayAbilitySpecHandle>& AAirplane::GetGrantedAbilitySpecHandles()
 {
 	return GrantedAbilitySpecHandles;
 }

@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class AAirplane;
 class UHudWidget;
 class UInventoryWidget;
 class ACrosshairHUD;
@@ -50,6 +51,12 @@ public:
 	void DestroyInventoryWidget();
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentPlayer(int32 CurrentPlayer);
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_RemoveMappingContext();
+	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
@@ -61,6 +68,10 @@ private:
 	UPROPERTY()
 	UHudWidget* HudWidget;
 	
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	AAirplane* ControlledAirplane;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UInputMappingContext* AdditionalInputMappingContext;
 };
 
 

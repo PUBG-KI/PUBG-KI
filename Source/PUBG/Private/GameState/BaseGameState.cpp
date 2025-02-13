@@ -3,9 +3,13 @@
 
 #include "GameState/BaseGameState.h"
 
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "Controller/BasePlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "GameplayActor/Airplane/GA/GA_Airplane_Fall.h"
 #include "Net/UnrealNetwork.h"
+#include "PlayerState/BasePlayerState.h"
 
 ABaseGameState::ABaseGameState()
 {
@@ -96,21 +100,21 @@ void ABaseGameState::OnRep_IsVisibiltyNextZone()
 
 void ABaseGameState::OnRep_CurrentAirplaneLocation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CurrentAirplaneLocation : %s"), *CurrentAirplaneLocation.ToString());	
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentAirplaneLocation : %s"), *CurrentAirplaneLocation.ToString());	
 }
 
 void ABaseGameState::OnRep_IsVisibiltyAirplane()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartAirplanePoint : %s"), *StartAirplanePoint.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("EndAirplanePoint : %s"), *EndAirplanePoint.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("StartAirplanePoint : %s"), *StartAirplanePoint.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("EndAirplanePoint : %s"), *EndAirplanePoint.ToString());
 	
 	if (bIsVisibiltyAirplane)
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = true"));
+	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = true"));
 	}
 	else
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = false"));
+	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = false"));
 	}	
 }
 
@@ -159,6 +163,24 @@ void ABaseGameState::UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FV
 	StartAirplanePoint = NewStartAirplanePoint;
 	EndAirplanePoint = NewEndAirplanePoint;
 	bIsVisibiltyAirplane = NewbIsVisibiltyAirplane;
+}
+
+void ABaseGameState::FinishMoveAirplane()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+	
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
+		
+		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
+		{
+			PS->GetAbilitySystemComponent()->TryActivateAbilityByClass(UGA_Airplane_Fall::StaticClass(), true );
+		}
+	}
 }
 
 

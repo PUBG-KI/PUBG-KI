@@ -49,6 +49,7 @@ public:
 	void UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone);
 	void UpdateCurrentAirplaneLocation(FVector NewCurrentAirplaneLocation);
 	void UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint, bool NewbIsVisibiltyAirplane);
+	void FinishMoveAirplane();
 	
 	// 플레이어 수 업데이트
 	void UpdatePlayerCount();

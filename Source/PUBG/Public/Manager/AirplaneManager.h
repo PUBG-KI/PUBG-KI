@@ -22,17 +22,13 @@ public:
 	void NotifyStartToMoveAirplane();
     // 비행기 스폰
 	void SpwanAirplane();
-	void SetViewTargetToPlane();
-	void GrantPlayerAirplaneAbilites(APlayerState* PlayerState);
 	// 비행기의 타임라인 시작
 	void StartToMoveAirplane();
-
-
-private:
-	
-	UPROPERTY(EditAnywhere, Category = "PlaneManager")
+	// 비행기의 타임라인 시작
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlaneManager", meta = (AllowPrivateAccess = "true"))
 	AAirplane* SpawnedPlane;
 	
+private:
 	// 비행기 클래스 (Blueprint에서 설정 가능)
 	UPROPERTY(EditAnywhere, Category = "PlaneManager")
 	TSubclassOf<AAirplane> PlaneClass;	

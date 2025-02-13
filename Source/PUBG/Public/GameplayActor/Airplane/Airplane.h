@@ -11,14 +11,12 @@ class USpringArmComponent;
 class UCameraComponent;
 class UTimelineComponent;
 class UCurveFloat;
+class APlayerState;
 
 USTRUCT(BlueprintType)
 struct FAirplaneData
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	AAirplane* AirplaneInstance = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInputMappingContext* WeaponInputMappingContext = nullptr;
@@ -56,11 +54,18 @@ public:
 	
 	void UpdateCurrentLocation();
 	void UpdateIsVisibiltyAirplane(bool bIsVisibiltyAirplane);
-	
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetControlledAirplane(ABasePlayerController* PC);
+	void GrantPlayerAirplaneAbilites(APlayerState* PlayerState);
+	void SetViewTargetToPlane();
+
+	UFUNCTION(BlueprintCallable)
 	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles);
-	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+	UFUNCTION(BlueprintPure)
+	TArray<FGameplayAbilitySpecHandle>& GetGrantedAbilitySpecHandles();
 	
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AirplaneData")
 	FAirplaneData AirplaneData;
 	
 	UPROPERTY()
