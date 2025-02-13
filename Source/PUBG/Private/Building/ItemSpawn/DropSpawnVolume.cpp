@@ -32,43 +32,9 @@ void ADropSpawnVolume::OnConstruction(const FTransform& Transform)
 	//AActor* SpawnedZone = GetWorld()->SpawnActor<AActor>(zoneActorClass, GetRandomLandscapeLocation());
 }
 
-// FBox ADropSpawnVolume::GetLandscapeBounds()
-// {
-// 	// if (!TargetLandscape)
-// 	// {
-// 	// 	UE_LOG(LogTemp, Error, TEXT("Error: TargetLandscape is nullptr!"));
-// 	// 	return FBox();
-// 	// }
-// 	//
-// 	// //return TargetLandscape->GetComponentsBoundingBox();
-// 	// FBox Bounds = TargetLandscape->GetComponentsBoundingBox();
-// 	// return Bounds;
-// }
-
 FVector ADropSpawnVolume::GetRandomLandscapeLocation()
 {
-	//랜드스케이프 크기 얻어오기 실패!
-	// if (!TargetLandscape)
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("TargetLandscape is nullptr!"));
-	// 	return FVector::ZeroVector;
-	// }
-	//
-	// //FBox Bounds = SpawnArea->;
-	//
-	// float RandX = FMath::RandRange(Bounds.Min.X, Bounds.Max.X);
-	// float RandY = FMath::RandRange(Bounds.Min.Y, Bounds.Max.Y);
-	// float RandZ = Bounds.Max.Z + 1000.0f; 
-	//
-	// UE_LOG(LogTemp, Warning, TEXT("Spawn Location Inside Actor Bounds: X=%f, Y=%f, Z=%f"), RandX, RandY, RandZ);
-	//
-	// return FVector(RandX, RandY, RandZ);
-
-	
-	//스포너 박스 내의 extent 크기로 조정
-	//return FVector(RandX, RandY, RandZ);
-
-		if (!DropSpawnArea)
+		if (!DropSpawnArea) //스폰시킬 위치
 		{
 			UE_LOG(LogTemp, Error, TEXT("DropSpawnArea is nullptr"));
 			return FVector::ZeroVector;
@@ -93,14 +59,12 @@ void ADropSpawnVolume::SetDropLocation()
 	UWorld* World = GetWorld();
 
 	//스폰
-	//ASupplyDrop* SupplyDrop = World->SpawnActor<ASupplyDrop>(BP_SupplyDrop,GetRandomLandscapeLocation(),FRotator::ZeroRotator);
+	ASupplyDrop* SupplyDrop = World->SpawnActor<ASupplyDrop>(BP_SupplyDrop,GetRandomLandscapeLocation(),FRotator::ZeroRotator);
 }
 
 // Called every frame
 void ADropSpawnVolume::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	
 }
 

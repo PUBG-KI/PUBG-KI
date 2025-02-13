@@ -19,30 +19,23 @@ public:
 	// Sets default values for this actor's properties
 	ADropSpawnVolume();
 
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Landscape", meta = (AllowPrivateAccess = "true"))
-	// TSoftObjectPtr<ALandscape> TargetLandscape;
-	
+	//스폰시킬BP
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<ASupplyDrop> BP_SupplyDrop;
 
 private:
+	//스폰지정구역
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* DropSpawnArea;
 
+	//스폰타이머
 	FTimerHandle SpawnTimerHandle;
-
-public:
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Settings")
-	// FVector SpawnScale;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	virtual void OnConstruction(const FTransform& Transform) override;
-
-	//랜드스케이프 크기 가져오기
-	//FBox GetLandscapeBounds();
 	
 	//랜드스케이프 랜덤 위치 지정
 	FVector GetRandomLandscapeLocation();
