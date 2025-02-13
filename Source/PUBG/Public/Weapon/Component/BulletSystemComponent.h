@@ -66,6 +66,12 @@ public:
 	void SpawnLineTrace_HitResult(float DeltaSecond);
 	
 	void DestoryBullet();
+
+	UFUNCTION()
+	float FindHitLocation_Multiplier(FName _HitBodyName);
+
+	UFUNCTION()
+	float FindShootingGunType_multiplier(FName _HitBodyName);
 	
 	UPROPERTY()
 	FGameplayTag _EventTag;

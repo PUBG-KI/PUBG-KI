@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Weapon/DataTable/DT_Weapon.h"
+#include "Weapon/Guns/Gun_Base.h"
 #include "Projectile_Base.generated.h"
 
 
@@ -32,6 +34,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, category = Projectile)
 	UBulletSystemComponent* BulletSystemComponent;
+
+	UPROPERTY(EditDefaultsOnly, category = Projectile)
+	AGun_Base* ShootingBulletOwner;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
+	EGunType GunType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile", meta = (ExposeOnSpawn = "true"))
 	float BulletDamage;
