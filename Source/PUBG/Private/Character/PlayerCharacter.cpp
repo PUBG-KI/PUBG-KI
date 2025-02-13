@@ -627,67 +627,71 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 	{
 		BeginOverlapCount += 1;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
-	}
 
-	FTimerDelegate TimerDelegate;
-	TimerDelegate.BindLambda([this, OtherActor]()
-	{
-		FHitResult Hit;
-		FVector Start = GetFollowCamera()->K2_GetComponentLocation();
-		FVector End = Start + UKismetMathLibrary::GetForwardVector(FollowCamera->K2_GetComponentRotation()) * 380.0f;
-		TArray<AActor*> ActorsToIgnore;
-		ActorsToIgnore.Add(this);
-		//ActorsToIgnore.Add(TestCharacter);
-		ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1);
-
-		if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, OtherActor]()
 		{
-			UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
-			                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
-			                                      FLinearColor(0, 1, 0, 1));
-			if (Hit.GetActor() != nullptr)
-			{
-				// FVector HitLocation = Hit.Location;
-				// SetItemOfZ(HitLocation.Z);
-				if (LookAtActor != Hit.GetActor())
-				{
-					LookAtActor = Hit.GetActor();
-					IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
+			FHitResult Hit;
+			FVector Start = GetFollowCamera()->K2_GetComponentLocation();
+			FVector End = Start + UKismetMathLibrary::GetForwardVector(FollowCamera->K2_GetComponentRotation()) * 380.0f;
+			TArray<AActor*> ActorsToIgnore;
+			ActorsToIgnore.Add(this);
+			//ActorsToIgnore.Add(TestCharacter);
+			ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1);
 
-					if (InteractInterface)
+			if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+			{
+				UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
+													  EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
+													  FLinearColor(0, 1, 0, 1));
+				if (Hit.GetActor() != nullptr)
+				{
+					// FVector HitLocation = Hit.Location;
+					// SetItemOfZ(HitLocation.Z);
+					if (LookAtActor != Hit.GetActor())
 					{
-						FText result = InteractInterface->LookAt();
-						//InteractInterface->InteractWith();
-					}
-					else
-					{
-						LookAtActor = nullptr;
-						InventoryComponent->SetItem(nullptr);
+						LookAtActor = Hit.GetActor();
+						IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
+
+						if (InteractInterface)
+						{
+							FText result = InteractInterface->LookAt();
+							//InteractInterface->InteractWith();
+						}
+						else
+						{
+							LookAtActor = nullptr;
+							InventoryComponent->SetItem(nullptr);
+						}
 					}
 				}
+				else
+				{
+					LookAtActor = nullptr;
+					InventoryComponent->SetItem(nullptr);
+				}
 			}
-			else
-			{
-				LookAtActor = nullptr;
-				InventoryComponent->SetItem(nullptr);
-			}
-		}
-	});
+		});
 
-	GetWorldTimerManager().SetTimer(BeginOverlapTimerHandle, TimerDelegate, 0.1f, true);
+		GetWorldTimerManager().SetTimer(BeginOverlapTimerHandle, TimerDelegate, 0.1f, true);
+	}
 }
 
 void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	BeginOverlapCount -= 1;
-	UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
-	LookAtActor = nullptr;
-	InventoryComponent->SetItem(nullptr);
-	if (BeginOverlapCount == 0)
+	if(BeginOverlapCount > 0)
 	{
-		GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
-	}
+		BeginOverlapCount -= 1;
+		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
+		
+		if (BeginOverlapCount == 0)
+		{			
+			LookAtActor = nullptr;
+			InventoryComponent->SetItem(nullptr);
+			GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
+		}
+	}	
 }
 
 void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

@@ -29,7 +29,12 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_PistolWeapon, "InputTag.PistolWeapon");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_MeleeWeapon, "InputTag.MeleeWeapon");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_ThrowableWeapon, "InputTag.ThrowableWeapon");
-
+	
+	// Airplane Input Tag
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Airplane_Look, "InputTag.Airplane.Look");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Airplane_Fall, "InputTag.Airplane.Fall");
+	
+	// Inventory Tag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
 
@@ -86,4 +91,5 @@ namespace BaseGameplayTag
 	
 	// Data Tag
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage, "Data.Damage");
+
 }

@@ -6,9 +6,11 @@
 #include "Engine/GameInstance.h"
 #include "BaseGameInstance.generated.h"
 
+class UAirplaneManager;
 class UTimeManager;
 class UGameEventManager;
 class UZoneManager;
+class ULandscapeManager;
 
 /**
  * 
@@ -29,12 +31,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UGameEventManager* GameEventManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	ULandscapeManager* LandscapeManager ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UZoneManager* ZoneManager;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UAirplaneManager* AirplaneManager;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UZoneManager> ZoneManagerClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TSubclassOf<UAirplaneManager> AirplaneManagerClass;
 
 	UTimeManager* GetTimeManager() const { return TimeManager; }
 	UGameEventManager* GetGameEventManager() const { return GameEventManager; }
+	ULandscapeManager* GetLandscapeManager() const { return LandscapeManager; }
 	UZoneManager* GetZoneManager() const { return ZoneManager; }
+	UAirplaneManager* GetAirplaneManager() const { return AirplaneManager; }
 };

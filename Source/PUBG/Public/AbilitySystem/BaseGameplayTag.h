@@ -25,6 +25,10 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_PistolWeapon);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_MeleeWeapon);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ThrowableWeapon);
+	
+	// Airplane Input Tag
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Airplane_Look);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Airplane_Fall);
 
 	// Inventory Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle);
@@ -88,5 +92,6 @@ namespace BaseGameplayTag
 
 	// Data Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage);
+
 	
 }

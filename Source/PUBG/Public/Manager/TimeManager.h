@@ -46,5 +46,5 @@ private:
 	void GameStartCountdown();
 
 	/** 비행기 태우기 시작 */
-	void StartPlaneDeparture();
+	void StartGameFlow();
 };

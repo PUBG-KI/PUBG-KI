@@ -4,9 +4,11 @@
 #include "Controller/BasePlayerController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "EnhancedInputSubsystems.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
 #include "Components/WrapBox.h"
+#include "GameplayActor/Airplane/Airplane.h"
 #include "HUD/Crosshair/CrosshairHUD.h"
 #include "PlayerState/BasePlayerState.h"
 #include "Widgets/HUD/HudWidget.h"
@@ -199,6 +201,44 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 		}
 	}
 }
+
+void ABasePlayerController::Client_RemoveMappingContext_Implementation()
+{
+	// Enhanced Input Subsystem 가져오기
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+		
+	if (InputSubsystem && AdditionalInputMappingContext)
+	{
+		InputSubsystem->RemoveMappingContext(AdditionalInputMappingContext);	
+	}
+}
+
+void ABasePlayerController::Client_AddMappingContext_Implementation(AAirplane* NewControlledAirplane, 
+                                                                    UInputMappingContext* InputMappingContext)
+{
+	if (!IsLocalController())
+	{
+		UE_LOG(LogTemp, Error, TEXT("!IsLocalController()"));		
+		return;  
+	}
+	
+	if (!InputMappingContext)
+	{
+		UE_LOG(LogTemp, Error, TEXT("!InputMappingContext"));		
+		return; 
+	}	
+	// Enhanced Input Subsystem 가져오기
+	UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	
+	if (InputSubsystem && InputMappingContext)
+	{
+		//ControlledAirplane = NewControlledAirplane;
+		AdditionalInputMappingContext = InputMappingContext;
+		InputSubsystem->AddMappingContext(InputMappingContext, 1);			
+	}
+}
+
+
 	
 
 
