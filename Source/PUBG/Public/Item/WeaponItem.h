@@ -14,6 +14,7 @@ class PUBG_API AWeaponItem : public AItemBase
 {
 	GENERATED_BODY()
 
+	AWeaponItem();
 
 public:
 	void InteractWith(APlayerCharacter* Character);

@@ -3,6 +3,8 @@
 
 #include "Weapon/Guns/Gun_Base.h"
 
+#include "BaseLibrary/DataEnum/ItemEnum.h"
+
 AGun_Base::AGun_Base()
 {
 	ScopeMesh = CreateDefaultSubobject<UStaticMeshComponent>("ScopeMesh");
@@ -22,6 +24,9 @@ AGun_Base::AGun_Base()
 
 	//SetReplicates(true);
 	bReplicates = true;
+
+	// 이준수
+	EquipSlot = EEquippedItemCategory::PrimarySlot;
 }
 
 void AGun_Base::SetFiremode(EFiremodes Firemodes)
