@@ -23,7 +23,7 @@ AZone::AZone()
 
 	ShrinkFactor = 0.5f;	
 	bIsVisibiltyNextZone = false;
-	Timer = 30.0f;
+	Timer = 3.0f;
 
 	SetReplicates(true);
     SetReplicateMovement(true);
@@ -32,6 +32,8 @@ AZone::AZone()
 
 void AZone::NotifySize()
 {
+	
+	UE_LOG(LogTemp, Warning, TEXT("NotifySize"));
 	GetWorldTimerManager().ClearTimer(NotifyTimerHandle);
 	
 	//다음 원의 반지름
@@ -47,7 +49,7 @@ void AZone::NotifySize()
 	
 	UpdateNextZone();
 		
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::StartShirnkZone, 0.0f, false, Timer);
+	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::StartShirnkZone, 1.0f, false, Timer);
 }
 
 void AZone::StartShirnkZone()
@@ -93,11 +95,11 @@ void AZone::UpdateShrinkZone(float Value)
 		SetActorScale3D(FVector(TempSize, TempSize ,GetActorScale3D().Z));
 		SetActorLocation(TempLocation);
 
+		
+		UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
+		UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
 		UpdateCurrentZone();
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
-	//UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
-
 }
 
 void AZone::TimelineFinishedFunction()
@@ -115,7 +117,7 @@ void AZone::TimelineFinishedFunction()
 	UpdateCurrentZone();
 	UpdateNextZone();
 	
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 0.0f, false, Timer);
+	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, Timer);
 
 	Level++;
 
@@ -243,8 +245,11 @@ void AZone::StartShrinkTimer()
 {	
 	CurrentLocation = GetActorLocation();
 	CurrentScale = GetMeshWorldScale();
+
 	
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 0.0f, false, Timer * 2.0f);
+	UE_LOG(LogTemp, Warning, TEXT("UStartShrinkTimer"));
+	
+	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, Timer * 2.0f);
 }
 
 

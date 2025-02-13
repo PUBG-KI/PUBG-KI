@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Building/ItemSpawn/DropSpawnVolume.h"
+#include "GameplayActor//ItemSpawn/DropSpawnVolume.h"
 
 #include "Landscape.h"
 #include "Building/SupplyDrop/SupplyDrop.h"

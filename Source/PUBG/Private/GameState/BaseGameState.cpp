@@ -80,21 +80,21 @@ void ABaseGameState::OnRep_BoardPlaneNotification()
 
 void ABaseGameState::OnRep_CurrentZoneScale()
 {	
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
+	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
+	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
 }
 
 void ABaseGameState::OnRep_IsVisibiltyNextZone()
 {	
-	//UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
-	//UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
+	UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
+	UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
 	if (bIsVisibiltyNextZone)
 	{		
-		//UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
+		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
 	}
 	else
 	{		
-		//UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
+		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
 	}
 }
 

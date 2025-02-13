@@ -39,7 +39,7 @@ void UZoneManager::SpawnZone()
 		FBox ZoneBox = SpawnedZone->GetComponentsBoundingBox();		
 		FBox LandscapeBox = GI->GetLandscapeManager()->GetLandscapeBoundingBox();
 
-		SpawnedZone->SetActorScale3D(FVector(LandscapeBox.Max.X / ZoneBox.Max.X, LandscapeBox.Max.Y / ZoneBox.Max.Y, LandscapeBox.Max.Z / ZoneBox.Max.Z * 2) );
+		SpawnedZone->SetActorScale3D(FVector(LandscapeBox.Max.X / ZoneBox.Max.X, LandscapeBox.Max.Y / ZoneBox.Max.Y, LandscapeBox.Max.Z / ZoneBox.Max.Z * 2 + 10000.f) );
 
 		UE_LOG(LogTemp, Warning, TEXT("SpawnedZone->GetActorScale3D() : %s"), *SpawnedZone->GetActorScale3D().ToString());
 
