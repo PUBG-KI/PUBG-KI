@@ -39,7 +39,6 @@ void UItemSpawnerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 void UItemSpawnerComponent::SpawnItems()
 {
 	UWorld* World = GetWorld();
-
 	AActor* Owner = GetOwner();
 
 	for (const FVector& SpawnLocation : SpawnLocations)
