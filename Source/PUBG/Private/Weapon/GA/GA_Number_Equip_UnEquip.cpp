@@ -2,9 +2,9 @@
 
 
 #include "Weapon/GA/GA_Number_Equip_UnEquip.h"
-
 #include "Character/PlayerCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 
 bool UGA_Number_Equip_UnEquip::EqualCurrentWeapon(AWeapon_Base* _Weapon)
 {
@@ -48,6 +48,8 @@ void UGA_Number_Equip_UnEquip::Attach_HandToBack_Weapon(FName _SocketName)
 			Weapon_Base->AttachToComponent(PlayerCharacter->GetMesh(), Rules, _SocketName);
 
 			PlayerCharacter->GetInventoryComponent()->SetCurrentWeapon(nullptr);
+
+			
 			
 		}
 	}
@@ -107,5 +109,61 @@ bool UGA_Number_Equip_UnEquip::EqualLastCurrentWeaponToPrimaryWeaponSlot()
 	}
 	SocketName = FName("slot_secondarySocket");
 	return false;
+}
+
+UAnimMontage* UGA_Number_Equip_UnEquip::selectCurrentMontage_isProne(UAnimMontage* TrueMontage, UAnimMontage* FalseMontage)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
+	
+	if (MovementComponent->RequestToStartProne)
+	{
+		return TrueMontage;
+	}
+	return FalseMontage;
+}
+
+
+UAnimMontage* UGA_Number_Equip_UnEquip::selectCurrentMontage_CurrentWeapon(UAnimMontage* TrueMontage,
+	UAnimMontage* FalseMontage)
+{
+	if (EqualCurrentWeaponToPrimaryWeaponSlot())
+	{
+		return TrueMontage;
+	}
+	return FalseMontage;
+}
+
+
+UAnimMontage* UGA_Number_Equip_UnEquip::selectCurrentMontage_LastCurrentWeapon(UAnimMontage* TrueMontage,
+	UAnimMontage* FalseMontage)
+{
+	if (EqualLastCurrentWeaponToPrimaryWeaponSlot())
+	{
+		return TrueMontage;
+	}
+	return FalseMontage;
+}
+
+UAnimMontage* UGA_Number_Equip_UnEquip::selectCurrentMontage_isProne_PrimarySecondary(UAnimMontage* Primary_TrueMontage,
+	UAnimMontage* Primary_falseMontage, UAnimMontage* Secondary_TrueMontage, UAnimMontage* Secondary_falseMontage, bool Selectbool)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
+	
+	if (MovementComponent->RequestToStartProne)
+	{
+		if (Selectbool)
+		{
+			return Primary_TrueMontage;
+		}
+		return Secondary_TrueMontage;
+	}
+
+	if (Selectbool)
+	{
+		return Primary_falseMontage;
+	}
+	return Secondary_falseMontage;
 }
 

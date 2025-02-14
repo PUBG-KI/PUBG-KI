@@ -43,6 +43,18 @@ public:
 	UFUNCTION(Blueprintpure)
 	bool EqualLastCurrentWeaponToPrimaryWeaponSlot();
 
+	UFUNCTION(BlueprintPure)
+	UAnimMontage* selectCurrentMontage_isProne(UAnimMontage* TrueMontage, UAnimMontage* FalseMontage);
+
+	UFUNCTION(BlueprintPure)
+	UAnimMontage* selectCurrentMontage_CurrentWeapon(UAnimMontage* TrueMontage, UAnimMontage* FalseMontage);
+
+	UFUNCTION(BlueprintPure)
+	UAnimMontage* selectCurrentMontage_LastCurrentWeapon(UAnimMontage* TrueMontage, UAnimMontage* FalseMontage);
+	
+	UFUNCTION(BlueprintPure)
+	UAnimMontage* selectCurrentMontage_isProne_PrimarySecondary(UAnimMontage* Primary_TrueMontage, UAnimMontage* Primary_falseMontage, UAnimMontage* Secondary_TrueMontage, UAnimMontage* Secondary_falseMontage, bool Selectbool);
+
 private:
 	UPROPERTY()
 	FName SocketName;
