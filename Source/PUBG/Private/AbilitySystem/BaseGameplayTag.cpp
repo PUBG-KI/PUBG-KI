@@ -33,6 +33,14 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
 
+	// Vehicle Input Tag
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_Break, "InputTag.Vehicle.Break");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_Steering, "InputTag.Vehicle.Steering");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_Throttle, "InputTag.Vehicle.Throttle");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_HandBreak, "InputTag.Vehicle.HandBreak");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_VehicleLook, "InputTag.Vehicle.VehicleLook");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_GetOut, "InputTag.Vehicle.GetOut");
+	
 	// Weapon Input Tag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_Equip, "InputTag.Weapon.Equip");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Weapon_UnEquip, "InputTag.Weapon.UnEquip");

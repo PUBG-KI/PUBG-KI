@@ -38,6 +38,14 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_ChangeFireMode);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Zoom);
 
+	// Vehicle Input Tag
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_Break);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_Steering);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_Throttle);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_HandBreak);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_VehicleLook);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vehicle_GetOut);
+	
 	// Weapon Action Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Fire);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Reload);

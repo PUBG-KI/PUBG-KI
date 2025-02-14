@@ -26,11 +26,11 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 		if (GS && !GS->GetIsGameStarted())
 		{
 			UBaseGameInstance* GI = GetGameInstance<UBaseGameInstance>();
-			if (GI)
-			{
-				// 게임 시작 타이머 실행
-				GI->GetTimeManager()->StartGameTimer();
-			}
+			// if (GI)
+			// {
+			// 	// 게임 시작 타이머 실행
+			// 	GI->GetTimeManager()->StartGameTimer();
+			// }
 		}	
 	}
 
