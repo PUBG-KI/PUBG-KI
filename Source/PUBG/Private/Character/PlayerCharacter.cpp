@@ -53,11 +53,15 @@
 #include "Net/UnrealNetwork.h"
 #include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
+//Weapon
+#include "Weapon/Weapon_Base.h"
+#include "BaseLibrary/BaseStructType.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	//bReplicates = true;
-	
+
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
 
 	bUseControllerRotationPitch = false;
@@ -69,7 +73,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 200.0f;
 	CameraBoom->SocketOffset = FVector(0.f, 55.f, 65.f);
-	CameraBoom->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, UPUBGSpringArmComponent::SocketName);
@@ -77,7 +80,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	FirstPersonCamera->SetupAttachment(GetMesh(),TEXT("camera_fppSocket"));
 	FirstPersonCamera->Deactivate();
 	CameraMode = PlayerCameraMode::FPPCamera;
-	//FollowCamera->bUsePawnControlRotation = false;
 
 	// 메쉬 부착
 	//UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
@@ -125,7 +127,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//자기장
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PlayerPostProcess"));
 	PostProcessComponent->SetupAttachment(RootComponent);
-	
 }
 
 void APlayerCharacter::BeginPlay()
@@ -239,15 +240,21 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	}
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
+	if (Controller)
+	{
+		const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
+		FRotator CurrentRotation = GetActorRotation(); // 현재 회전
+		// 부드럽게 회전 (보간을 통해)
+		FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(),
+		                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
+		// 회전 적용
+		Server_SetActorRotation(InterpolatedRotation);
+	}
+	else
+	{
+		return;
+	}
 
-	const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
-	FRotator CurrentRotation = GetActorRotation(); // 현재 회전
-
-	// 부드럽게 회전 (보간을 통해)
-	FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(),
-	                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
-	// 회전 적용
-	Server_SetActorRotation(InterpolatedRotation);
 
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 	if (MovementVector.Y <= 0.f)
@@ -295,7 +302,7 @@ void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionVa
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
-	
+
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X);
@@ -437,9 +444,17 @@ void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	APlayerController* PlayerController = Cast<APlayerController>(NewController);
+	ULocalPlayer* LocalPlayer = PlayerController ? PlayerController->GetLocalPlayer() : nullptr;
+	if (LocalPlayer)
+	{
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+		check(Subsystem);
+		Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
+	}
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
-	if (PS)
+	if (PS&&!FirstAttribute)
 	{
 		// 서버에 ASC를 설정합니다. 클라이언트는 OnRep_PlayerState()에서 이 작업을 수행합니다.
 		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
@@ -468,6 +483,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
 		SetHealth(GetMaxHealth());
 		SetStamina(0);
+		FirstAttribute = true;
 	}
 }
 
@@ -571,6 +587,91 @@ void APlayerCharacter::RightLeanCameraMovement()
 		CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
 	}
 }
+
+void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayerCharacter, OntheVehicle);
+}
+
+void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
+{
+	if (OntheVehicle)
+	{
+		AWeapon_Base* CachedCurrentWeapon = GetInventoryComponent()->GetCurrentWeapon();
+		if (CachedCurrentWeapon)
+		{
+			if (CachedCurrentWeapon == GetInventoryComponent()->GetPrimarySlotWeapon())
+			{
+				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+													   FName("slot_primarySocket"));
+				UE_LOG(LogTemp, Warning, TEXT("PrimarySocket"));
+			}
+			else if (CachedCurrentWeapon == GetInventoryComponent()->GetSecondarySlot())
+			{
+				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform,
+													   FName("slot_secondarySocket"));
+				UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
+			}
+			// else if (CurrentWeapon == GetInventoryComponent()->GetSideArmSlot())   지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
+			// {
+			// 	
+			// }
+			// else if (CurrentWeapon == GetInventoryComponent()->GetMeleeSlot())
+			// {
+			// 	
+			// }
+			// else if (CurrentWeapon == GetInventoryComponent()->GetThrowableSlot())
+			// {
+			// 	
+			// }
+		
+			FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData(); //웨폰데이터 구조체 가져오기(맵핑컨텍스트, 테그, 어빌리티)
+			UInputMappingContext* CachedInputMappingContext = WeaponData.WeaponInputMappingContext;
+			GetInventoryComponent()->SetCurrentWeapon(nullptr);
+			Server_SetAnimLayer(nullptr); //애님레이어 교체 nullptr시 unarmed기본설정되어있음
+			Client_InputMappingContextRemove(CachedInputMappingContext);
+			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag); //테그 삭제
+			TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->GetGrantedAbilitySpecHandles();//어빌리티 삭제
+			BaseAbilitySystemComponent->RemoveGrantedPlayerWeaponAbilities(CachedAbilitySpecHandle); //어빌리티 삭제
+		}
+	}
+}
+
+void APlayerCharacter::Client_InputMappingContextRemove_Implementation(UInputMappingContext* MappingContext)
+{
+	ULocalPlayer* LocalPlayer = GetController<APlayerController>()->GetLocalPlayer();
+	if (LocalPlayer)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LocalPlayer exist"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("LocalPlayer not exist"));
+	}
+	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+		UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
+	if (Subsystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem exist"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Subsystem not exist"));
+	}
+	check(Subsystem);
+	Subsystem->RemoveMappingContext(MappingContext);//인풋매핑컨텍스트 삭제
+}
+
+// void APlayerCharacter::ServerSetCollisionEnabled_Implementation(bool NewCollisionSet)
+// {
+// 	SetActorEnableCollision(NewCollisionSet);
+// }
+//
+// bool APlayerCharacter::ServerSetCollisionEnabled_Validate(bool NewCollisionSet)
+// {
+// 	return true;
+// }
 
 
 void APlayerCharacter::OnRep_PlayerState()

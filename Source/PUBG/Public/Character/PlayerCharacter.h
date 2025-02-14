@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
+#include "PlayerState/BasePlayerState.h"
 #include "PlayerCharacter.generated.h"
 
 
@@ -68,6 +69,7 @@ public:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite, category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	TMap<EPlayerMeshType, USkeletalMeshComponent*> CharacterEquipmentMap;
 	
+
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);	
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
@@ -218,15 +220,22 @@ public:
 
 	//차랑관련
 private:
+	UPROPERTY(Replicated)
 	bool OntheVehicle = false; // 탈것 스테이트 머신 전환
 	bool VehicleFacetoBackward = false; //90~180도면 스테이트머신의 애니메이션 변경을 위해서
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AnimLayer", meta = (AllowPrivateAccess = "true"))
+	UPlayerAnimInstance* DefaultPlayerAnimLayer;
+	bool FirstAttribute = false;
 public:
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	FORCEINLINE bool GetOnTheVehicle() const { return OntheVehicle; }
-	FORCEINLINE void SetOnTheVehicle(bool NewOnTheVehicle) {OntheVehicle = NewOnTheVehicle;}
+	FORCEINLINE void SetOnTheVehicle(bool NewOnTheVehicle){OntheVehicle = NewOnTheVehicle;}
 	FORCEINLINE bool GetVehicleFacetoBackward() const { return VehicleFacetoBackward; }
 	FORCEINLINE void SetVehicleFacetoBackward(bool NewOnTheVehicle) {VehicleFacetoBackward = NewOnTheVehicle;}
-	
+	UFUNCTION()
+	void WhenGetOntheVehicleUnequippedWeapon();
+	UFUNCTION(Client, Reliable)
+	void Client_InputMappingContextRemove(UInputMappingContext* MappingContext);
 };
 
 

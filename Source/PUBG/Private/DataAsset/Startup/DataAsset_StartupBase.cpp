@@ -24,6 +24,7 @@ void UDataAsset_StartupBase::GiveToAbilitySystemComponent(UBaseAbilitySystemComp
 			ASC->ApplyGameplayEffectToSelf(EffectCDO, Level, ASC->MakeEffectContext());
 		}
 	}
+	
 }
 
 void UDataAsset_StartupBase::GrantAbilities(const TArray<TSubclassOf<UBaseGameplayAbility>> GAs,

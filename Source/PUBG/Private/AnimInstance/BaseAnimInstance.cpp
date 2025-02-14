@@ -61,8 +61,8 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	FRotator ActorRotation = OwningPlayer->GetActorRotation();
 	
 	FRotator DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
-	Yaw = DeltaRotator.Yaw;
 	Pitch = DeltaRotator.Pitch;
+	Yaw = DeltaRotator.Yaw;
 	
 	LeaningPressedValue = OwningMovementComponent->LeaningValue;
 	PlayerOntheVehicle = OwningPlayer->GetOnTheVehicle();

@@ -25,19 +25,15 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon")
 	USkeletalMeshComponent* WeaponSkeletalMeshComponent;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
-	FPlayerWeaponData PlayerWeaponData;
 	
 	UFUNCTION(BlueprintCallable)
 	void AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles);
-
-	UFUNCTION(BlueprintPure)
-	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FWeaponData WeaponDataAsset;
-
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "WeaponData")
+	FPlayerWeaponData PlayerWeaponData;
 
 private:
 
@@ -51,14 +47,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "DataAsset")
 	void SetWeaponDataAsset(FWeaponData WeaponData);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponData")
+	FPlayerWeaponData GetPlayerWeaponData() const { return PlayerWeaponData; }
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+<<<<<<< HEAD
 	
 	// 이준수
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 
 	
+=======
+	UFUNCTION(BlueprintCallable)
+	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+>>>>>>> Player
 };
 
 
