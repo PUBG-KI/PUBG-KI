@@ -596,16 +596,16 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 {
 	if (OntheVehicle)
 	{
-		AWeapon_Base* CachedCurrentWeapon = GetInventoryComponent()->GetCurrentWeapon();
+		AWeapon_Base* CachedCurrentWeapon = GetEquippedComponent()->GetCurrentWeapon();
 		if (CachedCurrentWeapon)
 		{
-			if (CachedCurrentWeapon == GetInventoryComponent()->GetPrimarySlotWeapon())
+			if (CachedCurrentWeapon == GetEquippedComponent()->GetPrimarySlotWeapon())
 			{
 				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 													   FName("slot_primarySocket"));
 				UE_LOG(LogTemp, Warning, TEXT("PrimarySocket"));
 			}
-			else if (CachedCurrentWeapon == GetInventoryComponent()->GetSecondarySlot())
+			else if (CachedCurrentWeapon == GetEquippedComponent()->GetSecondarySlot())
 			{
 				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform,
 													   FName("slot_secondarySocket"));
@@ -626,7 +626,7 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 		
 			FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData(); //웨폰데이터 구조체 가져오기(맵핑컨텍스트, 테그, 어빌리티)
 			UInputMappingContext* CachedInputMappingContext = WeaponData.WeaponInputMappingContext;
-			GetInventoryComponent()->SetCurrentWeapon(nullptr);
+			GetEquippedComponent()->SetCurrentWeapon(nullptr);
 			Server_SetAnimLayer(nullptr); //애님레이어 교체 nullptr시 unarmed기본설정되어있음
 			Client_InputMappingContextRemove(CachedInputMappingContext);
 			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag); //테그 삭제

@@ -3,6 +3,7 @@
 
 #include "Weapon/GA/GA_Number_Equip_UnEquip.h"
 #include "Character/PlayerCharacter.h"
+#include "Component/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 
@@ -13,7 +14,7 @@ bool UGA_Number_Equip_UnEquip::EqualCurrentWeapon(AWeapon_Base* _Weapon)
 		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 		if (PlayerCharacter)
 		{
-			if (PlayerCharacter->GetInventoryComponent()->GetCurrentWeapon() == _Weapon)
+			if (PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon() == _Weapon)
 			{
 				return true;
 			}
@@ -27,7 +28,7 @@ bool UGA_Number_Equip_UnEquip::IsValidCurrentWeapon()
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 	if (PlayerCharacter)
 	{
-		if (PlayerCharacter->GetInventoryComponent()->GetCurrentWeapon() != nullptr)
+		if (PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon() != nullptr)
 		{
 			return true;
 		}
@@ -40,16 +41,14 @@ void UGA_Number_Equip_UnEquip::Attach_HandToBack_Weapon(FName _SocketName)
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 	if (PlayerCharacter)
 	{
-		if (AWeapon_Base* Weapon_Base = PlayerCharacter->GetInventoryComponent()->GetCurrentWeapon())
+		if (AWeapon_Base* Weapon_Base = PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon())
 		{
 			//PlayerCharacter->GetInventoryComponent()->SetLastCurrentWeapon(PlayerCharacter->GetInventoryComponent()->GetCurrentWeapon());
 			
 			FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			Weapon_Base->AttachToComponent(PlayerCharacter->GetMesh(), Rules, _SocketName);
 
-			PlayerCharacter->GetInventoryComponent()->SetCurrentWeapon(nullptr);
-
-			
+			PlayerCharacter->GetEquippedComponent()->SetCurrentWeapon(nullptr);
 			
 		}
 	}
@@ -65,8 +64,8 @@ void UGA_Number_Equip_UnEquip::Attach_BackToHand_Weapon(FName _SocketName, AWeap
 			FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			_Weapon->AttachToComponent(PlayerCharacter->GetMesh(), Rules, _SocketName);
 
-			PlayerCharacter->GetInventoryComponent()->SetCurrentWeapon(_Weapon);
-			PlayerCharacter->GetInventoryComponent()->SetLastCurrentWeapon(PlayerCharacter->GetInventoryComponent()->GetCurrentWeapon());
+			PlayerCharacter->GetEquippedComponent()->SetCurrentWeapon(_Weapon);
+			PlayerCharacter->GetEquippedComponent()->SetLastCurrentWeapon(PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon());
 			
 		}
 	}
@@ -82,9 +81,9 @@ bool UGA_Number_Equip_UnEquip::EqualCurrentWeaponToPrimaryWeaponSlot()
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 	if (PlayerCharacter)
 	{
-		UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+		UEquippedComponent* EquippedItemComponent = PlayerCharacter->GetEquippedComponent();
 		
-		if (InventoryComponent && (InventoryComponent->GetCurrentWeapon() == InventoryComponent->GetPrimarySlotWeapon()))
+		if (EquippedItemComponent && (EquippedItemComponent->GetCurrentWeapon() == EquippedItemComponent->GetPrimarySlotWeapon()))
 		{
 			SocketName = FName("slot_primarySocket");
 			return true;
@@ -99,9 +98,9 @@ bool UGA_Number_Equip_UnEquip::EqualLastCurrentWeaponToPrimaryWeaponSlot()
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 	if (PlayerCharacter)
 	{
-		UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+		UEquippedComponent* EquippedItemComponent = PlayerCharacter->GetEquippedComponent();
 		
-		if (InventoryComponent && (InventoryComponent->GetLastCurrentWeapon() == InventoryComponent->GetPrimarySlotWeapon()))
+		if (EquippedItemComponent && (EquippedItemComponent->GetLastCurrentWeapon() == EquippedItemComponent->GetPrimarySlotWeapon()))
 		{
 			SocketName = FName("slot_primarySocket");
 			return true;
