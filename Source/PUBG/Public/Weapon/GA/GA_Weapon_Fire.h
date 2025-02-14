@@ -42,5 +42,7 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "GA_weapon")
 	FVector GetProjectileSocketLocation() const {return Gun_Base->GetWeaponMagSocketLocation();}
+
+	
 	
 };

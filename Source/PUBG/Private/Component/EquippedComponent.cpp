@@ -15,7 +15,7 @@ UEquippedComponent::UEquippedComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
-
+	SetIsReplicatedByDefault(true);
 	// ...
 	
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
@@ -34,6 +34,8 @@ void UEquippedComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(UEquippedComponent, LastCurrentWeapon);
 	DOREPLIFETIME(UEquippedComponent, PrimarySlot);
 	DOREPLIFETIME(UEquippedComponent, SecondarySlot);
+	DOREPLIFETIME(UEquippedComponent, EquippedItems);
+	
 }
 
 

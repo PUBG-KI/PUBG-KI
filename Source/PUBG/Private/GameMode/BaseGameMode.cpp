@@ -51,7 +51,10 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 			// 	// 게임 시작 타이머 실행
 			// 	GI->GetTimeManager()->StartGameTimer();
 			// }
+<<<<<<< HEAD
 
+=======
+>>>>>>> JaeYun
 		}	
 	}
 

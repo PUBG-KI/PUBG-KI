@@ -52,13 +52,9 @@ public:
 	FPlayerWeaponData GetPlayerWeaponData() const { return PlayerWeaponData; }
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-
-	
 	// 이준수
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
-
 	
-
 	UFUNCTION(BlueprintCallable)
 	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
 

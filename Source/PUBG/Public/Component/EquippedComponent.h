@@ -120,19 +120,19 @@ public:
 	AWeapon_Base* GetLastCurrentWeapon() const { return LastCurrentWeapon; }
 	
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetPrimarySlotWeapon() const { return PrimarySlot; }
+	AWeapon_Base* GetPrimarySlotWeapon() const { return Cast<AWeapon_Base>(EquippedItems[0]);}
 	
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetSecondarySlot() const { return SecondarySlot; }
+	AWeapon_Base* GetSecondarySlot() const { return Cast<AWeapon_Base>(EquippedItems[1]); }
 
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetSideArmSlot() const { return SideArmSlot; }
+	AWeapon_Base* GetSideArmSlot() const { return Cast<AWeapon_Base>(EquippedItems[2]); }
 
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetMeleeSlot() const { return MeleeSlot; }
+	AWeapon_Base* GetMeleeSlot() const { return Cast<AWeapon_Base>(EquippedItems[3]); }
 
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
+	AWeapon_Base* GetThrowableSlot() const { return Cast<AWeapon_Base>(EquippedItems[4]); }
 
 	// setter
 	UFUNCTION(BlueprintCallable)
@@ -168,6 +168,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetSecondary_GunBase() const { return Cast<AGun_Base>(SecondarySlot);}
+
+	UFUNCTION(BlueprintCallable)
+	AGun_Base* GetPistol_GunBase() const { return Cast<AGun_Base>(SideArmSlot);}
 };
 
 

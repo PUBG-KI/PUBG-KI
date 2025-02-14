@@ -4,15 +4,17 @@
 #include "Weapon/GA/GA_Weapon_Fire.h"
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
+#include "Component/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
 void UGA_Weapon_Fire::SetDefault()
 {
-	if (GetPlayerCharacterFromActorInfo()->GetInventoryComponent()->GetCurrentWeapon_GunBase())
+	if (GetPlayerCharacterFromActorInfo()->GetEquippedComponent()->GetCurrentWeapon_GunBase())
 	{
 		// current weapon Type-[Gun_Base]
-		Gun_Base = GetPlayerCharacterFromActorInfo()->GetInventoryComponent()->GetCurrentWeapon_GunBase();
+		Gun_Base = GetPlayerCharacterFromActorInfo()->GetEquippedComponent()->GetCurrentWeapon_GunBase();
 
 		// Weapon DT_Data
 		WeaponData = Gun_Base->GetWeaponDataAsset();
@@ -47,4 +49,5 @@ FVector UGA_Weapon_Fire::GetVelocityVector()
 		return GetPlayerCharacterFromActorInfo()->GetFollowCamera()->GetForwardVector();
 	}
 }
+
 
