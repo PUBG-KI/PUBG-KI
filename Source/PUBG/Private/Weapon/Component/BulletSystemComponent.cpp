@@ -86,20 +86,16 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(GetOwner());
 		ActorsToIgnore.Add(Projectile->PlayerCharacter);
-	
-		//FCollisionQueryParams CollisionParams;
-		//CollisionParams.AddIgnoredActor(GetOwner()); // 총알 액터는 제외
-		//CollisionParams.AddIgnoredActor(Projectile->PlayerCharacter); // 발사한 자기자신은 제외
 
 		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartLocation, EndLocation, TraceType, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor(1, 0, 0, 0),
 												  FLinearColor(0, 1, 0, 1), 0.05);
-		//GetWorld()->LineTraceSingleByChannel(HitResult,StartLocation, EndLocation, ECollisionChannel::ECC_GameTraceChannel3, CollisionParams);
-		//UKismetSystemLibrary::DrawDebugLine(GetWorld(), StartLocation, EndLocation, FLinearColor::Green, 1, 1.0f);
-
+		
 		// 충돌 판정
 		if (HitResult.bBlockingHit)
 		{
-			
+			float HitLocationmultiplier = FindHitLocation_Multiplier(HitResult.BoneName);
+			float HitGuntypeMultiplier = FindShootingGunType_multiplier(HitResult.BoneName);
+			float CaclulateDamage = Projectile->BulletDamage * HitLocationmultiplier * HitGuntypeMultiplier; // 마지막 거리별 데미지 curve로 계산
 			// tag 설정
 			_EventTag = FGameplayTag::RequestGameplayTag("Player.Event.Action.Hit");
 			
@@ -107,9 +103,9 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 			FGameplayEventData Payload;
 			Payload.Instigator = Projectile->PlayerCharacter;
 			Payload.Target = HitResult.GetActor();
-			Payload.EventMagnitude = Projectile->BulletDamage;
+			Payload.EventMagnitude = CaclulateDamage;
 
-			// UE_LOG(LogTemp, Warning, TEXT("Hit_Actor : %s"), *HitResult.GetActor()->GetName());
+			UE_LOG(LogTemp, Error, TEXT("Hit_Actor : %s"), *HitResult.BoneName.ToString());
 
 			ABasePlayerController* Playercontroller = Cast<ABasePlayerController>(Projectile->PlayerCharacter->GetController());
 
@@ -131,5 +127,110 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 void UBulletSystemComponent::DestoryBullet()
 {
 	GetOwner()->Destroy();
+}
+
+float UBulletSystemComponent::FindHitLocation_Multiplier(FName _HitBodyName)
+{
+	if (_HitBodyName == FName(TEXT("head")) || _HitBodyName == FName(TEXT("spine_01"))) return 1.0f;
+	if (_HitBodyName == FName(TEXT("spine_03"))) return 1.1f;
+	if (_HitBodyName == FName(TEXT("pelvis"))) return 0.9f;
+	if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))) return 0.6f;
+	if (_HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))) return 0.5f;
+	if (_HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))) return 0.3f;
+	if (_HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))) return 0.6f;
+	if (_HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))) return 0.5f;
+	if (_HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 0.3f;
+	
+	UE_LOG(LogTemp, Error, TEXT("Hit body name not found!"));
+	return 0.0f;
+}
+
+
+float UBulletSystemComponent::FindShootingGunType_multiplier(FName _HitBodyName)
+{
+	if (Projectile->GunType == EGunType::AR)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 2.35f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.0f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 0.9f;
+	}
+
+	if (Projectile->GunType == EGunType::SR)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 2.5f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.3f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 0.9f;
+	}
+
+	if (Projectile->GunType == EGunType::DMR)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 2.35f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.05f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 0.95f;
+	}
+
+	if (Projectile->GunType == EGunType::SG)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 1.5f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 0.9f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 1.2f;
+	}
+
+	if (Projectile->GunType == EGunType::SMG)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 2.1f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.05f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 1.3f;
+	}
+
+	if (Projectile->GunType == EGunType::Pistol)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 1.5f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.0f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 1.05f;
+	}
+
+	if (Projectile->GunType == EGunType::Melee)
+	{
+		if (_HitBodyName == FName(TEXT("head"))) return 1.5f;
+		if (_HitBodyName == FName(TEXT("spine_01")) || _HitBodyName == FName(TEXT("pelvis")) || _HitBodyName == FName(TEXT("spine_03"))) return 1.0f;
+		if (_HitBodyName == FName(TEXT("upperarm_l")) || _HitBodyName == FName(TEXT("upperarm_r"))
+			|| _HitBodyName == FName(TEXT("lowerarm_l")) || _HitBodyName == FName(TEXT("lowerarm_r"))
+			|| _HitBodyName == FName(TEXT("hand_l")) || _HitBodyName == FName(TEXT("hand_r"))
+			|| _HitBodyName == FName(TEXT("thigh_l")) || _HitBodyName == FName(TEXT("thigh_r"))
+			|| _HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))
+			|| _HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 1.2f;
+	}
+		return 0;
 }
 

@@ -95,6 +95,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Unarmed,"Weapon.Unarmed");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Pistol,"Weapon.Pistol");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_SR,"Weapon.SR");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_SG,"Weapon.SG");
 
 	
 	// Data Tag

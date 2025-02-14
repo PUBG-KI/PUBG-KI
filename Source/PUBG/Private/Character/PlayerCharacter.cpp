@@ -404,8 +404,6 @@ void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
 			CameraBoom->TimelineAddOffset(UnProneCameraOffset, 0.2f);
 			MovementComponent->StopProne();
 		}
-
-
 		return;
 	}
 

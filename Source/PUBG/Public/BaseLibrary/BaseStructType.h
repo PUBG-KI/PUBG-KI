@@ -41,3 +41,4 @@ struct FPlayerWeaponData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
 	TArray<FPlayerAbilitySet> WeaponAbilities;
 };
+
