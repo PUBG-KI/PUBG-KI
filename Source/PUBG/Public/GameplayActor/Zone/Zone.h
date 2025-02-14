@@ -57,7 +57,6 @@ public:
 	void UpdateNextZone();
 	void StartShrinkTimer();
 
-
 private:		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UTimelineComponent* TimelineComponent;
@@ -83,10 +82,7 @@ private:
 	FVector CurrentLocation;
 	FVector NextLocation;
 	
-	bool bIsVisibiltyNextZone;	
-	
-	FTimerHandle NotifyTimerHandle;
-	FTimerHandle ShrinkTimerHandle;
+	bool bIsVisibiltyNextZone;		
 	float ShrinkFactor;
 
 };

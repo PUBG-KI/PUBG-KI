@@ -14,28 +14,22 @@ AZone::AZone()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	
 	ZoneMesh = CreateDefaultSubobject<UStaticMeshComponent>("Sphere Zone Mesh");
 	RootComponent = ZoneMesh;
 	
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
 
-	ShrinkFactor = 0.5f;	
+	ShrinkFactor = 0.7f;	
 	bIsVisibiltyNextZone = false;
-	Timer = 3.0f;
+	Timer = 30.0f;
 
 	SetReplicates(true);
-    SetReplicateMovement(true);
+    AActor::SetReplicateMovement(true);
 	ZoneMesh->SetIsReplicated(true);
 }
 
 void AZone::NotifySize()
 {
-	
-	UE_LOG(LogTemp, Warning, TEXT("NotifySize"));
-	GetWorldTimerManager().ClearTimer(NotifyTimerHandle);
-	
 	//다음 원의 반지름
 	NextScale = FMath::Clamp(CurrentScale * ShrinkFactor,0,CurrentScale);
 	//다음 원의 중심
@@ -48,14 +42,13 @@ void AZone::NotifySize()
 	}
 	
 	UpdateNextZone();
-		
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::StartShirnkZone, 1.0f, false, Timer);
+
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::StartShirnkZone, Timer, false);
 }
 
 void AZone::StartShirnkZone()
-{
-	GetWorldTimerManager().ClearTimer(NotifyTimerHandle);
-	
+{	
 	if (CurveFloat)
 	{
 		TimelineComponent->PlayFromStart();
@@ -87,8 +80,6 @@ void AZone::UpdateShrinkZone(float Value)
 {
 	if (HasAuthority())
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Update!  CurrentSize: %f") , CurrentSize);
-	
 		float TempSize = FMath::Lerp(CurrentScale, NextScale, Value);
 		FVector TempLocation = FMath::Lerp(CurrentLocation, NextLocation, Value);
 
@@ -96,16 +87,14 @@ void AZone::UpdateShrinkZone(float Value)
 		SetActorLocation(TempLocation);
 
 		
-		UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
-		UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("Update!  TempSize: %f") , TempSize);
+		//UE_LOG(LogTemp, Warning, TEXT("Update!  TempLocation: %s") , *TempLocation.ToString());
 		UpdateCurrentZone();
 	}
 }
 
 void AZone::TimelineFinishedFunction()
 {
-	//UpdateShrinkZone(1.0f);
-
 	CurrentLocation = NextLocation;
 	CurrentScale = NextScale;
 	
@@ -116,8 +105,10 @@ void AZone::TimelineFinishedFunction()
 
 	UpdateCurrentZone();
 	UpdateNextZone();
+
 	
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, Timer);
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, Timer, false);
 
 	Level++;
 
@@ -144,9 +135,6 @@ FVector AZone::GetRandomPointInCircle(FVector OriginCenter, float RandomRange) /
 
 float AZone::GetCurrentRadius()
  {
- 	//float MeshSizeX = ZoneMesh->GetStaticMesh()->GetBounds().BoxExtent.X;
-	//float Radius = (MeshSizeX * CurrentScale) / 2;
-	
 	float Radius = ZoneMesh->GetStaticMesh()->GetBoundingBox().Max.X * CurrentScale;
 	
  	return Radius;
@@ -245,11 +233,9 @@ void AZone::StartShrinkTimer()
 {	
 	CurrentLocation = GetActorLocation();
 	CurrentScale = GetMeshWorldScale();
-
 	
-	UE_LOG(LogTemp, Warning, TEXT("UStartShrinkTimer"));
-	
-	GetWorldTimerManager().SetTimer(NotifyTimerHandle, this, &AZone::NotifySize, 1.0f, false, Timer * 2.0f);
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, Timer * 2.0f, false);
 }
 
 

@@ -29,14 +29,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UTimeManager* TimeManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	UGameEventManager* GameEventManager;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	ULandscapeManager* LandscapeManager ;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UGameEventManager* GameEventManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UZoneManager* ZoneManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAirplaneManager* AirplaneManager;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TSubclassOf<UGameEventManager> GameEventManagerClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UZoneManager> ZoneManagerClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

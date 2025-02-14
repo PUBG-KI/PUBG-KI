@@ -161,8 +161,21 @@ void UBaseAbilitySystemComponent::GrantAbility(TSubclassOf<UPlayerGameplayAbilit
 	OutGrantedAbilitySpecHandles = GiveAbility(Spec);
 }
 
+void UBaseAbilitySystemComponent::RemoveAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass)
+{
+	if (!AbilityClass) return;  // 안전 체크
+
+	// 해당 클래스의 어빌리티가 있는지 확인
+	FGameplayAbilitySpec* AbilitySpec = FindAbilitySpecFromClass(AbilityClass);
+	if (AbilitySpec)
+	{
+		// 어빌리티 제거
+		ClearAbility(AbilitySpec->Handle);
+	}
+}
+
 void UBaseAbilitySystemComponent::ReceiveDamage(UBaseAbilitySystemComponent* SourceASC, float UnmitigatedDamage,
-	float MitigatedDamage)
+                                                float MitigatedDamage)
 {
 	ReceivedDamage.Broadcast(SourceASC, UnmitigatedDamage, MitigatedDamage);
 }
