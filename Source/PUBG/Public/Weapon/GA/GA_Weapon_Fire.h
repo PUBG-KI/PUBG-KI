@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerGameplayAbility.h"
+#include "Components/TimelineComponent.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Weapon/Guns/Gun_Base.h"
 #include "GA_Weapon_Fire.generated.h"
@@ -30,6 +31,26 @@ private:
 	UPROPERTY(EditAnywhere)
 	AGun_Base* Gun_Base;
 
+	UTimelineComponent* Tiemline;
+	
+	UCurveFloat* FloatCurve;
+
+	UPROPERTY(EditAnywhere, Category = "Recoil")
+	float RecoilAmount; // 반동 강도 (상하)
+
+	UPROPERTY(EditAnywhere, Category = "Recoil")
+	float YawRecoilAmount; // 좌우 반동 강도 (약간만 적용)
+
+	UPROPERTY(EditAnywhere, Category = "Recoil")
+	float RecoilDuration;  // 반동 지속 시간
+
+	UFUNCTION()
+	void OnTimelineUpdate(float Value);
+
+	// 타임라인 종료 함수
+	UFUNCTION()
+	void OnTimelineFinished();
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "GA_weapon")
 	void SetDefault();
@@ -43,6 +64,8 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GA_weapon")
 	FVector GetProjectileSocketLocation() const {return Gun_Base->GetWeaponMagSocketLocation();}
 
-	
+	// timeline
+	UFUNCTION(BlueprintCallable)
+	void ApplyRecoil(float _RecoilAmount, float _RecoilDuration, float _YawRecoilAmount);
 	
 };
