@@ -9,6 +9,8 @@
 #include "DataAsset/Input/DataAsset_InputConfig.h"
 #include "ChaosVehicleMovementComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AnimNodes/AnimNode_RandomPlayer.h"
+#include "Controller/BasePlayerController.h"
 
 void AVehicleBase::PossessedBy(AController* NewController)
 {
@@ -16,8 +18,18 @@ void AVehicleBase::PossessedBy(AController* NewController)
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(NewController))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("playercontroller"));
+		//UE_LOG(LogTemp, Warning, TEXT("playercontroller"));
 		Client_SetUpLocalPlayerInput(PlayerController);
+	}
+}
+
+void AVehicleBase::BeginPlay()
+{
+	Super::BeginPlay();
+	if (HitCollisionComponent)
+	{
+		HitCollisionComponent->OnComponentHit.AddDynamic(this, &AVehicleBase::HitPlayerWithVehicle);
+		UE_LOG(LogTemp, Warning, TEXT("HitCollisionComponent"));
 	}
 }
 
@@ -59,6 +71,10 @@ AVehicleBase::AVehicleBase()
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
 	ArrowComponent->SetupAttachment(GetMesh(), "RootComponent");
+
+	HitCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("HitCollisionComponent"));
+	HitCollisionComponent->SetupAttachment(GetMesh(), "RootComponent");
+	HitCollisionComponent->InitBoxExtent(FVector(40.f));
 }
 
 
@@ -91,6 +107,14 @@ void AVehicleBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 void AVehicleBase::Input_Throttle(const FInputActionValue& InputActionValue)
 {
 	GetVehicleMovement()->SetThrottleInput(InputActionValue.Get<float>());
+	if (GetVehicleVelocity() > 0)
+	{
+		PlayerCharacter->SetVehicleVelocityBackWard(false);
+	}
+	else
+	{
+		PlayerCharacter->SetVehicleVelocityBackWard(true);
+	}
 }
 
 void AVehicleBase::Input_Steering(const FInputActionValue& InputActionValue)
@@ -100,8 +124,15 @@ void AVehicleBase::Input_Steering(const FInputActionValue& InputActionValue)
 
 void AVehicleBase::Input_Break(const FInputActionValue& InputActionValue)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Brake Inputvalue : %s"), *InputActionValue.ToString());
 	GetVehicleMovement()->SetBrakeInput(InputActionValue.Get<float>());
+	if (GetVehicleVelocity() > 0)
+	{
+		PlayerCharacter->SetVehicleVelocityBackWard(false);
+	}
+	else
+	{
+		PlayerCharacter->SetVehicleVelocityBackWard(true);
+	}
 }
 
 void AVehicleBase::Input_HandBreak()
@@ -117,7 +148,20 @@ void AVehicleBase::Input_HandBreakCompleted()
 void AVehicleBase::Input_VehicleLook(const FInputActionValue& InputActionValue)
 {
 	AddControllerYawInput(InputActionValue.Get<FVector>().X);
+
 	AddControllerPitchInput(InputActionValue.Get<FVector>().Y);
+	FRotator CurrentRotation = GetActorRotation();
+	FRotator AimRotation = GetBaseAimRotation(); // 카메라나 타겟 방향
+
+	FRotator DeltaRotation = CurrentRotation - AimRotation;
+	if (DeltaRotation.Yaw <= 180.0f && DeltaRotation.Yaw >= 90.0f)
+	{
+		PlayerCharacter->SetVehicleFacetoBackward(true);
+	}
+	else
+	{
+		PlayerCharacter->SetVehicleFacetoBackward(false);
+	}
 }
 
 void AVehicleBase::Input_GetOut_Implementation()
@@ -239,11 +283,11 @@ void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //�
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
 	PlayerCharacter = Character;
-	
+
 	if (PlayerController)
 	{
 		Character->SetOnTheVehicle(true); //애님인스턴스로 보내기 위함
-		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon();//
+		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon(); //
 		Character->SetActorEnableCollision(false); // 콜리전을 꺼서 차량안으로 들어갈 수 있도록
 		SetCharacterCollision(Character);
 
@@ -254,8 +298,10 @@ void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //�
 		if (HasAuthority())
 		{
 			PlayerController->Possess(this);
+			this->SetOwner(PlayerCharacter);
 			UE_LOG(LogTemp, Warning, TEXT("Possess"));
 		}
+
 		PlayerController->SetControlRotation(CharacterRotator);
 	}
 	MultiCast_InteractWith(Character);
@@ -294,5 +340,87 @@ void AVehicleBase::SetActor(APlayerCharacter* Character)
 
 void AVehicleBase::MultiCast_InteractWith_Implementation(APlayerCharacter* Character)
 {
+	this->SetOwner(PlayerCharacter);
 	SetCharacterCollision(Character);
+}
+
+float AVehicleBase::GetVehicleVelocity()
+{
+	return GetVehicleMovement()->GetForwardSpeed();
+}
+
+void AVehicleBase::HitPlayerWithVehicle(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Server_HitPlayerWithVehicle(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+}
+
+bool AVehicleBase::Server_HitPlayerWithVehicle_Validate(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+                                                        UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+                                                        const FHitResult& Hit)
+{
+	return true;
+}
+
+void AVehicleBase::Server_HitPlayerWithVehicle_Implementation(UPrimitiveComponent* HitComponent, AActor* OtherActor,
+                                                              UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+                                                              const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("HitPlayerWithVehicle1"));
+	if (PlayerCharacter != nullptr && PlayerCharacter->GetOnTheVehicle() == true)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitPlayerWithVehicle"));
+		FGameplayEventData Payload;
+		
+		Payload.Instigator = PlayerCharacter; //가해자
+		Payload.Target = OtherActor; //피해자
+		Payload.EventMagnitude = CalculateSpeedDamage(); //데미지
+		if (Payload.Instigator)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Payload.Instigator:%s"), *Payload.Instigator->GetName());
+		}
+		UE_LOG(LogTemp, Warning, TEXT("Payload.Target:%s"), *Payload.Target->GetName());
+		UE_LOG(LogTemp, Warning, TEXT("Payload.EventMagnitude:%f"), Payload.EventMagnitude);
+
+		if (OtherActor && OtherActor != this)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("OtherActor:%s"), *OtherActor->GetName());
+			ABasePlayerController* VehicleController = Cast<ABasePlayerController>(GetController());
+			if (VehicleController)
+			{
+				VehicleController->HitEventServer(OtherActor, BaseGameplayTag::Player_Event_Action_Hit,
+				                                  Payload);
+				if (OtherActor && OtherActor->IsA(AVehicleBase::StaticClass())) 
+				{
+					FVector ForceDirection = Hit.ImpactNormal * -5000.0f; // 충돌 방향으로 힘 추가
+					GetMesh()->AddImpulse(ForceDirection, NAME_None, true); // 캐릭터에게 힘을 가함
+				}
+			}
+		}
+	}
+}
+
+float AVehicleBase::CalculateSpeedDamage()
+{
+	float CurrentVelocity = GetVehicleMovement()->GetForwardSpeed();
+
+	float LowDamage = 30.f;
+	float MiddleDamage = 50.f;
+	float HighDamage = 100.f;
+	if (30.f > CurrentVelocity && CurrentVelocity > -30.f)
+	{
+		return 0;
+	}
+	if ((-100.f <= CurrentVelocity && CurrentVelocity < -30.f) || (30.f < CurrentVelocity && CurrentVelocity <= 100.f))
+	{
+		return LowDamage;
+	}
+	else if ((-300 <= CurrentVelocity && CurrentVelocity < 100.f) || (100 < CurrentVelocity && CurrentVelocity <= 300))
+	{
+		return MiddleDamage;
+	}
+	else
+	{
+		return HighDamage;
+	}
 }
