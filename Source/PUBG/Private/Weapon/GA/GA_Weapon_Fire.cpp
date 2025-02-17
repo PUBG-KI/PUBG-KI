@@ -50,4 +50,9 @@ FVector UGA_Weapon_Fire::GetVelocityVector()
 	}
 }
 
+void UGA_Weapon_Fire::ApplyRecoil(float _RecoilAmount, float _RecoilDuration, float _YawRecoilAmount)
+{
+	
+}
+
 

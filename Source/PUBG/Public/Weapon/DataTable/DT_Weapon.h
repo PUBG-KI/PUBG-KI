@@ -9,6 +9,7 @@
 UENUM(BlueprintType)
 enum class EGunType : uint8
 {
+	None,
 	AR,
 	SR,
 	DMR,
@@ -22,13 +23,36 @@ enum class EGunType : uint8
 UENUM(BlueprintType)
 enum class EBulletType : uint8
 {
+	None,
 	B_7_62 UMETA(DisplayName = "7.62mm"),
 	B_5_56 UMETA(DisplayName = "5.56mm"),
 	B_9 UMETA(DisplayName = "9mm"),
 	B_12G UMETA(DisplayName = "12G"),
 };
 
+USTRUCT(Atomic, BlueprintType)
+struct FInstallable_parts : public FTableRowBase
+{
 
+	GENERATED_BODY()
+
+	FInstallable_parts();  // 초기화
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Scope;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Mag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Muzzle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Grip;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool Loops; // 샷건
+};
 /**
  * 
  */
@@ -37,6 +61,8 @@ USTRUCT(Atomic, BlueprintType)
 struct FWeaponData : public FTableRowBase
 {
 	GENERATED_BODY()
+
+	FWeaponData();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EGunType Type;
@@ -52,46 +78,44 @@ struct FWeaponData : public FTableRowBase
 	float Gun_Damage;
 
 	// 기본 장전 탄창
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Armo;
 
 	// 총알 속도
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Bullet_Speed;
 
 	// 총알 단면적
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Bullet_crossSection;
 
 	// 총알 무게
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float bullet_Mass;
 
 	// 총알 항력
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Bullet_DragCoefficiency;
 
+	// 파츠별 장착 가능 여부
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FInstallable_parts Installable_Parts;
+	
 	// 반동 값 =====================================
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Min_XRecoil;
 
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Max_XRecoil;
 
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Min_YRecoil;
 
-	UPROPERTY(editAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Max_YRecoil;
 
 	// ===========================================
 	
-
-	
-	
-
-	
-
 	
 	
 };
