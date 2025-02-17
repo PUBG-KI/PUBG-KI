@@ -8,6 +8,7 @@
 
 class AItemBase;
 struct FItemStruct;
+class UDT_Weapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UItemSpawnerComponent : public UActorComponent
@@ -43,12 +44,16 @@ public:
 	//아이템 데이터테이블
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	UDataTable* SpawnItemTable;
+
+	//무기테이블
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UDataTable* WeaponTable;
 	
 	//TestItem 스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
 
-	UFUNCTION(BlueprintCallable, Category="Item Spawn")
+	UFUNCTION(BlueprintCallable, Category="Spawn")
 	void SetRandomMesh(AItemBase* Item, FName ItemRowName);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
@@ -56,6 +61,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SetRandomProperties(AItemBase* Item, FName ItemRowName);
+
+	//무기 확인 함수
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	bool IsWeapon(FName ItemID);
+	
 	
 private:
 	//bool SetItemStruct(FItemStruct& Output);

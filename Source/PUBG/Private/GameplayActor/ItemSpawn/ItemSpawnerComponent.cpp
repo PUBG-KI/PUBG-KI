@@ -64,10 +64,16 @@ void UItemSpawnerComponent::SpawnItems()
 				UE_LOG(LogTemp, Warning, TEXT("Spawned"));
 
 				FName SpawnedItemName = GetRandomItemRowName();
+
+				//랜덤값이 무기인지 확인
+				if (IsWeapon(SpawnedItemName))
+				{
+					//UE_LOG(LogTemp, Warning, TEXT("SpawnedItemName(): %s") , *SpawnedItemName.ToString());
+				}
 				
 				SetRandomProperties(SpawnedItem,SpawnedItemName);
 				
-				UE_LOG(LogTemp, Warning, TEXT("ItemRowName(): %s") , *SpawnedItem->GetItemDataComponent()->GetItemRowName().ToString());
+				//UE_LOG(LogTemp, Warning, TEXT("ItemRowName(): %s") , *SpawnedItem->GetItemDataComponent()->GetItemRowName().ToString());
 				
 				
 				//TArray<FName> RowNames = ItemDataComponent;
@@ -133,39 +139,22 @@ void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowNa
 		ItemDataComponent->SetItemQuantity(FoundItem->Quantity);
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Spawned Item: %s | Mesh: %s | Weight: %.2f | Quantity: %d"),
-			*ItemRowName.ToString(),
-			FoundItem->StaticMesh ? *FoundItem->StaticMesh->GetName() : TEXT("None"),
-			FoundItem->Weight,
-			FoundItem->Quantity);
+	// UE_LOG(LogTemp, Warning, TEXT("Spawned Item: %s | Mesh: %s | Weight: %.2f | Quantity: %d"),
+	// 		*ItemRowName.ToString(),
+	// 		FoundItem->StaticMesh ? *FoundItem->StaticMesh->GetName() : TEXT("None"),
+	// 		FoundItem->Weight,
+	// 		FoundItem->Quantity);
 }
 
-//SetItem 하기 위함
-// bool UItemSpawnerComponent::SetItemStruct(FItemStruct& Output)
-// {
-// 	if (!SpawnItemTable)
-// 	{
-// 		return false;
-// 	}
-// 	
-// 	TArray<FName> RowNames = SpawnItemTable->GetRowNames();
-// 	FName RandomRowName = RowNames[FMath::RandRange(0,RowNames.Num()-1)];
-//
-// 	//UE_LOG(LogTemp, Warning, TEXT("CurrentLocation: %s") , *CurrentLocation.ToString());
-// 	UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
-// 	static const FString ContextString(TEXT("Item Spawn Lookup"));
-// 	
-// 	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(RandomRowName,ContextString);
-//
-// 	
-// 	if (!FoundItem)
-// 	{
-// 		return false;
-// 	}
-//
-// 	Output = *FoundItem;	
-// 	
-// 	return true;
-// }
+bool UItemSpawnerComponent::IsWeapon(FName ItemID)
+{
+	static const FString ContextString(TEXT("Weapon Lookup"));
+	FWeaponData* FoundWeapon = WeaponTable->FindRow<FWeaponData>(ItemID, ContextString);
 
-//아이템 아이디 랜덤
+	if ( WeaponTable && FoundWeapon != nullptr)
+	{
+		return true;
+	}
+	return false;
+}
+
