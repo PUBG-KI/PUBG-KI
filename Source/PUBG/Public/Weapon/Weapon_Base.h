@@ -53,7 +53,7 @@ public:
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	// 이준수
-	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
+	//EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 	
 	UFUNCTION(BlueprintCallable)
 	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;

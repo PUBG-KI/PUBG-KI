@@ -4,7 +4,7 @@
 #include "Weapon/GA/GA_Weapon_Fire.h"
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 

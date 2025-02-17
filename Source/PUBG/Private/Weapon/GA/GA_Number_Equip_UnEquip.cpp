@@ -3,7 +3,7 @@
 
 #include "Weapon/GA/GA_Number_Equip_UnEquip.h"
 #include "Character/PlayerCharacter.h"
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 
