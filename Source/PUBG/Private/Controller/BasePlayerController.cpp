@@ -202,6 +202,14 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 	}
 }
 
+void ABasePlayerController::UpdateWorldMap()
+{
+	if (MapWidget)
+	{
+		//MapWidget->
+	}
+}
+
 void ABasePlayerController::Client_RemoveMappingContext_Implementation()
 {
 	// Enhanced Input Subsystem 가져오기

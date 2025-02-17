@@ -15,13 +15,15 @@ ARedZoneBomb::ARedZoneBomb()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
 
 	ExplosionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ExplosionSphere"));
 	RootComponent = ExplosionSphere;
 	ExplosionSphere->InitSphereRadius(ExplosionRadius);
-	ExplosionSphere->SetCollisionProfileName(TEXT("Trigger"));
-
-	SetReplicates(true);
+	ExplosionSphere->SetCollisionProfileName(TEXT("Trigger"));	
+	
+	bReplicates = true;
+	//SetReplicates(true);
 	ExplosionSphere->SetIsReplicated(true);
 }
 
@@ -42,18 +44,26 @@ void ARedZoneBomb::StartExplosion()
 }
 
 void ARedZoneBomb::MulticastSpawnExplosionEffect_Implementation()
-{
+{	
 	if (ParticleEffect)
 	{
-		UParticleSystemComponent* ParticleSystemComponent= UGameplayStatics::SpawnEmitterAttached(
-		  ParticleEffect,
-		  ExplosionSphere,       
-		  NAME_None,      
-		  FVector::ZeroVector, 
-		  FRotator::ZeroRotator, 
-		  EAttachLocation::KeepRelativeOffset,
-		  true				
-	  );
+	// {
+	// 	  UParticleSystemComponent* ParticleComp = UGameplayStatics::SpawnEmitterAttached(
+	// 	  ParticleEffect,
+	// 	  ExplosionSphere,       
+	// 	  NAME_None,      
+	// 	  FVector::ZeroVector, 
+	// 	  FRotator::ZeroRotator, 
+	// 	  EAttachLocation::KeepRelativeOffset,
+	// 	  true				
+	//   );
+		UGameplayStatics::SpawnEmitterAtLocation(
+		GetWorld(),
+		ParticleEffect,
+		GetActorLocation(), // 폭발 위치
+		FRotator::ZeroRotator,
+		true // 네트워크에서 실행될 수 있도록 true
+	);
 	}
 }
 

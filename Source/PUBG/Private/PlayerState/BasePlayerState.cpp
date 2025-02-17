@@ -4,6 +4,7 @@
 #include "PlayerState/BasePlayerState.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "Character/PlayerCharacter.h"
 #include "Controller/BasePlayerController.h"
 
@@ -31,7 +32,7 @@ ABasePlayerState::ABasePlayerState()
 	NetUpdateFrequency = 100.0f;
 
 	// Cache tags
-	//DeadTag = FGameplayTag::RequestGameplayTag(FName("State.Dead"));
+	DeadTag = BaseGameplayTag::Player_State_Dead;
 }
 
 class UAbilitySystemComponent* ABasePlayerState::GetAbilitySystemComponent() const
@@ -102,11 +103,24 @@ float ABasePlayerState::GetMaxMagazine() const
 void ABasePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
+	HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ABasePlayerState::HealthChanged);
 }
 
 void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
-{
+{	
+	UE_LOG(LogTemp, Warning, TEXT("HealthChanged"));
 	float Health = Data.NewValue;
+
+	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))
+	{
+		APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
+		if (Player)
+		{
+			Player->Die();
+		}
+	}
 	
 	// Update floating status bar
 	//APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());

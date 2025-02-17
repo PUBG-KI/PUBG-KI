@@ -13,6 +13,7 @@ AZone::AZone()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 
 	ZoneMesh = CreateDefaultSubobject<UStaticMeshComponent>("Sphere Zone Mesh");
 	RootComponent = ZoneMesh;
@@ -22,9 +23,10 @@ AZone::AZone()
 	ShrinkFactor = 0.7f;	
 	bIsVisibiltyNextZone = false;
 	Timer = 30.0f;
-
-	SetReplicates(true);
-    AActor::SetReplicateMovement(true);
+	
+	bReplicates = true;
+	//SetReplicates(true);
+	AActor::SetReplicateMovement(true);
 	ZoneMesh->SetIsReplicated(true);
 }
 
@@ -156,7 +158,8 @@ void AZone::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 			//적용할 대상, 적용할 게임 이펙트, 레벨, 이펙트 컨텍스트 
 			ASC->RemoveActiveGameplayEffectBySourceEffect(GameplayEffectClass,nullptr,-1);
 
-			PlayerCharacter->PostProcessComponent->SetVisibility(false);
+			// 이거 대상의 클라이언트 에서만 적용되게 수정해야함
+			//PlayerCharacter->PostProcessComponent->SetVisibility(false);
 		}
 	}
 }
@@ -177,7 +180,7 @@ void AZone::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				//적용할 대상, 적용할 게임 이펙트, 레벨, 이펙트 컨텍스트 
 				ASC->ApplyGameplayEffectToSelf(GameplayEffect, Level, ASC->MakeEffectContext());
 				
-				PlayerCharacter->PostProcessComponent->SetVisibility(true);
+				//PlayerCharacter->PostProcessComponent->SetVisibility(true);
 			}
 		}
 }

@@ -125,7 +125,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//자기장
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PlayerPostProcess"));
 	PostProcessComponent->SetupAttachment(RootComponent);
-	
+
+	DeadTag = BaseGameplayTag::Player_State_Dead;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -468,6 +469,31 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
 		SetHealth(GetMaxHealth());
 		SetStamina(0);
+	}
+}
+
+void APlayerCharacter::Die()
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("Die"));
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->Velocity = FVector(0);
+
+	if (BaseAbilitySystemComponent.IsValid())
+	{
+		BaseAbilitySystemComponent->CancelAllAbilities();
+		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+	}
+
+	//if (DeathMontage)
+	{
+	//	PlayAnimMontage(DeathMontage);
+	}
+	//else
+	{
+		//Destroy();
 	}
 }
 

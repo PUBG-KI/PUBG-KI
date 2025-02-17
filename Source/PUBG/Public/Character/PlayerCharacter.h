@@ -67,7 +67,7 @@ public:
 	// 캐릭터가 장착할 파츠들을 맵으로 저장, enum값으로 원하는 파츠 불러올 수 있게 설정
 	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite, category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	TMap<EPlayerMeshType, USkeletalMeshComponent*> CharacterEquipmentMap;
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);	
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
@@ -125,8 +125,6 @@ protected:
 	
 public:
 	virtual void PossessedBy(AController* NewController) override;
-
-
 	bool bIsProne;
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	bool bAnimationIsPlaying;
@@ -135,6 +133,10 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
+
+	FGameplayTag DeadTag;
+	void RemoveCharacterAbilities();
+	void Die();
 
 	// Getter
 	

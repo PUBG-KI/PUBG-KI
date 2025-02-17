@@ -51,6 +51,8 @@ public:
 	void DestroyInventoryWidget();
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentPlayer(int32 CurrentPlayer);
+	UFUNCTION(BlueprintCallable)
+	void UpdateWorldMap();
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
@@ -67,6 +69,11 @@ private:
 	TSubclassOf<UHudWidget> HudWidgetClass;
 	UPROPERTY()
 	UHudWidget* HudWidget;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UUserWidget> MapWidgetClass;
+	UPROPERTY()
+	UUserWidget* MapWidget;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AAirplane* ControlledAirplane;
