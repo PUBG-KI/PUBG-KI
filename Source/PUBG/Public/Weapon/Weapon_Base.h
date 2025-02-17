@@ -54,11 +54,20 @@ public:
 	
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	
 	// 이준수
-	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
+protected:
+	//Setter
 
+public:
+	//Getter
+	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 	
+	// UFUNCTION(BlueprintCallable)
+	// UTextureRenderTarget2D* CreateRenderTarget2D(int32 width, int32 height, bool makeHDR);
+	// UFUNCTION(BlueprintCallable)
+	// bool SaveRenderTarget(UTextureRenderTarget2D* renderTarget, FString path, FString fileName);
 };
+
+
 
 

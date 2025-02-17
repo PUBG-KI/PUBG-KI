@@ -20,16 +20,36 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 
+	UPROPERTY()
 	EEquippedItemCategory EquipSlot;
+	// 이준수
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneCaptureComponent2D *SceneCapture;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTextureRenderTarget2D *TextureRenderTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMaterialInstanceDynamic* RenderMaterialInstance;
+	//Setter
 
 public:
+	//Getter
 	virtual EEquippedItemCategory GetEquipSlot() const { return EquipSlot; }
+	UFUNCTION(BlueprintCallable)
+	USceneCaptureComponent2D* GetSceneCaptureComponent() { return SceneCapture;}
+	UFUNCTION(BlueprintCallable)
+	UTextureRenderTarget2D* GetTextureRenderTarget() const { return TextureRenderTarget; }
+	UFUNCTION(BlueprintCallable)
+	UMaterialInstanceDynamic* GetRenderMaterial() const { return RenderMaterialInstance; }
+	//Setter
 	void SetEquipSlot(EEquippedItemCategory OutEquippedItemCategory) { EquipSlot = OutEquippedItemCategory; } 
-
 public:	
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void ClientCreateMaterial();
 
 };

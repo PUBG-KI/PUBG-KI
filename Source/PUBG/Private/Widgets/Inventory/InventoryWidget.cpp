@@ -3,6 +3,9 @@
 
 #include "Widgets/Inventory/InventoryWidget.h"
 
+#include "EditorDirectories.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Component/NearArea/NearComponent.h"
 #include "Components/TextBlock.h"
@@ -10,9 +13,13 @@
 #include "Components/WrapBox.h"
 #include "Controller/BasePlayerController.h"
 #include "DragDrop/DDInventorySlot.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Item/ItemBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Widgets/Inventory/ItemSlotWidget.h"
+#include "Widgets/Inventory/WeaponSlotWidget.h"
+#include "Components/Image.h"
+#include "Components/SizeBox.h"
 
 
 UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -22,7 +29,8 @@ UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) 
 	WrapBox_Inventory  = nullptr;
 
 	ItemSlotWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_ItemSlot.WBP_ItemSlot_C"));
-
+	WeaponSlotWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot_C"));
+	
 	ItemZoneType = EItemZoneType::None;
 
 }
@@ -128,11 +136,64 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 	ItemSlot.Empty();
 }
 
-void UInventoryWidget::AddNewChild()
+void UInventoryWidget::UpdateEquippedWidget()
 {
-	GetWrapBox_Inventory()->AddChildToWrapBox(ItemSlotWidget);
-	
+	if (!WeaponSlotWidgetClass && !EquippedComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidgetClass None Or EquippedComponent None"));
+		return;
+	}
+		
+	TArray<AEquipableItem*> EquippedItems = EquippedComponent->GetEquippedItems();
+
+	UE_LOG(LogTemp, Warning, TEXT("EquippedItems Num : %d"), EquippedItems.Num());
+
+
+	for (int i = 0; i < EquippedItems.Num(); i++)
+	{
+		if (EquippedItems[i] != nullptr)
+		{
+			switch (i)
+			{
+			case 0:
+				WeaponSlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetClass);
+
+				// if (EquippedItems[i]->GetRenderMaterial() == nullptr)
+				// {
+				// 	UE_LOG(LogTemp, Warning, TEXT("EquippedItems[i]->GetRenderMaterial() NULL"));
+				// }
+				//
+				// FSlateBrush Brush;
+				//Brush.SetResourceObject(EquippedItems[i]->GetTextureRenderTarget());
+				//UWidgetBlueprintLibrary::SetBrushResourceToMaterial(Brush, EquippedItems[i]->GetRenderMaterial());
+				//Brush.SetResourceObject(EquippedItems[i]->GetRenderMaterial());
+
+				//UE_LOG(LogTemp, Warning, TEXT("RenderMaterial : %s"), *EquippedItems[i]->GetRenderMaterial()->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("Brush Resource: %s"), *Brush.GetResourceObject()->GetName());
+
+
+				if (WeaponSlotWidget)
+				{
+					// if (WeaponSlotWidget->GetImage_RenderTargetWeapon() != nullptr)
+					// {
+					// 	WeaponSlotWidget->GetImage_RenderTargetWeapon()->SetBrush(Brush);
+					// }
+					//WeaponSlotWidget->SetImage_RenderTargetWeapon(EquippedItems[i]->GetRenderMaterial());
+				
+					SizeBox_1Slot->SetContent(WeaponSlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidget None"));
+				}
+				break;
+			}
+		}
+	}
 }
+
+
 
 bool UInventoryWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
 	UDragDropOperation* InOperation)
@@ -365,4 +426,9 @@ EItemZoneType UInventoryWidget::CheckItemZoneType(FDragDropEvent InDragDropEvent
 	{
 		return EItemZoneType::NoneArea;
 	}
+}
+
+void UInventoryWidget::TextureRenderTarget2DToImage(UTextureRenderTarget2D* RenderTarget)
+{
+	
 }

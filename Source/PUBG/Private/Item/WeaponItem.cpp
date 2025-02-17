@@ -3,8 +3,9 @@
 
 #include "Item/WeaponItem.h"
 
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
+#include "Component/ItemData/ItemDataComponent.h"
 
 
 AWeaponItem::AWeaponItem()
@@ -26,7 +27,23 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 		InventoryComponent->ServerSetItem(this); // 
 
 		UEquippedComponent* EquippedComponent = Character->GetEquippedComponent();
-		EquippedComponent->ServerEquipMainItem(InventoryComponent->GetItem());
+
+		if (ItemDataTable != nullptr)
+		{
+			FName ItemID = this->GetItemDataComponent()->GetItemRowName();
+			FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+
+			int32 ItemCategory = static_cast<int32>(Row->Category);
+
+			if (ItemCategory == 0)
+			{
+				EquippedComponent->ServerEquipMainItem(InventoryComponent->GetItem());
+			}
+			else if (ItemCategory == 2)
+			{
+				EquippedComponent->ServerEquipSubWeapon(InventoryComponent->GetItem());
+			}
+		}
 		
 	}
 

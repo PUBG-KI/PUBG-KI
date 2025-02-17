@@ -42,6 +42,9 @@ AItemBase::AItemBase()
 	//RegisterReplicatedSubObject(ItemDataComponent);
 
 	//BeginOverlapCount = 0;
+
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 }
 
 void AItemBase::BeginPlay()
@@ -62,6 +65,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AItemBase, ItemStruct);
 	DOREPLIFETIME(AItemBase, Item);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
+	DOREPLIFETIME(AItemBase, TableIndex);
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemStruct, COND_OwnerOnly);
@@ -253,6 +257,33 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
+}
+
+void AItemBase::SetSlotFromCategory()
+{
+	FName ItemID = this->ItemDataComponent->GetItemRowName();
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+
+	int32 SlotNum = static_cast<int32>(Row->Category);
+	
+	switch (SlotNum)
+	{
+	case 0:
+		EquippedItemCategory = EEquippedItemCategory::PrimarySlot;
+		break;
+	case 2:
+		EquippedItemCategory = EEquippedItemCategory::SubWeapon;
+		break;
+	case 3:
+		EquippedItemCategory = EEquippedItemCategory::MeleeWeapon;
+		break;
+	case 4:
+		EquippedItemCategory = EEquippedItemCategory::Throw;
+		break;
+	}
+	
+	int32 EquippedItemSlot = static_cast<int32>(EquippedItemCategory);
+	UE_LOG(LogTemp, Warning, TEXT("EquippedItemSlot : %d"), EquippedItemSlot);
 }
 
 

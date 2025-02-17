@@ -9,7 +9,7 @@
 UENUM(BlueprintType)
 enum class EGunType : uint8
 {
-	AR,
+	AR = 0 UMETA(DisplayName = "AR"),
 	SR,
 	DMR,
 	SMG,

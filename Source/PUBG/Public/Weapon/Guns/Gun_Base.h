@@ -26,8 +26,9 @@ class PUBG_API AGun_Base : public AWeapon_Base
 
 public:
 	AGun_Base();
-	
 
+	// 이준수
+	virtual void BeginPlay() override;
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
 	UStaticMeshComponent* ScopeMesh;
@@ -87,9 +88,8 @@ public:
 	void Server_SetBulletArom(float Armo);
 
 	// 이준수
-	// 이준수
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
-	
+	UDataTable* WeaponDataTable;
 };
 
 
