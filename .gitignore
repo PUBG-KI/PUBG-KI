@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=unrealengine,c++,visualstudio,visualstudiocode
 
 ## 랜드스케이프맵 무시
-LandscapeMap.umap
+*LandscapeMap.umap
 
 ### C++ ###
 # Prerequisites
