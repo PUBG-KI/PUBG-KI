@@ -47,8 +47,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void GrantAbility(TSubclassOf<UPlayerGameplayAbility> AbilityToGrant, int32 Level, FGameplayAbilitySpecHandle& OutGrantedAbilitySpecHandles);
-	
-public:
+
+	void RemoveAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass);
+
 	bool bCharacterAbilitiesGiven = false;
 	bool bStartupEffectsApplied = false;
 

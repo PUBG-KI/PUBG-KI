@@ -7,6 +7,7 @@
 #include "GameState/BaseGameState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/AirplaneManager.h"
+#include "Manager/GameEventManager.h"
 #include "Manager/ZoneManager.h"
 
 UTimeManager::UTimeManager()
@@ -59,6 +60,34 @@ void UTimeManager::NotifyClientsToBoardPlane()
 	}
 }
 
+void UTimeManager::NotifyClientsToArrivePlane()
+{
+	ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+	if (GameState && GameState->HasAuthority())
+	{
+		GameState->FinishMoveAirplane(); 
+	}
+	
+	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+
+	if (GI)
+	{
+		// 자기장 생성
+		UZoneManager* ZoneManager = GI->GetZoneManager();
+		if (ZoneManager)
+		{
+			ZoneManager->SpawnZone();
+		}
+
+		// 이벤트 생성
+		UGameEventManager* GameEventManager  = GI->GetGameEventManager();
+		if (GameEventManager)
+		{
+			GameEventManager->StartGameEventTimer();
+		}
+	}
+}
+
 void UTimeManager::GameStartCountdown()
 {
 	CurrentGameTime -= TickTime;
@@ -77,19 +106,13 @@ void UTimeManager::GameStartCountdown()
 }
 
 void UTimeManager::StartGameFlow()
-{
-	NotifyClientsToBoardPlane();
-	
+{	
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
 	if (GI)
 	{
-		// 자기장 생성
-		UZoneManager* ZoneManager = GI->GetZoneManager();
-		if (ZoneManager)
-		{
-			ZoneManager->SpawnZone();
-		}
+		
+		NotifyClientsToBoardPlane();
         // 비행기 탑승
 		UAirplaneManager* AirplaneManager = GI->GetAirplaneManager();
 		if (AirplaneManager)

@@ -12,10 +12,13 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerState/BasePlayerState.h"
 
-#include "EnhancedInputSubsystems.h"
 #include "GameplayAbilitySpecHandle.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Controller/BasePlayerController.h"
+#include "GameInstance/BaseGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Manager/TimeManager.h"
+
 
 #include "Net/UnrealNetwork.h"
 
@@ -131,15 +134,13 @@ void AAirplane::OnPlaneMoveFinished()
 	UE_LOG(LogTemp, Warning, TEXT("비행기 이동 완료!"));
 	UpdateIsVisibiltyAirplane(false);
 
-	if (HasAuthority())
-	{
-		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
-		if (GameState && GameState->HasAuthority())
-		{
-			GameState->FinishMoveAirplane(); 
-		}
-	}
+	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
+	if (GI)
+	{
+		GI->GetTimeManager()->NotifyClientsToArrivePlane();
+	}
+	
 	Destroy();
 }
 

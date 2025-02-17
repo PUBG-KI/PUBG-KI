@@ -7,13 +7,14 @@
 #include "Controller/BasePlayerController.h"
 #include "GameInstance/BaseGameInstance.h"
 #include "GameplayActor/Airplane/Airplane.h"
+#include "GameplayActor/Airplane/GA/GA_Airplane_Look.h"
 #include "Kismet/GameplayStatics.h"
 #include "Manager/AirplaneManager.h"
 
 UGA_Airplane_Fall::UGA_Airplane_Fall()
 {
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerExecution;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 }
 
 void UGA_Airplane_Fall::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -50,13 +51,9 @@ void UGA_Airplane_Fall::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	PlayerController->Client_RemoveMappingContext();
 
 	
-	GetBaseAbilitySystemComponentFromActorInfo()->RemoveGrantedPlayerWeaponAbilities(Airplane->GetGrantedAbilitySpecHandles());
-	//RemoveAirplaneAbility(Airplane);
+	GetBaseAbilitySystemComponentFromActorInfo()->RemoveAbilityByClass(StaticClass());
+	GetBaseAbilitySystemComponentFromActorInfo()->RemoveAbilityByClass(UGA_Airplane_Look::StaticClass());
 	
 	EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 }
 
-void UGA_Airplane_Fall::RemoveAirplaneAbility_Implementation(AAirplane* Airplane)
-{	
-	GetBaseAbilitySystemComponentFromActorInfo()->RemoveGrantedPlayerWeaponAbilities(Airplane->GetGrantedAbilitySpecHandles());
-}

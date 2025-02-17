@@ -3,7 +3,9 @@
 
 #include "Manager/LandscapeManager.h"
 #include "Landscape.h"
+#include "GameState/BaseGameState.h"
 #include "Kismet/GameplayStatics.h"
+
 
 ULandscapeManager::ULandscapeManager()
 {
@@ -23,7 +25,7 @@ void ULandscapeManager::FindLandscape()
 
 		if (FoundLandscape)
 		{
-			SetLandscape(FoundLandscape);
+			SetLandscape(FoundLandscape);			
 			UE_LOG(LogTemp, Warning, TEXT("월드에서 랜드스케이프를 찾아 설정했습니다: %s"), *FoundLandscape->GetName());
 
 			
@@ -46,6 +48,12 @@ void ULandscapeManager::SetLandscape(ALandscape* Landscape)
 	{
 		CurrentLandscape = Landscape;
 		UE_LOG(LogTemp, Warning, TEXT("랜드스케이프가 저장됨: %s"), *CurrentLandscape->GetName());
+
+		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+		if (GameState && GameState->HasAuthority())
+		{
+			GameState->UpdateLandScapeBoundingBoxXY(GetLandscapeBoundingBox()); // 비행기 탑승 알림 설정
+		}
 	}
 }
 

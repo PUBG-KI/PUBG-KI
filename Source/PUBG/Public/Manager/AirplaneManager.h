@@ -24,7 +24,7 @@ public:
 	void SpwanAirplane();
 	// 비행기의 타임라인 시작
 	void StartToMoveAirplane();
-	// 비행기의 타임라인 시작
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlaneManager", meta = (AllowPrivateAccess = "true"))
 	AAirplane* SpawnedPlane;
 	

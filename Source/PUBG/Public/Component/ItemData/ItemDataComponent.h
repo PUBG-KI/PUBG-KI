@@ -53,7 +53,7 @@ public:
 
 	//Setter
 	void SetItemID(FName ItemIdName);
-	void SetItemWeigt(int32 ItemWeigt);
+	void SetItemWeight(int32 ItemWeigt);
 	void SetItemQuantity(float ItemQuantity);
 
 	

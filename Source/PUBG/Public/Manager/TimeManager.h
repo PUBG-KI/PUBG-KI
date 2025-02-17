@@ -33,6 +33,9 @@ public:
 	/** 비행기 타기 시작 알림 */
 	void NotifyClientsToBoardPlane();
 
+	/** 비행기 비행 완료 알림 */
+	void NotifyClientsToArrivePlane();
+
 private:
 	/** 게임 시작 타이머 */
 	FTimerHandle GameTimerHandle;

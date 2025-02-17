@@ -36,6 +36,7 @@ void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseGameState, StartAirplanePoint);
 	DOREPLIFETIME(ABaseGameState, EndAirplanePoint);
 	DOREPLIFETIME(ABaseGameState, bIsVisibiltyAirplane);
+	DOREPLIFETIME(ABaseGameState, LandScapeBoundingBox);
 }
 
 void ABaseGameState::SetGameStartNotification(bool bNewValue)
@@ -80,21 +81,21 @@ void ABaseGameState::OnRep_BoardPlaneNotification()
 
 void ABaseGameState::OnRep_CurrentZoneScale()
 {	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
-	UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
 }
 
 void ABaseGameState::OnRep_IsVisibiltyNextZone()
 {	
-	UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
-	UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
+	//UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
+	//UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
 	if (bIsVisibiltyNextZone)
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
+	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
 	}
 	else
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
+	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
 	}
 }
 
@@ -118,6 +119,10 @@ void ABaseGameState::OnRep_IsVisibiltyAirplane()
 	}	
 }
 
+void ABaseGameState::OnRep_LandScapeBoundingBoxXY()
+{
+}
+
 void ABaseGameState::UpdateWidget()
 {
 	for (APlayerState* PS : PlayerArray)
@@ -137,6 +142,11 @@ void ABaseGameState::UpdateRemainingTime(int32 NewTime)
 {
 	RemainingTime = NewTime;
 	OnRep_RemainingTime(); //리슨 서버용
+}
+
+void ABaseGameState::UpdateLandScapeBoundingBoxXY(FBox NewLandScapeBoundingBox)
+{
+	LandScapeBoundingBox = NewLandScapeBoundingBox;
 }
 
 void ABaseGameState::UpdateCurrentZone(FVector NewCurrentZoneCenter, float NewCurrentZoneScale)
@@ -198,6 +208,11 @@ int32 ABaseGameState::GetPlayerCount()
 bool ABaseGameState::GetIsGameStarted()
 {
 	return bIsGameStarted;
+}
+
+FBox ABaseGameState::GetLandScapeBoundingBox()
+{
+	return LandScapeBoundingBox;
 }
 
 void ABaseGameState::initalize()

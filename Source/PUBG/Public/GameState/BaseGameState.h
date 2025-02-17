@@ -40,11 +40,14 @@ public:
 	void OnRep_CurrentAirplaneLocation();
 	UFUNCTION()
 	void OnRep_IsVisibiltyAirplane();
+	UFUNCTION()
+	void OnRep_LandScapeBoundingBoxXY();
 	
 	void UpdateWidget();
 	
 	// 게임 상태 업데이트
 	void UpdateRemainingTime(int32 NewTime);
+	void UpdateLandScapeBoundingBoxXY(FBox NewLandScapeBoundingBox);
 	void UpdateCurrentZone(FVector NewCurrentZoneCenter, float NewCurrentZoneScale);
 	void UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone);
 	void UpdateCurrentAirplaneLocation(FVector NewCurrentAirplaneLocation);
@@ -56,6 +59,7 @@ public:
 	int32 GetPlayerCount();
 	
 	bool GetIsGameStarted();
+	FBox GetLandScapeBoundingBox();
 
 	void initalize();
 
@@ -75,6 +79,10 @@ private:
 	// 비행기 탑승 알림 (리플리케이션)
 	UPROPERTY(ReplicatedUsing = OnRep_BoardPlaneNotification, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsPlaneBoarding;
+	
+	// 불러온 랜드스케이프 정보
+	UPROPERTY(ReplicatedUsing = OnRep_LandScapeBoundingBoxXY, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	FBox LandScapeBoundingBox;
 
 	/** 현재 자기장의 중심 위치 */
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
@@ -111,5 +119,4 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyAirplane;
 };
-
 

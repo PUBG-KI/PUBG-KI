@@ -1,10 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameplayActor//ItemSpawn/DropSpawnVolume.h"
-
-#include "Landscape.h"
-#include "Building/SupplyDrop/SupplyDrop.h"
+#include "GameplayActor/ItemSpawn/DropSpawnVolume.h"
+#include "GameplayActor/SupplyDrop/SupplyDrop.h"
 
 // Sets default values
 ADropSpawnVolume::ADropSpawnVolume()

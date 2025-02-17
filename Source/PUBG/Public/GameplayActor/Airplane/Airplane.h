@@ -48,7 +48,6 @@ public:
 	UFUNCTION()
 	void UpdatePlaneLocation(float Alpha);
 	
-
 	UFUNCTION()
 	void OnPlaneMoveFinished();
 	

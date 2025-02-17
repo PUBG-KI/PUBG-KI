@@ -127,6 +127,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	//자기장
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PlayerPostProcess"));
 	PostProcessComponent->SetupAttachment(RootComponent);
+
+	DeadTag = BaseGameplayTag::Player_State_Dead;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -482,6 +484,31 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		SetHealth(GetMaxHealth());
 		SetStamina(0);
 		FirstAttribute = true;
+	}
+}
+
+void APlayerCharacter::Die()
+{
+
+	UE_LOG(LogTemp, Warning, TEXT("Die"));
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale = 0;
+	GetCharacterMovement()->Velocity = FVector(0);
+
+	if (BaseAbilitySystemComponent.IsValid())
+	{
+		BaseAbilitySystemComponent->CancelAllAbilities();
+		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+	}
+
+	//if (DeathMontage)
+	{
+	//	PlayAnimMontage(DeathMontage);
+	}
+	//else
+	{
+		//Destroy();
 	}
 }
 

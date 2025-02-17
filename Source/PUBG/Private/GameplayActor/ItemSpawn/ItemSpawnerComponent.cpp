@@ -11,7 +11,7 @@ UItemSpawnerComponent::UItemSpawnerComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -21,20 +21,9 @@ UItemSpawnerComponent::UItemSpawnerComponent()
 void UItemSpawnerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SpawnItems();
-	// ...
-	
+	SpawnItems();	
 }
 
-
-// Called every frame
-void UItemSpawnerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
 
 void UItemSpawnerComponent::SpawnItems()
 {
@@ -68,9 +57,6 @@ void UItemSpawnerComponent::SpawnItems()
 				SetRandomProperties(SpawnedItem,SpawnedItemName);
 				
 				UE_LOG(LogTemp, Warning, TEXT("ItemRowName(): %s") , *SpawnedItem->GetItemDataComponent()->GetItemRowName().ToString());
-				
-				
-				//TArray<FName> RowNames = ItemDataComponent;
 			}
 		}
 		
@@ -124,7 +110,7 @@ void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowNa
 	if (FoundItem && FoundItem->Weight)
 	{
 		//무게 변경
-		ItemDataComponent->SetItemWeigt(FoundItem->Weight);
+		ItemDataComponent->SetItemWeight(FoundItem->Weight);
 	}
 
 	if (FoundItem && FoundItem->Quantity)
