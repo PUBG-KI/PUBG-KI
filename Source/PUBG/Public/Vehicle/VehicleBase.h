@@ -17,7 +17,7 @@ class PUBG_API AVehicleBase : public AWheeledVehiclePawn, public IInteractInterf
 	GENERATED_BODY()
 public:
 	virtual void PossessedBy(AController* NewController) override;
-	
+	virtual void BeginPlay() override;
 protected:
 	AVehicleBase();
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))  / AAwheeledVehiclePawn에 이미 메시있음
@@ -28,6 +28,8 @@ protected:
 	UBoxComponent* InteractionComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UArrowComponent* ArrowComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* HitCollisionComponent;
 
 	//카메라 관련
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -69,9 +71,23 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiCast_SetActor(APlayerCharacter* Character);
 	void SetActor(APlayerCharacter* Character);
-	
+	UFUNCTION()
+	float GetVehicleVelocity();
 	FORCEINLINE UPUBGSpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	//애니메이션 관련
+	bool VehicleFacetoBackward = false;
+	
+	//히트 판정
+	UFUNCTION()
+	void HitPlayerWithVehicle(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	UFUNCTION(Server, Reliable,WithValidation)
+	void Server_HitPlayerWithVehicle(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	
+	float CalculateSpeedDamage();
 };
+
+
 
 
 

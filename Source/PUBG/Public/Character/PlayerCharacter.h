@@ -222,10 +222,12 @@ public:
 private:
 	UPROPERTY(Replicated)
 	bool OntheVehicle = false; // 탈것 스테이트 머신 전환
+	UPROPERTY(Replicated)
 	bool VehicleFacetoBackward = false; //90~180도면 스테이트머신의 애니메이션 변경을 위해서
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AnimLayer", meta = (AllowPrivateAccess = "true"))
-	UPlayerAnimInstance* DefaultPlayerAnimLayer;
-	bool FirstAttribute = false;
+	bool FirstAttribute = false;//어빌리티 한번이상 주입하지 않기 위해 (possessdby에서)
+	UPROPERTY(Replicated)
+	bool VehicleVelocityBackWard = false;
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	FORCEINLINE bool GetOnTheVehicle() const { return OntheVehicle; }
@@ -236,6 +238,8 @@ public:
 	void WhenGetOntheVehicleUnequippedWeapon();
 	UFUNCTION(Client, Reliable)
 	void Client_InputMappingContextRemove(UInputMappingContext* MappingContext);
+	FORCEINLINE bool GetVehicleVelocityBackWard() const {return VehicleVelocityBackWard;}
+	FORCEINLINE void SetVehicleVelocityBackWard(bool NewVelocityBackWard){VehicleVelocityBackWard = NewVelocityBackWard;}
 };
 
 

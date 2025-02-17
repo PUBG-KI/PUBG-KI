@@ -515,19 +515,19 @@ void APlayerCharacter::CheckRotationForTurn()
 			AbilitySystemComponent->TryActivateAbilityByTagToRandom(BaseGameplayTag::Player_Ability_Turn);
 		}
 	}
-	else if (OntheVehicle)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OntheVehicle "));
-		if (DeltaRotation.Yaw >= -180.0f && DeltaRotation.Yaw <= -90.0f)
-		{
-			VehicleFacetoBackward = true;
-			UE_LOG(LogTemp, Warning, TEXT("Player Movement"));
-		}
-		else
-		{
-			VehicleFacetoBackward = false;
-		}
-	}
+	// else if (OntheVehicle)
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("OntheVehicle "));
+	// 	if (DeltaRotation.Yaw >= -180.0f && DeltaRotation.Yaw <= -90.0f)
+	// 	{
+	// 		VehicleFacetoBackward = true;
+	// 		UE_LOG(LogTemp, Warning, TEXT("Player Movement"));
+	// 	}
+	// 	else
+	// 	{
+	// 		VehicleFacetoBackward = false;
+	// 	}
+	// }
 }
 
 
@@ -537,7 +537,7 @@ void APlayerCharacter::LeftLeanCameraMovement()
 	if (MovementComponent->RequestToStartProne == false)
 	{
 		//CameraBoom->SetWanstReversePlaying(false);
-		FVector OffsetDelta = FVector(0.f, -20.f, 0.f);
+		FVector OffsetDelta = FVector(0.f, -40.f, 0.f);
 		float Duration = 0.2f;
 
 
@@ -552,7 +552,7 @@ void APlayerCharacter::LeftDefaultCameraMovement()
 	{
 		//CameraBoom->SetWanstReversePlaying(true);
 		//float OppositeDistance = CameraBoom->GetDistanceMoved();
-		FVector OffsetDelta = FVector(0.f, 20.f, 0.f);
+		FVector OffsetDelta = FVector(0.f, 40.f, 0.f);
 		float Duration = 0.2f;
 
 		CameraBoom->TimelineAddOffset(OffsetDelta, Duration);
@@ -590,6 +590,8 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlayerCharacter, OntheVehicle);
+	DOREPLIFETIME(APlayerCharacter, VehicleFacetoBackward);
+	DOREPLIFETIME(APlayerCharacter, VehicleVelocityBackWard);
 }
 
 void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()

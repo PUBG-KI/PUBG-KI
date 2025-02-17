@@ -69,7 +69,8 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleFacetoBackward;
 
-	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
+	bool VehicleVelocityBackWard;
 
 	
 protected:
