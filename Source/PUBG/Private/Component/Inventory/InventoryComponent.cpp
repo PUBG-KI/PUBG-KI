@@ -10,7 +10,7 @@
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
 //#include "Math/UnrealMathNeon.h"
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Controller/BasePlayerController.h"
 #include "Item/WeaponItem.h"
 #include "Net/UnrealNetwork.h"

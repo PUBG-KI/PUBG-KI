@@ -7,6 +7,7 @@
 #include "Item/BaseItem.h"
 #include "ItemBase.generated.h"
 
+enum class EEquippedItemCategory : uint8;
 class UItemDataComponent;
 class UBoxComponent;
 /**
@@ -43,9 +44,17 @@ private:
 	UBoxComponent* InteractionComponent;
 	UPROPERTY(ReplicatedUsing = OnRep_ItemDataComponent, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UItemDataComponent* ItemDataComponent;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FTimerHandle BeginOverlapTimerHandle;
 	//static int32 BeginOverlapCount;
+
+protected:
+	UPROPERTY()
+	UDataTable* ItemDataTable;
+
+	UPROPERTY()
+	EEquippedItemCategory EquippedItemCategory;
 
 // 함수 부분
 private:
@@ -63,6 +72,8 @@ public:
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
 	UBoxComponent* GetBoxComponent() const { return BoxComponent; }
 	FItemStruct& GetItemStruct() { return Item; }
+	UFUNCTION(BlueprintCallable)
+	EEquippedItemCategory GetEquippedItemCategory() const { return EquippedItemCategory; }
 
 	// Setter
 	UFUNCTION(BlueprintCallable)
@@ -73,23 +84,27 @@ public:
 	void SetItemStruct(FItemStruct OutItemStruct) { ItemStruct = OutItemStruct; }
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerSetItemStruct(FItemStruct OutItemStruct);
+	UFUNCTION(BlueprintCallable)
+	void SetEquippedItemCategory(EEquippedItemCategory OutEquippedItemCategory) { EquippedItemCategory = OutEquippedItemCategory; }
 	
 	virtual FText LookAt() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void InteractWith(APlayerCharacter* Character);
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
-
-
+	
 	UFUNCTION()
 	void SetMesh(UStaticMesh* NewMesh);
+
+	UFUNCTION(BlueprintCallable)
+	void SetSlotFromCategory();
 	
 
 private:
 	UPROPERTY()
 	float ItemOfZ;
 
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated,BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 TableIndex;
 public:
 	
@@ -102,3 +117,4 @@ public:
 	FORCEINLINE int32 GetTableIndex() const { return TableIndex; }
 	
 };
+

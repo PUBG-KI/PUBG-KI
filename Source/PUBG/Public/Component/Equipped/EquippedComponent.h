@@ -39,21 +39,26 @@ private:
 	
 	// 무기 5칸, 방어구(헬멧, 가방, 조끼, 길리슈트) 4칸, 의상 (머리, 안경, 마스크, 셔츠, 겉옷, 한벌 옷, 바지, 신발) 8칸 총 17칸
 	// 01 = 주무기, 2 = 보조무기 , 3 = 근접무기, 4 = 투척무기, 5 = 헬멧, 6 = 가방, 7 = 조끼, 8 = 길리, 9 ~ 16 의상
-	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
+	UPROPERTY(ReplicatedUsing=OnRep_EquippedItems, BlueprintReadWrite, Category="Equipped", meta = (AllowPrivateAccess = true))
 	TArray<AEquipableItem*> EquippedItems; // 생성자에서 크기 지정
 	
 	
 	
-	//TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
-	UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
-	TArray<AWeapon_Base*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
-	AItemBase* EquippedSubWeapon; // 보조 무기
-	AItemBase* MeleeWeapon; // 근접 무기
+	// //TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
+	// UPROPERTY(BlueprintReadWrite, Replicated, Category="Equipped", meta = (AllowPrivateAccess = true))
+	// TArray<AWeapon_Base*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
+	// AItemBase* EquippedSubWeapon; // 보조 무기
+	// AItemBase* MeleeWeapon; // 근접 무기
 
-	
 
 public:
+	// OnRep
+	UFUNCTION()
+	void OnRep_EquippedItems();
 
+	// Getter
+	TArray<AEquipableItem*> GetEquippedItems () { return EquippedItems; }
+	
 	// 1. F를 누르면 아이템이 들어옴
 	// 2. 아이템을 통해 카테고리를 나눔
 	EItemCategory GetEquippedItemCategory(AItemBase* Item);
@@ -62,7 +67,6 @@ public:
 	void EquipItem(AItemBase* Item);
 	void UnEquipItem(AItemBase* Item);
 
-	void EquipSubWeapon();
 	void EquipMeleeWeapon();
 	void EquipThrow();
 
@@ -75,19 +79,25 @@ public:
 	int32 DropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr);
 	// 스태틱 메인 무기 소환
 	UFUNCTION(Server, Reliable)
-	void ServerSpawnStaticMesh(AGun_Base* OutCurrentWeapon);
+	void ServerSpawnStaticMeshFromMainWeapon(AGun_Base* OutCurrentWeapon);
 	
-	template <typename T>
-	AGun_Base* ConvertToEquippable(T* Input)
-	{
-		return Cast<AGun_Base>(Input);
-	}
+	// 서브 무기 장착
+	UFUNCTION(Server, Reliable)
+	void ServerEquipSubWeapon(AItemBase* Item);
+	// 서브 무기 바닥에 버리기
+	void DropSUbWeapon(AGun_Base* OutCurrentWeapon = nullptr);
+	// 스태틱 서브 무기 소환
+	UFUNCTION(Server, Reliable)
+	void ServerSpawnStaticMeshFromSubWeapon(AGun_Base* OutCurrentWeapon);
 
 	
 	// 데이터 테이블 행 인덱스 가져오기
 	int32 GetRowIndex(UDataTable* DataTable, FName TargetRowName);
 	// Drop 위치 가져오기
 	FVector DropLocation();
+	// 장착중인 배열 가져오기 
+	UFUNCTION(BlueprintCallable)
+	void PrintEquippedItems();
 	
 	// 재윤 ======================================
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")

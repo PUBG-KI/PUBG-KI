@@ -3,20 +3,108 @@
 
 #include "Item/EquipableItem.h"
 
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/TextureRenderTarget2D.h"
+#include "Kismet/KismetMaterialLibrary.h"
+
 // Sets default values
 AEquipableItem::AEquipableItem()
 {
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem"));
+		//ClientCreateMaterial_Implementation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : AEquipableItem"));
+
+	}
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
+	SceneCapture->bCaptureEveryFrame = false; 
+	SceneCapture->bEditableWhenInherited = true;
+
+	//SceneCapture->ShowOnlyComponent(this);
+	//SceneCapture->ShowOnlyActorComponents(this, true);
+	
+	
 }
 
-// Called when the game starts or when spawned
-// void AEquipableItem::BeginPlay()
-// {
-// 	Super::BeginPlay();
-// 	
-// }
+//Called when the game starts or when spawned
+void AEquipableItem::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+void AEquipableItem::ClientCreateMaterial_Implementation()
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : ClientCreateMaterial_Implementation"));
+		return;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ClientCreateMaterial_Implementation"));
+	}
+		
+	
+	if (UTextureRenderTarget2D* LoadedRT = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+		UTextureRenderTarget2D::StaticClass(), 
+		nullptr, 
+		TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/RT_Weapon.RT_Weapon")
+	)))
+	{
+		SceneCapture->TextureTarget = LoadedRT;
+		SceneCapture->CaptureScene();
+		TextureRenderTarget = LoadedRT;
+
+		UMaterialInterface* LoadedMaterial = Cast<UMaterialInterface>(StaticLoadObject(
+		UMaterialInterface::StaticClass(),
+		nullptr,
+		TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/M_RenderTarget_Inst.M_RenderTarget_Inst")
+	   ));
+
+		RenderMaterialInstance = UKismetMaterialLibrary::CreateDynamicMaterialInstance(GetWorld(), LoadedMaterial);
+		UE_LOG(LogTemp, Warning, TEXT("RenderMaterialInstance : %s"), *RenderMaterialInstance->GetName());
+		
+		if (RenderMaterialInstance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT(" Dynamic Material Instance successfully created!"));
+			RenderMaterialInstance->SetTextureParameterValue(TEXT("WeaponTexture"), LoadedRT);
+
+			UTexture* RetrievedTexture = nullptr;
+			RenderMaterialInstance->GetTextureParameterValue(TEXT("WeaponTexture"), RetrievedTexture);
+
+			if (RetrievedTexture == LoadedRT)
+			{
+				UE_LOG(LogTemp, Warning, TEXT(" WeaponTexture successfully set in the material!"));
+			}
+			else if (RetrievedTexture == nullptr)
+			{
+				UE_LOG(LogTemp, Error, TEXT(" GetTextureParameterValue() returned NULL! The texture was not set correctly."));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT(" WeaponTexture is not correctly set. Retrieved different texture."));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT(" Failed to create Dynamic Material Instance!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT(" Failed to create LoadedRT"));
+
+	}
+}
+
 
 // Called every frame
 // void AEquipableItem::Tick(float DeltaTime)

@@ -129,6 +129,8 @@ void ABasePlayerController::CreateInventoryWidget()
 		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
 		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
+		InventoryWidget->SetEquippedComponent(PlayerCharacter->GetEquippedComponent());
+
 
 		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
 		InventoryWidget->GetWrapBox_Near()->ClearChildren();
@@ -174,6 +176,7 @@ void ABasePlayerController::ClientCreateInventoryWidget_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
 		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
+		InventoryWidget->SetEquippedComponent(PlayerCharacter->GetEquippedComponent());
 
 		InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
 		InventoryWidget->GetWrapBox_Near()->ClearChildren();

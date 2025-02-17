@@ -42,7 +42,7 @@
 
 //
 
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 
 #include "BaseLibrary/BaseDebugHelper.h"
 

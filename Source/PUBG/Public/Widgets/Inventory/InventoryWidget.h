@@ -11,6 +11,9 @@
  * 
  */
 
+class USizeBox;
+class UWeaponSlotWidget;
+class UEquippedComponent;
 class UVerticalBox;
 class UNearComponent;
 class UItemSlotWidget;
@@ -28,11 +31,15 @@ private:
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY(EditAnywhere)
 	UNearComponent* NearComponent;
+	UPROPERTY(EditAnywhere)
+	UEquippedComponent* EquippedComponent;
 	
 	UPROPERTY(EditAnywhere)
 	UItemSlotWidget* ItemSlotWidget;
 	UPROPERTY(EditAnywhere)
 	UItemSlotWidget* NearItemSlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* WeaponSlotWidget;
 
 	UPROPERTY()
 	EItemZoneType ItemZoneType;
@@ -46,8 +53,11 @@ private:
 	UVerticalBox* VerticalBox_Near;
 	UPROPERTY(meta = (BindWidget))
 	UVerticalBox* VerticalBox_Inventory;
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SizeBox_1Slot;
 
 	UClass* ItemSlotWidgetClass;
+	UClass* WeaponSlotWidgetClass;
 
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);
@@ -59,11 +69,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateNearItemSlotWidget();
 	UFUNCTION(BlueprintCallable)
-	void AddNewChild();
-
+	void UpdateEquippedWidget();
+	
 	//Setter
 	void SetInventoryComponent(UInventoryComponent* OutInventoryComponent) { InventoryComponent = OutInventoryComponent; }
 	void SetNearComponent(UNearComponent* OutNearComponent) { NearComponent = OutNearComponent; }
+	void SetEquippedComponent(UEquippedComponent* OutEquippedComponent) { EquippedComponent = OutEquippedComponent; }
 
 	//Getter
 	UItemSlotWidget* GetItemSlotWidget() const { return ItemSlotWidget; }
@@ -71,6 +82,8 @@ public:
 	UWrapBox *GetWrapBox_Near() const { return WrapBox_Near; }
 	UVerticalBox* GetVerticalBox_Inventory() const { return VerticalBox_Inventory; }
 	UVerticalBox* GetVerticalBox_Near() const { return VerticalBox_Near; }
+	UFUNCTION(BlueprintCallable)
+	USizeBox* GetSizeBox_1Slot() const { return SizeBox_1Slot; }
 
 	virtual bool NativeOnDragOver( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
 	virtual bool NativeOnDrop( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
@@ -78,4 +91,8 @@ public:
 	// 드래그 시 영역 확인
 	EItemZoneType CheckItemZoneType(FPointerEvent InMousePoint);
 	EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
+
+	// UTextureRenderTarget2D 을 Image로 변환
+	void TextureRenderTarget2DToImage(UTextureRenderTarget2D* RenderTarget);
 };
+

@@ -24,9 +24,36 @@ AGun_Base::AGun_Base()
 
 	//SetReplicates(true);
 	bReplicates = true;
-
+	
 	// 이준수
-	EquipSlot = EEquippedItemCategory::PrimarySlot;
+	FString DataTablePath = TEXT("/Game/Blueprint/Weapon/Datatable/DT_WeaponData.DT_WeaponData");
+	WeaponDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+
+	int32 WeaponType = static_cast<int32>(GetWeaponDataAsset().Type);
+	
+	// UE_LOG(LogTemp, Warning, TEXT("WeaponType : %d"), WeaponType);
+	// if (WeaponType == 5)
+	// {
+	// 	EquipSlot = EEquippedItemCategory::SubWeapon;
+	// }
+}
+
+void AGun_Base::BeginPlay()
+{
+	Super::BeginPlay();
+
+	
+
+	int32 WeaponType = static_cast<int32>(GetWeaponDataAsset().Type);
+
+	if (WeaponType == 5)
+	{
+		EquipSlot = EEquippedItemCategory::SubWeapon;
+	}
+	// else
+	// {
+	// 	EquipSlot = EEquippedItemCategory::PrimarySlot;
+	// }
 }
 
 void AGun_Base::SetFiremode(EFiremodes Firemodes)
