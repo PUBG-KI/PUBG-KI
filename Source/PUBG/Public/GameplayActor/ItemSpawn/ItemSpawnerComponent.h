@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/DataTable/DT_Weapon.h"
 #include "ItemSpawnerComponent.generated.h"
 
 class AItemBase;
 struct FItemStruct;
-class UDT_Weapon;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UItemSpawnerComponent : public UActorComponent
@@ -53,8 +53,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
 
-	UFUNCTION(BlueprintCallable, Category="Spawn")
-	void SetRandomMesh(AItemBase* Item, FName ItemRowName);
+	// UFUNCTION(BlueprintCallable, Category="Spawn")
+	// void SetRandomMesh(AItemBase* Item, FName ItemRowName);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();
@@ -65,9 +65,23 @@ public:
 	//무기 확인 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	bool IsWeapon(FName ItemID);
-	
+
+	//무기 스폰
+	// UFUNCTION(BlueprintCallable, Category = "Spawn")
+	// void SpawnWeapon(FName WeaponID,FVector SpawnLocation);
+
+	//무기 타입에 맞는 총알 찾기
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FName GetBulletTypeName(EBulletType BulletType);
+
+	// //위치 지정
+	// UFUNCTION(BlueprintCallable, Category = "Spawn")
+	// FVector UItemSpawnerComponent::GetRandomSpawnLocation(FVector BaseLocation, float MinOffset, float MaxOffset);
 	
 private:
 	//bool SetItemStruct(FItemStruct& Output);
+
 	
 };
+
+
