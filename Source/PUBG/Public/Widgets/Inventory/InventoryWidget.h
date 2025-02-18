@@ -39,7 +39,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	UItemSlotWidget* NearItemSlotWidget;
 	UPROPERTY(EditAnywhere)
-	UWeaponSlotWidget* WeaponSlotWidget;
+	UWeaponSlotWidget* Weapon1SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* Weapon2SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* Weapon3SlotWidget;
 
 	UPROPERTY()
 	EItemZoneType ItemZoneType;
@@ -56,8 +60,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SizeBox_1Slot;
 
-	UClass* ItemSlotWidgetClass;
-	UClass* WeaponSlotWidgetClass;
+	UClass* ItemSlotWidgetBPClass;
+	UClass* WeaponSlotWidgetBPClass1;
+	UClass* WeaponSlotWidgetBPClass2;
+	UClass* WeaponSlotWidgetBPClass3;
 
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);

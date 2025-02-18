@@ -2,11 +2,9 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Engine/DataTable.h"
-
+#include "Item/EquipableItem.h"
 #include "ItemStruct.generated.h"
 
-
-class AEquipableItem;
 
 enum class EItemCategory : uint8;
 
