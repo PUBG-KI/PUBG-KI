@@ -30,6 +30,8 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 
 		if (ItemDataTable != nullptr)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("WeaponItem : ItemDataTable"));
+
 			FName ItemID = this->GetItemDataComponent()->GetItemRowName();
 			FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 

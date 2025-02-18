@@ -43,6 +43,7 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 		//PlayerCharacter->GetInventoryComponent()->ServerUpdateInventory();
 		InventoryWidget->UpdateInventoryWidget();
+		//InventoryWidget->UpdateNearItemSlotWidget();
 		InventoryWidget->UpdateEquippedWidget();
 		
 		if (!PlayerCharacter)
