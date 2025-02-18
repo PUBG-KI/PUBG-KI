@@ -3,7 +3,6 @@
 
 #include "Widgets/Inventory/InventoryWidget.h"
 
-#include "EditorDirectories.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Component/Equipped/EquippedComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
@@ -28,8 +27,10 @@ UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) 
 	ItemSlotWidget  = nullptr;
 	WrapBox_Inventory  = nullptr;
 
-	ItemSlotWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_ItemSlot.WBP_ItemSlot_C"));
-	WeaponSlotWidgetClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot_C"));
+	ItemSlotWidgetBPClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_ItemSlot.WBP_ItemSlot_C"));
+	WeaponSlotWidgetBPClass1 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot1.WBP_WeaponSlot1_C"));
+	WeaponSlotWidgetBPClass2 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot2_C"));
+	WeaponSlotWidgetBPClass3 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot3_C"));
 	
 	ItemZoneType = EItemZoneType::None;
 
@@ -62,9 +63,9 @@ void UInventoryWidget::UpdateInventoryWidget()
 	TArray<FItemSlotStruct> ItemSlot = InventoryComponent->GetContent();
 	for (int i = 0; i < ItemSlot.Num(); i++)
 	{
-		if (ItemSlotWidgetClass)
+		if (ItemSlotWidgetBPClass)
 		{
-			ItemSlotWidget = CreateWidget<UItemSlotWidget>(GetWorld(), ItemSlotWidgetClass);
+			ItemSlotWidget = CreateWidget<UItemSlotWidget>(GetWorld(), ItemSlotWidgetBPClass);
 			if (ItemSlotWidget != nullptr)
 			{
 				ItemSlotWidget->SetItemName(ItemSlot[i].ItemName);
@@ -100,9 +101,9 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 	for (int i = 0; i < ItemSlot.Num(); i++)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("ItemSlot Widget not found"));
-		if (ItemSlotWidgetClass)
+		if (ItemSlotWidgetBPClass)
 		{
-			NearItemSlotWidget = CreateWidget<UItemSlotWidget>(GetWorld(), ItemSlotWidgetClass);
+			NearItemSlotWidget = CreateWidget<UItemSlotWidget>(GetWorld(), ItemSlotWidgetBPClass);
 			if (NearItemSlotWidget != nullptr)
 			{
 				if (ItemSlot[i] != nullptr)
@@ -138,7 +139,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 
 void UInventoryWidget::UpdateEquippedWidget()
 {
-	if (!WeaponSlotWidgetClass && !EquippedComponent)
+	if (!WeaponSlotWidgetBPClass1 &&!WeaponSlotWidgetBPClass2 && !WeaponSlotWidgetBPClass3 && !EquippedComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidgetClass None Or EquippedComponent None"));
 		return;
@@ -156,37 +157,33 @@ void UInventoryWidget::UpdateEquippedWidget()
 			switch (i)
 			{
 			case 0:
-				WeaponSlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetClass);
-
-				// if (EquippedItems[i]->GetRenderMaterial() == nullptr)
-				// {
-				// 	UE_LOG(LogTemp, Warning, TEXT("EquippedItems[i]->GetRenderMaterial() NULL"));
-				// }
-				//
-				// FSlateBrush Brush;
-				//Brush.SetResourceObject(EquippedItems[i]->GetTextureRenderTarget());
-				//UWidgetBlueprintLibrary::SetBrushResourceToMaterial(Brush, EquippedItems[i]->GetRenderMaterial());
-				//Brush.SetResourceObject(EquippedItems[i]->GetRenderMaterial());
-
-				//UE_LOG(LogTemp, Warning, TEXT("RenderMaterial : %s"), *EquippedItems[i]->GetRenderMaterial()->GetName());
-				//UE_LOG(LogTemp, Warning, TEXT("Brush Resource: %s"), *Brush.GetResourceObject()->GetName());
-
-
-				if (WeaponSlotWidget)
-				{
-					// if (WeaponSlotWidget->GetImage_RenderTargetWeapon() != nullptr)
-					// {
-					// 	WeaponSlotWidget->GetImage_RenderTargetWeapon()->SetBrush(Brush);
-					// }
-					//WeaponSlotWidget->SetImage_RenderTargetWeapon(EquippedItems[i]->GetRenderMaterial());
+				Weapon1SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass1);
 				
-					SizeBox_1Slot->SetContent(WeaponSlotWidget);
+				if (Weapon1SlotWidget)
+				{	
+					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅 
+					
+					Weapon1SlotWidget->FindEquiablePartsSlot(Slot1Weapon);
+
+					FString SlotNumber =  FString::FromInt(i + 1);
+					Weapon1SlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
+					
+					FString WeaponName = Slot1Weapon->GetWeaponDataAsset().GunName;
+					Weapon1SlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
+
+
+					// 장전된 총알, 남은 총알 
+					
+					EBulletType WeaponBulletType = Slot1Weapon->GetWeaponDataAsset().BulletType;
+					FString WeaponBulletName = Weapon1SlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
+					Weapon1SlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정 
+
+					
+					
+					SizeBox_1Slot->SetContent(Weapon1SlotWidget);
 					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
 				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidget None"));
-				}
+
 				break;
 			}
 		}
