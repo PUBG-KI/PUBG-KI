@@ -13,7 +13,7 @@
 UTimeManager::UTimeManager()
 {
 	TickTime = 1.f;
-	StartGameTime = 10;
+	StartGameTime = 30;
 	CurrentGameTime = StartGameTime;
 }
 
@@ -24,7 +24,7 @@ void UTimeManager::InitializeManager()
 	GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
 	
 	TickTime = 1.f;
-	StartGameTime = 5;
+	StartGameTime = 30;
 	CurrentGameTime = StartGameTime;
 }
 

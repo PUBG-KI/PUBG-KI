@@ -45,7 +45,7 @@ AAirplane::AAirplane()
 	
 	TimelineComponent =CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
 
-	Duration = 5.f;
+	Duration = 60.f;
 
 	
 

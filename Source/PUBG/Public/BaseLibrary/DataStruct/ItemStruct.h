@@ -20,7 +20,7 @@ struct FItemStruct : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UStaticMesh* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<AEquipableItem> BP_Item;
+	TSoftClassPtr<AEquipableItem> BP_Item;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* Image;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

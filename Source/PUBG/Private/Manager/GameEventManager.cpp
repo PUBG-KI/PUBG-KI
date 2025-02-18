@@ -44,7 +44,7 @@ void UGameEventManager::StartRedZoneTimer()
 	UE_LOG(LogTemp, Warning, TEXT("Red Zone event timer started."));
 
 	// 랜덤한 시간 간격으로 설정
-	float RandomTime = FMath::RandRange(5.0f, 10.0f);
+	float RandomTime = FMath::RandRange(60.0f, 120.0f);
 
 	// 일정 시간이 지나면 OnSupplyDrop 실행
 	GetWorld()->GetTimerManager().SetTimer(
