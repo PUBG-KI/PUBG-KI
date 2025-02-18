@@ -9,6 +9,14 @@
 #include "Kismet/KismetMathLibrary.h"
 
 
+void UGA_Weapon_Fire::OnTimelineUpdate(float Value)
+{
+}
+
+void UGA_Weapon_Fire::OnTimelineFinished()
+{
+}
+
 void UGA_Weapon_Fire::SetDefault()
 {
 	if (GetPlayerCharacterFromActorInfo()->GetEquippedComponent()->GetCurrentWeapon_GunBase())

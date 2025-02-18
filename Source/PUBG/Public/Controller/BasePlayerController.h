@@ -36,7 +36,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InputModeGame();
 
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void HitEventServer(AActor* TargetActor, FGameplayTag HitTag, FGameplayEventData payload);
 	
 	//Getter
