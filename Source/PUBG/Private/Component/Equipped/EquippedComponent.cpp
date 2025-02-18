@@ -24,12 +24,7 @@ UEquippedComponent::UEquippedComponent()
 
 	SetIsReplicatedByDefault(true);
 	
-	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	
-	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
-
-	//EquippedMainWeapon.SetNum(2);
-	EquippedItems.SetNum(16);
 }
 
 void UEquippedComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -50,7 +45,11 @@ void UEquippedComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	// ...
-	
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");	
+	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+
+	//EquippedMainWeapon.SetNum(2);
+	EquippedItems.SetNum(16);
 }
 
 
@@ -123,7 +122,7 @@ void UEquippedComponent::EquipItem(AItemBase* Item)
 	FName ItemID = Item->GetItemDataComponent()->GetItemRowName();
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 		
-	AEquipableItem* EquipableItem = GetWorld()->SpawnActor<AEquipableItem>(Row->BP_Item);
+	AEquipableItem* EquipableItem = GetWorld()->SpawnActor<AEquipableItem>(Row->BP_Item.Get());
 	
 
 	
@@ -155,7 +154,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 
 	int32 MainWeaponSlot = static_cast<int32>(WeaponItem->GetEquippedItemCategory());
 	
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item);
+	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
 	
 	
 	if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
@@ -333,7 +332,7 @@ void UEquippedComponent::ServerEquipSubWeapon_Implementation(AItemBase* Item)
 		DropSUbWeapon();
 	}
 
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item);
+	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
 	if (AGun_Base* SubWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
 	{
 		//TempWeapon->SetTableIndex(RowIndex);
@@ -487,8 +486,9 @@ FVector UEquippedComponent::DropLocation()
 		UE_LOG(LogTemp, Warning, TEXT("Drop Location : 0"));
 		return FVector(0, 0, 0);
 	}
+
 	
-	return FVector(0, 0, 0);
+	//return FVector(0, 0, 0);
 }
 
 void UEquippedComponent::PrintEquippedItems()
@@ -501,7 +501,7 @@ void UEquippedComponent::PrintEquippedItems()
 		{
 			if (EquippedItems[i] != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
+				//UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
 			
 			}
 		}
@@ -514,7 +514,7 @@ void UEquippedComponent::PrintEquippedItems()
 		{
 			if (EquippedItems[i] != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
+				//UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
 			
 			}
 		}

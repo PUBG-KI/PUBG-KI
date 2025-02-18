@@ -3,7 +3,6 @@
 
 #include "Widgets/Inventory/InventoryWidget.h"
 
-#include "EditorDirectories.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Component/Equipped/EquippedComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
