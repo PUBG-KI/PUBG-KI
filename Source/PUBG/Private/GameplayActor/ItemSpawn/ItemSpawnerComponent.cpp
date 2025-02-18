@@ -138,7 +138,7 @@ void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowNa
 	if (FoundItem && FoundItem->Weight)
 	{
 		//무게 변경
-		ItemDataComponent->SetItemWeigt(FoundItem->Weight);
+		ItemDataComponent->SetItemWeight(FoundItem->Weight);
 	}
 
 	if (FoundItem && FoundItem->Quantity)
