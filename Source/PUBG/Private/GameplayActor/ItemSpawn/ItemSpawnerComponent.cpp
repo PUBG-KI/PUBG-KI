@@ -61,40 +61,38 @@ void UItemSpawnerComponent::SpawnItems()
 				if (IsWeapon(SpawnedItemName))
 				{
 					UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *SpawnedItemName.ToString());
+					//무기 메쉬로 변경
+					SetRandomProperties(SpawnedItem, SpawnedItemName);
+					
 					//무기 정보 테이블 접근
 					FWeaponData* WeaponData = WeaponTable->FindRow<FWeaponData>(SpawnedItemName, TEXT("Weapon Info Lookup"));
-					if (!WeaponData)
-					{
-						return;
-					}
 
 					if (WeaponData)
 					{
-						//무기 메쉬로 변경
-						SetRandomProperties(SpawnedItem, SpawnedItemName);
-					}
+						FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
+						//무기에 맞는 총알 찾기
+						FItemStruct* BulletData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
 
-					FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
-					//무기에 맞는 총알 찾기
-					FItemStruct* BulletData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
-
-					if (BulletData)
-					{
-						for (int BulletCount = 0; BulletCount < 2; BulletCount++)
+						if (BulletData)
 						{
-							FVector BulletRandomOffset = GetRandomOffset();
-							
-							// 탄약 스폰할 위치 계산
-							AItemBase* SpawnedAmmo = GetWorld()->SpawnActor<AItemBase>(BP_Item, FinalLocation + BulletRandomOffset,FRotator::ZeroRotator);
-						
-							if (SpawnedAmmo)
+							for (int BulletCount = 0; BulletCount < 2; BulletCount++)
 							{
-								UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *BulletTypeName.ToString());
-								SetRandomProperties(SpawnedAmmo, BulletTypeName);
-							}
-						}
+								FVector BulletRandomOffset = GetRandomOffset();
+							
+								// 탄약 스폰할 위치 계산
+								AItemBase* SpawnedAmmo = GetWorld()->SpawnActor<AItemBase>(BP_Item, FinalLocation + BulletRandomOffset,FRotator::ZeroRotator);
 						
+								if (SpawnedAmmo)
+								{
+									UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *BulletTypeName.ToString());
+									SetRandomProperties(SpawnedAmmo, BulletTypeName);
+								}
+							}
+						
+						}
 					}
+
+					
 				}
 				else
 				{
