@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/DataTable/DT_Weapon.h"
 #include "ItemSpawnerComponent.generated.h"
 
 class AItemBase;
@@ -15,42 +16,64 @@ class PUBG_API UItemSpawnerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
+	// Sets default values for this component's properties
 	UItemSpawnerComponent();
 
+protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+public:	
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//스폰존 생성 위치
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TArray<FVector> SpawnLocations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<AActor> BP_Item;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 SpawnItemCount;
+
+	//아이템 스폰 반경
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 ItemSpawnRadius;
+
+	//아이템 데이터테이블
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UDataTable* SpawnItemTable;
+
+	//무기테이블
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	UDataTable* WeaponTable;
+	
 	//TestItem 스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnItems();
 
-	UFUNCTION(BlueprintCallable, Category="Spawn")
-	void SetRandomMesh(AItemBase* Item, FName ItemRowName);
+	// UFUNCTION(BlueprintCallable, Category="Spawn")
+	// void SetRandomMesh(AItemBase* Item, FName ItemRowName);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SetRandomProperties(AItemBase* Item, FName ItemRowName);
-	
 
-private:
-	//스폰존 생성 위치
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
-	TArray<FVector> SpawnLocations;
+	//무기 확인 함수
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	bool IsWeapon(FName ItemID);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AActor> BP_Item;
+	//무기 타입에 맞는 총알 찾기
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FName GetBulletTypeName(EBulletType BulletType);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
-	int32 SpawnItemCount;
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FVector GetRandomOffset();
 
-	//아이템 스폰 반경
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
-	int32 ItemSpawnRadius;
-
-	//아이템 데이터테이블
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn", meta = (AllowPrivateAccess = "true"))
-	UDataTable* SpawnItemTable;
 	
 };
+
+
