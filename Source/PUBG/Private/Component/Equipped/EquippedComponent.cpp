@@ -488,7 +488,7 @@ FVector UEquippedComponent::DropLocation()
 		return FVector(0, 0, 0);
 	}
 	
-	//return FVector(0, 0, 0);
+	return FVector(0, 0, 0);
 }
 
 void UEquippedComponent::PrintEquippedItems()
@@ -501,7 +501,7 @@ void UEquippedComponent::PrintEquippedItems()
 		{
 			if (EquippedItems[i] != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorNameOrLabel());
+				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
 			
 			}
 		}
@@ -514,7 +514,7 @@ void UEquippedComponent::PrintEquippedItems()
 		{
 			if (EquippedItems[i] != nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorNameOrLabel());
+				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorLabel());
 			
 			}
 		}
