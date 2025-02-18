@@ -40,69 +40,60 @@ void UItemSpawnerComponent::SpawnItems()
 {
 	UWorld* World = GetWorld();
 	AActor* Owner = GetOwner();
-
-	//bool bNextShouldBeAmmo = false;
 	
 	for (const FVector& SpawnLocation : SpawnLocations)
 	{
-		//for (int32 i = 0; i < SpawnItemCount; i++)
+		for (int i = 0; i < SpawnItemCount; i++)
 		{
 			FVector WorldSpawnLocation = Owner->GetTransform().TransformPosition(SpawnLocation);
-	
-			//위치 주변 배치
-			FVector RandomOffset = FVector(
-				FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
-				FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
-				0.0f
-			);
-			
-			FVector FinalLocation = WorldSpawnLocation + RandomOffset;
+			FVector FinalLocation = WorldSpawnLocation + GetRandomOffset();
 			
 			//아이템 랜덤 생성
 			AItemBase* SpawnedItem = World->SpawnActor<AItemBase>(BP_Item,FinalLocation,FRotator::ZeroRotator);
 			
 			if (SpawnedItem)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Spawned"));
+				//UE_LOG(LogTemp, Warning, TEXT("Spawned"));
 
 				FName SpawnedItemName = GetRandomItemRowName();
 
 				//랜덤값이 무기인지 확인
 				if (IsWeapon(SpawnedItemName))
 				{
-					//bNextShouldBeAmmo = true;
-					
-					// //SetRandomProperties(SpawnedItem)
-					// // SetRandomProperties(SpawnedItem,SpawnedItemName);
-					// //SetRandomProperties(SpawnedItem,SpawnedItemName);
-					// SpawnWeapon(SpawnedItemName,FinalLocation);
-					// UE_LOG(LogTemp, Warning, TEXT("SpawnWeapon(): %s") , *SpawnedItemName.ToString());
-
-					//무기 정보 테이블에서 해당 총기의 탄약 정보 가져오기
+					UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *SpawnedItemName.ToString());
+					//무기 정보 테이블 접근
 					FWeaponData* WeaponData = WeaponTable->FindRow<FWeaponData>(SpawnedItemName, TEXT("Weapon Info Lookup"));
 					if (!WeaponData)
 					{
 						return;
 					}
-					//AItemBase* SpawnedWeapon = GetWorld()->SpawnActor<AItemBase>(BP_Item, SpawnLocation, FRotator::ZeroRotator);
 
 					if (WeaponData)
 					{
+						//무기 메쉬로 변경
 						SetRandomProperties(SpawnedItem, SpawnedItemName);
 					}
 
 					FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
-					FItemStruct* AmmoData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
+					//무기에 맞는 총알 찾기
+					FItemStruct* BulletData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
 
-					if (AmmoData)
+					if (BulletData)
 					{
-						// 탄약 스폰할 위치 계산 (총기 근처)
-						AItemBase* SpawnedAmmo = GetWorld()->SpawnActor<AItemBase>(BP_Item, FinalLocation,FRotator::ZeroRotator);
-						
-						if (SpawnedAmmo)
+						for (int BulletCount = 0; BulletCount < 2; BulletCount++)
 						{
-							SetRandomProperties(SpawnedAmmo, BulletTypeName);
+							FVector BulletRandomOffset = GetRandomOffset();
+							
+							// 탄약 스폰할 위치 계산
+							AItemBase* SpawnedAmmo = GetWorld()->SpawnActor<AItemBase>(BP_Item, FinalLocation + BulletRandomOffset,FRotator::ZeroRotator);
+						
+							if (SpawnedAmmo)
+							{
+								UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *BulletTypeName.ToString());
+								SetRandomProperties(SpawnedAmmo, BulletTypeName);
+							}
 						}
+						
 					}
 				}
 				else
@@ -111,28 +102,28 @@ void UItemSpawnerComponent::SpawnItems()
 				}
 			}
 		}
-		
+			
 	}
 }
 
+//랜덤 아이템 지정
 FName UItemSpawnerComponent::GetRandomItemRowName()
 {
 	TArray<FName> RowNames = SpawnItemTable->GetRowNames();
 	FName RandomRowName = RowNames[FMath::RandRange(0,RowNames.Num()-1)];
 
-	UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
 	
 	return RandomRowName;
 }
 
+//스폰 시 속성 변경
 void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowName)
 {
 	static const FString ContextString(TEXT("Item Lookup"));
 	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(ItemRowName, ContextString);
 
 	UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
-	
-	UE_LOG(LogTemp, Warning, TEXT("ItemRowName: %s") , *ItemRowName.ToString());
 
 	if (FoundItem)
 	{
@@ -157,63 +148,22 @@ void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowNa
 		//수량 변경
 		ItemDataComponent->SetItemQuantity(FoundItem->Quantity);
 	}
-
-	// UE_LOG(LogTemp, Warning, TEXT("Spawned Item: %s | Mesh: %s | Weight: %.2f | Quantity: %d"),
-	// 		*ItemRowName.ToString(),
-	// 		FoundItem->StaticMesh ? *FoundItem->StaticMesh->GetName() : TEXT("None"),
-	// 		FoundItem->Weight,
-	// 		FoundItem->Quantity);
 }
 
+//무기 타입인지 확인
 bool UItemSpawnerComponent::IsWeapon(FName ItemID)
 {
 	static const FString ContextString(TEXT("Weapon Lookup"));
 	FWeaponData* FoundWeapon = WeaponTable->FindRow<FWeaponData>(ItemID, ContextString);
 
-	if ( WeaponTable && FoundWeapon != nullptr)
+	if (WeaponTable && FoundWeapon != nullptr)
 	{
 		return true;
 	}
 	return false;
 }
 
-// void UItemSpawnerComponent::SpawnWeapon(FName WeaponID , FVector SpawnLocation)
-// {
-// 	FItemStruct* ItemData = SpawnItemTable->FindRow<FItemStruct>(WeaponID, TEXT("Item Lookup"));
-// 	if (!ItemData)
-// 	{
-// 		return;
-// 	}
-//
-// 	//무기 정보 테이블에서 해당 총기의 탄약 정보 가져오기
-// 	FWeaponData* WeaponData = WeaponTable->FindRow<FWeaponData>(WeaponID, TEXT("Weapon Info Lookup"));
-// 	if (!WeaponData)
-// 	{
-// 		return;
-// 	}
-//
-// 	FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
-// 	FItemStruct* AmmoData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
-// 	
-// 	AItemBase* SpawnedWeapon = GetWorld()->SpawnActor<AItemBase>(BP_Item, SpawnLocation, FRotator::ZeroRotator);
-//
-// 	if (SpawnedWeapon)
-// 	{
-// 		SetRandomProperties(SpawnedWeapon, WeaponID);
-// 	}
-// 	
-// 	if (AmmoData)
-// 	{
-// 		// 탄약 스폰할 위치 계산 (총기 근처)
-// 		AItemBase* SpawnedAmmo = GetWorld()->SpawnActor<AItemBase>(BP_Item, SpawnLocation, FRotator::ZeroRotator);
-//
-// 		if (SpawnedAmmo)
-// 		{
-// 			SetRandomProperties(SpawnedAmmo, BulletTypeName);
-// 		}
-// 	}
-// }
-
+//총알 타입 찾기
 FName UItemSpawnerComponent::GetBulletTypeName(EBulletType BulletType)
 {
 	switch (BulletType)
@@ -226,25 +176,12 @@ FName UItemSpawnerComponent::GetBulletTypeName(EBulletType BulletType)
 	}
 }
 
-// FVector UItemSpawnerComponent::GetRandomSpawnLocation(FVector BaseLocation, float MinOffset, float MaxOffset)
-// {
-// 	UWorld* World = GetWorld();
-// 	AActor* Owner = GetOwner();
-//
-// 	for (const FVector& SpawnLocation : SpawnLocations)
-// 	{
-// 		for (int32 i = 0; i < SpawnItemCount; i++)
-// 		{
-// 			FVector WorldSpawnLocation = Owner->GetTransform().TransformPosition(SpawnLocation);
-//
-// 			//위치 주변 배치
-// 			FVector RandomOffset = FVector(
-// 				FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
-// 				FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
-// 				0.0f
-// 			);
-// 			
-// 			FVector FinalLocation = WorldSpawnLocation + RandomOffset;
-//
-// 			return FinalLocation;
-// }
+//랜덤 위치 지정
+FVector UItemSpawnerComponent::GetRandomOffset()
+{
+	return FVector(
+		FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
+		FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
+		0.0f
+	);
+}

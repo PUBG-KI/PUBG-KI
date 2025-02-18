@@ -16,10 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	AAHouse();
 
-	//집유형
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "House")
-	FName HouseName;
-
 	//스폰존컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner")
 	UItemSpawnerComponent* ItemSpawnerComponent;
@@ -27,13 +23,5 @@ public:
 	//집 메쉬
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "House")
 	UStaticMeshComponent* HouseMesh;
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };

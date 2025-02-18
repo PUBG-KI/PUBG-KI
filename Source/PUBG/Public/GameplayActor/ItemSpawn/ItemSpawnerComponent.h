@@ -66,20 +66,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	bool IsWeapon(FName ItemID);
 
-	//무기 스폰
-	// UFUNCTION(BlueprintCallable, Category = "Spawn")
-	// void SpawnWeapon(FName WeaponID,FVector SpawnLocation);
-
 	//무기 타입에 맞는 총알 찾기
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetBulletTypeName(EBulletType BulletType);
 
-	// //위치 지정
-	// UFUNCTION(BlueprintCallable, Category = "Spawn")
-	// FVector UItemSpawnerComponent::GetRandomSpawnLocation(FVector BaseLocation, float MinOffset, float MaxOffset);
-	
-private:
-	//bool SetItemStruct(FItemStruct& Output);
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FVector GetRandomOffset();
 
 	
 };
