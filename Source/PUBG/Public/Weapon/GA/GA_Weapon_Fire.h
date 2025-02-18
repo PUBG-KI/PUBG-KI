@@ -64,6 +64,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GA_weapon")
 	FVector GetProjectileSocketLocation() const {return Gun_Base->GetWeaponMagSocketLocation();}
 
+	UFUNCTION(BlueprintPure, Category = "GA_Weapon")
+	UAnimMontage* PlayCurrentPose_recoilMontage(UAnimMontage* StandMontage, UAnimMontage* ProneMontage, UAnimMontage* CrouchMontage);
+	
+	
 	// timeline
 	UFUNCTION(BlueprintCallable)
 	void ApplyRecoil(float _RecoilAmount, float _RecoilDuration, float _YawRecoilAmount);

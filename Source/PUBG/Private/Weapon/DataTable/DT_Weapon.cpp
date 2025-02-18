@@ -12,6 +12,13 @@ FInstallable_parts::FInstallable_parts()
 	Loops = false;
 }
 
+FRecoilMontage::FRecoilMontage()
+{
+	Stand_RecoilMontage = nullptr;
+	Prone_RecoilMontage = nullptr;
+	Crouch_RecoilMontage = nullptr;
+}
+
 FWeaponData::FWeaponData()
 {
 	Type = EGunType::None;

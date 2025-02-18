@@ -5,9 +5,17 @@
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Component/EquippedComponent.h"
-#include "Component/Inventory/InventoryComponent.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+
+void UGA_Weapon_Fire::OnTimelineUpdate(float Value)
+{
+}
+
+void UGA_Weapon_Fire::OnTimelineFinished()
+{
+}
 
 void UGA_Weapon_Fire::SetDefault()
 {
@@ -48,6 +56,17 @@ FVector UGA_Weapon_Fire::GetVelocityVector()
 		// UKismetSystemLibrary::DrawDebugLine(GetWorld(), HitResult.ImpactPoint, LineTraceEnd, FLinearColor::Red, 100.0f, 1.0f);
 		return GetPlayerCharacterFromActorInfo()->GetFollowCamera()->GetForwardVector();
 	}
+}
+
+UAnimMontage* UGA_Weapon_Fire::PlayCurrentPose_recoilMontage(UAnimMontage* StandMontage, UAnimMontage* ProneMontage,
+	UAnimMontage* CrouchMontage)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
+	
+	if (MovementComponent->RequestToStartProne) return ProneMontage;
+	if (MovementComponent->IsCrouching()) return  CrouchMontage;
+	return StandMontage;
 }
 
 void UGA_Weapon_Fire::ApplyRecoil(float _RecoilAmount, float _RecoilDuration, float _YawRecoilAmount)

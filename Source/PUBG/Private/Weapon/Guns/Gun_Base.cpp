@@ -36,14 +36,19 @@ void AGun_Base::SetFiremode(EFiremodes Firemodes)
 
 void AGun_Base::ChangeFiremode_AR(EFiremodes _Firemode)
 {
-	if (IgnoreMode == _Firemode)
+	if (IgnoreMode != EFiremodes::None)
 	{
-		this->FireMode = EFiremodes::Semi_Auto;
+		if (IgnoreMode == _Firemode)
+		{
+			this->FireMode = EFiremodes::Semi_Auto;
+		}
+		else
+		{
+			this->FireMode = _Firemode;
+		}
 	}
-	else
-	{
-		this->FireMode = _Firemode;
-	}
+	this->FireMode = _Firemode;
+
 }
 
 void AGun_Base::SetMagToHandSocekt()
