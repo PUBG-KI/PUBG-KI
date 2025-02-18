@@ -91,6 +91,10 @@ private:
 	UCameraComponent* FollowCamera;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCamera;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UCapsuleComponent* PunchCapsuleLeft;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UCapsuleComponent* PunchCapsuleRight;
 #pragma endregion
 public:
 	
@@ -241,6 +245,8 @@ public:
 	void Client_InputMappingContextRemove(UInputMappingContext* MappingContext);
 	FORCEINLINE bool GetVehicleVelocityBackWard() const {return VehicleVelocityBackWard;}
 	FORCEINLINE void SetVehicleVelocityBackWard(bool NewVelocityBackWard){VehicleVelocityBackWard = NewVelocityBackWard;}
+
+
 };
 
 

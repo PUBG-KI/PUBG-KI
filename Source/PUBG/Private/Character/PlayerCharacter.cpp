@@ -54,6 +54,7 @@
 #include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 //Weapon
+#include "NavigationSystemTypes.h"
 #include "Weapon/Weapon_Base.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
@@ -80,6 +81,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	FirstPersonCamera->SetupAttachment(GetMesh(),TEXT("camera_fppSocket"));
 	FirstPersonCamera->Deactivate();
 	CameraMode = PlayerCameraMode::FPPCamera;
+
+	PunchCapsuleLeft = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PunchCapsuleLeft"));
+	PunchCapsuleRight = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PunchCapsuleRight"));
 
 	// 메쉬 부착
 	//UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EPlayerMeshType"), true);
@@ -345,6 +349,7 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	}
 	else
 	{
+		bUseControllerRotationYaw = true;
 		Jump();
 	}
 }
