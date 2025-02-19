@@ -27,6 +27,7 @@ AWeapon_Base::AWeapon_Base()
 	EquipSlot = EEquippedItemCategory::PrimarySlot;
 
 	SceneCapture->SetupAttachment(RootComponent);
+	//SceneCapture->SetRelativeLocationAndRotation(FVector(20.0f, -60.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
 	SceneCapture->SetWorldLocationAndRotation(FVector(20.0f, -60.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
 	
 	

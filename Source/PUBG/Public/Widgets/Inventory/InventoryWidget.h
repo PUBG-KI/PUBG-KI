@@ -59,6 +59,10 @@ private:
 	UVerticalBox* VerticalBox_Inventory;
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SizeBox_1Slot;
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SizeBox_2Slot;
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SizeBox_3Slot;
 
 	UClass* ItemSlotWidgetBPClass;
 	UClass* WeaponSlotWidgetBPClass1;
@@ -98,7 +102,9 @@ public:
 	EItemZoneType CheckItemZoneType(FPointerEvent InMousePoint);
 	EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
 
-	// UTextureRenderTarget2D 을 Image로 변환
-	void TextureRenderTarget2DToImage(UTextureRenderTarget2D* RenderTarget);
+	// 위젯들 파괴 및 초기화
+	void EquippedUIInit();
+	// 장착된 총 UI 업데이트
+	UWeaponSlotWidget* EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex);
 };
 

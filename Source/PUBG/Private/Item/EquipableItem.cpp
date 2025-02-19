@@ -37,7 +37,9 @@ AEquipableItem::AEquipableItem()
 void AEquipableItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 }
 
 void AEquipableItem::ClientCreateMaterial_Implementation()

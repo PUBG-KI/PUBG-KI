@@ -16,9 +16,9 @@ FString UWeaponSlotWidget::SetBulletTypeTextBlock(EBulletType OutEBulletType)
 	case EBulletType::B_5_56:
 		return TEXT("5.56mm");
 	case EBulletType::B_9:
-		return TEXT("9.9mm");
+		return TEXT("9mm");
 	case EBulletType::B_12G:
-		return TEXT("12mm");
+		return TEXT("12G");
 	default:
 		return TEXT("None");
 	}

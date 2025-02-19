@@ -32,6 +32,8 @@ protected:
 	UTextureRenderTarget2D *TextureRenderTarget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMaterialInstanceDynamic* RenderMaterialInstance;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
 	//Setter
 
 public:
@@ -43,6 +45,8 @@ public:
 	UTextureRenderTarget2D* GetTextureRenderTarget() const { return TextureRenderTarget; }
 	UFUNCTION(BlueprintCallable)
 	UMaterialInstanceDynamic* GetRenderMaterial() const { return RenderMaterialInstance; }
+	UFUNCTION(BlueprintCallable)
+	UDataTable* GetItemDataTable() const { return ItemDataTable; }
 	//Setter
 	void SetEquipSlot(EEquippedItemCategory OutEquippedItemCategory) { EquipSlot = OutEquippedItemCategory; } 
 public:	

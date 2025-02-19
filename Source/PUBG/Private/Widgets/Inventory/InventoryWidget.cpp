@@ -29,8 +29,8 @@ UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) 
 
 	ItemSlotWidgetBPClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_ItemSlot.WBP_ItemSlot_C"));
 	WeaponSlotWidgetBPClass1 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot1.WBP_WeaponSlot1_C"));
-	WeaponSlotWidgetBPClass2 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot2_C"));
-	WeaponSlotWidgetBPClass3 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot.WBP_WeaponSlot3_C"));
+	WeaponSlotWidgetBPClass2 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot2.WBP_WeaponSlot2_C"));
+	WeaponSlotWidgetBPClass3 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot3.WBP_WeaponSlot3_C"));
 	
 	ItemZoneType = EItemZoneType::None;
 
@@ -149,7 +149,8 @@ void UInventoryWidget::UpdateEquippedWidget()
 
 	UE_LOG(LogTemp, Warning, TEXT("EquippedItems Num : %d"), EquippedItems.Num());
 
-
+	EquippedUIInit();
+	
 	for (int i = 0; i < EquippedItems.Num(); i++)
 	{
 		if (EquippedItems[i] != nullptr)
@@ -161,29 +162,69 @@ void UInventoryWidget::UpdateEquippedWidget()
 				
 				if (Weapon1SlotWidget)
 				{	
-					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅 
-					
-					Weapon1SlotWidget->FindEquiablePartsSlot(Slot1Weapon);
+					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon1SlotWidget = EquippedWeaponUIUpdate(Weapon1SlotWidget, Slot1Weapon, i);
 
-					FString SlotNumber =  FString::FromInt(i + 1);
-					Weapon1SlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
-					
-					FString WeaponName = Slot1Weapon->GetWeaponDataAsset().GunName;
-					Weapon1SlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
-
-
-					// 장전된 총알, 남은 총알 
-					
-					EBulletType WeaponBulletType = Slot1Weapon->GetWeaponDataAsset().BulletType;
-					FString WeaponBulletName = Weapon1SlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
-					Weapon1SlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정 
-
-					
-					
 					SizeBox_1Slot->SetContent(Weapon1SlotWidget);
 					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+					
+					// Weapon1SlotWidget->FindEquiablePartsSlot(Slot1Weapon);
+					//
+					// FString SlotNumber =  FString::FromInt(i + 1);
+					// Weapon1SlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
+					//
+					// FString WeaponName = Slot1Weapon->GetWeaponDataAsset().GunName;
+					// Weapon1SlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
+					//
+					//
+					// // 장전된 총알, 남은 총알 
+					//
+					// EBulletType WeaponBulletType = Slot1Weapon->GetWeaponDataAsset().BulletType;
+					// FString WeaponBulletName = Weapon1SlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
+					// Weapon1SlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정
+					//
+					// FName WeaponBulletFName = FName(*WeaponBulletName);
+					// FItemStruct* Row = Slot1Weapon->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
+					// Weapon1SlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
+					// Weapon1SlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
+					// Weapon1SlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
+					//
+					//
+					// SizeBox_1Slot->SetContent(Weapon1SlotWidget);
+					// UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
 				}
+				break;
+			case 1:
+				Weapon2SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass2);
+				
+				if (Weapon2SlotWidget)
+				{
+					AGun_Base* Slot2Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon2SlotWidget = EquippedWeaponUIUpdate(Weapon2SlotWidget, Slot2Weapon, i);
 
+					SizeBox_2Slot->SetContent(Weapon2SlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Weapon2SlotWidget None"));
+				}
+				break;
+			case 2:
+				Weapon3SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass3);
+				
+				if (Weapon3SlotWidget)
+				{
+					AGun_Base* Slot3Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon3SlotWidget = EquippedWeaponUIUpdate(Weapon3SlotWidget, Slot3Weapon, i);
+
+					SizeBox_2Slot->SetContent(Weapon3SlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Weapon3SlotWidget None"));
+				}
 				break;
 			}
 		}
@@ -425,7 +466,51 @@ EItemZoneType UInventoryWidget::CheckItemZoneType(FDragDropEvent InDragDropEvent
 	}
 }
 
-void UInventoryWidget::TextureRenderTarget2DToImage(UTextureRenderTarget2D* RenderTarget)
+void UInventoryWidget::EquippedUIInit()
 {
+	if (Weapon1SlotWidget != nullptr)
+	{
+		Weapon1SlotWidget->RemoveFromParent();
+		Weapon1SlotWidget = nullptr;
+	}
 	
+
+	if (Weapon2SlotWidget != nullptr)
+	{
+		Weapon2SlotWidget->RemoveFromParent();
+		Weapon2SlotWidget = nullptr;
+	}
+
+	if (Weapon3SlotWidget != nullptr)
+	{
+		Weapon3SlotWidget->RemoveFromParent();
+		Weapon3SlotWidget = nullptr;
+	}
+}
+
+UWeaponSlotWidget* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex)
+{
+					
+	OutWeaponSlotWidget->FindEquiablePartsSlot(OutGunBase);
+
+	FString SlotNumber =  FString::FromInt(OutIndex + 1);
+	OutWeaponSlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
+					
+	FString WeaponName = OutGunBase->GetWeaponDataAsset().GunName;
+	OutWeaponSlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
+
+
+	// 장전된 총알, 남은 총알 
+					
+	EBulletType WeaponBulletType = OutGunBase->GetWeaponDataAsset().BulletType;
+	FString WeaponBulletName = OutWeaponSlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
+	OutWeaponSlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정
+
+	FName WeaponBulletFName = FName(*WeaponBulletName);
+	FItemStruct* Row = OutGunBase->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
+	OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
+	OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
+	OutWeaponSlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
+
+	return OutWeaponSlotWidget;
 }
