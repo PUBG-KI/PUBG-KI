@@ -58,6 +58,7 @@
 #include "Weapon/Weapon_Base.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -494,19 +495,68 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 void APlayerCharacter::Die()
 {
+	EPlayerMeshType EnumValue = EPlayerMeshType::Face;  // 예시로 머리 메시
+	//USkeletalMeshComponent* HeadMesh = CharacterEquipmentMap.FindRef(EnumValue);
+	//UPhysicsConstraintComponent* PhysicsConstraint = NewObject<UPhysicsConstraintComponent>(this);
 
+	// 제약 컴포넌트를 루트에 추가
+	// PhysicsConstraint->SetupAttachment(HeadMesh);
+	//
+	//
+	// // 상위 메시와 하위 메시 연결
+	// PhysicsConstraint->SetConstrainedComponents(GetMesh(),NAME_None , HeadMesh, NAME_None);
+	// PhysicsConstraint->SetLinearXLimit(ELinearConstraintMotion::LCM_Locked, 0.f);
+	// PhysicsConstraint->SetLinearYLimit(ELinearConstraintMotion::LCM_Locked, 0.f);
+	// PhysicsConstraint->SetLinearZLimit(ELinearConstraintMotion::LCM_Free, 0.f); // Z축 자유롭게 설정
+	// PhysicsConstraint->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// PhysicsConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// PhysicsConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// PhysicsConstraint->RegisterComponent();
+	// 제약 설정
+	// PhysicsConstraint->SetLinearXLimit(ELinearConstraintMotion::LCM_Locked, 0.f);
+	// PhysicsConstraint->SetLinearYLimit(ELinearConstraintMotion::LCM_Locked, 0.f);
+	// PhysicsConstraint->SetLinearZLimit(ELinearConstraintMotion::LCM_Free, 0.f); // Z축 자유
+	// PhysicsConstraint->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// PhysicsConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// PhysicsConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	UE_LOG(LogTemp, Warning, TEXT("Die"));
 	
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetCharacterMovement()->GravityScale = 0;
-	GetCharacterMovement()->Velocity = FVector(0);
-
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//GetCharacterMovement()->GravityScale = 0;
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
+	//GetCharacterMovement()->Velocity = FVector(0);
+	
+	
+	
+	//HeadMesh->SetAllBodiesBelowSimulatePhysics(FName("Root"),true, true);
+	GetMesh()->SetSimulatePhysics(true); // 물리 시뮬레이션 시작
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly); // 충돌 및 물리 시뮬레이션 활성화
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	GetMesh()->WakeAllRigidBodies();
+	UCharacterMovementComponent* CharacterComp = Cast<UCharacterMovementComponent>(GetMovementComponent());
+	if (CharacterComp)
+	{
+		CharacterComp->StopMovementImmediately();
+		CharacterComp->DisableMovement();
+	}
+	
+	// 머리 메시의 물리 시뮬레이션을 활성화
+	// HeadMesh->SetSimulatePhysics(true);
+	// //
+	// //
+	 //  HeadMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	 // HeadMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	 // HeadMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	// HeadMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);  // 초기 속도 설정 (필요 시)
+	// HeadMesh->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
+	// HeadMesh->WakeAllRigidBodies();
+	
 	if (BaseAbilitySystemComponent.IsValid())
 	{
 		BaseAbilitySystemComponent->CancelAllAbilities();
 		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
 	}
-
+	SetLifeSpan(10.0f);
 	//if (DeathMontage)
 	{
 	//	PlayAnimMontage(DeathMontage);
