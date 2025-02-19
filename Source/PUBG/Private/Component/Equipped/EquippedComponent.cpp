@@ -69,10 +69,11 @@ void UEquippedComponent::OnRep_EquippedItems()
 	{
 		if (EquippedItems[i] != nullptr)
 		{
+			UTextureRenderTarget2D* LoadedRT = nullptr;
 			switch (i)
 			{
 			case 0:
-				UTextureRenderTarget2D* LoadedRT = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				LoadedRT = Cast<UTextureRenderTarget2D>(StaticLoadObject(
 				UTextureRenderTarget2D::StaticClass(), 
 				nullptr, 
 				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/RT_1Slot.RT_1Slot")
@@ -82,8 +83,33 @@ void UEquippedComponent::OnRep_EquippedItems()
 				EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
 				EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
 				EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
-				
+				break;
+			case 1:
+				LoadedRT = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				UTextureRenderTarget2D::StaticClass(), 
+				nullptr, 
+				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/2Slot/RT_2Slot.RT_2Slot")
+				));
+
+				EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRT;
+				EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
+				EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
+				EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
+				break;
+			case 2:
+				LoadedRT = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				UTextureRenderTarget2D::StaticClass(), 
+				nullptr, 
+				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/3Slot/RT_3Slot.RT_3Slot")
+				));
+
+				EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRT;
+				EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
+				EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
+				EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
+				break;
 			}
+			
 			
 		}
 	}
@@ -150,6 +176,8 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 	AWeaponItem* WeaponItem = Cast<AWeaponItem>(Item);
 
 	FName ItemID = WeaponItem->GetItemDataComponent()->GetItemRowName();
+	UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : ItemId %s"), *ItemID.ToString());
+
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 
 	int32 MainWeaponSlot = static_cast<int32>(WeaponItem->GetEquippedItemCategory());
@@ -198,7 +226,10 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 		
 		MainWeapon->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 	}
-	
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : MainWeapon Casting Fail"));
+	}
 	GetOwner()->ForceNetUpdate();
 	Item->Destroy(true);
 	
@@ -288,7 +319,7 @@ int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon)
 void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun_Base* OutCurrentWeapon)
 {
 	FName ItemID = FName(OutCurrentWeapon->GetWeaponDataAsset().GunName); // RowName 가져오기
-			
+	
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row")); // 테이블 가져오기
 	int32 RowIndex = GetRowIndex(ItemDataTable, ItemID); // RowName에 해당하는 인덱스 가져오기 
 	UE_LOG(LogTemp, Warning, TEXT("Row Index : %d"), RowIndex);
@@ -303,8 +334,8 @@ void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun
 	{
 		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
 		{
-			//TempWeapon->SetTableIndex(RowIndex);
-			TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함 
+			TempWeapon->SetTableIndex(RowIndex);
+			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함 
 			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
 			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
 
@@ -424,6 +455,9 @@ int32 UEquippedComponent::GetRowIndex(UDataTable* DataTable, FName TargetRowName
 	}
 
 	TArray<FName> RowNames = DataTable->GetRowNames(); // 모든 RowName 가져오기
+	//TArray<FName> RowNames = DataTable->FindRow<>();
+	
+
 
 	for (int32 Index = 0; Index < RowNames.Num(); Index++)
 	{

@@ -46,6 +46,11 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 				EquippedComponent->ServerEquipSubWeapon(InventoryComponent->GetItem());
 			}
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WeaponItem : ItemDataTable None"));
+
+		}
 		
 	}
 
