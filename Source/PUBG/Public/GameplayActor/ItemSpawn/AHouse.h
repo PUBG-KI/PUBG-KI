@@ -16,6 +16,8 @@ public:
 	// Sets default values for this actor's properties
 	AAHouse();
 
+	virtual void BeginPlay() override;
+
 	//스폰존컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner")
 	UItemSpawnerComponent* ItemSpawnerComponent;
