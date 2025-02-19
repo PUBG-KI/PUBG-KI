@@ -54,7 +54,6 @@
 #include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 //Weapon
-#include "NavigationSystemTypes.h"
 #include "Weapon/Weapon_Base.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"

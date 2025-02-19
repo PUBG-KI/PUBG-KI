@@ -10,11 +10,21 @@ AAHouse::AAHouse()
 	PrimaryActorTick.bCanEverTick = false;
 
 	//집 메쉬
-	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	
 	//HouseMesh = CreateDefaultSubobject<UStaticMeshComponent>("HouseMesh");
 	//HouseMesh->SetupAttachment(RootComponent);
 	
 	//스폰컴포넌트
 	ItemSpawnerComponent = CreateDefaultSubobject<UItemSpawnerComponent>(TEXT("ItemSpawnerComponent"));
+}
+
+void AAHouse::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if(HasAuthority())
+	{		
+		ItemSpawnerComponent->SpawnItems();
+	}
 }

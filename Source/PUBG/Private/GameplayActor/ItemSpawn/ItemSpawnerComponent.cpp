@@ -22,7 +22,10 @@ void UItemSpawnerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnItems();
+
+	
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay"));
+	//SpawnItems();
 	// ...
 	
 }
