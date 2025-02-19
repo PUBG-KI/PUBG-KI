@@ -53,6 +53,24 @@ struct FInstallable_parts : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Loops; // 샷건
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FRecoilMontage : public FTableRowBase
+{
+
+	GENERATED_BODY()
+
+	FRecoilMontage();  // 초기화
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Stand_RecoilMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Prone_RecoilMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Crouch_RecoilMontage;
+};
 /**
  * 
  */
@@ -115,8 +133,9 @@ struct FWeaponData : public FTableRowBase
 	float Max_YRecoil;
 
 	// ===========================================
-	
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRecoilMontage RecoilMontage;
 	
 };
 

@@ -14,7 +14,8 @@
 UENUM(BlueprintType)
 enum class EFiremodes : uint8
 {
-	Auto = 0,
+	None,
+	Auto,
 	Single,
 	Semi_Auto,
 };
