@@ -44,4 +44,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
 	TArray<FBaseInputActionConfig> AbilityInputActions;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (TitleProperty = "InputTag"))
+	TArray<FBaseInputActionConfig> Trigger_AbilityInputActions;
 };

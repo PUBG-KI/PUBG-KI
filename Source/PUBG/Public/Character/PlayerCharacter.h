@@ -42,12 +42,12 @@ enum class EPlayerMeshType : uint8
 	Face UMETA(DisplayName = "Face"),
 	Hair UMETA(DisplayName = "Hair"),
 };
-
 UENUM()
 enum class PlayerCameraMode : uint8
 {
 	FPPCamera UMETA(DisplayName = "TPP"),
-	TPPCamera UMETA(DisplayName = "FPP")
+	TPPCamera UMETA(DisplayName = "FPP"),
+	ScopeCamera UMETA(DisplayName = "ZoomScope"),
 };
 
 /**
@@ -57,15 +57,13 @@ UCLASS()
 class PUBG_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
-
+	
 public:
 	APlayerCharacter(const class FObjectInitializer& ObjectInitializer);
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 	
-
+private:
+	virtual void BeginPlay() override;
+	
 public:
 #pragma region Mesh
 	// 캐릭터가 장착할 파츠들을 맵으로 저장, enum값으로 원하는 파츠 불러올 수 있게 설정
@@ -73,36 +71,19 @@ public:
 	TMap<EPlayerMeshType, USkeletalMeshComponent*> CharacterEquipmentMap;
 
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
-	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);
+	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);	
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	void SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh);
 #pragma endregion
 
 #pragma region Animation
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Animation")
-	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
+	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
-	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
-	bool ActorHasTag(const FNativeGameplayTag& Tag);
-	// UPROPERTY()
-	// FRotator AimRotation;
-	// UPROPERTY()
-	// FRotator ActorRotation;
-	UPROPERTY(ReplicatedUsing = OnRep_RotationValues)
-	FRotator NormalDeltaRotator;
-	 UPROPERTY(Replicated)
-	 float Yaw;
-	// UPROPERTY(Replicated)
-	// float Pitch;
-	UFUNCTION(Server, Reliable, WithValidation)
-	void UpdateRotationValues();
-	UFUNCTION()
-	void OnRep_RotationValues();
-	
-	
+	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
 
 #pragma endregion
-
+	
 private:
 #pragma region Components
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
@@ -112,51 +93,55 @@ private:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCamera;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* CurrentCamera;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* PunchCapsuleLeft;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* PunchCapsuleRight;
-
 #pragma endregion
-
 public:
+	
 #pragma region Inputs
-
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	UDataAsset_InputConfig* InputConfigDataAsset;
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 
 	void Input_Move(const FInputActionValue& InputActionValue);
 	void Input_MoveReleased(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
-	void Input_Jump(const FInputActionValue& InputActionValue);
+	void Input_Jump(const FInputActionValue& InputActionValue);	
 	void Input_Crouch(const FInputActionValue& InputActionValue);
 	void Input_Prone(const FInputActionValue& InputActionValue);
 	void OnQkey();
 	void OnRightClick();
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
+	void Input_TabAbilityTrigger(FGameplayTag InputTag);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SetActorRotation(FRotator Rotator);
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiCast_SetActorRotation(FRotator Rotator);
-
+	
 #pragma endregion
-
+	    
 	// Client only
 	virtual void OnRep_PlayerState() override;
-
+	
 public:
 	virtual void PossessedBy(AController* NewController) override;
 	bool bIsProne;
 	UPROPERTY(BlueprintReadOnly, Category = "Input")
 	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
-	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying) { bAnimationIsPlaying = bNewAnimaitonIsPlaying; }
+	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying){bAnimationIsPlaying = bNewAnimaitonIsPlaying;}
+
+	UPROPERTY(BlueprintReadWrite, Category = "Input")
+	bool IsZoom;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
@@ -166,10 +151,13 @@ public:
 	void Die();
 
 	// Getter
-
+	
 	FORCEINLINE class UPUBGSpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	FORCEINLINE UCameraComponent* GetFirstPersonCamera() { return FirstPersonCamera; }
+	FORCEINLINE UCameraComponent* GetFirstPersonCamera(){return FirstPersonCamera;}
+	FORCEINLINE UCameraComponent* GetcurrentCamera(){return CurrentCamera;}
+
+	void SetcurrentCamera(UCameraComponent* NewCamera);
 
 	// 이준수
 public:
@@ -177,20 +165,17 @@ public:
 	// void InputModeUI();
 	// UFUNCTION(BlueprintCallable)
 	// void InputModeGame();
-
+	
 	//Getter
 	UFUNCTION(Blueprintable)
 	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-
 	UNearComponent* GetNearComponent() const { return NearComponent; }
 	UFUNCTION(Blueprintable)
 	AActor* GetLookAtActor() const { return LookAtActor; }
-
 	UFUNCTION(BlueprintCallable)
 	UBoxComponent* GetDetectionItem() const { return DetectionItem; }
-
 	UFUNCTION(BlueprintCallable)
-	UEquippedComponent* GetEquippedComponent() const { return EquippedComponent; }
+	UEquippedComponent* GetEquippedComponent() const { return EquippedComponent;}
 
 	//자기장
 public:
@@ -199,33 +184,27 @@ public:
 
 	//
 	UFUNCTION()
-	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	                             const FHitResult& SweepResult);
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
-	void OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	                                 const FHitResult& SweepResult);
+	void OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
-	void OnDetectionItemEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void OnDetectionItemEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
 	UPROPERTY(BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	AActor* LookAtActor;
-
+	
 	UPROPERTY()
 	int32 BeginOverlapCount = 0;
-
+	
 	FTimerHandle BeginOverlapTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* DetectionItem;
-
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UInventoryComponent* InventoryComponent;
@@ -233,11 +212,11 @@ protected:
 	UNearComponent* NearComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UEquippedComponent* EquippedComponent;
-
+	
 public:
 	void OnMouseMoved(FVector2D MouseMovement);
 	void CheckRotationForTurn();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
 	void LeftLeanCameraMovement();
 	UFUNCTION(BlueprintCallable, Category = "CharacterLean")
@@ -249,10 +228,10 @@ public:
 
 private:
 	PlayerCameraMode CameraMode;
-
+	
 public:
 	FORCEINLINE PlayerCameraMode GetCameraMode() const { return CameraMode; }
-	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) { CameraMode = NewCameraMode; }
+	FORCEINLINE void SetCameraMode(PlayerCameraMode NewCameraMode) {CameraMode = NewCameraMode;}
 
 	//차랑관련
 private:
@@ -261,23 +240,24 @@ private:
 	UPROPERTY(Replicated)
 	bool VehicleFacetoBackward = false; //90~180도면 스테이트머신의 애니메이션 변경을 위해서
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AnimLayer", meta = (AllowPrivateAccess = "true"))
-	bool FirstAttribute = false; //어빌리티 한번이상 주입하지 않기 위해 (possessdby에서)
+	bool FirstAttribute = false;//어빌리티 한번이상 주입하지 않기 위해 (possessdby에서)
 	UPROPERTY(Replicated)
 	bool VehicleVelocityBackWard = false;
-
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	FORCEINLINE bool GetOnTheVehicle() const { return OntheVehicle; }
-	FORCEINLINE void SetOnTheVehicle(bool NewOnTheVehicle) { OntheVehicle = NewOnTheVehicle; }
+	FORCEINLINE void SetOnTheVehicle(bool NewOnTheVehicle){OntheVehicle = NewOnTheVehicle;}
 	FORCEINLINE bool GetVehicleFacetoBackward() const { return VehicleFacetoBackward; }
-	FORCEINLINE void SetVehicleFacetoBackward(bool NewOnTheVehicle) { VehicleFacetoBackward = NewOnTheVehicle; }
+	FORCEINLINE void SetVehicleFacetoBackward(bool NewOnTheVehicle) {VehicleFacetoBackward = NewOnTheVehicle;}
 	UFUNCTION()
 	void WhenGetOntheVehicleUnequippedWeapon();
 	UFUNCTION(Client, Reliable)
 	void Client_InputMappingContextRemove(UInputMappingContext* MappingContext);
-	FORCEINLINE bool GetVehicleVelocityBackWard() const { return VehicleVelocityBackWard; }
-	FORCEINLINE void SetVehicleVelocityBackWard(bool NewVelocityBackWard)
-	{
-		VehicleVelocityBackWard = NewVelocityBackWard;
-	}
+	FORCEINLINE bool GetVehicleVelocityBackWard() const {return VehicleVelocityBackWard;}
+	FORCEINLINE void SetVehicleVelocityBackWard(bool NewVelocityBackWard){VehicleVelocityBackWard = NewVelocityBackWard;}
+
+
 };
+
+
+

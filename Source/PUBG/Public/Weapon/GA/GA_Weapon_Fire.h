@@ -44,13 +44,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Recoil")
 	float RecoilDuration;  // 반동 지속 시간
 
-	//UFUNCTION()
-	//void OnTimelineUpdate(float Value);
-
-	// 타임라인 종료 함수
-	//UFUNCTION()
-	//void OnTimelineFinished();
-
 public:
 	UFUNCTION(BlueprintCallable, Category = "GA_weapon")
 	void SetDefault();
