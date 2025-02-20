@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Engine/DataTable.h"
 #include "Item/EquipableItem.h"
 #include "ItemStruct.generated.h"
@@ -12,6 +13,8 @@ USTRUCT(BlueprintType)
 struct FItemStruct : public FTableRowBase
 {
 	GENERATED_BODY()
+
+	FItemStruct();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName Name;
@@ -38,3 +41,16 @@ struct FItemStruct : public FTableRowBase
 	
 	
 };
+
+inline FItemStruct::FItemStruct()
+{
+	StaticMesh = nullptr;
+	BP_Item = nullptr;
+	Image = nullptr;
+	Weight = -1.0f;
+	Category = EItemCategory::FullBody;
+	IsStackAble = false;
+	StackSize = -1;
+	Quantity = -1;
+	Tag = FGameplayTag::EmptyTag;
+}

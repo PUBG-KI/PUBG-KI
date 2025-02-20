@@ -218,7 +218,7 @@ void UInventoryWidget::UpdateEquippedWidget()
 					AGun_Base* Slot3Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
 					Weapon3SlotWidget = EquippedWeaponUIUpdate(Weapon3SlotWidget, Slot3Weapon, i);
 
-					SizeBox_2Slot->SetContent(Weapon3SlotWidget);
+					SizeBox_3Slot->SetContent(Weapon3SlotWidget);
 					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
 				}
 				else
@@ -507,10 +507,14 @@ UWeaponSlotWidget* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget* O
 	OutWeaponSlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정
 
 	FName WeaponBulletFName = FName(*WeaponBulletName);
+	UE_LOG(LogTemp, Warning, TEXT("EquippedWeaponUIUpdate : %s"), *WeaponBulletName);
 	FItemStruct* Row = OutGunBase->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
-	OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
-	OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
-	OutWeaponSlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
+	if (Row != nullptr)
+	{
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
+	}
 
 	return OutWeaponSlotWidget;
 }

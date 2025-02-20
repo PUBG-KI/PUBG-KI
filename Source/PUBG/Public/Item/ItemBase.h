@@ -35,6 +35,8 @@ private:
 	FItemStruct ItemStruct;
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct Item;
+	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	int32 TableIndex;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
@@ -98,14 +100,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSlotFromCategory();
+
+	// 콜리전박수 2개 크기 지정
+	UFUNCTION(BlueprintCallable)
+	void SetCollisionScale();
 	
 
 private:
 	UPROPERTY()
 	float ItemOfZ;
 
-	UPROPERTY(Replicated,BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int32 TableIndex;
 public:
 	
 	FORCEINLINE void SetItemOfZ(float InItemOfZ) { ItemOfZ = InItemOfZ; }

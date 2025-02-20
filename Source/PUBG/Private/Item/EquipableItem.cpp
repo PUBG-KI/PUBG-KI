@@ -29,8 +29,6 @@ AEquipableItem::AEquipableItem()
 
 	//SceneCapture->ShowOnlyComponent(this);
 	//SceneCapture->ShowOnlyActorComponents(this, true);
-	
-	
 }
 
 //Called when the game starts or when spawned

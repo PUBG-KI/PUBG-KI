@@ -335,6 +335,40 @@ void UInventoryComponent::ReplicateContent_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!!"));
 }
 
+void UInventoryComponent::ServerRemove_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed)
+{
+}
+
+void UInventoryComponent::RemoveFromInventory(int32 InIndex, int32 InQuantity, bool IsConsumed)
+{
+	FName ItemID = Content[InIndex].ItemName;
+	int32 Quantity = Content[InIndex].Quantity;
+
+	if (IsConsumed)
+	{
+		Content[InIndex].Quantity = Quantity - 1;
+
+		if (Content[InIndex].Quantity == 0)
+		{
+			Content.RemoveAt(InIndex);
+		}
+	}
+	else
+	{
+		ServerDropItem(InIndex, InQuantity);
+
+		if (Content[InIndex].Quantity == 0)
+		{
+			Content.RemoveAt(InIndex);
+		}
+	}
+}
+
+void UInventoryComponent::ServerDropItem_Implementation(int32 InIndex, int32 OutQuantity)
+{
+	
+}
+
 void UInventoryComponent::PrintContents()
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
@@ -373,10 +407,6 @@ void UInventoryComponent::ServerPrintContents_Implementation()
 		
 		UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
 	}
-}
-
-void UInventoryComponent::TransferSlots()
-{
 }
 
 EItemCategory UInventoryComponent::GetEquippedItemCategory(AItemBase* InItem)

@@ -286,6 +286,20 @@ void AItemBase::SetSlotFromCategory()
 	UE_LOG(LogTemp, Warning, TEXT("EquippedItemSlot : %d"), EquippedItemSlot);
 }
 
+void AItemBase::SetCollisionScale()
+{
+	FBoxSphereBounds ComponentBoundsStaticMeshBounds = StaticMesh->Bounds;
+
+	FVector BoxLocation = FVector(ComponentBoundsStaticMeshBounds.Origin.X, ComponentBoundsStaticMeshBounds.Origin.Y, ComponentBoundsStaticMeshBounds.Origin.Z + ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
+	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
+	FVector OutBoxScale = FVector(InnerBoxScale.X * 3.5f, InnerBoxScale.Y * 2.0f, InnerBoxScale.Z * 5.0f);
+
+	InteractionComponent->SetWorldLocation(BoxLocation);
+	BoxComponent->SetWorldLocation(BoxLocation);
+	InteractionComponent->SetBoxExtent(InnerBoxScale);
+	BoxComponent->SetBoxExtent(OutBoxScale);
+}
+
 
 
 

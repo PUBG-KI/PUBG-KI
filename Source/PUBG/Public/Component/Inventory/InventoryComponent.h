@@ -103,16 +103,21 @@ public:
 	void ServerUpdateInventory();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ReplicateContent();
+	// 아이템 버리기, 소모하기
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRemove(int32 Index, bool RemoveWholeStack, bool IsConsumed);
+	UFUNCTION(BlueprintCallable)
+	void RemoveFromInventory(int32 InIndex, int32 InQuantity, bool IsConsumed);
+	// 아이템 버리기
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerDropItem(int32 InIndex, int32 OutQuantity);
 
 	
 	UFUNCTION(BlueprintCallable)
 	void PrintContents();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerPrintContents();
-
-	UFUNCTION(BlueprintCallable)
-	void TransferSlots();
-
+	
 
 	
 	// 재윤, 디버그용 CurrentWeapon변수
