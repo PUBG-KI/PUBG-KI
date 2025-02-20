@@ -4,18 +4,18 @@
 #include "Weapon/GA/GA_Weapon_Fire.h"
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
-void UGA_Weapon_Fire::OnTimelineUpdate(float Value)
-{
-}
-
-void UGA_Weapon_Fire::OnTimelineFinished()
-{
-}
+// void UGA_Weapon_Fire::OnTimelineUpdate(float Value)
+// {
+// }
+//
+// void UGA_Weapon_Fire::OnTimelineFinished()
+// {
+// }
 
 void UGA_Weapon_Fire::SetDefault()
 {

@@ -24,7 +24,7 @@ void UGA_RightShouldering::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		if (UBaseFunctionLibrary::NativeActorHasTag(GetPlayerCharacterFromActorInfo(),
 		                                            FGameplayTag::RequestGameplayTag(FName("InputTag.LeftLeaning"))))
 		{
-			FVector OffsetDelta = FVector(110.f, -20.f, 0.f);
+			FVector OffsetDelta = FVector(110.f, -40.f, 0.f);
 			float Duration = 0.2f;
 
 			PlayerCameraBoom->TimelineAddOffset(OffsetDelta, Duration);
@@ -33,7 +33,7 @@ void UGA_RightShouldering::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		}
 
 		//PlayerCameraBoom->SetWanstReversePlaying(false);
-		FVector OffsetDelta = FVector(110.f, 20.f, 0.f);
+		FVector OffsetDelta = FVector(110.f, 40.f, 0.f);
 		float Duration = 0.2f;
 		CameraLeftMoved = false;
 		PlayerCameraBoom->TimelineAddOffset(OffsetDelta, Duration);
@@ -78,7 +78,7 @@ void UGA_RightShouldering::EndAbility(const FGameplayAbilitySpecHandle Handle,
 	if (GetPlayerCharacterFromActorInfo()->GetCameraMode() == PlayerCameraMode::FPPCamera
 		&& CameraLeftMoved)
 	{
-		FVector OffsetDelta = FVector(-110.f, 20.f, 0.f);
+		FVector OffsetDelta = FVector(-110.f, 40.f, 0.f);
 		float Duration = 0.2f;
 
 		PlayerCameraBoom->TimelineAddOffset(OffsetDelta, Duration);
@@ -88,7 +88,7 @@ void UGA_RightShouldering::EndAbility(const FGameplayAbilitySpecHandle Handle,
 			!CameraLeftMoved)
 	{
 		//PlayerCameraBoom->SetWanstReversePlaying(true);
-		FVector OffsetDelta = FVector(-110.f, -20.f, 0.f);
+		FVector OffsetDelta = FVector(-110.f, -40.f, 0.f);
 		float Duration = 0.2f;
 
 		PlayerCameraBoom->TimelineAddOffset(OffsetDelta, Duration);

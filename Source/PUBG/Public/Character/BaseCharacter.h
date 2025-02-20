@@ -15,12 +15,13 @@ UCLASS()
 class PUBG_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
+	
+
 
 public:
 	// Sets default values for this character's properties
 	ABaseCharacter(const class FObjectInitializer& ObjectInitializer);
-
-
+	virtual void Tick(float DeltaTime) override;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	virtual bool IsAlive() const;
 	/**

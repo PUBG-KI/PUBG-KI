@@ -382,7 +382,7 @@ void AVehicleBase::Server_HitPlayerWithVehicle_Implementation(UPrimitiveComponen
 		UE_LOG(LogTemp, Warning, TEXT("Payload.Target:%s"), *Payload.Target->GetName());
 		UE_LOG(LogTemp, Warning, TEXT("Payload.EventMagnitude:%f"), Payload.EventMagnitude);
 
-		if (OtherActor && OtherActor != this)
+		if ((OtherActor!=PlayerCharacter)&&OtherActor && OtherActor != this)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("OtherActor:%s"), *OtherActor->GetName());
 			ABasePlayerController* VehicleController = Cast<ABasePlayerController>(GetController());
@@ -390,11 +390,6 @@ void AVehicleBase::Server_HitPlayerWithVehicle_Implementation(UPrimitiveComponen
 			{
 				VehicleController->HitEventServer(OtherActor, BaseGameplayTag::Player_Event_Action_Hit,
 				                                  Payload);
-				if (OtherActor && OtherActor->IsA(AVehicleBase::StaticClass())) 
-				{
-					FVector ForceDirection = Hit.ImpactNormal * -5000.0f; // 충돌 방향으로 힘 추가
-					GetMesh()->AddImpulse(ForceDirection, NAME_None, true); // 캐릭터에게 힘을 가함
-				}
 			}
 		}
 	}

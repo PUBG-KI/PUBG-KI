@@ -70,6 +70,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
 
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+
 	CameraBoom = CreateDefaultSubobject<UPUBGSpringArmComponent>(TEXT("CameraBoom"));
 
 	CameraBoom->SetupAttachment(GetRootComponent());
@@ -139,7 +142,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	// 이준수
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
@@ -184,6 +186,12 @@ void APlayerCharacter::BeginPlay()
 	//
 }
 
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	UpdateRotationValues();
+}
+
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
 {
 	return *CharacterEquipmentMap.Find(PlayerMeshType);
@@ -194,6 +202,42 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 }
+
+
+void APlayerCharacter::UpdateRotationValues_Implementation()
+{
+	if (HasAuthority())
+	{
+		FRotator AimRotation = GetBaseAimRotation();
+		FRotator ActorRotation = GetActorRotation();
+		NormalDeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
+		Yaw = NormalDeltaRotator.Yaw;
+		UE_LOG(LogTemp, Log, TEXT("Server - Yaw: %f"), Yaw);
+		//Pitch = NormalDeltaRotator.Pitch;
+	
+	}
+}
+
+bool APlayerCharacter::UpdateRotationValues_Validate()
+{
+	return true;
+}
+
+void APlayerCharacter::OnRep_RotationValues()
+{
+	if (NormalDeltaRotator.Yaw >= 180.0f)
+	{
+		NormalDeltaRotator.Yaw -= 360.0f;
+	}
+	else if (NormalDeltaRotator.Yaw <= -180.0f)
+	{
+		NormalDeltaRotator.Yaw += 360.0f;
+	}
+	Yaw = NormalDeltaRotator.Yaw;
+	UE_LOG(LogTemp, Log, TEXT("OnRep Rotation - Yaw: %f"), Yaw);
+	//Pitch = DeltaRotation.Pitch;
+}
+
 
 void APlayerCharacter::Server_SetAnimLayer_Implementation(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance)
 {
@@ -309,7 +353,14 @@ void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionVa
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
-
+	
+	//Server_SetAimOffset();
+	// AimRotation = GetBaseAimRotation();
+	// ActorRotation = GetActorRotation();
+	// NormalDeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
+	// Yaw = NormalDeltaRotator.Yaw;
+	// Pitch = NormalDeltaRotator.Pitch;
+	//UE_LOG(LogTemp,Warning,TEXT("NormalDeltaRotator:%s"), *NormalDeltaRotator.ToString());
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X);
@@ -460,7 +511,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 	}
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
-	if (PS&&!FirstAttribute)
+	if (PS && !FirstAttribute)
 	{
 		// 서버에 ASC를 설정합니다. 클라이언트는 OnRep_PlayerState()에서 이 작업을 수행합니다.
 		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(PS->GetAbilitySystemComponent());
@@ -495,7 +546,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 void APlayerCharacter::Die()
 {
-	EPlayerMeshType EnumValue = EPlayerMeshType::Face;  // 예시로 머리 메시
+	EPlayerMeshType EnumValue = EPlayerMeshType::Face; // 예시로 머리 메시
 	//USkeletalMeshComponent* HeadMesh = CharacterEquipmentMap.FindRef(EnumValue);
 	//UPhysicsConstraintComponent* PhysicsConstraint = NewObject<UPhysicsConstraintComponent>(this);
 
@@ -520,14 +571,13 @@ void APlayerCharacter::Die()
 	// PhysicsConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	// PhysicsConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	UE_LOG(LogTemp, Warning, TEXT("Die"));
-	
+
 	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//GetCharacterMovement()->GravityScale = 0;
 	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::QueryAndPhysics);
 	//GetCharacterMovement()->Velocity = FVector(0);
-	
-	
-	
+
+
 	//HeadMesh->SetAllBodiesBelowSimulatePhysics(FName("Root"),true, true);
 	GetMesh()->SetSimulatePhysics(true); // 물리 시뮬레이션 시작
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly); // 충돌 및 물리 시뮬레이션 활성화
@@ -539,18 +589,18 @@ void APlayerCharacter::Die()
 		CharacterComp->StopMovementImmediately();
 		CharacterComp->DisableMovement();
 	}
-	
+
 	// 머리 메시의 물리 시뮬레이션을 활성화
 	// HeadMesh->SetSimulatePhysics(true);
 	// //
 	// //
-	 //  HeadMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	 // HeadMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	 // HeadMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+	//  HeadMesh->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	// HeadMesh->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	// HeadMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
 	// HeadMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);  // 초기 속도 설정 (필요 시)
 	// HeadMesh->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 	// HeadMesh->WakeAllRigidBodies();
-	
+
 	if (BaseAbilitySystemComponent.IsValid())
 	{
 		BaseAbilitySystemComponent->CancelAllAbilities();
@@ -559,7 +609,7 @@ void APlayerCharacter::Die()
 	SetLifeSpan(10.0f);
 	//if (DeathMontage)
 	{
-	//	PlayAnimMontage(DeathMontage);
+		//	PlayAnimMontage(DeathMontage);
 	}
 	//else
 	{
@@ -574,25 +624,25 @@ void APlayerCharacter::OnMouseMoved(FVector2D MouseMovement)
 
 void APlayerCharacter::CheckRotationForTurn()
 {
-	FRotator CurrentRotation = GetActorRotation();
-	FRotator AimRotation = GetBaseAimRotation(); // 카메라나 타겟 방향
+	// 카메라나 타겟 방향
 
-	FRotator DeltaRotation = CurrentRotation - AimRotation;
 
-	if (DeltaRotation.Yaw >= 180.0f)
+	FRotator CheckDeltaRotation = GetActorRotation() - GetBaseAimRotation();
+
+	if (CheckDeltaRotation.Yaw >= 180.0f)
 	{
-		DeltaRotation.Yaw -= 360.0f;
+		CheckDeltaRotation.Yaw -= 360.0f;
 	}
-	else if (DeltaRotation.Yaw <= -180.0f)
+	else if (CheckDeltaRotation.Yaw <= -180.0f)
 	{
-		DeltaRotation.Yaw += 360.0f;
+		CheckDeltaRotation.Yaw += 360.0f;
 	}
 	if (!OntheVehicle)
 	{
 		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(
 			GetAbilitySystemComponent());
 
-		if (AbilitySystemComponent && DeltaRotation.Yaw >= 90.0f || DeltaRotation.Yaw <= -90.f)
+		if (AbilitySystemComponent && CheckDeltaRotation.Yaw >= 90.0f || CheckDeltaRotation.Yaw <= -90.f)
 		{
 			AbilitySystemComponent->TryActivateAbilityByTagToRandom(BaseGameplayTag::Player_Ability_Turn);
 		}
@@ -674,6 +724,11 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	DOREPLIFETIME(APlayerCharacter, OntheVehicle);
 	DOREPLIFETIME(APlayerCharacter, VehicleFacetoBackward);
 	DOREPLIFETIME(APlayerCharacter, VehicleVelocityBackWard);
+	//DOREPLIFETIME(APlayerCharacter, AimRotation);
+	//DOREPLIFETIME(APlayerCharacter, ActorRotation);
+	DOREPLIFETIME(APlayerCharacter, NormalDeltaRotator);
+	DOREPLIFETIME(APlayerCharacter, Yaw);
+	//DOREPLIFETIME(APlayerCharacter, Pitch);
 }
 
 void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
@@ -685,14 +740,15 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 		{
 			if (CachedCurrentWeapon == GetEquippedComponent()->GetPrimarySlotWeapon())
 			{
-				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-													   FName("slot_primarySocket"));
+				CachedCurrentWeapon->AttachToComponent(
+					GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					FName("slot_primarySocket"));
 				UE_LOG(LogTemp, Warning, TEXT("PrimarySocket"));
 			}
 			else if (CachedCurrentWeapon == GetEquippedComponent()->GetSecondarySlot())
 			{
 				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform,
-													   FName("slot_secondarySocket"));
+				                                       FName("slot_secondarySocket"));
 				UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
 			}
 			// else if (CurrentWeapon == GetInventoryComponent()->GetSideArmSlot())   지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
@@ -707,14 +763,16 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 			// {
 			// 	
 			// }
-		
-			FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData(); //웨폰데이터 구조체 가져오기(맵핑컨텍스트, 테그, 어빌리티)
+
+			FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData();
+			//웨폰데이터 구조체 가져오기(맵핑컨텍스트, 테그, 어빌리티)
 			UInputMappingContext* CachedInputMappingContext = WeaponData.WeaponInputMappingContext;
 			GetEquippedComponent()->SetCurrentWeapon(nullptr);
 			Server_SetAnimLayer(nullptr); //애님레이어 교체 nullptr시 unarmed기본설정되어있음
 			Client_InputMappingContextRemove(CachedInputMappingContext);
 			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag); //테그 삭제
-			TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->GetGrantedAbilitySpecHandles();//어빌리티 삭제
+			TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->
+				GetGrantedAbilitySpecHandles(); //어빌리티 삭제
 			BaseAbilitySystemComponent->RemoveGrantedPlayerWeaponAbilities(CachedAbilitySpecHandle); //어빌리티 삭제
 		}
 	}
@@ -742,7 +800,7 @@ void APlayerCharacter::Client_InputMappingContextRemove_Implementation(UInputMap
 		UE_LOG(LogTemp, Warning, TEXT("Subsystem not exist"));
 	}
 	check(Subsystem);
-	Subsystem->RemoveMappingContext(MappingContext);//인풋매핑컨텍스트 삭제
+	Subsystem->RemoveMappingContext(MappingContext); //인풋매핑컨텍스트 삭제
 }
 
 // void APlayerCharacter::ServerSetCollisionEnabled_Implementation(bool NewCollisionSet)
@@ -816,7 +874,8 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 		{
 			FHitResult Hit;
 			FVector Start = GetFollowCamera()->K2_GetComponentLocation();
-			FVector End = Start + UKismetMathLibrary::GetForwardVector(FollowCamera->K2_GetComponentRotation()) * 380.0f;
+			FVector End = Start + UKismetMathLibrary::GetForwardVector(FollowCamera->K2_GetComponentRotation()) *
+				380.0f;
 			TArray<AActor*> ActorsToIgnore;
 			ActorsToIgnore.Add(this);
 			//ActorsToIgnore.Add(TestCharacter);
@@ -825,8 +884,8 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 			if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 			{
 				UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
-													  EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
-													  FLinearColor(0, 1, 0, 1));
+				                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
+				                                      FLinearColor(0, 1, 0, 1));
 				if (Hit.GetActor() != nullptr)
 				{
 					// FVector HitLocation = Hit.Location;
@@ -863,18 +922,18 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if(BeginOverlapCount > 0)
+	if (BeginOverlapCount > 0)
 	{
 		BeginOverlapCount -= 1;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
-		
+
 		if (BeginOverlapCount == 0)
-		{			
+		{
 			LookAtActor = nullptr;
 			InventoryComponent->SetItem(nullptr);
 			GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
 		}
-	}	
+	}
 }
 
 void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

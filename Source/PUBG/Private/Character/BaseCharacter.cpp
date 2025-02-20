@@ -8,16 +8,23 @@
 // 무브먼트
 #include "Component/Movement/PlayerMovementComponent.h"
 
+
+
 // Sets default values
 ABaseCharacter::ABaseCharacter(const class FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer.SetDefaultSubobjectClass<UPlayerMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	// 틱관련 기능 비활성화
-	 PrimaryActorTick.bCanEverTick = false;
-	 PrimaryActorTick.bStartWithTickEnabled = false;
+	 PrimaryActorTick.bCanEverTick = true;
+	 PrimaryActorTick.bStartWithTickEnabled = true;
 	
 	BaseAbilitySystemComponent = CreateDefaultSubobject<UBaseAbilitySystemComponent>(TEXT("BaseAbilitySystemComponent"));
 	BaseAttributeSet = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("BaseAttributeSet"));
+}
+
+void ABaseCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 bool ABaseCharacter::IsAlive() const
