@@ -52,11 +52,13 @@ public:
 	FPlayerWeaponData GetPlayerWeaponData() const { return PlayerWeaponData; }
 	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
+	UFUNCTION(BlueprintCallable)
+	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+	
 	// 이준수
 	//EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 	
-	UFUNCTION(BlueprintCallable)
-	TArray<FGameplayAbilitySpecHandle> GetGrantedAbilitySpecHandles() const;
+	virtual USkeletalMeshComponent* GetWeaponSkeletalMeshComponent() override { return WeaponSkeletalMeshComponent;}
 
 protected:
 	//Setter

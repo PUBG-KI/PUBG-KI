@@ -98,6 +98,8 @@ public:
 	// 장착중인 배열 가져오기 
 	UFUNCTION(BlueprintCallable)
 	void PrintEquippedItems();
+	// 무기 장착 시 씬캡쳐 컴포넌트 연결
+	void EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT);
 	
 	// 재윤 ======================================
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")

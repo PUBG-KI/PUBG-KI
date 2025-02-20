@@ -9,6 +9,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -28,15 +29,35 @@ AWeapon_Base::AWeapon_Base()
 
 	SceneCapture->SetupAttachment(RootComponent);
 	//SceneCapture->SetRelativeLocationAndRotation(FVector(20.0f, -60.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
-	SceneCapture->SetWorldLocationAndRotation(FVector(20.0f, -60.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
+	//SceneCapture->SetWorldLocationAndRotation(FVector(20.0f, -60.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
+	
+	//SceneCapture->SetWorldLocationAndRotation(FVector(ComponentBounds.Origin.X, ComponentBounds.BoxExtent.Y * -5.0f , ComponentBounds.Origin.Z) , FRotator(0.0f, 90.0f, 0.0f));
+
+	
+	SceneCapture->bCaptureEveryFrame = false;
+	SceneCapture->bCaptureOnMovement = false;
 	
 	
+
 }
 
 // Called when the game starts or when spawned
 void AWeapon_Base::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 이준수
+	FBoxSphereBounds ComponentBounds = WeaponSkeletalMeshComponent->Bounds;
+	FVector RelativeComponentLocation = WeaponSkeletalMeshComponent->GetRelativeLocation();
+	FTransform ComponentTransform = WeaponSkeletalMeshComponent->GetRelativeTransform();
+
+	FVector NewSceneCaptureLocation = FVector(RelativeComponentLocation.X + ComponentBounds.BoxExtent.X, RelativeComponentLocation.Y - ComponentBounds.BoxExtent.Y * 4.0f, 0.0f);
+	
+	// SceneCapture 위치 및 방향 설정
+	SceneCapture->SetRelativeLocationAndRotation(NewSceneCaptureLocation, FRotator(0.0f, 90.0f, 0.0f));
+	
+	
+	//SceneCapture->DestroyComponent(true);
 }
 
 void AWeapon_Base::AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpecHandle>& SpecHandles)

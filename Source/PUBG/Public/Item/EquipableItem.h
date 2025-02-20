@@ -38,6 +38,8 @@ protected:
 
 public:
 	//Getter
+	UFUNCTION(BlueprintCallable)
+	virtual USkeletalMeshComponent* GetWeaponSkeletalMeshComponent() { return nullptr; };
 	virtual EEquippedItemCategory GetEquipSlot() const { return EquipSlot; }
 	UFUNCTION(BlueprintCallable)
 	USceneCaptureComponent2D* GetSceneCaptureComponent() { return SceneCapture;}
@@ -55,5 +57,5 @@ public:
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void ClientCreateMaterial();
-
+	
 };
