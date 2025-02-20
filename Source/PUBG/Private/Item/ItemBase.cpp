@@ -171,6 +171,22 @@ void AItemBase::ServerSetItemStruct_Implementation(FItemStruct OutItemStruct)
 	ItemStruct = OutItemStruct;
 }
 
+void AItemBase::SetCollisionBox(FVector Origin ,FVector CollisionBoxExtent)
+{
+	FVector NewInteractionComponentBoxExtent = CollisionBoxExtent * FVector(1.5f,1.5f,4.0f);
+
+	//InteractionComponent새로운 위치, 박스 크기 설정
+	FVector NewInteractionComponentLocation = FVector(Origin.X,Origin.Y,Origin.Z + NewInteractionComponentBoxExtent.Z);
+	InteractionComponent->SetWorldLocation(NewInteractionComponentLocation);
+	InteractionComponent->SetBoxExtent(NewInteractionComponentBoxExtent);
+
+	BoxComponent->SetWorldLocation(NewInteractionComponentLocation);
+	FVector NewBoxComponentBoxExtent = NewInteractionComponentBoxExtent * FVector(3.5f,2.0f,5.0f);
+	BoxComponent->SetBoxExtent(NewBoxComponentBoxExtent);
+
+	UE_LOG(LogTemp, Warning, TEXT("New Collision Box Extent"));
+}
+
 FText AItemBase::LookAt()
 {
 	checkf(ItemDataComponent, TEXT("ItemDataComponent is Null"));
@@ -257,6 +273,11 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
+	
+	FVector BoxOrigin = StaticMesh->Bounds.Origin;
+	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
+
+	SetCollisionBox(BoxOrigin,BoxExtent);
 }
 
 void AItemBase::SetSlotFromCategory()

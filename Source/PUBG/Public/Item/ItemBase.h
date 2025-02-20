@@ -86,6 +86,10 @@ public:
 	void ServerSetItemStruct(FItemStruct OutItemStruct);
 	UFUNCTION(BlueprintCallable)
 	void SetEquippedItemCategory(EEquippedItemCategory OutEquippedItemCategory) { EquippedItemCategory = OutEquippedItemCategory; }
+
+	//충돌 박스 크기 설정
+	UFUNCTION(BlueprintCallable)
+	void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
 	
 	virtual FText LookAt() override;
 
