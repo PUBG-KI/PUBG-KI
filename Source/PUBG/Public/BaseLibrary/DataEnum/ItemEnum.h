@@ -47,3 +47,22 @@ enum class EEquippedItemCategory : uint8
 	
 	
 };
+
+//아이템 대분류
+UENUM(BlueprintType)
+enum class EItemType : uint8
+{
+	None UMETA(DisplayName = "None"),           // 정의되지않음
+	GunWeapon UMETA(DisplayName = "GunWeapon"),       //주무기,보조무기
+	
+	ThrowWeapon UMETA(DisplayName = "ThrowWeapon"),		   //투척무기
+	MeleeWeapon UMETA(DisplayName = "MeleeWeapon"),		   //근접무기
+	
+   Ammo UMETA(DisplayName = "Ammo"),           //탄약
+	
+   Consumable UMETA(DisplayName = "Consumable"), //소모품
+	
+   Equipment UMETA(DisplayName = "Equipment"), //장비
+	
+   WeaponPart UMETA(DisplayName = "WeaponPart"), //파츠
+};

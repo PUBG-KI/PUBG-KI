@@ -51,10 +51,10 @@ public:
 	
 	//TestItem 스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	void SpawnItems();
+	void SpawnItem(FName ItemID,FVector SpawnLocation);
 
-	// UFUNCTION(BlueprintCallable, Category="Spawn")
-	// void SetRandomMesh(AItemBase* Item, FName ItemRowName);
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	void SpawnItems();
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();

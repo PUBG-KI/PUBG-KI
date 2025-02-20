@@ -52,7 +52,7 @@ public:
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 
 	//Setter
-	void SetItemID(FName ItemIdName);
+	void SetItemID(UDataTable* ItemDataTable,FName ItemIdName);
 	void SetItemWeight(int32 ItemWeigt);
 	void SetItemQuantity(float ItemQuantity);
 

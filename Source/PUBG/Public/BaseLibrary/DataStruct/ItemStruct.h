@@ -8,6 +8,7 @@
 
 
 enum class EItemCategory : uint8;
+enum class EItemType : uint8;
 
 USTRUCT(BlueprintType)
 struct FItemStruct : public FTableRowBase
@@ -30,6 +31,8 @@ struct FItemStruct : public FTableRowBase
 	float Weight;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EItemCategory Category;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	EItemType ItemType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	bool IsStackAble;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

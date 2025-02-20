@@ -246,8 +246,14 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 	}
 }
 
-void UItemDataComponent::SetItemID(FName ItemIdName)
+void UItemDataComponent::SetItemID(UDataTable* ItemDataTable,FName ItemIdName)
 {
+	if (!ItemDataTable)
+	{
+		return;
+	}
+	
+	ItemID.DataTable = ItemDataTable;
 	ItemID.RowName = ItemIdName;
 }
 
