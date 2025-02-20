@@ -118,7 +118,7 @@ void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
 		if (Player)
 		{
-			//Player->Die();
+			Player->Die();
 		}
 	}
 	

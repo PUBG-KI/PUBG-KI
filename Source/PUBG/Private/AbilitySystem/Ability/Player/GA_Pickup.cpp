@@ -63,7 +63,7 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		return;
 	}
 	float ItemOfZ = Item->GetItemOfZ();
-	if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Rifle"))))
+	if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
 	{
 		UPlayerMovementComponent* MovementComponent = Cast<
 			UPlayerMovementComponent>(PUBGPlayer->GetMovementComponent());
@@ -323,7 +323,7 @@ void UGA_Pickup::UnarmedSelectedMontagePlay(EMontageType MontageType)
 				this, NAME_None, UnarmedSelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_Pickup::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_Pickup::OnCompleted);
-
+			//Task->Oncancel
 			Task->ReadyForActivation();
 		}
 	}

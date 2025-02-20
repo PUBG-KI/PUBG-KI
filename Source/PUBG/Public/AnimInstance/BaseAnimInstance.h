@@ -25,7 +25,9 @@ public:
 	UPROPERTY()
 	ABaseCharacter* OwningCharacter;
 	UPROPERTY()
-	APlayerCharacter* OwningPlayer;
+	APlayerCharacter* OwningPlayer;	
+	UPROPERTY()
+	APlayerController* OwningPlayerController;
 	UPROPERTY()
 	UPlayerMovementComponent* OwningMovementComponent;
 	
@@ -56,9 +58,11 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float FallingTime;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
+	// UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
+	// FRotator AimRotation;
+	UPROPERTY(Replicated,BlueprintReadWrite , Category = "AimOffset")
 	float Yaw;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "AimOffset")
 	float Pitch;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly ,Category = "AimOffset")
 	float LeaningPressedValue;
@@ -72,8 +76,15 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleVelocityBackWard;
 
-	
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// UFUNCTION(Server, Reliable)
+	// void ServerSetAimRotation(FRotator NewAimRotation);
+	// UFUNCTION(NetMulticast, Reliable)
+	// void MulticastSetAimRotation(FRotator NewAimRotation);
+	
 };
+

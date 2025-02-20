@@ -90,15 +90,15 @@ namespace BaseGameplayTag
 	
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Hit, "Player.Event.Action.Hit");
 
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_Rifle, "Weapon.Rifle");
+	
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Melee, "Weapon.Melee");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Grenade,"Weapon.Grenade");
 	UE_DEFINE_GAMEPLAY_TAG(Weapon_Unarmed,"Weapon.Unarmed");
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_Pistol,"Weapon.Pistol");
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_SR,"Weapon.SR");
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_SG,"Weapon.SG");
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_DMR,"Weapon.DMR");
-	UE_DEFINE_GAMEPLAY_TAG(Weapon_SMG,"Weapon.SMG");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Gun_Pistol,"Weapon.Gun.Pistol");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Gun_SR,"Weapon.Gun.SR");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Gun_SG,"Weapon.Gun.SG");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Gun_DMR,"Weapon.Gun.DMR");
+	UE_DEFINE_GAMEPLAY_TAG(Weapon_Gun_SMG,"Weapon.Gun.SMG");
 
 	
 	// Data Tag
