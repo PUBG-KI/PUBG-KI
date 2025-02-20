@@ -9,12 +9,15 @@
 #include "Character/PlayerCharacter.h"
 #include "Components/WrapBox.h"
 #include "GameplayActor/Airplane/Airplane.h"
+#include "GameState/BaseGameState.h"
 #include "HUD/Crosshair/CrosshairHUD.h"
 #include "PlayerState/BasePlayerState.h"
 #include "Widgets/HUD/HudWidget.h"
 #include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 #include "Widgets/HUD/GameStatus/CurrentPlayerWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
+#include "Widgets/Map/MapWidget.h"
+#include "Widgets/Map/WorldMapWidget.h"
 
 ABasePlayerController::ABasePlayerController()
 {
@@ -153,6 +156,28 @@ void ABasePlayerController::CreateInventoryWidget()
 	// InventoryWidget->AddToViewport();
 }
 
+void ABasePlayerController::CreateWorldMapWidget()
+{
+	if (!IsLocalController())  // 로컬 플레이어인지 확인
+	{
+		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		return;
+	}
+
+	if (WorldMapWidget)
+	{
+		WorldMapWidget->RemoveFromParent();
+		WorldMapWidget = nullptr;
+	}
+	else if (IsValid(WorldMapWidgetClass))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WorldMapWidget Loaded"));
+		
+		WorldMapWidget = CreateWidget<UWorldMapWidget>(this, WorldMapWidgetClass);	
+		WorldMapWidget->AddToViewport();
+	}
+}
+
 void ABasePlayerController::ClientCreateInventoryWidget_Implementation()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
@@ -205,11 +230,19 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 	}
 }
 
-void ABasePlayerController::UpdateWorldMap()
+void ABasePlayerController::UpdateMapCurrentZone()
 {
-	if (MapWidget)
+	if (WorldMapWidget)
 	{
-		//MapWidget->
+		WorldMapWidget->GetWBP_Map()->UpdateCurrentZone();
+	}
+}
+
+void ABasePlayerController::UpdateMapNextZone()
+{
+	if (WorldMapWidget)
+	{
+		WorldMapWidget->GetWBP_Map()->UpdateNextZone();
 	}
 }
 

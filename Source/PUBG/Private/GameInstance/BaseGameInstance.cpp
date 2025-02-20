@@ -19,9 +19,9 @@ void UBaseGameInstance::Init()
 	Super::Init();
 	
 	// 시간 관리 매니저 초기화
-	TimeManager = NewObject<UTimeManager>(this, UTimeManager::StaticClass());
+	TimeManager = NewObject<UTimeManager>(this, TimeManagerClass);
 	TimeManager->InitializeManager();
-	LandscapeManager = NewObject<ULandscapeManager>(this, ULandscapeManager::StaticClass());
+	LandscapeManager = NewObject<ULandscapeManager>(this, LandscapeManagerClass);
 	LandscapeManager->InitializeManager();
 	GameEventManager = NewObject<UGameEventManager>(this, GameEventManagerClass);
 	GameEventManager->InitializeManager();

@@ -37,6 +37,7 @@ namespace BaseGameplayTag
 	// Inventory Tag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle, "InputTag.Toggle");
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_Inventory, "InputTag.Toggle.Inventory");
+	UE_DEFINE_GAMEPLAY_TAG(InputTag_Toggle_WorldMap, "InputTag.Toggle.WorldMap");
 
 	// Vehicle Input Tag
 	UE_DEFINE_GAMEPLAY_TAG(InputTag_Vehicle_Break, "InputTag.Vehicle.Break");

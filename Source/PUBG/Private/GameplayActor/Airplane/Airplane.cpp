@@ -45,7 +45,6 @@ AAirplane::AAirplane()
 	
 	TimelineComponent =CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
 
-	Duration = 60.f;
 
 	
 
@@ -60,11 +59,8 @@ void AAirplane::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AAirplane, ServerLocation);
 }
 
-// Called when the game starts or when spawned
-void AAirplane::BeginPlay()
+void AAirplane::SetTimelineComponent()
 {
-	Super::BeginPlay();
-
 	// 타임라인에 사용할 곡선 생성
 	UCurveFloat* MoveCurve = NewObject<UCurveFloat>(this, UCurveFloat::StaticClass());
 	MoveCurve->FloatCurve.AddKey(0.0f, 0.0f); // 시작 점 (Alpha = 0)
@@ -82,6 +78,13 @@ void AAirplane::BeginPlay()
 		FinishFunction.BindDynamic(this,&AAirplane::OnPlaneMoveFinished);
 		TimelineComponent->SetTimelineFinishedFunc(FinishFunction);
 	}
+}
+
+// Called when the game starts or when spawned
+void AAirplane::BeginPlay()
+{
+	Super::BeginPlay();
+
 }
 
 void AAirplane::Tick(float DeltaTime)
@@ -102,6 +105,8 @@ void AAirplane::OnRep_ServerLocation()
 
 void AAirplane::MovePlane(FVector Start, FVector End)
 {
+	SetTimelineComponent();
+	
 	StartLocation = Start;
 	EndLocation = End;
 
@@ -234,4 +239,9 @@ void AAirplane::AssignGrantedAbilitySpecHandles(const TArray<FGameplayAbilitySpe
 TArray<FGameplayAbilitySpecHandle>& AAirplane::GetGrantedAbilitySpecHandles()
 {
 	return GrantedAbilitySpecHandles;
+}
+
+void AAirplane::SetDuration(float NewDuration)
+{
+	Duration = NewDuration;
 }

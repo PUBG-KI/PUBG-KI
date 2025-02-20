@@ -6,14 +6,7 @@
 // Sets default values
 AAHouse::AAHouse()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
-	//집 메쉬
-	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	
-	//HouseMesh = CreateDefaultSubobject<UStaticMeshComponent>("HouseMesh");
-	//HouseMesh->SetupAttachment(RootComponent);
 	
 	//스폰컴포넌트
 	ItemSpawnerComponent = CreateDefaultSubobject<UItemSpawnerComponent>(TEXT("ItemSpawnerComponent"));

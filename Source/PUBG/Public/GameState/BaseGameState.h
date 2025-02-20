@@ -63,7 +63,7 @@ public:
 
 	void initalize();
 
-private:
+//private:
 	// 게임 시간
 	UPROPERTY(ReplicatedUsing=OnRep_RemainingTime, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	int32 RemainingTime;

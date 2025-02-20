@@ -38,6 +38,7 @@ void UAirplaneManager::SpwanAirplane()
 	
 	// 비행기 스폰
 	SpawnedPlane = GetWorld()->SpawnActor<AAirplane>(PlaneClass, SpawnTransform, SpawnParams);
+	SpawnedPlane->SetDuration(Duration);
 }
 
 

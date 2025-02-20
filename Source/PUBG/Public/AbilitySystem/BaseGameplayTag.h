@@ -33,6 +33,7 @@ namespace BaseGameplayTag
 	// Inventory Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle_Inventory);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Toggle_WorldMap);
 
 	// Weapon Input Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Weapon_Equip);

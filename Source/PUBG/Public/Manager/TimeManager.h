@@ -42,6 +42,7 @@ private:
 
 	/** 게임 타이머 시간 */
 	int32 CurrentGameTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 StartGameTime;
 	float TickTime;
 
