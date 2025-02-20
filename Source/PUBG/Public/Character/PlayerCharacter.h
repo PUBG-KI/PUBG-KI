@@ -46,7 +46,8 @@ UENUM()
 enum class PlayerCameraMode : uint8
 {
 	FPPCamera UMETA(DisplayName = "TPP"),
-	TPPCamera UMETA(DisplayName = "FPP")
+	TPPCamera UMETA(DisplayName = "FPP"),
+	ScopeCamera UMETA(DisplayName = "ZoomScope"),
 };
 
 /**
@@ -92,6 +93,8 @@ private:
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCamera;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* CurrentCamera;
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* PunchCapsuleLeft;
 	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly, category = "Camera", meta = (AllowPrivateAccess = "true"))
 	UCapsuleComponent* PunchCapsuleRight;
@@ -117,6 +120,7 @@ protected:
 	void OnRightClick();
 	void Input_AbilityInputPressed(FGameplayTag InputTag);
 	void Input_AbilityInputReleased(FGameplayTag InputTag);
+	void Input_TabAbilityTrigger(FGameplayTag InputTag);
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SetActorRotation(FRotator Rotator);
@@ -136,6 +140,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying){bAnimationIsPlaying = bNewAnimaitonIsPlaying;}
 
+	UPROPERTY(BlueprintReadWrite, Category = "Input")
+	bool IsZoom;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character")
 	FVector2D MoveForwardVecter;
 
@@ -148,6 +155,9 @@ public:
 	FORCEINLINE class UPUBGSpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE UCameraComponent* GetFirstPersonCamera(){return FirstPersonCamera;}
+	FORCEINLINE UCameraComponent* GetcurrentCamera(){return CurrentCamera;}
+
+	void SetcurrentCamera(UCameraComponent* NewCamera);
 
 	// 이준수
 public:
@@ -248,5 +258,6 @@ public:
 
 
 };
+
 
 

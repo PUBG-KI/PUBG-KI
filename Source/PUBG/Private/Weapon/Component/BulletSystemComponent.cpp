@@ -109,7 +109,7 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 
 			ABasePlayerController* Playercontroller = Cast<ABasePlayerController>(Projectile->PlayerCharacter->GetController());
 
-			if (Playercontroller)
+			if (Playercontroller && Cast<APlayerCharacter>(HitResult.GetActor()))
 			{
 				Playercontroller->HitEventServer(HitResult.GetActor(), _EventTag, Payload);
 			}

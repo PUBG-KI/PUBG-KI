@@ -22,6 +22,9 @@ public:
 	template<class UserObject, typename CallbackFunc>
 	void BindAbilityInputAction(const UDataAsset_InputConfig* InInputConfig, UserObject* ContextObject, CallbackFunc InputPressedFunc, CallbackFunc InputRelesedFunc);
 
+	template<class UserObject, typename CallbackFunc>
+	void BindAbilityInputAction_Tab(const UDataAsset_InputConfig* InInputConfig, UserObject* ContextObject, CallbackFunc InputPressedFunc);
+
 };
 
 template<class UserObject, typename CallbackFunc>
@@ -45,6 +48,18 @@ inline void UBaseInputComponent::BindAbilityInputAction(const UDataAsset_InputCo
 
 		BindAction(AbilityInputActionConfig.InputAction, ETriggerEvent::Started, ContextObject, InputPressedFunc, AbilityInputActionConfig.InputTag);
 		BindAction(AbilityInputActionConfig.InputAction, ETriggerEvent::Completed, ContextObject, InputRelesedFunc, AbilityInputActionConfig.InputTag);
+	}
+}
+
+template <class UserObject, typename CallbackFunc>
+void UBaseInputComponent::BindAbilityInputAction_Tab(const UDataAsset_InputConfig* InInputConfig,
+	UserObject* ContextObject, CallbackFunc InputPressedFunc)
+{
+	for (const FBaseInputActionConfig& AbilityInputActionConfig : InInputConfig->Trigger_AbilityInputActions)
+	{
+		if (!AbilityInputActionConfig.IsValid()) continue;
+
+		BindAction(AbilityInputActionConfig.InputAction, ETriggerEvent::Triggered, ContextObject, InputPressedFunc, AbilityInputActionConfig.InputTag);
 	}
 }
 

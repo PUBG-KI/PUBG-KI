@@ -4,18 +4,11 @@
 #include "Weapon/GA/GA_Weapon_Fire.h"
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
-#include "Component/EquippedComponent.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
 
-
-void UGA_Weapon_Fire::OnTimelineUpdate(float Value)
-{
-}
-
-void UGA_Weapon_Fire::OnTimelineFinished()
-{
-}
 
 void UGA_Weapon_Fire::SetDefault()
 {
@@ -34,9 +27,9 @@ void UGA_Weapon_Fire::SetDefault()
 
 FVector UGA_Weapon_Fire::GetVelocityVector()
 {
-	FVector LineTraceStart = GetPlayerCharacterFromActorInfo()->GetFollowCamera()->GetComponentLocation();
-	FVector LineTraceEnd = LineTraceStart + (GetPlayerCharacterFromActorInfo()->GetFollowCamera()->GetForwardVector() * 10000.0);
-
+	FVector LineTraceStart = GetPlayerCharacterFromActorInfo()->GetcurrentCamera()->GetComponentLocation();
+	FVector LineTraceEnd = LineTraceStart + (GetPlayerCharacterFromActorInfo()->GetcurrentCamera()->GetForwardVector() * 10000.0);
+	
 	FHitResult HitResult;
 	
 	FCollisionQueryParams CollisionParams;
@@ -47,13 +40,13 @@ FVector UGA_Weapon_Fire::GetVelocityVector()
 	if (HitResult.bBlockingHit)
 	{
 		FVector VelocityVector = UKismetMathLibrary::GetDirectionUnitVector(Gun_Base->GetWeaponMagSocketLocation(), HitResult.ImpactPoint);
-		// UKismetSystemLibrary::DrawDebugLine(GetWorld(), LineTraceStart, HitResult.ImpactPoint, FLinearColor::Green, 100.0f, 1.0f);
+		UKismetSystemLibrary::DrawDebugLine(GetWorld(), LineTraceStart, HitResult.ImpactPoint, FLinearColor::Green, 100.0f, 1.0f);
 		
 		return VelocityVector;
 	}
 	else
 	{
-		// UKismetSystemLibrary::DrawDebugLine(GetWorld(), HitResult.ImpactPoint, LineTraceEnd, FLinearColor::Red, 100.0f, 1.0f);
+		//UKismetSystemLibrary::DrawDebugLine(GetWorld(), HitResult.ImpactPoint, LineTraceEnd, FLinearColor::Red, 100.0f, 1.0f);
 		return GetPlayerCharacterFromActorInfo()->GetFollowCamera()->GetForwardVector();
 	}
 }

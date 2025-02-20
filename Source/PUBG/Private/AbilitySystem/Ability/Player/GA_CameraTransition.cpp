@@ -21,6 +21,7 @@ void UGA_CameraTransition::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	case PlayerCameraMode::TPPCamera:
 		FirstPersonCamera->SetActive(false);
 		FollowCamera->SetActive(true);
+		GetPlayerCharacterFromActorInfo()->SetcurrentCamera(FollowCamera);
 		FirstPersonCamera->bUsePawnControlRotation = false;
 		GetPlayerCharacterFromActorInfo()->SetCameraMode(PlayerCameraMode::FPPCamera);
 		//UE_LOG(LogTemp, Warning, TEXT("DEActive Ability"));
@@ -29,6 +30,7 @@ void UGA_CameraTransition::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	case PlayerCameraMode::FPPCamera:
 		FollowCamera->SetActive(false);
 		FirstPersonCamera->SetActive(true);
+		GetPlayerCharacterFromActorInfo()->SetcurrentCamera(FirstPersonCamera);
 		FirstPersonCamera->bUsePawnControlRotation = true;
 		GetPlayerCharacterFromActorInfo()->SetCameraMode(PlayerCameraMode::TPPCamera);
 		//UE_LOG(LogTemp, Warning, TEXT("Active Ability"));

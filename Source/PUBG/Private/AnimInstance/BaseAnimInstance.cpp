@@ -53,11 +53,31 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 		FallingTime += DeltaSeconds;
 	}
 	else
-	{
+	{	
 		FallingTime =0.f;
 	}
 	//턴과 에임오프셋을 위한 Yaw,Pitch구하기
-	FRotator AimRotation =OwningPlayer->GetBaseAimRotation();
+
+	FRotator AimRotation;
+	
+
+	if (OwningPlayer->IsZoom)
+	{
+		if (OwningPlayer->GetController())
+		{
+			AimRotation =OwningPlayer->GetController()->GetControlRotation();
+			UE_LOG(LogTemp, Warning, TEXT("Change Camera"));
+		}
+		else
+		{
+			AimRotation =OwningPlayer->GetBaseAimRotation();
+		}
+	}
+	else
+	{
+		AimRotation =OwningPlayer->GetBaseAimRotation();
+	}
+	// FRotator AimRotation =OwningPlayer->GetBaseAimRotation();
 	FRotator ActorRotation = OwningPlayer->GetActorRotation();
 	
 	FRotator DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
