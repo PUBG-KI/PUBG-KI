@@ -45,15 +45,11 @@ void UItemSpawnerComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation)
 {
 	UWorld* World = GetWorld();
-
-	//for (const FVector& SpawnLocation : SpawnLocations)
-	{
-		//아이템 랜덤 생성
-		AItemBase* SpawnedItem = World->SpawnActor<AItemBase>(BP_Item,SpawnLocation,FRotator::ZeroRotator);
-			
-		SpawnedItem->SetRandomProperties(ItemID);
-	}
 	
+	//아이템 랜덤 생성
+	AItemBase* SpawnedItem = World->SpawnActor<AItemBase>(BP_Item,SpawnLocation,FRotator::ZeroRotator);
+		
+	SpawnedItem->SetRandomProperties(ItemID);	
 }
 
 void UItemSpawnerComponent::SpawnItems()
@@ -87,20 +83,15 @@ void UItemSpawnerComponent::SpawnItems()
 					FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
 					UE_LOG(LogTemp, Warning, TEXT("BulletTypeName: %s") , *BulletTypeName.ToString());
 					
-					//무기에 맞는 총알 찾기
-					FItemStruct* BulletData = SpawnItemTable->FindRow<FItemStruct>(BulletTypeName, TEXT("Ammo Lookup"));
-
-					if (BulletData)
+					//무기에 맞는 총알 찾기					
+					for (int BulletCount = 0; BulletCount < 2; BulletCount++)
 					{
-						for (int BulletCount = 0; BulletCount < 2; BulletCount++)
-						{
-							UE_LOG(LogTemp, Warning, TEXT("BulletCount: %d") , BulletCount);
-							
-							FVector BulletRandomOffset = GetRandomOffset();
-							
-							SpawnItem(BulletTypeName,FinalLocation + BulletRandomOffset);
-						}//for
-					}//if
+						UE_LOG(LogTemp, Warning, TEXT("BulletCount: %d") , BulletCount);
+						
+						FVector BulletRandomOffset = GetRandomOffset();
+						
+						SpawnItem(BulletTypeName,FinalLocation + BulletRandomOffset);
+					}//for
 				}//if
 			}//if
 		}//for

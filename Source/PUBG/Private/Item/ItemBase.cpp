@@ -29,12 +29,11 @@ AItemBase::AItemBase()
 	RootComponent = StaticMesh;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(StaticMesh);
-	BoxComponent->SetupAttachment(StaticMesh);
 	InteractionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->SetupAttachment(StaticMesh);
 
 	
-	InteractionComponent->InitBoxExtent(FVector(20.0f));
+	//InteractionComponent->InitBoxExtent(FVector(20.0f));
 
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
 	//ItemDataComponent->bReplicates = true;
@@ -172,7 +171,7 @@ void AItemBase::ServerSetItemStruct_Implementation(FItemStruct OutItemStruct)
 
 void AItemBase::SetCollisionBox(FVector Origin ,FVector CollisionBoxExtent)
 {
-	FVector NewInteractionComponentBoxExtent = CollisionBoxExtent * FVector(1.5f,1.5f,4.0f);
+	FVector NewInteractionComponentBoxExtent = CollisionBoxExtent * FVector(1.5f,1.5f,1.5f);
 
 	//InteractionComponent새로운 위치, 박스 크기 설정
 	FVector NewInteractionComponentLocation = FVector(Origin.X,Origin.Y,Origin.Z + NewInteractionComponentBoxExtent.Z);
@@ -180,7 +179,7 @@ void AItemBase::SetCollisionBox(FVector Origin ,FVector CollisionBoxExtent)
 	InteractionComponent->SetBoxExtent(NewInteractionComponentBoxExtent);
 
 	BoxComponent->SetWorldLocation(NewInteractionComponentLocation);
-	FVector NewBoxComponentBoxExtent = NewInteractionComponentBoxExtent * FVector(3.5f,2.0f,5.0f);
+	FVector NewBoxComponentBoxExtent = NewInteractionComponentBoxExtent * FVector(10.0f,10.0f,10.0f);
 	BoxComponent->SetBoxExtent(NewBoxComponentBoxExtent);
 
 	UE_LOG(LogTemp, Warning, TEXT("New Collision Box Extent"));
