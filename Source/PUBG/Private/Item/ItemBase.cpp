@@ -274,12 +274,12 @@ void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
 
-	SetCollisionScale();
+	//SetCollisionScale();
 	
 	FVector BoxOrigin = StaticMesh->Bounds.Origin;
 	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
 
-	//SetCollisionBox(BoxOrigin,BoxExtent);
+	SetCollisionBox(BoxOrigin,BoxExtent);
 }
 
 void AItemBase::SetSlotFromCategory()
