@@ -22,7 +22,6 @@ AZone::AZone()
 
 	ShrinkFactor = 0.7f;	
 	bIsVisibiltyNextZone = false;
-	Timer = 30.0f;
 	
 	bReplicates = true;
 	//SetReplicates(true);
@@ -46,7 +45,7 @@ void AZone::NotifySize()
 	UpdateNextZone();
 
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::StartShirnkZone, Timer, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::StartShirnkZone, ShirnkTime, false);
 }
 
 void AZone::StartShirnkZone()
@@ -110,7 +109,7 @@ void AZone::TimelineFinishedFunction()
 
 	
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, Timer, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, ShirnkTime, false);
 
 	Level++;
 
@@ -202,7 +201,9 @@ void AZone::BeginPlay()
 		
 		FOnTimelineEvent TimelineFinishedEvent;
 		TimelineFinishedEvent.BindDynamic(this,&AZone::TimelineFinishedFunction);
-		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedEvent);		
+		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedEvent);
+
+		TimelineComponent->SetTimelineLength(ShirnkTime);
 	}
 }
 
@@ -238,7 +239,12 @@ void AZone::StartShrinkTimer()
 	CurrentScale = GetMeshWorldScale();
 	
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, Timer * 2.0f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, ShirnkTime * 2.0f, false);
+}
+
+void AZone::SetShirnkTime(int NewShirnkTime)
+{
+	ShirnkTime = NewShirnkTime;
 }
 
 

@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UWorldMapWidget;
 class AAirplane;
 class UHudWidget;
 class UInventoryWidget;
@@ -45,6 +46,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateInventoryWidget();
+	UFUNCTION(BlueprintCallable)
+	void CreateWorldMapWidget();
 	UFUNCTION(Client, Reliable)
 	void ClientCreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
@@ -52,7 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentPlayer(int32 CurrentPlayer);
 	UFUNCTION(BlueprintCallable)
-	void UpdateWorldMap();
+	void UpdateMapCurrentZone();
+	UFUNCTION(BlueprintCallable)
+	void UpdateMapNextZone();
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
@@ -71,9 +76,9 @@ private:
 	UHudWidget* HudWidget;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<UUserWidget> MapWidgetClass;
+	TSubclassOf<UWorldMapWidget> WorldMapWidgetClass;
 	UPROPERTY()
-	UUserWidget* MapWidget;
+	UWorldMapWidget* WorldMapWidget;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AAirplane* ControlledAirplane;

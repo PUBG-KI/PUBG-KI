@@ -63,7 +63,7 @@ public:
 
 	void initalize();
 
-private:
+//private:
 	// 게임 시간
 	UPROPERTY(ReplicatedUsing=OnRep_RemainingTime, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	int32 RemainingTime;
@@ -118,5 +118,7 @@ private:
 	// 비행기를 표시할 것인지
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyAirplane;
+	
+
 };
 

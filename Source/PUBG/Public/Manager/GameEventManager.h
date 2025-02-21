@@ -43,7 +43,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "GameEvent")
 	float SpawnHeight = 2000.0f;  // 보급품이 떨어질 높이
 
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FVector2D TimeRange;
 };
 
 

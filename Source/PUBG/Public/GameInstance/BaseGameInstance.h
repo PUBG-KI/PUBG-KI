@@ -38,6 +38,10 @@ public:
 	UAirplaneManager* AirplaneManager;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TSubclassOf<UTimeManager> TimeManagerClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TSubclassOf<ULandscapeManager> LandscapeManagerClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UGameEventManager> GameEventManagerClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UZoneManager> ZoneManagerClass;

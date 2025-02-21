@@ -3,6 +3,7 @@
 
 #include "GameplayActor/RedZone/RedZone.h"
 
+#include "Components/SphereComponent.h"
 #include "GameplayActor/RedZone/RedZoneBomb.h"
 
 // Sets default values
@@ -10,6 +11,10 @@ ARedZone::ARedZone()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	// 스피어 콜리전 생성 및 기본 설정
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	RootComponent = SphereComponent;
 }
 
 // Called when the game starts or when spawned

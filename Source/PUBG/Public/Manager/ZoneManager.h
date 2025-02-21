@@ -32,4 +32,7 @@ private:
 	
 	UPROPERTY(EditAnywhere,Category = "Zone Spawner")
 	AZone* SpawnedZone;
+
+	UPROPERTY(EditAnywhere,Category = "Zone Spawner", meta = (AllowPrivateAccess = "true"))
+	int ShirnkTime;
 };

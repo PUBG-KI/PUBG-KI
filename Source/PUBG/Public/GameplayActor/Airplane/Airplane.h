@@ -35,6 +35,7 @@ public:
 	AAirplane();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void SetTimelineComponent();
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	
@@ -69,6 +70,8 @@ public:
 	
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> GrantedAbilitySpecHandles;
+
+	void SetDuration(float NewDuration);
 
 private:
 	// 비행기 메쉬

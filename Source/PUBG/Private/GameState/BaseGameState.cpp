@@ -83,6 +83,18 @@ void ABaseGameState::OnRep_CurrentZoneScale()
 {	
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
+
+	for (APlayerState* PS : PlayerArray)
+	{
+		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
+		{
+			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
+			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
+			{
+				PC->UpdateMapCurrentZone();
+			}
+		}
+	}
 }
 
 void ABaseGameState::OnRep_IsVisibiltyNextZone()
@@ -96,6 +108,18 @@ void ABaseGameState::OnRep_IsVisibiltyNextZone()
 	else
 	{		
 	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
+	}
+
+	for (APlayerState* PS : PlayerArray)
+	{
+		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
+		{
+			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
+			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
+			{
+				PC->UpdateMapNextZone();
+			}
+		}
 	}
 }
 

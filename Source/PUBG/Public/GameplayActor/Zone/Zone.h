@@ -56,6 +56,7 @@ public:
 	void UpdateCurrentZone();
 	void UpdateNextZone();
 	void StartShrinkTimer();
+	void SetShirnkTime(int NewShirnkTime);
 
 private:		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -74,7 +75,7 @@ private:
 	int Level;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	int Timer;
+	int ShirnkTime;
 
 	float NextScale;
 	float CurrentScale;

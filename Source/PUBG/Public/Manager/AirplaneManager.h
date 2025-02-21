@@ -27,6 +27,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlaneManager", meta = (AllowPrivateAccess = "true"))
 	AAirplane* SpawnedPlane;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PlaneManager", meta = (AllowPrivateAccess = "true"))
+	float Duration;
 	
 private:
 	// 비행기 클래스 (Blueprint에서 설정 가능)

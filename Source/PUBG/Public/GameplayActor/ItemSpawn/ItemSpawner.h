@@ -15,9 +15,6 @@ public:
 	// Sets default values for this actor's properties
 	AItemSpawner();
 
-	//아이템이 스폰될 위치
-	
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
