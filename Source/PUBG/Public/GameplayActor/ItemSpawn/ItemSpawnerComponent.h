@@ -8,6 +8,7 @@
 #include "ItemSpawnerComponent.generated.h"
 
 class AItemBase;
+class AWeaponItem;
 struct FItemStruct;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -32,7 +33,9 @@ public:
 	TArray<FVector> SpawnLocations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
-	TSubclassOf<AActor> BP_Item;
+	TSubclassOf<AItemBase> ItemBaseClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<AWeaponItem> WeaponItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 SpawnItemCount;

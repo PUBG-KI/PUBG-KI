@@ -18,7 +18,6 @@ AEquipableItem::AEquipableItem()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execute Client : AEquipableItem"));
-
 	}
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;

@@ -11,7 +11,7 @@
 AWeaponItem::AWeaponItem()
 {
 	bReplicates = true;
-	SetReplicates(true);
+	//SetReplicates(true);
 }
 
 void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)

@@ -40,6 +40,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing=SetCollisionScale, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
+	UStaticMesh* ReplicatedMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -108,7 +110,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSlotFromCategory();
 
-	// 콜리전박수 2개 크기 지정
 	UFUNCTION(BlueprintCallable)
 	void SetCollisionScale();
 	

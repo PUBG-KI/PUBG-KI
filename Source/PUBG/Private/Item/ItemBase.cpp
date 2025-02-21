@@ -26,10 +26,13 @@ AItemBase::AItemBase()
 	bReplicateUsingRegisteredSubObjectList = true;
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->SetIsReplicated(true);
 	RootComponent = StaticMesh;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	BoxComponent->SetIsReplicated(true);
 	BoxComponent->SetupAttachment(StaticMesh);
 	InteractionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionComponent"));
+	InteractionComponent->SetIsReplicated(true);
 	InteractionComponent->SetupAttachment(StaticMesh);
 
 	
@@ -64,6 +67,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AItemBase, Item);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	DOREPLIFETIME(AItemBase, TableIndex);
+	DOREPLIFETIME(AItemBase, ReplicatedMesh);
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemStruct, COND_OwnerOnly);
@@ -270,14 +274,16 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
-	StaticMesh->SetStaticMesh(NewMesh);
-
-	//SetCollisionScale();
-	
+	if (HasAuthority()) // 서버에서만 실행
+	{
+		ReplicatedMesh = NewMesh;
+		//StaticMesh->SetStaticMesh(NewMesh);
+		SetCollisionScale();
+	}
 	FVector BoxOrigin = StaticMesh->Bounds.Origin;
 	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
 
-	SetCollisionBox(BoxOrigin,BoxExtent);
+	//SetCollisionBox(BoxOrigin,BoxExtent);
 }
 
 void AItemBase::SetSlotFromCategory()
@@ -308,12 +314,19 @@ void AItemBase::SetSlotFromCategory()
 }
 
 void AItemBase::SetCollisionScale()
-{
+{	
+	StaticMesh->SetStaticMesh(ReplicatedMesh);
+	
 	FBoxSphereBounds ComponentBoundsStaticMeshBounds = StaticMesh->Bounds;
+	ComponentBoundsStaticMeshBounds.BoxExtent = ReplicatedMesh->GetBounds().BoxExtent;
+	
+	UE_LOG(LogTemp, Warning, TEXT("ReplicatedMesh GetBounds: %s"), *ReplicatedMesh->GetBounds().ToString());
+	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
 
-	FVector BoxLocation = FVector(ComponentBoundsStaticMeshBounds.Origin.X, ComponentBoundsStaticMeshBounds.Origin.Y, ComponentBoundsStaticMeshBounds.Origin.Z + ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
-	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
-	FVector OutBoxScale = FVector(InnerBoxScale.X * 3.5f, InnerBoxScale.Y * 2.0f, InnerBoxScale.Z * 5.0f);
+	// BoxLocation = FVector(ComponentBoundsStaticMeshBounds.Origin.X, ComponentBoundsStaticMeshBounds.Origin.Y, ComponentBoundsStaticMeshBounds.Origin.Z + ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
+	FVector BoxLocation = ComponentBoundsStaticMeshBounds.Origin;
+	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 2.f);
+	FVector OutBoxScale = FVector(InnerBoxScale.X + 100.f, InnerBoxScale.Y + 100.f, InnerBoxScale.Z + 100.f);
 
 	InteractionComponent->SetWorldLocation(BoxLocation);
 	BoxComponent->SetWorldLocation(BoxLocation);
