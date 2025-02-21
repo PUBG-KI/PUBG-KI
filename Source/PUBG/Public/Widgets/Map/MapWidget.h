@@ -21,12 +21,14 @@ public:
 	virtual void NativeConstruct() override;	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	FVector2D ConvertWorldToMap(const FVector& WorldLocation) const;
+	float ConvertScale(float Scale);
+	FVector2D ConvertPosition(const FVector& WorldLocation) const;
 
 	void UpdatePlayerLocation();
 	void UpdateCurrentZone();
 	void UpdateNextZone();
+	void AddRedZone();
 	void SetLandScapeBoundingBox();
-	FVector2D ConvertPosition(const FVector& WorldLocation) const;
 
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))

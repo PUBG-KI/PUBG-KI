@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "RedZone.generated.h"
 
+class USphereComponent;
 class ARedZoneBomb;
 
 UCLASS()
@@ -31,6 +32,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Red Zone")
 	int32 ExplosionCount = 10; // 폭발 개수
+	
+	UPROPERTY(EditAnywhere, Category="Red Zone")
+	USphereComponent* SphereComponent; // 스폰할 위치를 정할 콜리전
 	
 	UPROPERTY(EditAnywhere, Category="Red Zone", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ARedZoneBomb> RedZoneBomb; // 스폰할 액터

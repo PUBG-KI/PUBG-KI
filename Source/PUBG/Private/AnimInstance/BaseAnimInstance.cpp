@@ -24,7 +24,7 @@ void UBaseAnimInstance::NativeInitializeAnimation()
 		OwningMovementComponent = Cast<UPlayerMovementComponent>(OwningCharacter->GetCharacterMovement());
 		OwningPlayer=Cast<APlayerCharacter>(OwningCharacter);
 	}
-	
+
 }
 
 void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)

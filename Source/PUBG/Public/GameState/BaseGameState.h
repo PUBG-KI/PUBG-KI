@@ -118,5 +118,7 @@ public:
 	// 비행기를 표시할 것인지
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyAirplane;
+	
+
 };
 

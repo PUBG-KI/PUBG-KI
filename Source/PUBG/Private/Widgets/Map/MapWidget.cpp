@@ -49,6 +49,11 @@ void UMapWidget::UpdatePlayerLocation()
 	Image_Player->SetRenderTransform(NewTransform);
 }
 
+float UMapWidget::ConvertScale(float Scale)
+{
+	return ((Scale) * 0.5f / LandScapeBoundingBox.Max.X);
+}
+
 void UMapWidget::UpdateCurrentZone()
 {
 	ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
@@ -62,7 +67,7 @@ void UMapWidget::UpdateCurrentZone()
 		
 	FVector2D NewLocation = ConvertPosition(Center);
 	
-	Scale = ((Scale * 100) * 0.5f / LandScapeBoundingBox.Max.X);
+	Scale = ConvertScale(Scale * 100.f);
 	
 	UE_LOG(LogTemp, Warning, TEXT("NewLocation : %s"), *NewLocation.ToString());	
 	UE_LOG(LogTemp, Warning, TEXT("Radius = %f"), Scale);
@@ -97,9 +102,8 @@ void UMapWidget::UpdateNextZone()
 	FVector Center = GS->NextZoneCenter;
 	float Scale = GS->NextZoneScale;
 	
-	FVector2D NewLocation = ConvertPosition(Center);
-	
-	Scale = ((Scale * 100) * 0.5f / LandScapeBoundingBox.Max.X);
+	FVector2D NewLocation = ConvertPosition(Center);	
+	Scale = ConvertScale(Scale * 100.f);
 	
 	UE_LOG(LogTemp, Warning, TEXT("NewLocation : %s"), *NewLocation.ToString());	
 	UE_LOG(LogTemp, Warning, TEXT("Radius = %f"), Scale);
@@ -109,6 +113,11 @@ void UMapWidget::UpdateNextZone()
 		NextZoneMaterial->SetVectorParameterValue(FName("Center"), FVector(NewLocation.X, NewLocation.Y, 0));
 		NextZoneMaterial->SetScalarParameterValue(FName("Radius"), Scale);
 	}
+}
+
+void UMapWidget::AddRedZone()
+{
+	
 }
 
 void UMapWidget::SetLandScapeBoundingBox() 
