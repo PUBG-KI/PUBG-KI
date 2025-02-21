@@ -51,7 +51,7 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation)
 		//아이템 랜덤 생성
 		AItemBase* SpawnedItem = World->SpawnActor<AItemBase>(BP_Item,SpawnLocation,FRotator::ZeroRotator);
 			
-		SetRandomProperties(SpawnedItem, ItemID);
+		SpawnedItem->SetRandomProperties(ItemID);
 	}
 	
 }
@@ -118,40 +118,40 @@ FName UItemSpawnerComponent::GetRandomItemRowName()
 	return RandomRowName;
 }
 
-//스폰 시 속성 변경
-void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowName)
-{
-	static const FString ContextString(TEXT("Item Lookup"));
-	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(ItemRowName, ContextString);
-
-	UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
-
-	if (FoundItem)
-	{
-		//아이디 설정
-		ItemDataComponent->SetItemID(SpawnItemTable,ItemRowName);
-		UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *ItemRowName.ToString());
-		
-	}
-
-	if (FoundItem && FoundItem->StaticMesh)
-	{
-		//메쉬변경
-		Item->SetMesh(FoundItem->StaticMesh);
-	}
-
-	if (FoundItem && FoundItem->Weight)
-	{
-		//무게 변경
-		ItemDataComponent->SetItemWeight(FoundItem->Weight);
-	}
-
-	if (FoundItem && FoundItem->Quantity)
-	{
-		//수량 변경
-		ItemDataComponent->SetItemQuantity(FoundItem->Quantity);
-	}
-}
+// //스폰 시 속성 변경
+// void UItemSpawnerComponent::SetRandomProperties(AItemBase* Item, FName ItemRowName)
+// {
+// 	static const FString ContextString(TEXT("Item Lookup"));
+// 	FItemStruct* FoundItem = SpawnItemTable->FindRow<FItemStruct>(ItemRowName, ContextString);
+//
+// 	UItemDataComponent* ItemDataComponent = Item->GetItemDataComponent();
+//
+// 	if (FoundItem)
+// 	{
+// 		//아이디 설정
+// 		ItemDataComponent->SetItemID(SpawnItemTable,ItemRowName);
+// 		UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *ItemRowName.ToString());
+// 		
+// 	}
+//
+// 	if (FoundItem && FoundItem->StaticMesh)
+// 	{
+// 		//메쉬변경
+// 		Item->SetMesh(FoundItem->StaticMesh);
+// 	}
+//
+// 	if (FoundItem && FoundItem->Weight)
+// 	{
+// 		//무게 변경
+// 		ItemDataComponent->SetItemWeight(FoundItem->Weight);
+// 	}
+//
+// 	if (FoundItem && FoundItem->Quantity)
+// 	{
+// 		//수량 변경
+// 		ItemDataComponent->SetItemQuantity(FoundItem->Quantity);
+// 	}
+// }
 
 //무기 타입인지 확인
 bool UItemSpawnerComponent::IsWeapon(FName ItemID)

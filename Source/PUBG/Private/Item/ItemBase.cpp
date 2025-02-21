@@ -273,16 +273,18 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
+
+	SetCollisionScale();
 	
 	FVector BoxOrigin = StaticMesh->Bounds.Origin;
 	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
 
-	SetCollisionBox(BoxOrigin,BoxExtent);
+	//SetCollisionBox(BoxOrigin,BoxExtent);
 }
 
 void AItemBase::SetSlotFromCategory()
 {
-	FName ItemID = this->ItemDataComponent->GetItemRowName();
+	FName ItemID = GetItemDataComponent()->GetItemRowName();
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 
 	int32 SlotNum = static_cast<int32>(Row->Category);
@@ -321,6 +323,38 @@ void AItemBase::SetCollisionScale()
 	BoxComponent->SetBoxExtent(OutBoxScale);
 }
 
+//스폰 시 속성 변경
+void AItemBase::SetRandomProperties(FName ItemIdName)
+{
+	static const FString ContextString(TEXT("Item Lookup"));
+	FItemStruct* FoundItem = ItemDataTable->FindRow<FItemStruct>(ItemIdName, ContextString);
+
+	if (FoundItem)
+	{
+		//아이디 설정
+		GetItemDataComponent()->SetItemID(ItemDataTable,ItemIdName);
+		UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *ItemIdName.ToString());
+		
+	}
+
+	if (FoundItem && FoundItem->StaticMesh)
+	{
+		//메쉬변경
+		SetMesh(FoundItem->StaticMesh);
+	}
+
+	if (FoundItem && FoundItem->Weight)
+	{
+		//무게 변경
+		GetItemDataComponent()->SetItemWeight(FoundItem->Weight);
+	}
+
+	if (FoundItem && FoundItem->Quantity)
+	{
+		//수량 변경
+		GetItemDataComponent()->SetItemQuantity(FoundItem->Quantity);
+	}
+}
 
 
 

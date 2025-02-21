@@ -102,6 +102,9 @@ public:
 	UFUNCTION()
 	void SetMesh(UStaticMesh* NewMesh);
 
+	UFUNCTION()
+	void SetRandomProperties(FName ItemRowName);
+
 	UFUNCTION(BlueprintCallable)
 	void SetSlotFromCategory();
 
