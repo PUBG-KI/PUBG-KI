@@ -35,7 +35,7 @@ private:
 	FItemStruct ItemStruct;
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct Item;
-	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 TableIndex;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
@@ -91,7 +91,7 @@ public:
 
 	//충돌 박스 크기 설정
 	UFUNCTION(BlueprintCallable)
-	void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
+	virtual void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
 	
 	virtual FText LookAt() override;
 

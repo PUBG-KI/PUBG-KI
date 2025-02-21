@@ -61,9 +61,9 @@ class PUBG_API APlayerCharacter : public ABaseCharacter
 public:
 	APlayerCharacter(const class FObjectInitializer& ObjectInitializer);
 	
-private:
+protected:
 	virtual void BeginPlay() override;
-	
+	virtual void Tick(float DeltaTime) override;
 public:
 #pragma region Mesh
 	// 캐릭터가 장착할 파츠들을 맵으로 저장, enum값으로 원하는 파츠 불러올 수 있게 설정
@@ -78,10 +78,24 @@ public:
 
 #pragma region Animation
 	UFUNCTION(BlueprintCallable, Server, Reliable, Category = "Animation")
-	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
+	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
-	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance );
-
+	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
+	bool ActorHasTag(const FNativeGameplayTag& Tag);
+	// UPROPERTY()
+	// FRotator AimRotation;
+	// UPROPERTY()
+	// FRotator ActorRotation;
+	UPROPERTY(ReplicatedUsing = OnRep_RotationValues)
+	FRotator NormalDeltaRotator;
+	UPROPERTY(Replicated)
+	float Yaw;
+	// UPROPERTY(Replicated)
+	// float Pitch;
+	UFUNCTION(Server, Reliable, WithValidation)
+	void UpdateRotationValues();
+	UFUNCTION()
+	void OnRep_RotationValues();
 #pragma endregion
 	
 private:

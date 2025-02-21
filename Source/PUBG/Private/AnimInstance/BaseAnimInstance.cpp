@@ -14,6 +14,7 @@
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Character/PlayerCharacter.h"
 #include "Component/Movement/PlayerMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 void UBaseAnimInstance::NativeInitializeAnimation()
@@ -82,7 +83,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	
 	FRotator DeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
 	Pitch = DeltaRotator.Pitch;
-	Yaw = DeltaRotator.Yaw;
+	Yaw = OwningPlayer->Yaw;
 	
 	LeaningPressedValue = OwningMovementComponent->LeaningValue;
 	PlayerOntheVehicle = OwningPlayer->GetOnTheVehicle();
@@ -97,4 +98,12 @@ bool UBaseAnimInstance::OwnerHasTag(FGameplayTag Tag) const
 		return UBaseFunctionLibrary::NativeActorHasTag(OwningPawn, Tag);
 	}
 	return false;
+}
+
+void UBaseAnimInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(UBaseAnimInstance, Yaw);
+	DOREPLIFETIME(UBaseAnimInstance, Pitch);
 }
