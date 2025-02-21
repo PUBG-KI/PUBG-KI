@@ -192,7 +192,10 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UpdateRotationValues();
+	if (IsLocallyControlled()) // Yaw의 값은 이플레이어의 주인의 값을 사용해야하기때문에 로컬컨트롤인지 체크
+	{		
+		UpdateRotationValues();
+	}
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -215,7 +218,7 @@ void APlayerCharacter::UpdateRotationValues_Implementation()
 		FRotator ActorRotation = GetActorRotation();
 		NormalDeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
 		Yaw = NormalDeltaRotator.Yaw;
-		UE_LOG(LogTemp, Log, TEXT("Server - Yaw: %f"), Yaw);
+		//UE_LOG(LogTemp, Log, TEXT("Server - Yaw: %f"), Yaw);
 		//Pitch = NormalDeltaRotator.Pitch;
 	
 	}
@@ -237,7 +240,7 @@ void APlayerCharacter::OnRep_RotationValues()
 		NormalDeltaRotator.Yaw += 360.0f;
 	}
 	Yaw = NormalDeltaRotator.Yaw;
-	UE_LOG(LogTemp, Log, TEXT("OnRep Rotation - Yaw: %f"), Yaw);
+	//UE_LOG(LogTemp, Log, TEXT("OnRep Rotation - Yaw: %f"), Yaw);
 	//Pitch = DeltaRotation.Pitch;
 }
 

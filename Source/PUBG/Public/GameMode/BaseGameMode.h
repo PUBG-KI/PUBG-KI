@@ -24,5 +24,9 @@ public:
 	virtual void Logout(AController* Exiting) override; // 플레이어 접속 해제 시 호출
 
 	void UpdatePlayerCount() const;
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "GameMode", meta = (AllowPrivateAccess = "true"))
+	bool GameStart;
 };
 

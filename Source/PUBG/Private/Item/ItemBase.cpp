@@ -20,9 +20,8 @@
 AItemBase::AItemBase()
 {
 	bReplicates = true;
-	SetReplicates(true);
 	//SetReplicateMovement(true); // 위치 변화를 동기화하려면 추가
-	NetDormancy = DORM_Initial; // 네트워크 동기화 활성화
+	//NetDormancy = DORM_Initial; // 네트워크 동기화 활성화
 	
 	bReplicateUsingRegisteredSubObjectList = true;
 	

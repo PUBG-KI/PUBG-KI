@@ -35,15 +35,18 @@ void ABasePlayerController::Tick(float DeltaTime)
 void ABasePlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
-
+	
 	if (!IsLocalPlayerController())
-	{
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("!IsLocalPlayerController"));
 		return;
 	}
 
+	
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
 	if (!PS)
-	{
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("!ABasePlayerState"));
 		return;
 	}
 
@@ -73,8 +76,14 @@ void ABasePlayerController::BeginPlayingState()
 
 	if (IsValid(HudWidgetClass))
 	{
+		
+		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass Loaded"));
 		HudWidget = CreateWidget<UHudWidget>(this, HudWidgetClass);
 		HudWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
 	}
 
 	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
