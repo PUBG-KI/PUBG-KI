@@ -54,6 +54,7 @@
 #include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 //Weapon
+#include "NavigationSystemTypes.h"
 #include "Weapon/Weapon_Base.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
@@ -136,10 +137,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	PostProcessComponent->SetupAttachment(RootComponent);
 
 	DeadTag = BaseGameplayTag::Player_State_Dead;
-
-	// 초기 카메라 설정
-	SetcurrentCamera(FollowCamera);
-	IsZoom = false;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -192,10 +189,12 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (IsLocallyControlled()) // Yaw의 값은 이플레이어의 주인의 값을 사용해야하기때문에 로컬컨트롤인지 체크
-	{		
+	if (IsLocallyControlled())
+	{
 		UpdateRotationValues();
 	}
+
+	
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -218,9 +217,8 @@ void APlayerCharacter::UpdateRotationValues_Implementation()
 		FRotator ActorRotation = GetActorRotation();
 		NormalDeltaRotator = UKismetMathLibrary::NormalizedDeltaRotator(AimRotation, ActorRotation);
 		Yaw = NormalDeltaRotator.Yaw;
-		//UE_LOG(LogTemp, Log, TEXT("Server - Yaw: %f"), Yaw);
+		// UE_LOG(LogTemp, Log, TEXT("Server - Yaw: %f"), Yaw);
 		//Pitch = NormalDeltaRotator.Pitch;
-	
 	}
 }
 
@@ -240,7 +238,7 @@ void APlayerCharacter::OnRep_RotationValues()
 		NormalDeltaRotator.Yaw += 360.0f;
 	}
 	Yaw = NormalDeltaRotator.Yaw;
-	//UE_LOG(LogTemp, Log, TEXT("OnRep Rotation - Yaw: %f"), Yaw);
+	// UE_LOG(LogTemp, Log, TEXT("OnRep Rotation - Yaw: %f"), Yaw);
 	//Pitch = DeltaRotation.Pitch;
 }
 
@@ -280,17 +278,15 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
-	
+
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
-
-	BaseInputComponent->BindAbilityInputAction_Tab(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed);
-	
 }
 
 
 void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 {
+	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 	bUseControllerRotationYaw = false;
 	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<
 		UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
@@ -299,6 +295,11 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
 	}
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+	if (InFreefall)//비행기 탄경우
+	{
+	MoveInput = MovementVector.Y; //애님인스턴스에 보내 블렌드스페이스의 애니메이션 변경하는 변수
+	MovementComponent->FreefallingVelocitySettings(MovementVector);
+	}
 
 	if (Controller)
 	{
@@ -316,7 +317,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	}
 
 
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+	
 	if (MovementVector.Y <= 0.f)
 	{
 		MovementComponent->StartBackMovement();
@@ -356,13 +357,17 @@ void APlayerCharacter::MultiCast_SetActorRotation_Implementation(FRotator Rotato
 
 void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionValue)
 {
+	if (InFreefall)
+	{
+	MoveInput = 0.f; 
+	}
 	bUseControllerRotationYaw = false;
 }
 
 void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
-	
+
 	//Server_SetAimOffset();
 	// AimRotation = GetBaseAimRotation();
 	// ActorRotation = GetActorRotation();
@@ -373,6 +378,7 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 	if (LookAxisVector.X != 0.f)
 	{
 		AddControllerYawInput(LookAxisVector.X);
+
 		OnMouseMoved(LookAxisVector); // 마우스 무브를통해 턴 조건확인위한..
 	}
 	if (LookAxisVector.Y != 0.f)
@@ -507,12 +513,6 @@ void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
 
-void APlayerCharacter::Input_TabAbilityTrigger(FGameplayTag InputTag)
-{
-	BaseAbilitySystemComponent->OnAbilityInputPressed(InputTag);
-}
-
-
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -630,11 +630,6 @@ void APlayerCharacter::Die()
 	{
 		//Destroy();
 	}
-}
-
-void APlayerCharacter::SetcurrentCamera(UCameraComponent* NewCamera)
-{
-	this->CurrentCamera = NewCamera;
 }
 
 void APlayerCharacter::OnMouseMoved(FVector2D MouseMovement)

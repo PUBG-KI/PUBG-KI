@@ -42,12 +42,15 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 
 			if (GI)
 			{
-				if (GameStart)
-				{					
-					// 게임 시작 타이머 실행
-					GI->GetTimeManager()->StartGameTimer();
-				}
+				// 게임 시작 타이머 실행
+				GI->GetTimeManager()->StartGameTimer();
 			}
+
+			// if (GI)
+			// {
+			// 	// 게임 시작 타이머 실행
+			// 	GI->GetTimeManager()->StartGameTimer();
+			// }
 		}	
 	}
 
