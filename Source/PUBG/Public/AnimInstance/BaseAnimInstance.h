@@ -76,6 +76,13 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleVelocityBackWard;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
+	bool InFreefalling;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
+	float Input;
+	
+
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;

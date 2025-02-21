@@ -5,8 +5,11 @@
 #include "Character/PlayerCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
+#include "MaterialHLSLTree.h"
 #include "Net/UnrealNetwork.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
+#include "Compression/lz4hc.h"
+
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
 	SetIsReplicatedByDefault(true); 
@@ -272,4 +275,35 @@ void UPlayerMovementComponent::StartBackMovement()
 void UPlayerMovementComponent::StopBackMovement()
 {
 	RequestToBackMovement = false;
+}
+
+void UPlayerMovementComponent::FreefallingVelocitySettings(FVector2D MovementVector)
+{
+	APlayerCharacter* Owner = Cast<APlayerCharacter>(GetOwner());
+	
+	if (MovementVector.Y>0.f)
+	{
+	FRotator Aimrot = Owner->GetBaseAimRotation();
+		if (Aimrot.Pitch>=270.f)
+		{
+			Aimrot.Pitch-=360.f;
+		}
+		float ZSpeed = 10010.f * GetWorld()->GetDeltaSeconds() * (Aimrot.Pitch / 90.f);
+		FVector CurrentVelocity = Owner->GetVelocity();
+		CurrentVelocity.Z += ZSpeed;
+		Owner->GetCharacterMovement()->Velocity = CurrentVelocity;
+		//마우스 방향 비례 속도 조정
+	}
+	else if (MovementVector.Y<=0.f)
+	{
+		//정해진 중력의 속도그대로 z방향으로 추락
+	}
+	if (MovementVector.X>0.f)
+	{
+		//오른쪽으로 가기
+	}
+	else if (MovementVector.X<0.f)
+	{
+		//왼쪽으로 가기
+	}
 }

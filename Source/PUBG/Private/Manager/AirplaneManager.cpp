@@ -60,6 +60,7 @@ void UAirplaneManager::StartToMoveAirplane()
 			float MinX = Bounds.Min.X * ScaleFactor;
 			float MinY = Bounds.Min.Y * ScaleFactor;
 			float Z = Bounds.Max.Z * ScaleFactor + 10000.f;
+			UE_LOG(LogTemp, Warning, TEXT("Z:%f"),Z);
 
 			// 랜덤하게 모서리 점 선택
 			TArray<FVector> StartPoints = {

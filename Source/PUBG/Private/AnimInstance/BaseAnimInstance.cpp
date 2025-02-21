@@ -73,6 +73,10 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	PlayerOntheVehicle = OwningPlayer->GetOnTheVehicle();
 	VehicleFacetoBackward = OwningPlayer->GetVehicleFacetoBackward();
 	VehicleVelocityBackWard = OwningPlayer->GetVehicleVelocityBackWard();
+	InFreefalling = OwningPlayer->GetInFreefall();
+	Input = OwningPlayer->GetMoveInput();
+	
+	
 }
 
 bool UBaseAnimInstance::OwnerHasTag(FGameplayTag Tag) const

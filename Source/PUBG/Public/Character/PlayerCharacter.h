@@ -280,4 +280,15 @@ public:
 	{
 		VehicleVelocityBackWard = NewVelocityBackWard;
 	}
+	// FreeFalling 관련
+private:
+	UPROPERTY(Replicated)
+	bool InFreefall = false;
+	UPROPERTY(Replicated)
+	float MoveInput;
+public:
+	FORCEINLINE bool GetInFreefall() const { return InFreefall; }
+	FORCEINLINE void SetInFreefall(bool NewInFreefall){InFreefall = NewInFreefall;}
+	FORCEINLINE float GetMoveInput() const { return MoveInput; }
+	FORCEINLINE void SetMoveInput(float NewMoveInput){MoveInput = NewMoveInput;}
 };
