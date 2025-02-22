@@ -26,10 +26,13 @@ AItemBase::AItemBase()
 	bReplicateUsingRegisteredSubObjectList = true;
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->SetIsReplicated(true);
 	RootComponent = StaticMesh;
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	BoxComponent->SetIsReplicated(true);
 	BoxComponent->SetupAttachment(StaticMesh);
 	InteractionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionComponent"));
+	InteractionComponent->SetIsReplicated(true);
 	InteractionComponent->SetupAttachment(StaticMesh);
 
 	
@@ -62,6 +65,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AItemBase, ItemStruct);
 	DOREPLIFETIME(AItemBase, Item);
+	DOREPLIFETIME(AItemBase, ItemID);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	DOREPLIFETIME(AItemBase, TableIndex);
 	
@@ -157,6 +161,17 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 void AItemBase::OnRep_ItemDataComponent()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
+}
+
+void AItemBase::OnRep_ItemID()
+{
+	SetRandomProperties(ItemID);	
+}
+
+void AItemBase::SetItemID(FName NewItemID)
+{
+	ItemID = NewItemID;	
+	SetRandomProperties(ItemID);	
 }
 
 void AItemBase::ServerSetItem_Implementation(FItemStruct const& OutItem)
@@ -271,19 +286,13 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
-
-	//SetCollisionScale();
-	
-	FVector BoxOrigin = StaticMesh->Bounds.Origin;
-	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
-
-	SetCollisionBox(BoxOrigin,BoxExtent);
+	SetCollisionScale();
 }
 
 void AItemBase::SetSlotFromCategory()
 {
-	FName ItemID = GetItemDataComponent()->GetItemRowName();
-	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+	FName ID = GetItemDataComponent()->GetItemRowName();
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ID, TEXT("Find Row"));
 
 	int32 SlotNum = static_cast<int32>(Row->Category);
 	
@@ -310,10 +319,13 @@ void AItemBase::SetSlotFromCategory()
 void AItemBase::SetCollisionScale()
 {
 	FBoxSphereBounds ComponentBoundsStaticMeshBounds = StaticMesh->Bounds;
+	ComponentBoundsStaticMeshBounds.BoxExtent = StaticMesh->GetStaticMesh()->GetBounds().BoxExtent;
 
-	FVector BoxLocation = FVector(ComponentBoundsStaticMeshBounds.Origin.X, ComponentBoundsStaticMeshBounds.Origin.Y, ComponentBoundsStaticMeshBounds.Origin.Z + ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
-	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 1.5f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
-	FVector OutBoxScale = FVector(InnerBoxScale.X * 3.5f, InnerBoxScale.Y * 2.0f, InnerBoxScale.Z * 5.0f);
+	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
+	
+	FVector BoxLocation = ComponentBoundsStaticMeshBounds.Origin;
+	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 2.f);
+	FVector OutBoxScale = FVector(InnerBoxScale.X + 100.f, InnerBoxScale.Y + 100.f, InnerBoxScale.Z + 100.f);
 
 	InteractionComponent->SetWorldLocation(BoxLocation);
 	BoxComponent->SetWorldLocation(BoxLocation);
@@ -351,6 +363,11 @@ void AItemBase::SetRandomProperties(FName ItemIdName)
 	{
 		//수량 변경
 		GetItemDataComponent()->SetItemQuantity(FoundItem->Quantity);
+	}
+	
+	if (FoundItem)
+	{
+		SetSlotFromCategory();
 	}
 }
 

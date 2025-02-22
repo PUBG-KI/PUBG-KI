@@ -3,10 +3,12 @@
 
 #include "GameplayActor/ItemSpawn/ItemSpawnerComponent.h"
 
+#include "AsyncTreeDifferences.h"
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Item/ItemBase.h"
+#include "Item/WeaponItem.h"
 
 // Sets default values for this component's properties
 UItemSpawnerComponent::UItemSpawnerComponent()
@@ -46,10 +48,29 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation)
 {
 	UWorld* World = GetWorld();
 	
-	//아이템 랜덤 생성
-	AItemBase* SpawnedItem = World->SpawnActor<AItemBase>(BP_Item,SpawnLocation,FRotator::ZeroRotator);
-		
-	SpawnedItem->SetRandomProperties(ItemID);	
+	//아이템 랜덤 생성	
+	AItemBase* SpawnedItem;
+	FItemStruct* ItemStruct = SpawnItemTable->FindRow<FItemStruct>(ItemID, TEXT("Weapon Info Lookup"));
+
+	EItemCategory ItemCategory = ItemStruct->Category;
+	
+	switch (ItemCategory) 
+	{
+	case EItemCategory::MainWeapon:
+	case EItemCategory::SubWeapon:
+		{
+			SpawnedItem = World->SpawnActor<AWeaponItem>(WeaponItemClass, SpawnLocation, FRotator::ZeroRotator);
+			break;
+		}
+	default:
+		{
+			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);
+		}
+	}
+	if (SpawnedItem)
+	{		
+		SpawnedItem->SetItemID(ItemID);	
+	}
 }
 
 void UItemSpawnerComponent::SpawnItems()
