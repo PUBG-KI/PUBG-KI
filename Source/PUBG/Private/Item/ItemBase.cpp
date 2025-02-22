@@ -65,9 +65,9 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AItemBase, ItemStruct);
 	DOREPLIFETIME(AItemBase, Item);
+	DOREPLIFETIME(AItemBase, ItemID);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	DOREPLIFETIME(AItemBase, TableIndex);
-	DOREPLIFETIME(AItemBase, ReplicatedMesh);
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemStruct, COND_OwnerOnly);
@@ -161,6 +161,17 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 void AItemBase::OnRep_ItemDataComponent()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
+}
+
+void AItemBase::OnRep_ItemID()
+{
+	SetRandomProperties(ItemID);	
+}
+
+void AItemBase::SetItemID(FName NewItemID)
+{
+	ItemID = NewItemID;	
+	SetRandomProperties(ItemID);	
 }
 
 void AItemBase::ServerSetItem_Implementation(FItemStruct const& OutItem)
@@ -274,22 +285,14 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
-	if (HasAuthority()) // 서버에서만 실행
-	{
-		ReplicatedMesh = NewMesh;
-		//StaticMesh->SetStaticMesh(NewMesh);
-		SetCollisionScale();
-	}
-	FVector BoxOrigin = StaticMesh->Bounds.Origin;
-	FVector BoxExtent = StaticMesh->Bounds.BoxExtent;
-
-	//SetCollisionBox(BoxOrigin,BoxExtent);
+	StaticMesh->SetStaticMesh(NewMesh);
+	SetCollisionScale();
 }
 
 void AItemBase::SetSlotFromCategory()
 {
-	FName ItemID = GetItemDataComponent()->GetItemRowName();
-	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+	FName ID = GetItemDataComponent()->GetItemRowName();
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ID, TEXT("Find Row"));
 
 	int32 SlotNum = static_cast<int32>(Row->Category);
 	
@@ -314,16 +317,12 @@ void AItemBase::SetSlotFromCategory()
 }
 
 void AItemBase::SetCollisionScale()
-{	
-	StaticMesh->SetStaticMesh(ReplicatedMesh);
-	
+{
 	FBoxSphereBounds ComponentBoundsStaticMeshBounds = StaticMesh->Bounds;
-	ComponentBoundsStaticMeshBounds.BoxExtent = ReplicatedMesh->GetBounds().BoxExtent;
-	
-	UE_LOG(LogTemp, Warning, TEXT("ReplicatedMesh GetBounds: %s"), *ReplicatedMesh->GetBounds().ToString());
-	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
+	ComponentBoundsStaticMeshBounds.BoxExtent = StaticMesh->GetStaticMesh()->GetBounds().BoxExtent;
 
-	// BoxLocation = FVector(ComponentBoundsStaticMeshBounds.Origin.X, ComponentBoundsStaticMeshBounds.Origin.Y, ComponentBoundsStaticMeshBounds.Origin.Z + ComponentBoundsStaticMeshBounds.BoxExtent.Z * 4.0f);
+	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
+	
 	FVector BoxLocation = ComponentBoundsStaticMeshBounds.Origin;
 	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 2.f);
 	FVector OutBoxScale = FVector(InnerBoxScale.X + 100.f, InnerBoxScale.Y + 100.f, InnerBoxScale.Z + 100.f);
@@ -364,6 +363,11 @@ void AItemBase::SetRandomProperties(FName ItemIdName)
 	{
 		//수량 변경
 		GetItemDataComponent()->SetItemQuantity(FoundItem->Quantity);
+	}
+	
+	if (FoundItem)
+	{
+		SetSlotFromCategory();
 	}
 }
 

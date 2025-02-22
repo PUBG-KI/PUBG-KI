@@ -67,9 +67,10 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation)
 			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);
 		}
 	}
-	
-	SpawnedItem->SetRandomProperties(ItemID);	
-	SpawnedItem->SetSlotFromCategory();	
+	if (SpawnedItem)
+	{		
+		SpawnedItem->SetItemID(ItemID);	
+	}
 }
 
 void UItemSpawnerComponent::SpawnItems()

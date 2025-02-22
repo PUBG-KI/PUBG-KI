@@ -40,8 +40,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
-	UPROPERTY(EditDefaultsOnly, ReplicatedUsing=SetCollisionScale, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
-	UStaticMesh* ReplicatedMesh;
+	UPROPERTY(EditDefaultsOnly, ReplicatedUsing=OnRep_ItemID, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
+	FName ItemID;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -71,6 +71,8 @@ public:
 	// OnRep
 	UFUNCTION(BlueprintCallable)
 	void OnRep_ItemDataComponent();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_ItemID();
 	//Getter
 	UFUNCTION()
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
@@ -80,6 +82,7 @@ public:
 	EEquippedItemCategory GetEquippedItemCategory() const { return EquippedItemCategory; }
 
 	// Setter
+	void SetItemID(FName NewItemID);
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	UFUNCTION(Server, Reliable, BlueprintCallable)

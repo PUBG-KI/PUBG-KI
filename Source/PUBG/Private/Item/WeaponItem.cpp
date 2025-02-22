@@ -32,8 +32,8 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("WeaponItem : ItemDataTable"));
 
-			FName ItemID = this->GetItemDataComponent()->GetItemRowName();
-			FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+			FName ID = this->GetItemDataComponent()->GetItemRowName();
+			FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ID, TEXT("Find Row"));
 
 			int32 ItemCategory = static_cast<int32>(Row->Category);
 
