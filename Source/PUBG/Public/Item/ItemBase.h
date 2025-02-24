@@ -79,6 +79,7 @@ public:
 	void OnRep_ItemDataComponent();
 	UFUNCTION(BlueprintCallable)
 	void OnRep_ItemID();
+	UFUNCTION(BlueprintCallable)
 	void OnRep_ItemTableRowName();
 
 	//Getter
