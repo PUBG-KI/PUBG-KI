@@ -10,6 +10,7 @@
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
 //#include "Math/UnrealMathNeon.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Component/Equipped/EquippedComponent.h"
 #include "Controller/BasePlayerController.h"
 #include "Item/WeaponItem.h"
@@ -335,38 +336,74 @@ void UInventoryComponent::ReplicateContent_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!!"));
 }
 
-void UInventoryComponent::ServerRemove_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed)
-{
-}
-
-void UInventoryComponent::RemoveFromInventory(int32 InIndex, int32 InQuantity, bool IsConsumed)
+void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, int32 InQuantity)
 {
 	FName ItemID = Content[InIndex].ItemName;
 	int32 Quantity = Content[InIndex].Quantity;
 
 	if (IsConsumed)
 	{
-		Content[InIndex].Quantity = Quantity - 1;
+		//Content[InIndex].Quantity = Quantity - 1; , 이것들은 능력 안에서 
 
-		if (Content[InIndex].Quantity == 0)
-		{
-			Content.RemoveAt(InIndex);
-		}
+		// if (Content[InIndex].Quantity == 0)
+		// {
+		// 	Content.RemoveAt(InIndex);
+		// }
+		UE_LOG(LogTemp, Warning, TEXT("RemoveFromInventory : IsConsumed true"));
+
+		UsingItem.Item = Content[InIndex];
+		UsingItem.Index = InIndex;
+		
+		// 능력 활성화 
 	}
 	else
 	{
-		ServerDropItem(InIndex, InQuantity);
+		// 현재 양보다 많이 넣으면 안되게, 음수도 안되게
+		UE_LOG(LogTemp, Warning, TEXT("RemoveFromInventory : IsConsumed false"));
 
-		if (Content[InIndex].Quantity == 0)
-		{
-			Content.RemoveAt(InIndex);
-		}
+		ServerDropItem(InIndex, InQuantity);
+		
 	}
 }
 
 void UInventoryComponent::ServerDropItem_Implementation(int32 InIndex, int32 OutQuantity)
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("ServerDropItem_Implementation"));
+
+	ServerSpawnItem(InIndex, OutQuantity);
+
+	Content[InIndex].Quantity -= OutQuantity;
+	UE_LOG(LogTemp, Warning, TEXT("ServerDropItem_Implementation : InIndex = %d Quantity = %d"), InIndex, Content[InIndex].Quantity);
+
+	if (Content[InIndex].Quantity == 0)
+	{
+		Content.RemoveAt(InIndex);
+	}
+}
+
+void UInventoryComponent::ServerSpawnItem_Implementation(int32 InIndex, int32 OutQuantity)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ServerSpawnItem_Implementation"));
+
+	FName ItemName = Content[InIndex].ItemName;
+
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemName, TEXT("Get Item Row"));
+
+	FRotator SpawnRotation = FRotator(0, 0, 0);
+	FVector SpawnLocation = UBaseFunctionLibrary::DropLocation(Cast<APlayerCharacter>(GetOwner()));
+	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
+
+	UClass* ItemBPClass = LoadClass<AItemBase>(nullptr, TEXT("/Game/Blueprint/Item/Farming/Item.Item_C"));
+	if (ItemBPClass) // nullptr 체크 추가
+	{
+		if (AItemBase* TempItem = GetWorld()->SpawnActorDeferred<AItemBase>(ItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
+		{
+			TempItem->SetItemTableRowName(ItemName);
+			TempItem->GetItemDataComponent()->SetItemQuantity(OutQuantity);
+			TempItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+			UE_LOG(LogTemp, Warning, TEXT("TempItem GetItemRowName : %s"), *TempItem->GetItemDataComponent()->GetItemRowName().ToString());
+		}
+	}
 }
 
 void UInventoryComponent::PrintContents()

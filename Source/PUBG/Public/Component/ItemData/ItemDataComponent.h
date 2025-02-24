@@ -53,7 +53,7 @@ public:
 
 	//Setter
 	void SetItemID(UDataTable* ItemDataTable,FName ItemIdName);
-	void SetItemWeight(int32 ItemWeigt);
+	void SetItemWeight(int32 ItemWeight);
 	void SetItemQuantity(float ItemQuantity);
 
 	

@@ -9,6 +9,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "Character/BaseCharacter.h"
 #include "Character/PlayerCharacter.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UBaseAbilitySystemComponent* UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(AActor* Actor)
 {
@@ -85,3 +86,61 @@ TArray<APlayerCharacter*> UBaseFunctionLibrary::GetAllPlayersInWorld(UWorld* Wor
 
 	return PlayerCharacters;
 }
+
+FName UBaseFunctionLibrary::GetRowNameByIndex(UDataTable* DataTable, int32 Index)
+{
+	if (DataTable)
+	{
+		TArray<FName> RowNames = DataTable->GetRowNames();
+		if (RowNames.IsValidIndex(Index))
+		{
+			return RowNames[Index];
+		}
+	}
+	return FName();
+}
+
+int32 UBaseFunctionLibrary::GetRowIndexByName(UDataTable* DataTable, FName Name)
+{
+	if (DataTable == nullptr)
+	{
+		return -1;
+	}
+
+	TArray<FName> RowNames = DataTable->GetRowNames(); // 모든 RowName 가져오기
+	
+	for (int32 Index = 0; Index < RowNames.Num(); Index++)
+	{
+		if (RowNames[Index] == Name)
+		{
+			return Index; // 일치하는 인덱스 반환
+		}
+	}
+
+	return -1;
+
+}
+
+FVector UBaseFunctionLibrary::DropLocation(APlayerCharacter* PlayerCharacter)
+{
+	FVector Start = PlayerCharacter->GetActorLocation();
+	UE_LOG(LogTemp, Warning, TEXT("Start Location : %f %f %f"), Start.X, Start.Y, Start.Z);
+	FVector End = PlayerCharacter->GetActorLocation() - FVector(0.0f, 0.0f, 500.0f);
+	UE_LOG(LogTemp, Warning, TEXT("End Location : %f %f %f"), End.X, End.Y, End.Z);
+	ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_WorldDynamic);
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(PlayerCharacter);
+	FHitResult Hit;
+
+	//UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceChannel, false, IgnoreActors, EDrawDebugTrace::Persistent, Hit, true, FLinearColor::Red, FLinearColor::Green);
+
+	if (UKismetSystemLibrary::LineTraceSingle(PlayerCharacter->GetWorld(), Start, End, TraceChannel, false, IgnoreActors, EDrawDebugTrace::Persistent, Hit, true, FLinearColor::Red, FLinearColor::Green))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Drop Location : %f %f %f"), Hit.Location.X, Hit.Location.Y, Hit.Location.Z);
+		return Hit.Location;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Drop Location : 0"));
+	return FVector(0, 0, 0);
+}
+

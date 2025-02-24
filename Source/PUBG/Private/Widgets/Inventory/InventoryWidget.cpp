@@ -333,9 +333,13 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		// DDInventorySlot에 담긴 값을 NearComponent에 추가
 		switch (DDInventorySlot->GetHaveComponent())
 		{
-		case 2: // 시작이 인벤토리
+		case 2: // 시작이 인벤토리 도착이 바닥
+			UE_LOG(LogTemp, Warning, TEXT("Start : Inventory, End : Near"));
+			PlayerCharacter->GetInventoryComponent()->RemoveFromInventory(DDInventorySlot->GetContentIndex(),
+																			false,
+																			DDInventorySlot->GetInventoryComponent()->GetContent()[DDInventorySlot->GetContentIndex()].Quantity);
 			return true;
-		case 3: // 시작이 장작된 장비
+		case 3: // 시작이 장작된 장비 도착이 바닥 
 			return true;
 			
 		}
@@ -351,13 +355,8 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		case 1: // 시작이 주위 도착이 인벤
 			UE_LOG(LogTemp, Warning, TEXT("Start : Near, End : Inventory"));
 			
-			//PlayerCharacter->GetInventoryComponent()->SetNearItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
 			PlayerCharacter->GetInventoryComponent()->ServerSetNearItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
-			//PlayerCharacter->GetInventoryComponent()->SetItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
-
-			//UE_LOG(LogTemp, Warning, TEXT("Drop Item : %s"), *PlayerCharacter->GetInventoryComponent()->GetNearItem()->GetItemStruct().Name.ToString());
 			
-			//PlayerCharacter->GetInventoryComponent()->Server_Interact();
 			PlayerCharacter->GetInventoryComponent()->Server_InteractItem(PlayerCharacter->GetInventoryComponent()->GetNearItem());
 			
 			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetOwningPlayer()))
@@ -368,7 +367,7 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 			PlayerCharacter->GetInventoryComponent()->SetNearItem(nullptr);
 			
 			return true;
-		case 3: // 시작이 장작된 장비 
+		case 3: // 시작이 장작된 장비 도착이 인벤 
 			return true;
 		}
 		

@@ -64,6 +64,9 @@ class PUBG_API UItemSlotWidget : public UWidgetBase
 	UVerticalBox* VerticalBox_Inventory;
 	UPROPERTY()
 	FPointerEvent StartMousePoint; // 드래그 시작 지점, 비어있는지 확인해야 함 (어떻게?)
+
+	UPROPERTY()
+	UDataTable* DataTable;
 	// UPROPERTY()
 	// EItemZoneType ItemZoneType;
 	

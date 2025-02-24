@@ -3,14 +3,17 @@
 
 #include "Widgets/Inventory/ItemSlotWidget.h"
 
+#include "BaseLibrary/DataStruct/BoosterEffectStruct.h"
 #include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "DragDrop/DDInventorySlot.h"
+#include "Item/WeaponItem.h"
 #include "Widgets/Inventory/DragItemWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
@@ -39,13 +42,15 @@ void UItemSlotWidget::NativeConstruct()
 	VerticalBox_Inventory = InventoryWidget->GetVerticalBox_Inventory();
 	
 	//ItemZoneType = EItemZoneType::None;
+	
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 
 }
 
 void UItemSlotWidget::UpdateItemSlotWidget()
 {
-	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
-	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	
 
 	if (DataTable)
 	{
@@ -81,11 +86,50 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 	}
 	else
 	{
-		if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+		if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton) // 좌클릭일 경우
 		{
 			FEventReply ReplyResult = UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton);
 			StartMousePoint = InMouseEvent;
 			return ReplyResult.NativeReply;
+		}
+		else if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton) // 우클릭일 경우
+		{
+			UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton"));
+			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
+			{
+				FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
+				UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
+
+				FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
+				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
+				if (Row)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
+
+					InventoryComponent->RemoveFromInventory(Index, true);
+				}
+			}
+			else if (NearComponent)
+			{
+				if (AWeaponItem* Weapon = Cast<AWeaponItem>(NearComponent->GetGroundItems()[Index]))
+				{
+					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
+					UEquippedComponent* EquippedComponent = PlayerCharacter->GetEquippedComponent();
+
+					FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Find Row"));
+
+					int32 ItemCategory = static_cast<int32>(Row->Category);
+
+					if (ItemCategory == 0)
+					{
+						EquippedComponent->ServerEquipMainItem(NearComponent->GetGroundItems()[Index]);
+					}
+					else if (ItemCategory == 2)
+					{
+						EquippedComponent->ServerEquipSubWeapon(NearComponent->GetGroundItems()[Index]);
+					}
+				}
+			}
 		}
 	}
 	return FReply::Unhandled();

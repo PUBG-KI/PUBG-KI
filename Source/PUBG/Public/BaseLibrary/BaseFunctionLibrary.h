@@ -43,5 +43,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
 	static TArray<APlayerCharacter*> GetAllPlayersInWorld(UWorld* World);
-	
+
+	// 이준수
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static FName GetRowNameByIndex(UDataTable* DataTable, int32 Index);
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static int32 GetRowIndexByName(UDataTable* DataTable, FName Name);
+	UFUNCTION(BlueprintCallable, Category = "FunctionLibary")
+	static FVector DropLocation(APlayerCharacter* PlayerCharacter); // 현재 자기 위치에서 바닥에 아이템 떨어뜨릴 위치 
 };

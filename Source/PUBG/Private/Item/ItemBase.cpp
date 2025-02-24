@@ -4,6 +4,7 @@
 #include "Item/ItemBase.h"
 
 //#include "K2Node_GetDataTableRow.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Character/TestCharacter.h"
 #include "Components/BoxComponent.h"
@@ -13,6 +14,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Character/PlayerCharacter.h"
+#include "Kismet/DataTableFunctionLibrary.h"
 
 
 //int32 AItemBase::BeginOverlapCount = 0;
@@ -39,13 +41,9 @@ AItemBase::AItemBase()
 	//InteractionComponent->InitBoxExtent(FVector(20.0f));
 
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
-	//ItemDataComponent->bReplicates = true;
-	//RegisterReplicatedSubObject(ItemDataComponent);
-
-	//BeginOverlapCount = 0;
-
-	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
-	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	
+	TableIndex = -1;
+	
 }
 
 void AItemBase::BeginPlay()
@@ -53,10 +51,46 @@ void AItemBase::BeginPlay()
 	Super::BeginPlay();
 
 
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 	
-	//BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AItemBase::OnComponentBeginOverlap);
-	//BoxComponent->OnComponentEndOverlap.AddDynamic(this, &AItemBase::OnComponentEndOverlap);
-	
+	if (!ItemTableRowName.IsNone())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItemBase::BeginPlay : %s"), *ItemTableRowName.ToString());
+		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemTableRowName, TEXT("AItemBase : Fail Find Row"));
+		StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
+
+		int32 CategoryIndex = static_cast<int32>(Row->Category);
+		SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
+
+		ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
+
+		if (ItemDataComponent->GetQuantity() == 0)
+		{
+			ItemDataComponent->SetItemQuantity(Row->Quantity);
+		}
+		ItemDataComponent->SetItemWeight(Row->Weight);
+		
+		SetCollisionScale(); // 콜리전 박스 2개 크기 지정
+
+		SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
+	}
+	else
+	{
+		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>("AKM", TEXT("AItemBase : Fail Find Row"));
+		StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
+
+		int32 CategoryIndex = static_cast<int32>(Row->Category);
+		SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
+
+		ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
+		ItemDataComponent->SetItemQuantity(Row->Quantity);
+		ItemDataComponent->SetItemWeight(Row->Weight);
+		
+		SetCollisionScale(); // 콜리전 박스 2개 크기 지정
+
+		SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
+	}
 }
 
 void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -68,6 +102,8 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AItemBase, ItemID);
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	DOREPLIFETIME(AItemBase, TableIndex);
+	DOREPLIFETIME(AItemBase, ItemTableRowName);
+	
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemStruct, COND_OwnerOnly);
@@ -163,6 +199,7 @@ void AItemBase::OnRep_ItemDataComponent()
 	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
 }
 
+
 void AItemBase::OnRep_ItemID()
 {
 	SetRandomProperties(ItemID);	
@@ -170,8 +207,15 @@ void AItemBase::OnRep_ItemID()
 
 void AItemBase::SetItemID(FName NewItemID)
 {
-	ItemID = NewItemID;	
-	SetRandomProperties(ItemID);	
+	ItemID = NewItemID;
+	SetRandomProperties(ItemID);
+}
+
+void AItemBase::OnRep_ItemTableRowName()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ItemTableRowName Replicate!"));
+
+
 }
 
 void AItemBase::ServerSetItem_Implementation(FItemStruct const& OutItem)
@@ -333,6 +377,7 @@ void AItemBase::SetCollisionScale()
 	BoxComponent->SetBoxExtent(OutBoxScale);
 }
 
+
 //스폰 시 속성 변경
 void AItemBase::SetRandomProperties(FName ItemIdName)
 {
@@ -371,5 +416,36 @@ void AItemBase::SetRandomProperties(FName ItemIdName)
 	}
 }
 
-
-
+void AItemBase::SetStaticMeshScaleFromCategory(int32 InCategoryIndex)
+{
+	switch (InCategoryIndex)
+	{
+	case 0:
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	case 5:
+		break;
+	case 6:
+		break;
+	case 7:
+		break;
+	case 8:
+		break;
+	case 9:
+		break;
+	case 10:
+		break;
+	case 11:
+		StaticMesh->SetWorldScale3D(FVector(2.0f));
+		break;
+	case 12:
+		break;
+	}
+}
