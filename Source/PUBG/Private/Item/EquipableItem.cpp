@@ -37,6 +37,16 @@ void AEquipableItem::BeginPlay()
 
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+
+	if (ItemDataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemDataTable"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ItemDataTable None"));
+
+	}
 }
 
 void AEquipableItem::ClientCreateMaterial_Implementation()

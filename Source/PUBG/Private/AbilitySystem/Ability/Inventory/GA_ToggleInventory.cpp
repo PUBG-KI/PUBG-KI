@@ -39,11 +39,14 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 		GetPlayerControllerFromActorInfo()->ClientCreateInventoryWidget();
 		UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
 		//InventoryWidget->UpdateInventoryWidget();
+
+		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		GetPlayerControllerFromActorInfo()->InputModeUI();
 		
 		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 		//PlayerCharacter->GetInventoryComponent()->ServerUpdateInventory();
 		InventoryWidget->UpdateInventoryWidget();
-		//InventoryWidget->UpdateNearItemSlotWidget();
+		InventoryWidget->UpdateNearItemSlotWidget();
 		InventoryWidget->UpdateEquippedWidget();
 		
 		if (!PlayerCharacter)
@@ -58,8 +61,8 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 			return;
 		}
 		
-		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		GetPlayerControllerFromActorInfo()->InputModeUI();
+		// GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		// GetPlayerControllerFromActorInfo()->InputModeUI();
 		
 	}
 	else

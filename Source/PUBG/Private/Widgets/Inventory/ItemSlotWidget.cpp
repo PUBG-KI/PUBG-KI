@@ -43,14 +43,15 @@ void UItemSlotWidget::NativeConstruct()
 	
 	//ItemZoneType = EItemZoneType::None;
 	
-	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
-	DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 
 }
 
 void UItemSlotWidget::UpdateItemSlotWidget()
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget"));
+
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 
 	if (DataTable)
 	{
@@ -62,7 +63,15 @@ void UItemSlotWidget::UpdateItemSlotWidget()
 			Text_Quantity->SetText(FText::AsNumber(Quantity));
 			Text_ItemName->SetText(FText::FromName(ItemName));
 		}
-		
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : Item name not found"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : DataTable None"));
+
 	}
 }
 

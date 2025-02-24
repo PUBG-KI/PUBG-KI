@@ -88,6 +88,7 @@ public:
 
 	// Getter
 	UTextBlock* GetTextBlock_Use() const { return TextBlock_Use; }
+	UTextBlock* GetText_ItemName() const { return Text_ItemName; }
 	UFUNCTION(BlueprintCallable)
 	void UpdateItemSlotWidget();
 

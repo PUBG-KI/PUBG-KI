@@ -69,6 +69,7 @@ void UInventoryWidget::UpdateInventoryWidget()
 			if (ItemSlotWidget != nullptr)
 			{
 				ItemSlotWidget->SetItemName(ItemSlot[i].ItemName);
+				//ItemSlotWidget->GetItemName
 				ItemSlotWidget->SetQuantity(ItemSlot[i].Quantity);
 				ItemSlotWidget->SetInventoryComponent(InventoryComponent);
 				ItemSlotWidget->SetIndex(i);
@@ -489,7 +490,7 @@ void UInventoryWidget::EquippedUIInit()
 
 UWeaponSlotWidget* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex)
 {
-					
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::EquippedWeaponUIUpdate"));					
 	OutWeaponSlotWidget->FindEquiablePartsSlot(OutGunBase);
 
 	FString SlotNumber =  FString::FromInt(OutIndex + 1);
@@ -508,6 +509,7 @@ UWeaponSlotWidget* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget* O
 	FName WeaponBulletFName = FName(*WeaponBulletName);
 	UE_LOG(LogTemp, Warning, TEXT("EquippedWeaponUIUpdate : %s"), *WeaponBulletName);
 	FItemStruct* Row = OutGunBase->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
+	
 	if (Row != nullptr)
 	{
 		OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));

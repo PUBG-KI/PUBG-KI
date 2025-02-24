@@ -43,16 +43,25 @@ AItemBase::AItemBase()
 	ItemDataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("ItemDataComponent"));
 	
 	TableIndex = -1;
-	
+
+
 }
 
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	
+	if (ItemDataTable)
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" AItemBase::BeginPlay ItemDataTable"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" AItemBase::BeginPlay ItemDataTable None"));
+	}
 	
 	if (!ItemTableRowName.IsNone())
 	{
@@ -69,6 +78,7 @@ void AItemBase::BeginPlay()
 		{
 			ItemDataComponent->SetItemQuantity(Row->Quantity);
 		}
+		
 		ItemDataComponent->SetItemWeight(Row->Weight);
 		
 		SetCollisionScale(); // 콜리전 박스 2개 크기 지정
@@ -208,6 +218,7 @@ void AItemBase::OnRep_ItemID()
 void AItemBase::SetItemID(FName NewItemID)
 {
 	ItemID = NewItemID;
+	ItemTableRowName = NewItemID;
 	SetRandomProperties(ItemID);
 }
 
