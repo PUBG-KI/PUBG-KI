@@ -277,10 +277,10 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump,
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Jump);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
-	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
-	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
-	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
+	// BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
+	//                                           ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
+	// BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
+	//                                           ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
 
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
@@ -426,84 +426,84 @@ void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 	}
 }
 
-void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
-{
-	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
-	{
-		return;
-	}
+// void APlayerCharacter::Input_Crouch(const FInputActionValue& InputActionValue)
+// {
+// 	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
+// 	{
+// 		return;
+// 	}
+//
+// 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+//
+// 	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
+// 	{
+// 		if (!bAnimationIsPlaying)
+// 		{
+// 			FVector UnCrouchCameraOffset = FVector(0, 0, 40.f);
+// 			CameraBoom->TimelineAddOffset(UnCrouchCameraOffset, 0.2f);
+// 			UnCrouch();
+// 		}
+// 		return;
+// 	}
+//
+// 	if (MovementComponent->RequestToStartProne)
+// 	{
+// 		if (!bAnimationIsPlaying)
+// 		{
+// 			MovementComponent->StopProne();
+// 			Crouch();
+// 			FVector CrouchCameraOffset = FVector(0, 0, 40.f);
+// 			CameraBoom->TimelineAddOffset(CrouchCameraOffset, 0.2f);
+// 		}
+// 		return;
+// 	}
+// 	if (!bAnimationIsPlaying)
+// 	{
+// 		FVector CrouchCameraOffset = FVector(0, 0, -40.f);
+// 		CameraBoom->TimelineAddOffset(CrouchCameraOffset, 0.2f);
+// 		Crouch();
+// 	}
+// }
 
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 
-	if (GetCharacterMovement()->IsCrouching()) //크라우칭 상태면
-	{
-		if (!bAnimationIsPlaying)
-		{
-			FVector UnCrouchCameraOffset = FVector(0, 0, 40.f);
-			CameraBoom->TimelineAddOffset(UnCrouchCameraOffset, 0.2f);
-			UnCrouch();
-		}
-		return;
-	}
-
-	if (MovementComponent->RequestToStartProne)
-	{
-		if (!bAnimationIsPlaying)
-		{
-			MovementComponent->StopProne();
-			Crouch();
-			FVector CrouchCameraOffset = FVector(0, 0, 40.f);
-			CameraBoom->TimelineAddOffset(CrouchCameraOffset, 0.2f);
-		}
-		return;
-	}
-	if (!bAnimationIsPlaying)
-	{
-		FVector CrouchCameraOffset = FVector(0, 0, -40.f);
-		CameraBoom->TimelineAddOffset(CrouchCameraOffset, 0.2f);
-		Crouch();
-	}
-}
-
-
-void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
-{
-	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
-	{
-		return;
-	}
-
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-
-	if (MovementComponent->RequestToStartProne) //누워있는 상태면
-	{
-		if (!bAnimationIsPlaying)
-		{
-			FVector UnProneCameraOffset = FVector(0, 0, 80.f);
-			CameraBoom->TimelineAddOffset(UnProneCameraOffset, 0.2f);
-			MovementComponent->StopProne();
-		}
-		return;
-	}
-
-	if (GetMovementComponent()->IsCrouching())
-	{
-		if (!bAnimationIsPlaying)
-		{
-			UnCrouch();
-			MovementComponent->StartProne();
-			FVector ProneCameraOffset = FVector(0, 0, -40.f);
-			CameraBoom->TimelineAddOffset(ProneCameraOffset, 0.2f);
-		}
-		return;
-	}
-	if (!bAnimationIsPlaying)
-	{
-		FVector ProneCameraOffset = FVector(0, 0, -80.f);
-		CameraBoom->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
-		MovementComponent->StartProne();
-	}
-}
+// void APlayerCharacter::Input_Prone(const FInputActionValue& InputActionValue)
+// {
+// 	if (GetCharacterMovement()->IsFalling() && bAnimationIsPlaying)
+// 	{
+// 		return;
+// 	}
+//
+// 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+//
+// 	if (MovementComponent->RequestToStartProne) //누워있는 상태면
+// 	{
+// 		if (!bAnimationIsPlaying)
+// 		{
+// 			FVector UnProneCameraOffset = FVector(0, 0, 80.f);
+// 			CameraBoom->TimelineAddOffset(UnProneCameraOffset, 0.2f);
+// 			MovementComponent->StopProne();
+// 		}
+// 		return;
+// 	}
+//
+// 	if (GetMovementComponent()->IsCrouching())
+// 	{
+// 		if (!bAnimationIsPlaying)
+// 		{
+// 			UnCrouch();
+// 			MovementComponent->StartProne();
+// 			FVector ProneCameraOffset = FVector(0, 0, -40.f);
+// 			CameraBoom->TimelineAddOffset(ProneCameraOffset, 0.2f);
+// 		}
+// 		return;
+// 	}
+// 	if (!bAnimationIsPlaying)
+// 	{
+// 		FVector ProneCameraOffset = FVector(0, 0, -80.f);
+// 		CameraBoom->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
+// 		MovementComponent->StartProne();
+// 	}
+// }
 
 
 void APlayerCharacter::Input_AbilityInputPressed(FGameplayTag InputTag)

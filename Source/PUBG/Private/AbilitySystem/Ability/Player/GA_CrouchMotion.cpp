@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AbilitySystem/Ability/Player/GA_ProneMotion.h"
+#include "AbilitySystem/Ability/Player/GA_CrouchMotion.h"
 #include "AbilitySystem/AbilityTask/PlayMontageAndWaitForEvent.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Character/PlayerCharacter.h"
@@ -9,89 +9,86 @@
 #include "Component/Movement/PlayerMovementComponent.h"
 
 
-UGA_ProneMotion::UGA_ProneMotion()
+UGA_CrouchMotion::UGA_CrouchMotion()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	SetCanBeCanceled(false);
 }
 
-void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                      const FGameplayAbilityActorInfo* ActorInfo,
-                                      const FGameplayAbilityActivationInfo ActivationInfo,
-                                      const FGameplayEventData* TriggerEventData)
+void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+                                       const FGameplayAbilityActorInfo* ActorInfo,
+                                       const FGameplayAbilityActivationInfo ActivationInfo,
+                                       const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	UPlayerMovementComponent* MovementComponent = Cast<
 		UPlayerMovementComponent>(PUBGPlayer->GetMovementComponent());
-	if (PUBGPlayer->GetMovementComponent()->IsFalling() && PUBGPlayer->bAnimationIsPlaying)
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-		
-	}
-	if (!MovementComponent)
+	if (MovementComponent->IsFalling() && PUBGPlayer->bAnimationIsPlaying)
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 	}
 
-	if (MovementComponent->RequestToStartProne) //누워있는 상태면
+	if (PUBGPlayer->GetMovementComponent()->IsCrouching()) //크라우칭 상태면
 	{
 		if (!PUBGPlayer->bAnimationIsPlaying)
 		{
-			FVector UnProneCameraOffset = FVector(0, 0, 80.f);
+			FVector UnProneCameraOffset = FVector(0, 0, 40.f);
 
 			PUBGPlayer->GetCameraBoom()->TimelineAddOffset(UnProneCameraOffset, 0.2f);
-			MovementComponent->StopProne();
-			
-			if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
+			PUBGPlayer->UnCrouch();
+
+			if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
 			{
-				ProneRifleMontagePlay(EProneMontageType::PronetoStand);
+				CrouchRifleMontagePlay(ECrouchMontageType::CrouchtoStand);
 			}
-			else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
+			else if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
 			{
-				ProneMeleeMontagePlay(EProneMontageType::PronetoStand);
+				CrouchMeleeMontagePlay(ECrouchMontageType::CrouchtoStand);
 			}
-			else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
+			else if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
 			{
-			ProneGrenadeMontagePlay(EProneMontageType::PronetoStand);
+				CrouchGrenadeMontagePlay(ECrouchMontageType::CrouchtoStand);
 			}
 			else
 			{
-				ProneUnarmedMontagePlay(EProneMontageType::PronetoStand);
+				CrouchUnarmedMontagePlay(ECrouchMontageType::CrouchtoStand);
 			}
-
-			
 		}
-
-		
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 	}
 
-	if (MovementComponent->IsCrouching())
+	if (MovementComponent->RequestToStartProne) //누워있으면
 	{
 		if (!PUBGPlayer->bAnimationIsPlaying)
 		{
-			PUBGPlayer->UnCrouch();
-			MovementComponent->StartProne();
-			FVector ProneCameraOffset = FVector(0, 0, -40.f);
+			MovementComponent->StopProne();
+			PUBGPlayer->Crouch();
+			FVector ProneCameraOffset = FVector(0, 0, 40.f);
 			PUBGPlayer->GetCameraBoom()->TimelineAddOffset(ProneCameraOffset, 0.2f);
-			if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
+			if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
 			{
-				ProneRifleMontagePlay(EProneMontageType::CrouchtoProne);
+			CrouchRifleMontagePlay(ECrouchMontageType::PronetoCrouch);
 			}
-			else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
+			else if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
 			{
-				ProneMeleeMontagePlay(EProneMontageType::CrouchtoProne);
+				CrouchMeleeMontagePlay(ECrouchMontageType::PronetoCrouch);
 			}
-			else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
+			else if (UBaseFunctionLibrary::NativeActorHasTag(
+				PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
 			{
-				ProneGrenadeMontagePlay(EProneMontageType::CrouchtoProne);
+				CrouchGrenadeMontagePlay(ECrouchMontageType::PronetoCrouch);
 			}
 			else
 			{
-				ProneUnarmedMontagePlay(EProneMontageType::CrouchtoProne);
+				CrouchUnarmedMontagePlay(ECrouchMontageType::PronetoCrouch);
 			}
 		}
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
@@ -99,43 +96,45 @@ void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 	if (!PUBGPlayer->bAnimationIsPlaying)
 	{
-		FVector ProneCameraOffset = FVector(0, 0, -80.f);
+		FVector ProneCameraOffset = FVector(0, 0, -40.f);
 		PUBGPlayer->GetCameraBoom()->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
-		MovementComponent->StartProne();
-UE_LOG(LogTemp, Warning, TEXT("Prone"));
+		PUBGPlayer->Crouch();
+
 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
 		{
-			ProneRifleMontagePlay(EProneMontageType::StandtoProne);
+			CrouchRifleMontagePlay(ECrouchMontageType::StandtoCrouch);
 		}
-		else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
+		else if (UBaseFunctionLibrary::NativeActorHasTag(
+			PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Melee"))))
 		{
-			ProneMeleeMontagePlay(EProneMontageType::StandtoProne);
+			CrouchMeleeMontagePlay(ECrouchMontageType::StandtoCrouch);
 		}
-		else if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
+		else if (UBaseFunctionLibrary::NativeActorHasTag(
+			PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Grenade"))))
 		{
-			ProneGrenadeMontagePlay(EProneMontageType::StandtoProne);
+			CrouchGrenadeMontagePlay(ECrouchMontageType::StandtoCrouch);
 		}
 		else
 		{
-			ProneUnarmedMontagePlay(EProneMontageType::StandtoProne);
+			CrouchUnarmedMontagePlay(ECrouchMontageType::StandtoCrouch);
 		}
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 	}
 }
 
-void UGA_ProneMotion::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+void UGA_CrouchMotion::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
+                                  const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility,
+                                  bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void UGA_ProneMotion::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
+void UGA_CrouchMotion::OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData)
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-
-void UGA_ProneMotion::ProneUnarmedMontagePlay(EProneMontageType MontageType)
+void UGA_CrouchMotion::CrouchUnarmedMontagePlay(ECrouchMontageType MontageType)
 {
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	if (UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(PUBGPlayer))
@@ -145,15 +144,15 @@ void UGA_ProneMotion::ProneUnarmedMontagePlay(EProneMontageType MontageType)
 			UAnimMontage* SelectedMontage = UnarmedMontage[(uint8)MontageType];
 			UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
-			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 
 			Task->ReadyForActivation();
 		}
 	}
 }
 
-void UGA_ProneMotion::ProneRifleMontagePlay(EProneMontageType MontageType)
+void UGA_CrouchMotion::CrouchRifleMontagePlay(ECrouchMontageType MontageType)
 {
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	if (UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(PUBGPlayer))
@@ -163,15 +162,15 @@ void UGA_ProneMotion::ProneRifleMontagePlay(EProneMontageType MontageType)
 			UAnimMontage* SelectedMontage = RifleMontage[(uint8)MontageType];
 			UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
-			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 
 			Task->ReadyForActivation();
 		}
 	}
 }
 
-void UGA_ProneMotion::ProneMeleeMontagePlay(EProneMontageType MontageType)
+void UGA_CrouchMotion::CrouchMeleeMontagePlay(ECrouchMontageType MontageType)
 {
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	if (UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(PUBGPlayer))
@@ -181,15 +180,15 @@ void UGA_ProneMotion::ProneMeleeMontagePlay(EProneMontageType MontageType)
 			UAnimMontage* SelectedMontage = MeleeMontage[(uint8)MontageType];
 			UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
-			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 
 			Task->ReadyForActivation();
 		}
 	}
 }
 
-void UGA_ProneMotion::ProneGrenadeMontagePlay(EProneMontageType MontageType)
+void UGA_CrouchMotion::CrouchGrenadeMontagePlay(ECrouchMontageType MontageType)
 {
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	if (UBaseFunctionLibrary::NativeGetBaseAbilitySystemComponentFromActor(PUBGPlayer))
@@ -199,8 +198,8 @@ void UGA_ProneMotion::ProneGrenadeMontagePlay(EProneMontageType MontageType)
 			UAnimMontage* SelectedMontage = GrenadeMontage[(uint8)MontageType];
 			UPlayMontageAndWaitForEvent* Task = UPlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
-			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 
 			Task->ReadyForActivation();
 		}

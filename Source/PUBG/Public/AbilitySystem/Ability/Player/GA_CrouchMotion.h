@@ -4,36 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerGameplayAbility.h"
-#include "GA_ProneMotion.generated.h"
-
+#include "GA_CrouchMotion.generated.h"
+UENUM(BlueprintType)
+enum class ECrouchMontageType : uint8
+{
+	CrouchtoStand UMETA(DisplayName = "CrouchtoStand"),
+	PronetoCrouch UMETA(DisplayName = "PronetoCrouch"),
+	StandtoCrouch UMETA(DisplayName = "StandtoCrouch")
+};
 /**
  * 
  */
-UENUM(BlueprintType)
-enum class EProneMontageType : uint8
-{
-	PronetoStand UMETA(DisplayName = "PronetoStand"),
-	CrouchtoProne UMETA(DisplayName = "CrouchtoProne"),
-	StandtoProne UMETA(DisplayName = "StandtoProne")
-};
 UCLASS()
-class PUBG_API UGA_ProneMotion : public UPlayerGameplayAbility
+class PUBG_API UGA_CrouchMotion : public UPlayerGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UGA_ProneMotion();
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-								 const FGameplayAbilityActivationInfo ActivationInfo,
-								 const FGameplayEventData* TriggerEventData) override;
-
+	UGA_CrouchMotion();
+	virtual void ActivateAbility(FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	UFUNCTION()
 	void OnCompleted(FGameplayTag EventTag, FGameplayEventData EventData);
-	void ProneUnarmedMontagePlay(EProneMontageType MontageType);
-	void ProneRifleMontagePlay(EProneMontageType MontageType);
-	void ProneMeleeMontagePlay(EProneMontageType MontageType);
-	void ProneGrenadeMontagePlay(EProneMontageType MontageType);
+	void CrouchUnarmedMontagePlay(ECrouchMontageType MontageType);
+	void CrouchRifleMontagePlay(ECrouchMontageType MontageType);
+	void CrouchMeleeMontagePlay(ECrouchMontageType MontageType);
+	void CrouchGrenadeMontagePlay(ECrouchMontageType MontageType);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TranspostureMontage")
@@ -47,6 +43,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "TranspostureMontage")
 	TArray<UAnimMontage*> GrenadeMontage;
-	
-	
 };
