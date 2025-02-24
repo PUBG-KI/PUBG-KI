@@ -18,6 +18,7 @@
 #include "Widgets/Inventory/InventoryWidget.h"
 #include "Widgets/Map/MapWidget.h"
 #include "Widgets/Map/WorldMapWidget.h"
+#include "Widgets/Notification/NotificationWidget.h"
 
 ABasePlayerController::ABasePlayerController()
 {
@@ -42,37 +43,17 @@ void ABasePlayerController::BeginPlayingState()
 		return;
 	}
 
-	
-	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
-	if (!PS)
-	{		
-		UE_LOG(LogTemp, Warning, TEXT("!ABasePlayerState"));
-		return;
-	}
-
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-	
-	//
-	// if (IsValid(InventoryWidgetClass))
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-	// 	
-	// 	InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
-	// 	InventoryWidget->AddToViewport();
-	// 	if (PlayerCharacter)
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
-	// 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
-	//
-	// 	}
-	// 	else
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
-	// 	}
-	// 	InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-	// 	InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-	// }
+	if (IsValid(NotificationWidgetClass))
+	{
 		
+		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass Loaded"));
+		NotificationWidget = CreateWidget<UNotificationWidget>(this, NotificationWidgetClass);
+		NotificationWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass is NULL"));
+	}
 
 	if (IsValid(HudWidgetClass))
 	{
@@ -85,11 +66,20 @@ void ABasePlayerController::BeginPlayingState()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
 	}
+	
+	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+	if (!PS)
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("!ABasePlayerState"));
+		return;
+	}
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
 	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
 	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
 	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
-
+	
 	InputModeGame();	
 }
 
@@ -252,6 +242,14 @@ void ABasePlayerController::UpdateMapNextZone()
 	if (WorldMapWidget)
 	{
 		WorldMapWidget->GetWBP_Map()->UpdateNextZone();
+	}
+}
+
+void ABasePlayerController::ShowNotification(FText Text)
+{
+	if (NotificationWidget)
+	{
+		NotificationWidget->ShowNotification(Text);
 	}
 }
 

@@ -11,6 +11,7 @@ class UWorldMapWidget;
 class AAirplane;
 class UHudWidget;
 class UInventoryWidget;
+class UNotificationWidget;
 class ACrosshairHUD;
 
 /**
@@ -58,6 +59,8 @@ public:
 	void UpdateMapCurrentZone();
 	UFUNCTION(BlueprintCallable)
 	void UpdateMapNextZone();
+	UFUNCTION(BlueprintCallable)
+	void ShowNotification(FText Text);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
@@ -79,6 +82,11 @@ private:
 	TSubclassOf<UWorldMapWidget> WorldMapWidgetClass;
 	UPROPERTY()
 	UWorldMapWidget* WorldMapWidget;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UNotificationWidget> NotificationWidgetClass;
+	UPROPERTY()
+	UNotificationWidget* NotificationWidget;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AAirplane* ControlledAirplane;

@@ -43,7 +43,8 @@ public:
 	UFUNCTION()
 	void OnRep_LandScapeBoundingBoxXY();
 	
-	void UpdateWidget();
+	void UpdatePlayerCountWidget();
+	void ShowNotification(FText Message);
 	
 	// 게임 상태 업데이트
 	void UpdateRemainingTime(int32 NewTime);
@@ -118,7 +119,6 @@ public:
 	// 비행기를 표시할 것인지
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyAirplane;
-	
-
+	bool StartNotify;
 };
 

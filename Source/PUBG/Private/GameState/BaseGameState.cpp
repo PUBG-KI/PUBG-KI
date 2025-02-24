@@ -13,7 +13,6 @@
 
 ABaseGameState::ABaseGameState()
 {
-	RemainingTime = 600; // 초기 게임 시간 설정 (10분)
 	PlayerCount = 0;
 	initalize();
 }
@@ -60,12 +59,23 @@ void ABaseGameState::SetBoardPlaneNotification(bool bNewValue)
 void ABaseGameState::OnRep_PlayerCount()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("OnRep_PlayerCount"));
-	UpdateWidget();
+	UpdatePlayerCountWidget();
 }
 
 void ABaseGameState::OnRep_RemainingTime()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("RemainingTime = %d"), RemainingTime);
+	FText Message;
+	if (RemainingTime == 0)
+	{
+		Message = FText::FromString(TEXT("게임 시작합니다!"));	
+	}
+	else
+	{
+		Message = FText::FromString(FString::FromInt(RemainingTime) + TEXT("초 남았습니다"));		
+	}
+	
+	ShowNotification(Message);
 }
 
 void ABaseGameState::OnRep_GameStartNotification()
@@ -84,6 +94,14 @@ void ABaseGameState::OnRep_CurrentZoneScale()
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
 
+
+	if (StartNotify)
+	{
+		StartNotify = false;
+		FText Message = FText::FromString(TEXT("자기장이 줄어듭니다"));		
+		ShowNotification(Message);
+	}
+	
 	for (APlayerState* PS : PlayerArray)
 	{
 		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
@@ -102,12 +120,13 @@ void ABaseGameState::OnRep_IsVisibiltyNextZone()
 	//UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
 	//UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
 	if (bIsVisibiltyNextZone)
-	{		
-	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = true"));
+	{
+		FText Message = FText::FromString(TEXT("잠시후 자기장이 줄어듭니다"));		
+		ShowNotification(Message);
 	}
 	else
-	{		
-	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyNextZone = false"));
+	{
+		StartNotify = true;
 	}
 
 	for (APlayerState* PS : PlayerArray)
@@ -147,7 +166,7 @@ void ABaseGameState::OnRep_LandScapeBoundingBoxXY()
 {
 }
 
-void ABaseGameState::UpdateWidget()
+void ABaseGameState::UpdatePlayerCountWidget()
 {
 	for (APlayerState* PS : PlayerArray)
 	{
@@ -157,6 +176,21 @@ void ABaseGameState::UpdateWidget()
 			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
 			{
 				PC->UpdateCurrentPlayer(PlayerCount);
+			}
+		}
+	}
+}
+
+void ABaseGameState::ShowNotification(FText Message)
+{
+	for (APlayerState* PS : PlayerArray)
+	{
+		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
+		{
+			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
+			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
+			{
+				PC->ShowNotification(Message);
 			}
 		}
 	}
