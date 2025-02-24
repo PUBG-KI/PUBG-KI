@@ -27,8 +27,8 @@ void UGA_Weapon_Fire::SetDefault()
 
 FVector UGA_Weapon_Fire::GetVelocityVector()
 {
-	FVector LineTraceStart = GetPlayerCharacterFromActorInfo()->GetcurrentCamera()->GetComponentLocation();
-	FVector LineTraceEnd = LineTraceStart + (GetPlayerCharacterFromActorInfo()->GetcurrentCamera()->GetForwardVector() * 10000.0);
+	FVector LineTraceStart = GetPlayerCharacterFromActorInfo()->GetCurrentCamera()->GetComponentLocation();
+	FVector LineTraceEnd = LineTraceStart + (GetPlayerCharacterFromActorInfo()->GetCurrentCamera()->GetForwardVector() * 10000.0);
 	
 	FHitResult HitResult;
 	

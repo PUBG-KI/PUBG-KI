@@ -137,6 +137,9 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 	PostProcessComponent->SetupAttachment(RootComponent);
 
 	DeadTag = BaseGameplayTag::Player_State_Dead;
+
+	SetCurrentCamera(FollowCamera);
+	IsZoom = false;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -281,6 +284,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
+
+	BaseInputComponent->BindAbilityInputAction_Tab(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed);
 }
 
 
@@ -513,6 +518,12 @@ void APlayerCharacter::Input_AbilityInputReleased(FGameplayTag InputTag)
 	BaseAbilitySystemComponent->OnAbilityInputReleased(InputTag);
 }
 
+void APlayerCharacter::Input_AbilityInputTab(FGameplayTag InputTag)
+{
+	BaseAbilitySystemComponent->OnAbilityInputPressed(InputTag);
+}
+
+
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -630,6 +641,11 @@ void APlayerCharacter::Die()
 	{
 		//Destroy();
 	}
+}
+
+void APlayerCharacter::SetCurrentCamera(UCameraComponent* NewCamera)
+{
+	this->CurrentCamera = NewCamera;
 }
 
 void APlayerCharacter::OnMouseMoved(FVector2D MouseMovement)

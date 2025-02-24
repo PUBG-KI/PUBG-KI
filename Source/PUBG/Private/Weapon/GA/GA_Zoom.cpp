@@ -23,7 +23,7 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 		//Movementcomponent->bUseControllerDesiredRotation = true;
 
 		GetPlayerCharacterFromActorInfo()->IsZoom = true;
-		GetPlayerCharacterFromActorInfo()->SetcurrentCamera(ActivateCamera);
+		GetPlayerCharacterFromActorInfo()->SetCurrentCamera(ActivateCamera);
 		ActivateCamera->SetFieldOfView(75.0f);
 	}
 }
@@ -41,6 +41,6 @@ void UGA_Zoom::DeActivatedZoom(UCameraComponent* ActivateCamera, UCameraComponen
 		Movementcomponent->bUseControllerDesiredRotation = false;
 		
 		GetPlayerCharacterFromActorInfo()->IsZoom = false;
-		GetPlayerCharacterFromActorInfo()->SetcurrentCamera(ActivateCamera);
+		GetPlayerCharacterFromActorInfo()->SetCurrentCamera(ActivateCamera);
 	}
 }
