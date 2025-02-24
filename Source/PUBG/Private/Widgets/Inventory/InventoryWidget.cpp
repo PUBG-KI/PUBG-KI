@@ -355,13 +355,8 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		case 1: // 시작이 주위 도착이 인벤
 			UE_LOG(LogTemp, Warning, TEXT("Start : Near, End : Inventory"));
 			
-			//PlayerCharacter->GetInventoryComponent()->SetNearItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
 			PlayerCharacter->GetInventoryComponent()->ServerSetNearItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
-			//PlayerCharacter->GetInventoryComponent()->SetItem(DDInventorySlot->GetNearComponent()->GetGroundItems()[DDInventorySlot->GetContentIndex()]);
-
-			//UE_LOG(LogTemp, Warning, TEXT("Drop Item : %s"), *PlayerCharacter->GetInventoryComponent()->GetNearItem()->GetItemStruct().Name.ToString());
 			
-			//PlayerCharacter->GetInventoryComponent()->Server_Interact();
 			PlayerCharacter->GetInventoryComponent()->Server_InteractItem(PlayerCharacter->GetInventoryComponent()->GetNearItem());
 			
 			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetOwningPlayer()))

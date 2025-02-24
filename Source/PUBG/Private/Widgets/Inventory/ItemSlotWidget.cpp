@@ -7,11 +7,13 @@
 #include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
+#include "Component/Equipped/EquippedComponent.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "DragDrop/DDInventorySlot.h"
+#include "Item/WeaponItem.h"
 #include "Widgets/Inventory/DragItemWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
@@ -40,13 +42,15 @@ void UItemSlotWidget::NativeConstruct()
 	VerticalBox_Inventory = InventoryWidget->GetVerticalBox_Inventory();
 	
 	//ItemZoneType = EItemZoneType::None;
+	
+	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
+	DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 
 }
 
 void UItemSlotWidget::UpdateItemSlotWidget()
 {
-	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
-	UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	
 
 	if (DataTable)
 	{
@@ -107,7 +111,24 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 			}
 			else if (NearComponent)
 			{
-				
+				if (AWeaponItem* Weapon = Cast<AWeaponItem>(NearComponent->GetGroundItems()[Index]))
+				{
+					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
+					UEquippedComponent* EquippedComponent = PlayerCharacter->GetEquippedComponent();
+
+					FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Find Row"));
+
+					int32 ItemCategory = static_cast<int32>(Row->Category);
+
+					if (ItemCategory == 0)
+					{
+						EquippedComponent->ServerEquipMainItem(NearComponent->GetGroundItems()[Index]);
+					}
+					else if (ItemCategory == 2)
+					{
+						EquippedComponent->ServerEquipSubWeapon(NearComponent->GetGroundItems()[Index]);
+					}
+				}
 			}
 		}
 	}
