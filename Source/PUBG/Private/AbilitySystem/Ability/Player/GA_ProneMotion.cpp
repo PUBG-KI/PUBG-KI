@@ -40,7 +40,7 @@ void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
-	if (MovementComponent()->IsCrouching())
+	if (MovementComponent->IsCrouching())
 	{
 		if (!PUBGPlayer->bAnimationIsPlaying)
 		{
