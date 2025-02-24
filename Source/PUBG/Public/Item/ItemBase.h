@@ -35,8 +35,7 @@ private:
 	FItemStruct ItemStruct;
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct Item;
-	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
-	int32 TableIndex;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
@@ -55,6 +54,12 @@ protected:
 	UPROPERTY()
 	UDataTable* ItemDataTable;
 
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	int32 TableIndex;
+
+	UPROPERTY(ReplicatedUsing=OnRep_ItemTableRowName, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FName ItemTableRowName;
+
 	UPROPERTY()
 	EEquippedItemCategory EquippedItemCategory;
 
@@ -69,6 +74,8 @@ public:
 	// OnRep
 	UFUNCTION(BlueprintCallable)
 	void OnRep_ItemDataComponent();
+	UFUNCTION(BlueprintCallable)
+	void OnRep_ItemTableRowName();
 	//Getter
 	UFUNCTION()
 	UItemDataComponent* GetItemDataComponent() const {return ItemDataComponent; }
@@ -76,6 +83,8 @@ public:
 	FItemStruct& GetItemStruct() { return Item; }
 	UFUNCTION(BlueprintCallable)
 	EEquippedItemCategory GetEquippedItemCategory() const { return EquippedItemCategory; }
+	UFUNCTION(BlueprintCallable)
+	FName GetItemTableRowName() const { return ItemTableRowName; }
 
 	// Setter
 	UFUNCTION(BlueprintCallable)
@@ -88,7 +97,10 @@ public:
 	void ServerSetItemStruct(FItemStruct OutItemStruct);
 	UFUNCTION(BlueprintCallable)
 	void SetEquippedItemCategory(EEquippedItemCategory OutEquippedItemCategory) { EquippedItemCategory = OutEquippedItemCategory; }
-
+	UFUNCTION(BlueprintCallable)
+	void SetItemTableRowName(FName OutItemTableRowName) { ItemTableRowName = OutItemTableRowName; }
+	
+	
 	//충돌 박스 크기 설정
 	UFUNCTION(BlueprintCallable)
 	void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
@@ -108,6 +120,8 @@ public:
 	// 콜리전박수 2개 크기 지정
 	UFUNCTION(BlueprintCallable)
 	void SetCollisionScale();
+	UFUNCTION(BlueprintCallable)
+	void SetStaticMeshScaleFromCategory(int32 InCategoryIndex);
 	
 
 private:

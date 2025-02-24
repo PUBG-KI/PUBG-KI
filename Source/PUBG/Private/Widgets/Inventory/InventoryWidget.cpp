@@ -333,9 +333,13 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 		// DDInventorySlot에 담긴 값을 NearComponent에 추가
 		switch (DDInventorySlot->GetHaveComponent())
 		{
-		case 2: // 시작이 인벤토리
+		case 2: // 시작이 인벤토리 도착이 바닥
+			UE_LOG(LogTemp, Warning, TEXT("Start : Inventory, End : Near"));
+			PlayerCharacter->GetInventoryComponent()->RemoveFromInventory(DDInventorySlot->GetContentIndex(),
+																			false,
+																			DDInventorySlot->GetInventoryComponent()->GetContent()[DDInventorySlot->GetContentIndex()].Quantity);
 			return true;
-		case 3: // 시작이 장작된 장비
+		case 3: // 시작이 장작된 장비 도착이 바닥 
 			return true;
 			
 		}
@@ -368,7 +372,7 @@ bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDrop
 			PlayerCharacter->GetInventoryComponent()->SetNearItem(nullptr);
 			
 			return true;
-		case 3: // 시작이 장작된 장비 
+		case 3: // 시작이 장작된 장비 도착이 인벤 
 			return true;
 		}
 		

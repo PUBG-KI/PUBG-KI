@@ -7,20 +7,20 @@ enum class EItemCategory : uint8
 {
 	MainWeapon = 0 UMETA(Display = "MainWeapon"),
 	SubWeapon  = 2 UMETA(Display = "SubWeapon"),
-	MeleeWeapon UMETA(Display = "MeleeWeapon"),
-	Throw UMETA(Display = "Throw"),
+	MeleeWeapon = 3 UMETA(Display = "MeleeWeapon"),
+	Throw = 4 UMETA(Display = "Throw"),
 	
-	Helmet UMETA(Display = "Helmet"),
-	Bag UMETA(Display = "Bag"),
-	Vest UMETA(Display = "Vest"),
-	Belt UMETA(Display = "Belt"),
+	Helmet = 5 UMETA(Display = "Helmet"),
+	Bag = 6  UMETA(Display = "Bag"),
+	Vest = 7 UMETA(Display = "Vest"),
+	Belt = 8 UMETA(Display = "Belt"),
 	
-	Ammo UMETA(Display = "Ammo"),
+	Ammo = 9  UMETA(Display = "Ammo"),
 	
-	Heal UMETA(Display = "Heal"),
-	Booster UMETA(Display = "Booster"),
+	Heal = 10 UMETA(Display = "Heal"),
+	Booster = 11 UMETA(Display = "Booster"),
 	
-	WeaponPart UMETA(Display = "WeaponPart"),
+	WeaponPart = 12 UMETA(Display = "WeaponPart"),
 
 	Head = 9 UMETA(Display = "Head"),
 	Mask UMETA(Display = "Mask"),

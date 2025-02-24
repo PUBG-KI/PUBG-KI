@@ -346,7 +346,8 @@ void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun
 	{
 		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
 		{
-			TempWeapon->SetTableIndex(RowIndex);
+			//TempWeapon->SetTableIndex(RowIndex);
+			TempWeapon->SetItemTableRowName(ItemID);
 			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함 
 			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
 			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
@@ -446,8 +447,9 @@ void UEquippedComponent::ServerSpawnStaticMeshFromSubWeapon_Implementation(AGun_
 	{
 		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
 		{
-			TempWeapon->SetTableIndex(RowIndex);
-			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함 
+			//TempWeapon->SetTableIndex(RowIndex);
+			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함
+			TempWeapon->SetItemTableRowName(ItemID);
 			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
 			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
 

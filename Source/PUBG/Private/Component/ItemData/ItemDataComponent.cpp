@@ -257,9 +257,9 @@ void UItemDataComponent::SetItemID(UDataTable* ItemDataTable,FName ItemIdName)
 	ItemID.RowName = ItemIdName;
 }
 
-void UItemDataComponent::SetItemWeight(int32 ItemWeigt)
+void UItemDataComponent::SetItemWeight(int32 ItemWeight)
 {
-	Weight = ItemWeigt;
+	Weight = ItemWeight;
 }
 
 void UItemDataComponent::SetItemQuantity(float ItemQuantity)

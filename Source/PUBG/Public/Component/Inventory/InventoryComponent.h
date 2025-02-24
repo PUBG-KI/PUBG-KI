@@ -13,6 +13,18 @@
 
 class AItemBase;
 
+USTRUCT(BlueprintType)
+struct FUsingItem
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemSlotStruct Item;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Index;
+	
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UInventoryComponent : public UActorComponent
 {
@@ -37,6 +49,8 @@ private:
 	
 	UPROPERTY(ReplicatedUsing = OnRep_Content, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	TArray<FItemSlotStruct> Content;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
+	FUsingItem UsingItem;
 
 	
 	UPROPERTY(ReplicatedUsing= OnRep_Item, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
@@ -72,6 +86,7 @@ public:
 	AItemBase* GetItem() const { return Item; }
 	AItemBase* GetNearItem() const { return NearItem; }
 	TArray<FItemSlotStruct> GetContent() { return Content; }
+	FUsingItem GetUsingItem() { return UsingItem; }
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();
@@ -104,14 +119,14 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ReplicateContent();
 	// 아이템 버리기, 소모하기
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerRemove(int32 Index, bool RemoveWholeStack, bool IsConsumed);
 	UFUNCTION(BlueprintCallable)
-	void RemoveFromInventory(int32 InIndex, int32 InQuantity, bool IsConsumed);
+	void RemoveFromInventory(int32 InIndex, bool IsConsumed,  int32 InQuantity = 1);
+	
 	// 아이템 버리기
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerDropItem(int32 InIndex, int32 OutQuantity);
-
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSpawnItem(int32 InIndex,	int32 OutQuantity);
 	
 	UFUNCTION(BlueprintCallable)
 	void PrintContents();
