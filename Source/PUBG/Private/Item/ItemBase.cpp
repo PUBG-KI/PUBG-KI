@@ -22,10 +22,10 @@
 AItemBase::AItemBase()
 {
 	bReplicates = true;
+	bReplicateUsingRegisteredSubObjectList = true;
 	//SetReplicateMovement(true); // 위치 변화를 동기화하려면 추가
 	//NetDormancy = DORM_Initial; // 네트워크 동기화 활성화
 	
-	bReplicateUsingRegisteredSubObjectList = true;
 	
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetIsReplicated(true);
@@ -265,7 +265,8 @@ FText AItemBase::LookAt()
 	//UK2Node_GetDataTableRow()
 	ItemOfZ = this->GetActorLocation().Z;
 	UE_LOG(LogTemp, Warning, TEXT("ItemofZ : %f"), ItemOfZ);
-	
+
+	Message = FText::FromString(Name.ToString());
 	return Message;
 }
 

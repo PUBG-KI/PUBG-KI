@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void HitEventServer(AActor* TargetActor, FGameplayTag HitTag, FGameplayEventData payload);
 	
+	
 	//Getter
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
@@ -63,6 +64,8 @@ public:
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_RemoveMappingContext();
+	UFUNCTION(BlueprintCallable)
+	UHudWidget* GetHudWidget() { return HudWidget;}
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")

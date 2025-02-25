@@ -10,9 +10,14 @@
 // Sets default values
 AEquipableItem::AEquipableItem()
 {
+	bReplicates = true;
+	bReplicateUsingRegisteredSubObjectList = true;
+	
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem"));
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem %s"), *GetActorNameOrLabel());
+		
 		//ClientCreateMaterial_Implementation();
 	}
 	else
@@ -35,6 +40,18 @@ void AEquipableItem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server AEquipableItem::BeginPlay() : AEquipableItem"));
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server AEquipableItem::BeginPlay() : AEquipableItem %s"), *GetActorNameOrLabel());
+		
+		//ClientCreateMaterial_Implementation();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client AEquipableItem::BeginPlay() : AEquipableItem"));
+	}
+	
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 
