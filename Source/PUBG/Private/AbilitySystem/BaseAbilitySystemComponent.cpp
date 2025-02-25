@@ -67,7 +67,7 @@ void UBaseAbilitySystemComponent::GrantPlayerWeaponAbilities(const TArray<FPlaye
 	for (const FPlayerAbilitySet& WeaponAbilitySet : WeaponAbilities)
 	{
 		if (!WeaponAbilitySet.IsValid()) continue;
-
+		
 		FGameplayAbilitySpec Spec(WeaponAbilitySet.AbilityToGrant);
 		Spec.SourceObject = GetAvatarActor();
 		Spec.Level = Level;

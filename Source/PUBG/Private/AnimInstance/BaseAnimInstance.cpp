@@ -67,7 +67,6 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 		if (OwningPlayer->GetController())
 		{
 			AimRotation =OwningPlayer->GetController()->GetControlRotation();
-			UE_LOG(LogTemp, Warning, TEXT("Change Camera"));
 		}
 		else
 		{

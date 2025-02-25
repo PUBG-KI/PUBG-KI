@@ -108,6 +108,8 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 			CharacterEquipmentMap.Add(EnumValue, NewMesh);
 		}
 	}
+	
+	
 
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -209,6 +211,14 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 {
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
+}
+
+void APlayerCharacter::CallCheckZoomAbility()
+{
+	if (IsZoom)
+	{
+		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(FGameplayTag::RequestGameplayTag("Player.Ability.Weapon.Zoom")));
+	}
 }
 
 

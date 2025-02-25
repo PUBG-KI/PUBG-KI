@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation)
 	void HitEventServer(AActor* TargetActor, FGameplayTag HitTag, FGameplayEventData payload);
 	
+	
 	//Getter
 	UFUNCTION(BlueprintCallable)
 	UInventoryWidget* GetInventoryWidget() const { return InventoryWidget; }
