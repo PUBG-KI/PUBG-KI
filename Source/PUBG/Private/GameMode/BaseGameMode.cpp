@@ -33,7 +33,7 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	if (HasAuthority()) // 서버에서만 실행
+	if (HasAuthority() && GameStart) // 서버에서만 실행
 	{
 		ABaseGameState* GS = Cast<ABaseGameState>(GameState);
 		if (GS && !GS->GetIsGameStarted())
@@ -43,14 +43,8 @@ void ABaseGameMode::PostLogin(APlayerController* NewPlayer)
 			if (GI)
 			{
 				// 게임 시작 타이머 실행
-				//GI->GetTimeManager()->StartGameTimer();
+				GI->GetTimeManager()->StartGameTimer();
 			}
-
-			// if (GI)
-			// {
-			// 	// 게임 시작 타이머 실행
-			// 	GI->GetTimeManager()->StartGameTimer();
-			// }
 		}	
 	}
 
