@@ -38,13 +38,16 @@ enum class EItemCategory : uint8
 UENUM(BlueprintType)
 enum class EEquippedItemCategory : uint8
 {
+	None = 99 UMETA(Display = "None"),
 	PrimarySlot = 0 UMETA(Display = "PrimarySlot"),
 	SecondarySlot UMETA(Display = "SecondarySlot"),
 	SubWeapon UMETA(Display = "SubWeapon"),
 	MeleeWeapon UMETA(Display = "MellWeapon"),
 	Throw UMETA(Display = "Throw"),
 	
-	
+	Helmet = 5 UMETA(Display = "Helmet"),
+	Bag UMETA(Display = "Bag"),
+	Vest UMETA(Display = "Vest"),
 	
 };
 

@@ -83,6 +83,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
 
+public:
 	// 캐릭터의 속성을 초기화합니다. 서버에서 실행해야 하지만 클라이언트에서도 실행합니다.
 	// 기다릴 필요가 없도록 합니다. 클라이언트에 대한 서버의 복제는 중요하지 않습니다.
 	// 값은 동일해야 합니다.
@@ -96,7 +97,13 @@ protected:
 
 	virtual void SetHealth(float Health);
 	virtual void SetStamina(float Stamina);
+	virtual void SetArmor(float Armor);
 	virtual void SetMoveSpeed(float MoveSpeed);
 	virtual void SetMagazine(float Magazine);
 	virtual void SetMaxMagazine(float MaxMagazine);
+
+	virtual float GetArmor();
+	
 };
+
+

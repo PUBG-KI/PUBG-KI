@@ -350,6 +350,11 @@ void AItemBase::SetSlotFromCategory()
 	FName ID = GetItemDataComponent()->GetItemRowName();
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ID, TEXT("Find Row"));
 
+	if (Row != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItemBase::SetSlotFromCategor = %s"), *ID.ToString());
+		return;
+	}
 	int32 SlotNum = static_cast<int32>(Row->Category);
 	
 	switch (SlotNum)
@@ -366,6 +371,9 @@ void AItemBase::SetSlotFromCategory()
 	case 4:
 		EquippedItemCategory = EEquippedItemCategory::Throw;
 		break;
+		
+	default:
+		EquippedItemCategory = EEquippedItemCategory::None;
 	}
 	
 	int32 EquippedItemSlot = static_cast<int32>(EquippedItemCategory);
