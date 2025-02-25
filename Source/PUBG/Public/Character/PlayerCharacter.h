@@ -181,10 +181,8 @@ public:
 
 	// 이준수
 public:
-	// UFUNCTION(BlueprintCallable)
-	// void InputModeUI();
-	// UFUNCTION(BlueprintCallable)
-	// void InputModeGame();
+	// On_Rep
+	void OnRep_Controller();
 
 	//Getter
 	UFUNCTION(Blueprintable)
@@ -300,5 +298,12 @@ public:
 	FORCEINLINE float GetMoveInput() const { return MoveInput; }
 	FORCEINLINE void SetMoveInput(float NewMoveInput){MoveInput = NewMoveInput;}
 };
+
+inline void APlayerCharacter::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_Controller"));
+}
 
 

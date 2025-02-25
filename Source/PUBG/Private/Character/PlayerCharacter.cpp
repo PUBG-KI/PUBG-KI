@@ -59,6 +59,8 @@
 #include "BaseLibrary/BaseStructType.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
+#include "Widgets/DisplayMessage/DisplayMessageItemWidget.h"
+#include "Widgets/HUD/HudWidget.h"
 
 APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
@@ -527,7 +529,9 @@ void APlayerCharacter::Input_AbilityInputTab(FGameplayTag InputTag)
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
+	
 	ULocalPlayer* LocalPlayer = PlayerController ? PlayerController->GetLocalPlayer() : nullptr;
 	if (LocalPlayer)
 	{
@@ -900,8 +904,19 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 		BeginOverlapCount += 1;
 		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
 
+		ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetController());
+		UE_LOG(LogTemp, Warning, TEXT("Current Controller: %s"), *GetNameSafe(GetController()));
+		//UE_LOG(LogTemp, Warning, TEXT("Controller class: %s"), *GetController()->GetClass()->GetName());
+
+
+		if (!PlayerController)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OnComponentBeginOverlap PlayerController None"));
+			return;
+		}
+		
 		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindLambda([this, OtherActor]()
+		TimerDelegate.BindLambda([this, OtherActor, PlayerController ]()
 		{
 			FHitResult Hit;
 			FVector Start = GetFollowCamera()->K2_GetComponentLocation();
@@ -912,11 +927,20 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 			//ActorsToIgnore.Add(TestCharacter);
 			ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1);
 
+			
+			// if (!PlayerController)
+			// {
+			// 	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OnComponentBeginOverlap PlayerController None"));
+			// 	return;
+			// }
+
 			if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 			{
 				UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
 				                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
 				                                      FLinearColor(0, 1, 0, 1));
+				
+				
 				if (Hit.GetActor() != nullptr)
 				{
 					// FVector HitLocation = Hit.Location;
@@ -924,16 +948,24 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 					if (LookAtActor != Hit.GetActor())
 					{
 						LookAtActor = Hit.GetActor();
+						
 						IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
-
 						if (InteractInterface)
 						{
 							FText result = InteractInterface->LookAt();
+							if (PlayerController->GetHudWidget() != nullptr)
+							{
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetMessage(result);
+							}
 							//InteractInterface->InteractWith();
 						}
 						else
 						{
 							LookAtActor = nullptr;
+							if (PlayerController->GetHudWidget() != nullptr)
+							{
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+							}
 							InventoryComponent->SetItem(nullptr);
 						}
 					}
@@ -941,6 +973,10 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 				else
 				{
 					LookAtActor = nullptr;
+					if (PlayerController->GetHudWidget() != nullptr)
+					{
+						PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+					}
 					InventoryComponent->SetItem(nullptr);
 				}
 			}

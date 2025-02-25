@@ -6,6 +6,7 @@
 #include "Widgets/WidgetBase.h"
 #include "HudWidget.generated.h"
 
+class UDisplayMessageItemWidget;
 class UCurrentPlayerWidget;
 class UPlayerStatusWidget;
 /**
@@ -15,16 +16,22 @@ UCLASS()
 class PUBG_API UHudWidget : public UWidgetBase
 {
 	GENERATED_BODY()
+public:
+	virtual void NativeOnInitialized();
 
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UPlayerStatusWidget* WBP_PlayerStatus;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UCurrentPlayerWidget* WBP_CurrentPlayer;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UDisplayMessageItemWidget* WBP_DisplayMessageItem;
 
 public:
 	UFUNCTION()
 	UPlayerStatusWidget* GetPlayerStatusWidget() const { return WBP_PlayerStatus; }
 	UFUNCTION()
 	UCurrentPlayerWidget* GetCurrentPlayerWidget() const { return WBP_CurrentPlayer; }
+	UFUNCTION()
+	UDisplayMessageItemWidget* GetDisplayMessageItemWidget() const { return WBP_DisplayMessageItem; }
 };
