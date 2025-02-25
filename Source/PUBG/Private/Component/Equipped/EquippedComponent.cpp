@@ -469,7 +469,7 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 	AArmorItem* HelmetItem = Cast<AArmorItem>(Item);
 
 	FName ItemID = HelmetItem->GetItemDataComponent()->GetItemRowName();
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemID.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("ServerEquiptHelmet_Implementation : %s"), *ItemID.ToString());
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 	
 	int32 HelmetSlot = static_cast<int32>(HelmetItem->GetEquippedItemCategory()); // Item에 저장되어 있는 슬롯 값 가져오기 
@@ -489,9 +489,10 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 
 		EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(HelmetSlot);
 		Armor->SetEquipSlot(EquippedItemCategory);
+		Armor->GetStaticMeshComponent()->SetStaticMesh(Row->StaticMesh);
 		
 		HelmetSlot = static_cast<int32>(Armor->GetEquipSlot()); // 장착될 슬롯값 가져오기
-		UE_LOG(LogTemp, Warning, TEXT("SubWeapon Slot : %d"), HelmetSlot);
+		UE_LOG(LogTemp, Warning, TEXT("Helmet Slot : %d"), HelmetSlot);
 
 		EquippedItems[HelmetSlot] = Armor;
 		if (HelmetSlot == 5)
@@ -500,6 +501,7 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		}
 		else if (HelmetSlot == 6)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("HelmetSlot == 6"));
 			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("BagSocket")));
 		}
 		else if (HelmetSlot == 7)
@@ -508,6 +510,10 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		}
 		
 		Armor->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Armor SpawnActorDeferred Failed"));
 	}
 
 	GetOwner()->ForceNetUpdate();
