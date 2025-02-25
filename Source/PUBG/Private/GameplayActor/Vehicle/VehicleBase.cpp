@@ -12,16 +12,6 @@
 #include "AnimNodes/AnimNode_RandomPlayer.h"
 #include "Controller/BasePlayerController.h"
 
-void AVehicleBase::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	if (APlayerController* PlayerController = Cast<APlayerController>(NewController))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("playercontroller"));
-		Client_SetUpLocalPlayerInput(PlayerController);
-	}
-}
 
 void AVehicleBase::BeginPlay()
 {
@@ -30,6 +20,17 @@ void AVehicleBase::BeginPlay()
 	{
 		HitCollisionComponent->OnComponentHit.AddDynamic(this, &AVehicleBase::HitPlayerWithVehicle);
 		UE_LOG(LogTemp, Warning, TEXT("HitCollisionComponent"));
+	}
+}
+
+void AVehicleBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (APlayerController* PlayerController = Cast<APlayerController>(NewController))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("playercontroller"));
+		Client_SetUpLocalPlayerInput(PlayerController);
 	}
 }
 
@@ -71,10 +72,6 @@ AVehicleBase::AVehicleBase()
 
 	ArrowComponent = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowComponent"));
 	ArrowComponent->SetupAttachment(GetMesh(), "RootComponent");
-
-	HitCollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("HitCollisionComponent"));
-	HitCollisionComponent->SetupAttachment(GetMesh(), "RootComponent");
-	HitCollisionComponent->InitBoxExtent(FVector(40.f));
 }
 
 
@@ -107,14 +104,6 @@ void AVehicleBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputC
 void AVehicleBase::Input_Throttle(const FInputActionValue& InputActionValue)
 {
 	GetVehicleMovement()->SetThrottleInput(InputActionValue.Get<float>());
-	if (GetVehicleVelocity() > 0)
-	{
-		PlayerCharacter->SetVehicleVelocityBackWard(false);
-	}
-	else
-	{
-		PlayerCharacter->SetVehicleVelocityBackWard(true);
-	}
 }
 
 void AVehicleBase::Input_Steering(const FInputActionValue& InputActionValue)
@@ -124,15 +113,8 @@ void AVehicleBase::Input_Steering(const FInputActionValue& InputActionValue)
 
 void AVehicleBase::Input_Break(const FInputActionValue& InputActionValue)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Brake Inputvalue : %s"), *InputActionValue.ToString());
 	GetVehicleMovement()->SetBrakeInput(InputActionValue.Get<float>());
-	if (GetVehicleVelocity() > 0)
-	{
-		PlayerCharacter->SetVehicleVelocityBackWard(false);
-	}
-	else
-	{
-		PlayerCharacter->SetVehicleVelocityBackWard(true);
-	}
 }
 
 void AVehicleBase::Input_HandBreak()
@@ -148,20 +130,7 @@ void AVehicleBase::Input_HandBreakCompleted()
 void AVehicleBase::Input_VehicleLook(const FInputActionValue& InputActionValue)
 {
 	AddControllerYawInput(InputActionValue.Get<FVector>().X);
-
 	AddControllerPitchInput(InputActionValue.Get<FVector>().Y);
-	FRotator CurrentRotation = GetActorRotation();
-	FRotator AimRotation = GetBaseAimRotation(); // 카메라나 타겟 방향
-
-	FRotator DeltaRotation = CurrentRotation - AimRotation;
-	if (DeltaRotation.Yaw <= 180.0f && DeltaRotation.Yaw >= 90.0f)
-	{
-		PlayerCharacter->SetVehicleFacetoBackward(true);
-	}
-	else
-	{
-		PlayerCharacter->SetVehicleFacetoBackward(false);
-	}
 }
 
 void AVehicleBase::Input_GetOut_Implementation()
@@ -276,23 +245,21 @@ void AVehicleBase::Client_SetUpRemotePlayerInput_Implementation(APlayerControlle
 
 FText AVehicleBase::LookAt()
 {
-	return FText::FromString("UAZ 탑승");
+	return FText::FromString("LookAt");
 }
 
 void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //이거는 서버에서 실행되는 함수임
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
 	PlayerCharacter = Character;
-
+	
 	if (PlayerController)
 	{
 		Character->SetOnTheVehicle(true); //애님인스턴스로 보내기 위함
-		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon(); //
+		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon();//
 		Character->SetActorEnableCollision(false); // 콜리전을 꺼서 차량안으로 들어갈 수 있도록
-		//bool collision = Character->GetActorEnableCollision();
-		//UE_LOG(LogTemp, Warning, TEXT("collsion : %hhd"),collision);
 		SetCharacterCollision(Character);
-	
+
 		FRotator CharacterRotator = Character->GetCameraBoom()->GetTargetRotation();
 
 		Character->AttachToComponent(ArrowComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -300,10 +267,8 @@ void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //�
 		if (HasAuthority())
 		{
 			PlayerController->Possess(this);
-			this->SetOwner(PlayerCharacter);
 			UE_LOG(LogTemp, Warning, TEXT("Possess"));
 		}
-
 		PlayerController->SetControlRotation(CharacterRotator);
 	}
 	MultiCast_InteractWith(Character);
@@ -342,9 +307,9 @@ void AVehicleBase::SetActor(APlayerCharacter* Character)
 
 void AVehicleBase::MultiCast_InteractWith_Implementation(APlayerCharacter* Character)
 {
-	this->SetOwner(PlayerCharacter);
 	SetCharacterCollision(Character);
 }
+
 
 float AVehicleBase::GetVehicleVelocity()
 {
