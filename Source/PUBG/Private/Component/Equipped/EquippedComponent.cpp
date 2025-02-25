@@ -225,6 +225,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 			
 			EquippedItems[MainWeaponSlot] = MainWeapon;
 			EquippedItems[MainWeaponSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("slot_primarySocket")));
+			UE_LOG(LogTemp, Warning, TEXT(" Test Debug!!!!!!!!!!!!!!!!!!!!!!!!!!!!"))
 
 		}
 		else if (RemainSlot == 1) // 2번 슬롯이 비어있는 것 
