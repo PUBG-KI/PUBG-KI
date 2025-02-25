@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 #include "GameplayActor/RedZone/RedZoneBomb.h"
+#include "GameState/BaseGameState.h"
 
 // Sets default values
 ARedZone::ARedZone()
@@ -25,13 +26,29 @@ void ARedZone::BeginPlay()
 
 void ARedZone::StartExplosions()
 {
+	UpdateRedZone(true);
 	GetWorldTimerManager().SetTimer(ExplosionTimer, this, &ARedZone::SpawnExplosion, ExplosionInterval, true);
+}
+
+void ARedZone::UpdateRedZone(bool IsVisibility)
+{
+	if (HasAuthority())
+	{
+		FVector Location = GetActorLocation();
+		float Scale = Radius;
+		ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
+		if (GameState && GameState->HasAuthority())
+		{
+			GameState->UpdateRedZone(Location, Scale, IsVisibility); 
+		}
+	}
 }
 
 void ARedZone::SpawnExplosion()
 {
 	if (ExplosionCount <= 0)
 	{
+		UpdateRedZone(false);
 		GetWorldTimerManager().ClearTimer(ExplosionTimer);
 		Destroy(); // 레드존 삭제
 		return;

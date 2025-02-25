@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UInputMappingContext;
 class UWorldMapWidget;
 class AAirplane;
 class UHudWidget;
@@ -48,7 +49,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
-	void CreateWorldMapWidget();
+	void ToggleMapWidget();
 	UFUNCTION(Client, Reliable)
 	void ClientCreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
@@ -60,12 +61,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateMapNextZone();
 	UFUNCTION(BlueprintCallable)
+	void UpdateAirplanebVisibilty();
+	UFUNCTION(BlueprintCallable)
+	void UpdateAirplanebLocation();
+	UFUNCTION(BlueprintCallable)
+	void UpdateRedZone();
+	UFUNCTION(BlueprintCallable)
 	void ShowNotification(FText Text);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
 	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_RemoveMappingContext();
+	void Client_RemoveMappingContext();	
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_UpdateAirplanebFall();
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
@@ -77,12 +86,7 @@ private:
 	TSubclassOf<UHudWidget> HudWidgetClass;
 	UPROPERTY()
 	UHudWidget* HudWidget;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<UWorldMapWidget> WorldMapWidgetClass;
-	UPROPERTY()
-	UWorldMapWidget* WorldMapWidget;
-	
+		
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UNotificationWidget> NotificationWidgetClass;
 	UPROPERTY()
@@ -93,5 +97,4 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UInputMappingContext* AdditionalInputMappingContext;
 };
-
 

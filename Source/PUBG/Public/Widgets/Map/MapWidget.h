@@ -17,6 +17,7 @@ class PUBG_API UMapWidget : public UWidgetBase
 
 public:
 	UMapWidget();
+	void InitializeImage();
 
 	virtual void NativeConstruct() override;	
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -27,8 +28,16 @@ public:
 	void UpdatePlayerLocation();
 	void UpdateCurrentZone();
 	void UpdateNextZone();
-	void AddRedZone();
+	void UpdateAirplanebVisibilty();
+	void UpdateAirplanebLocation();
+	void UpdateRedZone();
 	void SetLandScapeBoundingBox();
+
+	FVector2D GetPlayerLocation() const;
+	FVector2D GetWorldMapImageSize() const;
+
+	bool GetIsInPlane() const;
+	void SetIsInPlane(bool NewInIsInPlane);
 
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
@@ -39,9 +48,22 @@ private:
 	UImage* Image_CurrentZone;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UImage* Image_NextZone;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UImage* Image_Airplane;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UImage* Image_AirplaneLine;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UImage* Image_RedZone;
 	UPROPERTY()
 	UMaterialInstanceDynamic* CurrentZoneMaterial;
+	UPROPERTY()
 	UMaterialInstanceDynamic* NextZoneMaterial;
+	UPROPERTY()
+	UMaterialInstanceDynamic* AirplaneLineMaterial;
+	UPROPERTY()
+	UMaterialInstanceDynamic* RedZoneMaterial;
 	
 	FBox LandScapeBoundingBox;
+	bool bIsInPlane;
+	FVector2D PlayerLocation;
 };

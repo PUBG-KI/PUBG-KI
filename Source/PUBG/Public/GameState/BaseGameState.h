@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Controller/BasePlayerController.h"
 #include "GameFramework/GameStateBase.h"
 #include "BaseGameState.generated.h"
 
@@ -16,6 +17,7 @@ class PUBG_API ABaseGameState : public AGameStateBase
 
 public:
 	ABaseGameState();
+	ABasePlayerController* GetLocalController();
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
@@ -41,6 +43,8 @@ public:
 	UFUNCTION()
 	void OnRep_IsVisibiltyAirplane();
 	UFUNCTION()
+	void OnRep_IsVisibiltyRedZone();
+	UFUNCTION()
 	void OnRep_LandScapeBoundingBoxXY();
 	
 	void UpdatePlayerCountWidget();
@@ -53,6 +57,7 @@ public:
 	void UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone);
 	void UpdateCurrentAirplaneLocation(FVector NewCurrentAirplaneLocation);
 	void UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint, bool NewbIsVisibiltyAirplane);
+	void UpdateRedZone(FVector NewRedZoneCenter, float NewRedZoneScale, bool NewbIsVisibiltyRedZone);
 	void FinishMoveAirplane();
 	
 	// 플레이어 수 업데이트
@@ -119,6 +124,22 @@ public:
 	// 비행기를 표시할 것인지
 	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyAirplane, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	bool bIsVisibiltyAirplane;
+	
+	/** 레드존 센터 */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	FVector RedZoneCenter;
+
+	/** 레드존 스케일 */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	float RedZoneScale;
+	
+	// 레드존을 표시할 것인지
+	UPROPERTY(ReplicatedUsing = OnRep_IsVisibiltyRedZone, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	bool bIsVisibiltyRedZone;
+	
 	bool StartNotify;
+
+	UPROPERTY()
+	ABasePlayerController* LocalController;
 };
 

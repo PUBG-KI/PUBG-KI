@@ -155,25 +155,17 @@ void ABasePlayerController::CreateInventoryWidget()
 	// InventoryWidget->AddToViewport();
 }
 
-void ABasePlayerController::CreateWorldMapWidget()
+void ABasePlayerController::ToggleMapWidget()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
 	{
-		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		UE_LOG(LogTemp, Error, TEXT("ToggleMapWidget() - Only Local Player Controllers can create widgets!"));
 		return;
 	}
 
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->RemoveFromParent();
-		WorldMapWidget = nullptr;
-	}
-	else if (IsValid(WorldMapWidgetClass))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WorldMapWidget Loaded"));
-		
-		WorldMapWidget = CreateWidget<UWorldMapWidget>(this, WorldMapWidgetClass);	
-		WorldMapWidget->AddToViewport();
+		HudWidget->GetWorldMapWidget()->SwitchWidget();
 	}
 }
 
@@ -231,17 +223,41 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 
 void ABasePlayerController::UpdateMapCurrentZone()
 {
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->GetWBP_Map()->UpdateCurrentZone();
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateCurrentZone();
 	}
 }
 
 void ABasePlayerController::UpdateMapNextZone()
 {
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->GetWBP_Map()->UpdateNextZone();
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateNextZone();
+	}
+}
+
+void ABasePlayerController::UpdateAirplanebVisibilty()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateAirplanebVisibilty();
+	}
+}
+
+void ABasePlayerController::UpdateAirplanebLocation()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateAirplanebLocation();
+	}
+}
+
+void ABasePlayerController::UpdateRedZone()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateRedZone();
 	}
 }
 
@@ -286,6 +302,14 @@ void ABasePlayerController::Client_AddMappingContext_Implementation(AAirplane* N
 		//ControlledAirplane = NewControlledAirplane;
 		AdditionalInputMappingContext = InputMappingContext;
 		InputSubsystem->AddMappingContext(InputMappingContext, 1);			
+	}
+}
+
+void ABasePlayerController::Client_UpdateAirplanebFall_Implementation()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->SetIsInPlane(false);
 	}
 }
 

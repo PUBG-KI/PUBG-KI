@@ -17,6 +17,28 @@ ABaseGameState::ABaseGameState()
 	initalize();
 }
 
+ABasePlayerController* ABaseGameState::GetLocalController()
+{
+	if (LocalController)
+	{
+		return LocalController;
+	}
+	for (APlayerState* PS : PlayerArray)
+	{
+		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
+		{
+			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
+			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
+			{
+				LocalController = PC;
+				return LocalController; 
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -35,6 +57,9 @@ void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseGameState, StartAirplanePoint);
 	DOREPLIFETIME(ABaseGameState, EndAirplanePoint);
 	DOREPLIFETIME(ABaseGameState, bIsVisibiltyAirplane);
+	DOREPLIFETIME(ABaseGameState, RedZoneCenter);
+	DOREPLIFETIME(ABaseGameState, RedZoneScale);
+	DOREPLIFETIME(ABaseGameState, bIsVisibiltyRedZone);
 	DOREPLIFETIME(ABaseGameState, LandScapeBoundingBox);
 }
 
@@ -91,34 +116,21 @@ void ABaseGameState::OnRep_BoardPlaneNotification()
 
 void ABaseGameState::OnRep_CurrentZoneScale()
 {	
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneCenter.X = %f, CurrentZoneCenter.Y = %f"), CurrentZoneCenter.X, CurrentZoneCenter.Y);	
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentZoneScale = %f"), CurrentZoneScale);
-
-
 	if (StartNotify)
 	{
 		StartNotify = false;
 		FText Message = FText::FromString(TEXT("자기장이 줄어듭니다"));		
 		ShowNotification(Message);
 	}
-	
-	for (APlayerState* PS : PlayerArray)
+
+	if (GetLocalController())
 	{
-		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
-		{
-			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
-			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
-			{
-				PC->UpdateMapCurrentZone();
-			}
-		}
+		LocalController->UpdateMapCurrentZone();
 	}
 }
 
 void ABaseGameState::OnRep_IsVisibiltyNextZone()
 {	
-	//UE_LOG(LogTemp, Warning, TEXT("NextZoneCenter.X = %f, NextZoneCenter.Y = %f"), NextZoneCenter.X, NextZoneCenter.Y);	
-	//UE_LOG(LogTemp, Warning, TEXT("NextZoneScale = %f"), NextZoneScale);
 	if (bIsVisibiltyNextZone)
 	{
 		FText Message = FText::FromString(TEXT("잠시후 자기장이 줄어듭니다"));		
@@ -128,38 +140,35 @@ void ABaseGameState::OnRep_IsVisibiltyNextZone()
 	{
 		StartNotify = true;
 	}
-
-	for (APlayerState* PS : PlayerArray)
+	
+	if (GetLocalController())
 	{
-		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우f
-		{
-			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
-			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
-			{
-				PC->UpdateMapNextZone();
-			}
-		}
+		LocalController->UpdateMapNextZone();
 	}
 }
 
 void ABaseGameState::OnRep_CurrentAirplaneLocation()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("CurrentAirplaneLocation : %s"), *CurrentAirplaneLocation.ToString());	
+	if (GetLocalController())
+	{
+		LocalController->UpdateAirplanebLocation();
+	}
 }
 
 void ABaseGameState::OnRep_IsVisibiltyAirplane()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("StartAirplanePoint : %s"), *StartAirplanePoint.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("EndAirplanePoint : %s"), *EndAirplanePoint.ToString());
-	
-	if (bIsVisibiltyAirplane)
-	{		
-	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = true"));
+{	
+	if (GetLocalController())
+	{
+		LocalController->UpdateAirplanebVisibilty();
 	}
-	else
-	{		
-	//	UE_LOG(LogTemp, Warning, TEXT("bIsVisibiltyAirplane = false"));
-	}	
+}
+
+void ABaseGameState::OnRep_IsVisibiltyRedZone()
+{
+	if (GetLocalController())
+	{
+		LocalController->UpdateRedZone();
+	}
 }
 
 void ABaseGameState::OnRep_LandScapeBoundingBoxXY()
@@ -168,31 +177,17 @@ void ABaseGameState::OnRep_LandScapeBoundingBoxXY()
 
 void ABaseGameState::UpdatePlayerCountWidget()
 {
-	for (APlayerState* PS : PlayerArray)
+	if (GetLocalController())
 	{
-		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
-		{
-			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
-			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
-			{
-				PC->UpdateCurrentPlayer(PlayerCount);
-			}
-		}
+		LocalController->UpdateCurrentPlayer(PlayerCount);
 	}
 }
 
 void ABaseGameState::ShowNotification(FText Message)
 {
-	for (APlayerState* PS : PlayerArray)
+	if (GetLocalController())
 	{
-		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
-		{
-			ABasePlayerController* PC = Cast<ABasePlayerController>(PS->GetOwner());
-			if (PC && PC->IsLocalController())  // 로컬 컨트롤러 확인
-			{
-				PC->ShowNotification(Message);
-			}
-		}
+		LocalController->ShowNotification(Message);		
 	}
 }
 
@@ -231,6 +226,14 @@ void ABaseGameState::UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FV
 	StartAirplanePoint = NewStartAirplanePoint;
 	EndAirplanePoint = NewEndAirplanePoint;
 	bIsVisibiltyAirplane = NewbIsVisibiltyAirplane;
+}
+
+void ABaseGameState::UpdateRedZone(FVector NewRedZoneCenter, float NewRedZoneScale,
+	bool NewbIsVisibiltyRedZone)
+{
+	RedZoneCenter = NewRedZoneCenter;
+	RedZoneScale = NewRedZoneScale;
+	bIsVisibiltyRedZone = NewbIsVisibiltyRedZone;
 }
 
 void ABaseGameState::FinishMoveAirplane()

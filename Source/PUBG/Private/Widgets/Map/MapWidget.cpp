@@ -3,12 +3,26 @@
 
 #include "Widgets/Map/MapWidget.h"
 
+#include "ToolContextInterfaces.h"
 #include "Components/Image.h"
+#include "DSP/MidiNoteQuantizer.h"
+#include "DynamicMesh/MeshTransforms.h"
 #include "GameState/BaseGameState.h"
 #include "Kismet/GameplayStatics.h"
 
 UMapWidget::UMapWidget()
 {
+	bIsInPlane = false;
+}
+
+void UMapWidget::InitializeImage()
+{
+	UpdateAirplanebVisibilty();
+	UpdateAirplanebLocation();
+	UpdatePlayerLocation();
+	UpdateCurrentZone();
+	UpdateNextZone();
+	UpdateRedZone();
 }
 
 void UMapWidget::NativeConstruct()
@@ -19,18 +33,22 @@ void UMapWidget::NativeConstruct()
 	
 	if (Image_CurrentZone && Image_CurrentZone->GetDynamicMaterial())
 	{
-		// 기존 머터리얼을 동적 인스턴스로 변경
 		CurrentZoneMaterial = Image_CurrentZone->GetDynamicMaterial();
 	}
 	if (Image_NextZone && Image_NextZone->GetDynamicMaterial())
 	{
-		// 기존 머터리얼을 동적 인스턴스로 변경
 		NextZoneMaterial = Image_NextZone->GetDynamicMaterial();
 	}
+	if (Image_AirplaneLine && Image_AirplaneLine->GetDynamicMaterial())
+	{
+		AirplaneLineMaterial = Image_AirplaneLine->GetDynamicMaterial();
+	}
+	if (Image_RedZone && Image_RedZone->GetDynamicMaterial())
+	{
+		RedZoneMaterial = Image_RedZone->GetDynamicMaterial();
+	}
 
-	UpdatePlayerLocation();
-	UpdateCurrentZone();
-	UpdateNextZone();
+	InitializeImage();
 }
 
 void UMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -41,12 +59,24 @@ void UMapWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 }
 
 void UMapWidget::UpdatePlayerLocation()
-{
-	FVector2D NewLocation = ConvertWorldToMap(GetOwningPlayerPawn()->GetActorLocation());
+{	
+	if (bIsInPlane)
+	{
+		ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
 
-	FWidgetTransform NewTransform;
-	NewTransform.Translation = NewLocation;
-	Image_Player->SetRenderTransform(NewTransform);
+		if (!GS)
+		{
+			return;		
+		}
+		
+		PlayerLocation = ConvertWorldToMap(GS->CurrentAirplaneLocation);
+	}
+	else
+	{
+		PlayerLocation = ConvertWorldToMap(GetOwningPlayerPawn()->GetActorLocation());
+	}
+	
+	Image_Player->SetRenderTranslation(PlayerLocation);
 }
 
 float UMapWidget::ConvertScale(float Scale)
@@ -62,6 +92,7 @@ void UMapWidget::UpdateCurrentZone()
 	{
 		return;		
 	}
+	
 	FVector Center = GS->CurrentZoneCenter;
 	float Scale = GS->CurrentZoneScale;
 		
@@ -71,7 +102,6 @@ void UMapWidget::UpdateCurrentZone()
 	
 	UE_LOG(LogTemp, Warning, TEXT("NewLocation : %s"), *NewLocation.ToString());	
 	UE_LOG(LogTemp, Warning, TEXT("Radius = %f"), Scale);
-
 
 	if (CurrentZoneMaterial)
 	{
@@ -105,9 +135,6 @@ void UMapWidget::UpdateNextZone()
 	FVector2D NewLocation = ConvertPosition(Center);	
 	Scale = ConvertScale(Scale * 100.f);
 	
-	UE_LOG(LogTemp, Warning, TEXT("NewLocation : %s"), *NewLocation.ToString());	
-	UE_LOG(LogTemp, Warning, TEXT("Radius = %f"), Scale);
-
 	if (NextZoneMaterial)
 	{
 		NextZoneMaterial->SetVectorParameterValue(FName("Center"), FVector(NewLocation.X, NewLocation.Y, 0));
@@ -115,9 +142,86 @@ void UMapWidget::UpdateNextZone()
 	}
 }
 
-void UMapWidget::AddRedZone()
+void UMapWidget::UpdateAirplanebVisibilty()
 {
+	ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (!GS)
+	{
+		return;		
+	}
 	
+	bIsInPlane = GS->bIsVisibiltyAirplane;
+
+	if (!bIsInPlane)
+	{
+		Image_Airplane->SetVisibility(ESlateVisibility::Hidden);
+		Image_AirplaneLine->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	}
+	
+	FVector Direction = (GS->EndAirplanePoint - GS->StartAirplanePoint).GetSafeNormal();
+	float Angle = FMath::Atan2(Direction.Y, Direction.X) * (180.0f / PI) + 90.f;
+
+	Image_Airplane->SetRenderTransformAngle(Angle);	
+	Image_Airplane->SetVisibility(ESlateVisibility::Visible);
+
+	
+	FVector2D Start = ConvertPosition(GS->StartAirplanePoint);
+	FVector2D End = ConvertPosition(GS->EndAirplanePoint);
+
+	if (AirplaneLineMaterial)
+	{
+		AirplaneLineMaterial->SetVectorParameterValue(FName("End"), FVector(End.X, End.Y, 0));
+		AirplaneLineMaterial->SetVectorParameterValue(FName("Start"), FVector(Start.X, Start.Y, 0));
+	}
+	
+	Image_AirplaneLine->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UMapWidget::UpdateAirplanebLocation()
+{
+	ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (!GS)
+	{
+		return;		
+	}
+	
+	FVector2D NewLocation = ConvertWorldToMap(GS->CurrentAirplaneLocation);
+	Image_Airplane->SetRenderTranslation(NewLocation);
+}
+
+void UMapWidget::UpdateRedZone()
+{
+	ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
+
+	if (!GS)
+	{
+		return;		
+	}
+	
+	bool bIsVisibiltyRedZone = GS->bIsVisibiltyRedZone;
+
+	if (!bIsVisibiltyRedZone)
+	{
+		Image_RedZone->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	}
+	
+	Image_RedZone->SetVisibility(ESlateVisibility::Visible);
+	
+	FVector Center = GS->RedZoneCenter;
+	float Scale = GS->RedZoneScale;
+	
+	FVector2D NewLocation = ConvertPosition(Center);	
+	Scale = ConvertScale(Scale);
+	
+	if (RedZoneMaterial)
+	{
+		RedZoneMaterial->SetVectorParameterValue(FName("Center"), FVector(NewLocation.X, NewLocation.Y, 0));
+		RedZoneMaterial->SetScalarParameterValue(FName("Radius"), Scale);
+	}
 }
 
 void UMapWidget::SetLandScapeBoundingBox() 
@@ -130,6 +234,26 @@ void UMapWidget::SetLandScapeBoundingBox()
 	}
 
 	LandScapeBoundingBox = GS->GetLandScapeBoundingBox();
+}
+
+FVector2D UMapWidget::GetPlayerLocation() const
+{
+	return PlayerLocation;
+}
+
+FVector2D UMapWidget::GetWorldMapImageSize() const
+{
+	return Image_WorldMap->GetBrush().ImageSize;
+}
+
+bool UMapWidget::GetIsInPlane() const
+{
+	return bIsInPlane;
+}
+
+void UMapWidget::SetIsInPlane(bool NewInIsInPlane)
+{
+	bIsInPlane = NewInIsInPlane;
 }
 
 FVector2D UMapWidget::ConvertPosition(const FVector& WorldLocation) const
