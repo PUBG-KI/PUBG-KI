@@ -27,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();
+
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	void SpawnSupplyDropItem();
 	
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))

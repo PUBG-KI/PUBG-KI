@@ -66,16 +66,16 @@ void ASupplyDrop::BeginPlay()
 	DropMesh->OnComponentHit.AddDynamic(this, &ASupplyDrop::OnHit);
 
 	// 아이템 블루프린트가 설정되지 않았다면 스폰하지 않음
-	if (!ItemClass) return;
+	//if (!ItemClass) return;
 
 	// 스폰 파라미터 설정
 	// FActorSpawnParameters SpawnParams;
 	// SpawnParams.Owner = this;
 	// SpawnParams.Instigator = GetInstigator();
 
-	// 보급품의 위치를 기준으로 아이템을 약간 위쪽에 스폰
-	FVector SpawnLocation = GetActorLocation();
-	FRotator SpawnRotation = FRotator::ZeroRotator;
+	// // 보급품의 위치를 기준으로 아이템을 약간 위쪽에 스폰
+	// FVector SpawnLocation = GetActorLocation();
+	// FRotator SpawnRotation = FRotator::ZeroRotator;
 
 	// 아이템 스폰
 	//SpawnedItem = GetWorld()->SpawnActor<AItemBase>(ItemClass, SpawnLocation, SpawnRotation);
@@ -84,10 +84,10 @@ void ASupplyDrop::BeginPlay()
 	{
 		// TestItem2를 부착
 		//SpawnedItem->AttachToComponent(DropMesh, FAttachmentTransformRules::KeepWorldTransform);
-		//if(HasAuthority())
-		{
-			ItemSpawnerComponent->SpawnItems(true,this);
-		}
+		// if(HasAuthority())
+		// {
+		// 	ItemSpawnerComponent->SpawnItems(true,this);
+		// }
 		
 		// SpawnedItem->SetRandomProperties(GetRandomItemRowName());
 		//
@@ -133,6 +133,12 @@ FName ASupplyDrop::GetRandomItemRowName()
 	//UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
 	
 	return RandomRowName;
+}
+
+void ASupplyDrop::SpawnSupplyDropItem()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ASupplyDrop : SpawnSupplyDropItem()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+	ItemSpawnerComponent->SpawnItems(true,this);
 }
 
 

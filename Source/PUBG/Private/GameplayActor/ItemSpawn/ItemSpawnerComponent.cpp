@@ -61,24 +61,23 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 	case EItemCategory::SubWeapon:
 		{
 			SpawnedItem = World->SpawnActor<AWeaponItem>(WeaponItemClass, SpawnLocation, FRotator::ZeroRotator);
-			if (bAbleAttach)
-			{
-				SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-			}
 			break;
 		}
 	default:
 		{
 			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);
-			if (bAbleAttach)
-			{
-				SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-			}
+			
 		}
 	}
-	if (SpawnedItem)
+	
+	if (SpawnedItem && bAbleAttach)
+	{
+		SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		SpawnedItem->SetItemID(ItemID,true);
+	}
+	else if (SpawnedItem && bAbleAttach == false)
 	{		
-		SpawnedItem->SetItemID(ItemID);
+		SpawnedItem->SetItemID(ItemID,false);
 	}
 }
 

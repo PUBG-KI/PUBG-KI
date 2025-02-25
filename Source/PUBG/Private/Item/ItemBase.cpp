@@ -63,44 +63,44 @@ void AItemBase::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT(" AItemBase::BeginPlay ItemDataTable None"));
 	}
 	
-	if (!ItemTableRowName.IsNone())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AItemBase::BeginPlay : %s"), *ItemTableRowName.ToString());
-		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemTableRowName, TEXT("AItemBase : Fail Find Row"));
-		StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
-
-		int32 CategoryIndex = static_cast<int32>(Row->Category);
-		SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
-
-		ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
-
-		if (ItemDataComponent->GetQuantity() == 0)
-		{
-			ItemDataComponent->SetItemQuantity(Row->Quantity);
-		}
-		
-		ItemDataComponent->SetItemWeight(Row->Weight);
-		
-		SetCollisionScale(); // 콜리전 박스 2개 크기 지정
-
-		SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
-	}
-	else
-	{
-		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>("AKM", TEXT("AItemBase : Fail Find Row"));
-		StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
-
-		int32 CategoryIndex = static_cast<int32>(Row->Category);
-		SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
-
-		ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
-		ItemDataComponent->SetItemQuantity(Row->Quantity);
-		ItemDataComponent->SetItemWeight(Row->Weight);
-		
-		SetCollisionScale(); // 콜리전 박스 2개 크기 지정
-
-		SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
-	}
+	// if (!ItemTableRowName.IsNone())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("AItemBase::BeginPlay : %s"), *ItemTableRowName.ToString());
+	// 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemTableRowName, TEXT("AItemBase : Fail Find Row"));
+	// 	StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
+	//
+	// 	int32 CategoryIndex = static_cast<int32>(Row->Category);
+	// 	SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
+	//
+	// 	ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
+	//
+	// 	if (ItemDataComponent->GetQuantity() == 0)
+	// 	{
+	// 		ItemDataComponent->SetItemQuantity(Row->Quantity);
+	// 	}
+	// 	
+	// 	ItemDataComponent->SetItemWeight(Row->Weight);
+	// 	
+	// 	SetCollisionScale(); // 콜리전 박스 2개 크기 지정
+	//
+	// 	SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
+	// }
+	// else
+	// {
+	// 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>("AKM", TEXT("AItemBase : Fail Find Row"));
+	// 	StaticMesh->SetStaticMesh(Row->StaticMesh); // 스태틱 메쉬 지정
+	//
+	// 	int32 CategoryIndex = static_cast<int32>(Row->Category);
+	// 	SetStaticMeshScaleFromCategory(CategoryIndex); // 아이템 종류에 따른 스태틱 메쉬 크기 지정
+	//
+	// 	ItemDataComponent->SetItemID(ItemDataTable, Row->Name);
+	// 	ItemDataComponent->SetItemQuantity(Row->Quantity);
+	// 	ItemDataComponent->SetItemWeight(Row->Weight);
+	// 	
+	// 	SetCollisionScale(); // 콜리전 박스 2개 크기 지정
+	//
+	// 	SetSlotFromCategory(); // 장착할 수 있는 아이템이면 슬롯 지정 
+	// }
 }
 
 void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -113,6 +113,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AItemBase, ItemDataComponent);
 	DOREPLIFETIME(AItemBase, TableIndex);
 	DOREPLIFETIME(AItemBase, ItemTableRowName);
+	DOREPLIFETIME(AItemBase, bIsSupplyDrop);
 	
 	
 	//DOREPLIFETIME_CONDITION(AItemBase, ItemDataComponent, COND_OwnerOnly);
@@ -215,8 +216,9 @@ void AItemBase::OnRep_ItemID()
 	SetRandomProperties(ItemID);	
 }
 
-void AItemBase::SetItemID(FName NewItemID)
-{
+void AItemBase::SetItemID(FName NewItemID,bool NewbIsSupplyDrop)
+{	
+	bIsSupplyDrop = NewbIsSupplyDrop;
 	ItemID = NewItemID;
 	ItemTableRowName = NewItemID;
 	SetRandomProperties(ItemID);
@@ -403,7 +405,7 @@ void AItemBase::SetRandomProperties(FName ItemIdName)
 		
 	}
 
-	if (FoundItem && FoundItem->StaticMesh)
+	if (FoundItem && FoundItem->StaticMesh && bIsSupplyDrop == false)
 	{
 		//메쉬변경
 		SetMesh(FoundItem->StaticMesh);

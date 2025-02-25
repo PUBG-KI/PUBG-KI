@@ -42,6 +42,8 @@ private:
 	UStaticMeshComponent* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, ReplicatedUsing=OnRep_ItemID, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	FName ItemID;
+	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
+	bool bIsSupplyDrop;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* BoxComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -93,7 +95,7 @@ public:
 	FName GetItemTableRowName() const { return ItemTableRowName; }
 
 	// Setter
-	void SetItemID(FName NewItemID);
+	void SetItemID(FName NewItemID,bool bIsSupplyDrop);
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -122,7 +124,7 @@ public:
 	void SetMesh(UStaticMesh* NewMesh);
 
 	UFUNCTION()
-	void SetRandomProperties(FName ItemRowName);
+	void SetRandomProperties(FName ItemIdName);
 
 	UFUNCTION(BlueprintCallable)
 	void SetSlotFromCategory();
