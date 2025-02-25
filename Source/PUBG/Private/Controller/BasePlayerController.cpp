@@ -18,6 +18,7 @@
 #include "Widgets/Inventory/InventoryWidget.h"
 #include "Widgets/Map/MapWidget.h"
 #include "Widgets/Map/WorldMapWidget.h"
+#include "Widgets/Notification/NotificationWidget.h"
 
 ABasePlayerController::ABasePlayerController()
 {
@@ -42,37 +43,17 @@ void ABasePlayerController::BeginPlayingState()
 		return;
 	}
 
-	
-	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
-	if (!PS)
-	{		
-		UE_LOG(LogTemp, Warning, TEXT("!ABasePlayerState"));
-		return;
-	}
-
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-	
-	//
-	// if (IsValid(InventoryWidgetClass))
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
-	// 	
-	// 	InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
-	// 	InventoryWidget->AddToViewport();
-	// 	if (PlayerCharacter)
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
-	// 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
-	//
-	// 	}
-	// 	else
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("FailGetOwningPlayer"));
-	// 	}
-	// 	InventoryWidget->GetWrapBox_Inventory()->ClearChildren();
-	// 	InventoryWidget->SetVisibility(ESlateVisibility::Collapsed);
-	// }
+	if (IsValid(NotificationWidgetClass))
+	{
 		
+		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass Loaded"));
+		NotificationWidget = CreateWidget<UNotificationWidget>(this, NotificationWidgetClass);
+		NotificationWidget->AddToViewport();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass is NULL"));
+	}
 
 	if (IsValid(HudWidgetClass))
 	{
@@ -85,11 +66,20 @@ void ABasePlayerController::BeginPlayingState()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
 	}
+	
+	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+	if (!PS)
+	{		
+		UE_LOG(LogTemp, Warning, TEXT("!ABasePlayerState"));
+		return;
+	}
+
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
 
 	HudWidget->GetPlayerStatusWidget()->SetHealth(PS->GetHealth());
 	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
 	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
-
+	
 	InputModeGame();	
 }
 
@@ -165,25 +155,17 @@ void ABasePlayerController::CreateInventoryWidget()
 	// InventoryWidget->AddToViewport();
 }
 
-void ABasePlayerController::CreateWorldMapWidget()
+void ABasePlayerController::ToggleMapWidget()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
 	{
-		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		UE_LOG(LogTemp, Error, TEXT("ToggleMapWidget() - Only Local Player Controllers can create widgets!"));
 		return;
 	}
 
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->RemoveFromParent();
-		WorldMapWidget = nullptr;
-	}
-	else if (IsValid(WorldMapWidgetClass))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WorldMapWidget Loaded"));
-		
-		WorldMapWidget = CreateWidget<UWorldMapWidget>(this, WorldMapWidgetClass);	
-		WorldMapWidget->AddToViewport();
+		HudWidget->GetWorldMapWidget()->SwitchWidget();
 	}
 }
 
@@ -241,17 +223,49 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 
 void ABasePlayerController::UpdateMapCurrentZone()
 {
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->GetWBP_Map()->UpdateCurrentZone();
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateCurrentZone();
 	}
 }
 
 void ABasePlayerController::UpdateMapNextZone()
 {
-	if (WorldMapWidget)
+	if (HudWidget)
 	{
-		WorldMapWidget->GetWBP_Map()->UpdateNextZone();
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateNextZone();
+	}
+}
+
+void ABasePlayerController::UpdateAirplanebVisibilty()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateAirplanebVisibilty();
+	}
+}
+
+void ABasePlayerController::UpdateAirplanebLocation()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateAirplanebLocation();
+	}
+}
+
+void ABasePlayerController::UpdateRedZone()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->UpdateRedZone();
+	}
+}
+
+void ABasePlayerController::ShowNotification(FText Text)
+{
+	if (NotificationWidget)
+	{
+		NotificationWidget->ShowNotification(Text);
 	}
 }
 
@@ -290,6 +304,14 @@ void ABasePlayerController::Client_AddMappingContext_Implementation(AAirplane* N
 		//ControlledAirplane = NewControlledAirplane;
 		AdditionalInputMappingContext = InputMappingContext;
 		InputSubsystem->AddMappingContext(InputMappingContext, 1);			
+	}
+}
+
+void ABasePlayerController::Client_UpdateAirplanebFall_Implementation()
+{
+	if (HudWidget)
+	{
+		HudWidget->GetWorldMapWidget()->GetWBP_Map()->SetIsInPlane(false);
 	}
 }
 

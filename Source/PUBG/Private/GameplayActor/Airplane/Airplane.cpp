@@ -218,14 +218,11 @@ void AAirplane::SetViewTargetToPlane()
 	{
 		if (PS)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("PS: %s"), *PS->GetName());
 			APlayerController* PC = PS->GetOwner<APlayerController>();
 			if (PC)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("플레이어 컨트롤러: %s"), *PC->GetName());
 				PC->SetViewTargetWithBlend(this, 1.0f);
-			}
-
+			}			
 			GrantPlayerAirplaneAbilites(PS);
 		}
 	}

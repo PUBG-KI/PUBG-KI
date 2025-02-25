@@ -9,6 +9,7 @@
 class UDisplayMessageItemWidget;
 class UCurrentPlayerWidget;
 class UPlayerStatusWidget;
+class UWorldMapWidget;
 /**
  * 
  */
@@ -26,6 +27,8 @@ private:
 	UCurrentPlayerWidget* WBP_CurrentPlayer;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UDisplayMessageItemWidget* WBP_DisplayMessageItem;
+    UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UWorldMapWidget* WBP_WorldMap;
 
 public:
 	UFUNCTION()
@@ -34,4 +37,6 @@ public:
 	UCurrentPlayerWidget* GetCurrentPlayerWidget() const { return WBP_CurrentPlayer; }
 	UFUNCTION()
 	UDisplayMessageItemWidget* GetDisplayMessageItemWidget() const { return WBP_DisplayMessageItem; }
+	UFUNCTION()
+	UWorldMapWidget* GetWorldMapWidget() const { return WBP_WorldMap; }
 };

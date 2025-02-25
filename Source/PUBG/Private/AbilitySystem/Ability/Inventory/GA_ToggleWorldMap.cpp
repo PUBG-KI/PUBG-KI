@@ -20,7 +20,7 @@ void UGA_ToggleWorldMap::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 
 	SetCanBeCanceled(false);
 
-	GetPlayerControllerFromActorInfo()->CreateWorldMapWidget();
+	GetPlayerControllerFromActorInfo()->ToggleMapWidget();
 	EndAbility(Handle,ActorInfo, ActivationInfo, false, true);	
 }
 

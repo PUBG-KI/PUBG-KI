@@ -7,12 +7,15 @@
 #include "AbilitySystem/BaseGameplayTag.h"
 #include "Character/PlayerCharacter.h"
 #include "Controller/BasePlayerController.h"
+#include "Net/UnrealNetwork.h"
 
 // 위젯 추가
 //#include "UI/HUDWidget.h"
 
 ABasePlayerState::ABasePlayerState()
 {
+	bReplicates = true;
+	
 	// 능력 시스템 구성요소를 생성하고 명시적으로 복제되도록 설정합니다.
 	AbilitySystemComponent = CreateDefaultSubobject<UBaseAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -103,7 +106,6 @@ float ABasePlayerState::GetMaxMagazine() const
 void ABasePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ABasePlayerState::HealthChanged);
 }

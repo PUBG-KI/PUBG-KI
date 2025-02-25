@@ -19,6 +19,7 @@ public:
 	virtual void BeginPlay() override;
 
 	void StartExplosions();
+	void UpdateRedZone(bool IsVisibility);
 	void SpawnExplosion();
 	FVector FindGroundZ(UWorld* World, FVector StartLocation);
 

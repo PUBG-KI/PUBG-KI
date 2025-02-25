@@ -60,14 +60,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMaxMagazine() const;
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
 	class UBaseAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
 	class UBaseAttributeSet* AttributeSetBase;
-
 
 	FGameplayTag DeadTag;
 

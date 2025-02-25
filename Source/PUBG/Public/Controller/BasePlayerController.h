@@ -7,10 +7,12 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UInputMappingContext;
 class UWorldMapWidget;
 class AAirplane;
 class UHudWidget;
 class UInventoryWidget;
+class UNotificationWidget;
 class ACrosshairHUD;
 
 /**
@@ -48,7 +50,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
-	void CreateWorldMapWidget();
+	void ToggleMapWidget();
 	UFUNCTION(Client, Reliable)
 	void ClientCreateInventoryWidget();
 	UFUNCTION(BlueprintCallable)
@@ -59,14 +61,25 @@ public:
 	void UpdateMapCurrentZone();
 	UFUNCTION(BlueprintCallable)
 	void UpdateMapNextZone();
+	UFUNCTION(BlueprintCallable)
+	void UpdateAirplanebVisibilty();
+	UFUNCTION(BlueprintCallable)
+	void UpdateAirplanebLocation();
+	UFUNCTION(BlueprintCallable)
+	void UpdateRedZone();
+	UFUNCTION(BlueprintCallable)
+	void ShowNotification(FText Text);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_RemoveMappingContext();
+	UFUNCTION(Client, Reliable, BlueprintCallable)
+	void Client_UpdateAirplanebFall();
+
 	UFUNCTION(BlueprintCallable)
-	UHudWidget* GetHudWidget() { return HudWidget;}
-	
+	UHudWidget* GetHudWidget() { return HudWidget; }
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<UInventoryWidget> InventoryWidgetClass;
@@ -77,16 +90,15 @@ private:
 	TSubclassOf<UHudWidget> HudWidgetClass;
 	UPROPERTY()
 	UHudWidget* HudWidget;
-	
+		
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<UWorldMapWidget> WorldMapWidgetClass;
+	TSubclassOf<UNotificationWidget> NotificationWidgetClass;
 	UPROPERTY()
-	UWorldMapWidget* WorldMapWidget;
+	UNotificationWidget* NotificationWidget;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AAirplane* ControlledAirplane;
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UInputMappingContext* AdditionalInputMappingContext;
 };
-
 
