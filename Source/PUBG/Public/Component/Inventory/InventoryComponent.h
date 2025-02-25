@@ -81,12 +81,16 @@ public:
 	void ServerSetNearItem(AItemBase* OutNearItem);
 	UFUNCTION(Server, Reliable)
 	void ServerSetContents(const TArray<FItemSlotStruct>& OutContnets);
+	UFUNCTION(BlueprintCallable)
+	void SetMaxInventoryWeight(float NewInventoryWeight) { MaxInventoryWeight = NewInventoryWeight; }
 	
 	// Getter
 	AItemBase* GetItem() const { return Item; }
 	AItemBase* GetNearItem() const { return NearItem; }
 	TArray<FItemSlotStruct> GetContent() { return Content; }
 	FUsingItem GetUsingItem() { return UsingItem; }
+	UFUNCTION(BlueprintCallable)
+	float GetMaxInventoryWeight() { return MaxInventoryWeight; }
 	
 	UFUNCTION(Server, Reliable, WithValidation, BlueprintCallable) 
 	void Server_Interact();

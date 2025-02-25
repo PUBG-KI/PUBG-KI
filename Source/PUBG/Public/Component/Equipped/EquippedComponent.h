@@ -8,6 +8,7 @@
 #include "EquippedComponent.generated.h"
 
 
+class AArmor_Base;
 enum class EEquippedItemCategory : uint8;
 class AWeaponItem;
 enum class EItemCategory : uint8;
@@ -89,6 +90,15 @@ public:
 	// 스태틱 서브 무기 소환
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromSubWeapon(AGun_Base* OutCurrentWeapon);
+
+	// 헬멧 장착
+	UFUNCTION(Server, Reliable)
+	void ServerEquiptHelmet(AItemBase* Item);
+	// 헬멧 바닥에 버리기
+	void DropArmor(int32 OutIndex);
+	// 스태틱 헬멧 소환
+	UFUNCTION(Server, Reliable)
+	void ServerSpawnStaticMeshFromArmor(AArmor_Base* OutCurrentArmor);
 
 	
 	// 데이터 테이블 행 인덱스 가져오기
@@ -184,6 +194,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetPistol_GunBase() const { return Cast<AGun_Base>(SideArmSlot);}
 };
+
 
 
 

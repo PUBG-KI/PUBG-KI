@@ -175,6 +175,14 @@ void ABaseCharacter::SetStamina(float Stamina)
 	}
 }
 
+void ABaseCharacter::SetArmor(float Armor)
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		BaseAttributeSet->SetArmor(Armor);
+	}
+}
+
 void ABaseCharacter::SetMoveSpeed(float MoveSpeed)
 {
 	if (BaseAttributeSet.IsValid())
@@ -197,6 +205,16 @@ void ABaseCharacter::SetMaxMagazine(float MaxMagazine)
 	{
 		BaseAttributeSet->SetMaxMagazine(MaxMagazine);
 	}
+}
+
+float ABaseCharacter::GetArmor()
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetArmor();
+	}
+
+	return 0.0;
 }
 
 

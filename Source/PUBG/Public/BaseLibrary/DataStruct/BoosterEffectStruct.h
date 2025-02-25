@@ -15,6 +15,8 @@ struct FBoosterEffectStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMesh* SkeletalMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* StaticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimSequence* AnimationAsset; // 아이템 사용 시 아이템 애니메이션 에셋 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float UseTime;

@@ -8,8 +8,10 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Controller/BasePlayerController.h"
 #include "Engine/TextureRenderTarget2D.h"
+#include "Item/ArmorItem.h"
 #include "Item/ItemBase.h"
 #include "Item/WeaponItem.h"
+#include "Item/Armor/Armor_Base.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
@@ -397,7 +399,7 @@ void UEquippedComponent::ServerEquipSubWeapon_Implementation(AItemBase* Item)
 	}
 
 	GetOwner()->ForceNetUpdate();
-	//Item->Destroy(true);
+	Item->Destroy(true);
 }
 
 void UEquippedComponent::DropSUbWeapon(AGun_Base* OutCurrentWeapon)
@@ -452,6 +454,101 @@ void UEquippedComponent::ServerSpawnStaticMeshFromSubWeapon_Implementation(AGun_
 			TempWeapon->SetItemTableRowName(ItemID);
 			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
 			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
+
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to load blueprint class! Check the path: /Game/Blueprint/Item/Farming/TestWeaponItem.TestWeaponItem_C"));
+	}
+}
+
+
+void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
+{
+	AArmorItem* HelmetItem = Cast<AArmorItem>(Item);
+
+	FName ItemID = HelmetItem->GetItemDataComponent()->GetItemRowName();
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemID.ToString());
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+	
+	int32 HelmetSlot = static_cast<int32>(HelmetItem->GetEquippedItemCategory()); // Item에 저장되어 있는 슬롯 값 가져오기 
+
+	if (EquippedItems[HelmetSlot] != nullptr)
+	{
+		DropArmor(HelmetSlot);
+	}
+
+	TSubclassOf<AArmor_Base> ArmorClass = Cast<UClass>(Row->BP_Item.Get());
+	if (AArmor_Base* Armor = GetWorld()->SpawnActorDeferred<AArmor_Base>(ArmorClass, FTransform(FRotator(0), FVector(0))))
+	{
+		//TempWeapon->SetTableIndex(RowIndex);
+		FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+		
+		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+
+		EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(HelmetSlot);
+		Armor->SetEquipSlot(EquippedItemCategory);
+		
+		HelmetSlot = static_cast<int32>(Armor->GetEquipSlot()); // 장착될 슬롯값 가져오기
+		UE_LOG(LogTemp, Warning, TEXT("SubWeapon Slot : %d"), HelmetSlot);
+
+		EquippedItems[HelmetSlot] = Armor;
+		if (HelmetSlot == 5)
+		{
+			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("HeadSocket")));
+		}
+		else if (HelmetSlot == 6)
+		{
+			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("BagSocket")));
+		}
+		else if (HelmetSlot == 7)
+		{
+			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("ArmorSocket")));
+		}
+		
+		Armor->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+	}
+
+	GetOwner()->ForceNetUpdate();
+}
+
+void UEquippedComponent::DropArmor(int32 OutIndex)
+{
+	if (EquippedItems[OutIndex] != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::DropArmor = EquippedItems[OutIndex]"));
+		ServerSpawnStaticMeshFromArmor(Cast<AArmor_Base>(EquippedItems[OutIndex]));
+		EquippedItems[OutIndex]->Destroy();
+		EquippedItems[OutIndex] = nullptr;
+	}
+}
+
+void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Base* OutCurrentArmor)
+{
+	FName ItemID = FName(OutCurrentArmor->GetArmorData().Name); // RowName 가져오기
+	UE_LOG(LogTemp, Warning, TEXT("ITemID : %s"), *ItemID.ToString());
+	
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row")); // 테이블 가져오기
+	int32 RowIndex = GetRowIndex(ItemDataTable, ItemID); // RowName에 해당하는 인덱스 가져오기 
+	UE_LOG(LogTemp, Warning, TEXT("Row Index : %d"), RowIndex);
+
+			
+	FRotator SpawnRotation = FRotator(0, 0, 0);
+	FVector SpawnLocation = DropLocation();
+	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
+
+	UClass* ArmorItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/ArmorItem.ArmorItem_C"));
+	if (ArmorItemBPClass) // nullptr 체크 추가
+	{
+		if (AArmorItem* TempArmor = GetWorld()->SpawnActorDeferred<AArmorItem>(ArmorItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
+		{
+			//TempWeapon->SetTableIndex(RowIndex);
+			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함
+			
+			TempArmor->SetItemTableRowName(ItemID);
+			TempArmor->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempArmor->GetItemDataComponent()->GetItemRowName().ToString());
 
 		}
 	}
