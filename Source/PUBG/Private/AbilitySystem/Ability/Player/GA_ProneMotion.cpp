@@ -19,26 +19,19 @@ void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                       const FGameplayAbilityActivationInfo ActivationInfo,
                                       const FGameplayEventData* TriggerEventData)
 {
+	SetCanBeCanceled(false);
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	UPlayerMovementComponent* MovementComponent = Cast<
 		UPlayerMovementComponent>(PUBGPlayer->GetMovementComponent());
-	if (PUBGPlayer->GetMovementComponent()->IsFalling() && PUBGPlayer->bAnimationIsPlaying)
+	if (PUBGPlayer->GetMovementComponent()->IsFalling())
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 		
 	}
-	if (!MovementComponent)
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
-
 	if (MovementComponent->RequestToStartProne) //누워있는 상태면
 	{
-		if (!PUBGPlayer->bAnimationIsPlaying)
-		{
 			FVector UnProneCameraOffset = FVector(0, 0, 80.f);
 
 			PUBGPlayer->GetCameraBoom()->TimelineAddOffset(UnProneCameraOffset, 0.2f);
@@ -60,19 +53,12 @@ void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			{
 				ProneUnarmedMontagePlay(EProneMontageType::PronetoStand);
 			}
-
-			
-		}
-
 		
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 	}
 
 	if (MovementComponent->IsCrouching())
 	{
-		if (!PUBGPlayer->bAnimationIsPlaying)
-		{
 			PUBGPlayer->UnCrouch();
 			MovementComponent->StartProne();
 			FVector ProneCameraOffset = FVector(0, 0, -40.f);
@@ -93,16 +79,14 @@ void UGA_ProneMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			{
 				ProneUnarmedMontagePlay(EProneMontageType::CrouchtoProne);
 			}
-		}
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		
+	
 		return;
 	}
-	if (!PUBGPlayer->bAnimationIsPlaying)
-	{
+	
 		FVector ProneCameraOffset = FVector(0, 0, -80.f);
 		PUBGPlayer->GetCameraBoom()->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
 		MovementComponent->StartProne();
-UE_LOG(LogTemp, Warning, TEXT("Prone"));
 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
 		{
 			ProneRifleMontagePlay(EProneMontageType::StandtoProne);
@@ -119,8 +103,8 @@ UE_LOG(LogTemp, Warning, TEXT("Prone"));
 		{
 			ProneUnarmedMontagePlay(EProneMontageType::StandtoProne);
 		}
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-	}
+		
+	
 }
 
 void UGA_ProneMotion::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -147,7 +131,8 @@ void UGA_ProneMotion::ProneUnarmedMontagePlay(EProneMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -165,7 +150,8 @@ void UGA_ProneMotion::ProneRifleMontagePlay(EProneMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -183,7 +169,8 @@ void UGA_ProneMotion::ProneMeleeMontagePlay(EProneMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -201,7 +188,8 @@ void UGA_ProneMotion::ProneGrenadeMontagePlay(EProneMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_ProneMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
