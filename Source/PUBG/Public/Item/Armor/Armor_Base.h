@@ -20,9 +20,11 @@ public:
 	AArmor_Base();
 	
 	virtual void BeginPlay() override;
-	
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	UPROPERTY(ReplicatedUsing= OnRep_StaticMeshComponent, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	UStaticMeshComponent* StaticMeshComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
@@ -38,6 +40,10 @@ private:
 	float Weight;
 
 public:
+	// OnRep
+	UFUNCTION(BlueprintCallable)
+	void OnRep_StaticMeshComponent();
+	
 	// Getter functions
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	FArmorStruct GetArmorData() const { return ArmorData; }
@@ -49,6 +55,8 @@ public:
 	float GetDefense() const { return Defense; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	float GetWeight() const { return Weight; }
+	UFUNCTION(BlueprintCallable, Category="Armor")
+	UStaticMeshComponent* GetStaticMeshComponent() const { return StaticMeshComponent; }
 
 	// Setter functions
 	UFUNCTION(BlueprintCallable, Category="Armor")
@@ -62,7 +70,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void SetWeight(float NewWeight) { Weight = NewWeight; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
-	void SetStaticMesh(UStaticMeshComponent* NewStaticMeshComponent) { StaticMeshComponent = NewStaticMeshComponent; }
+	void SetStaticMeshComponent(UStaticMeshComponent* NewStaticMeshComponent) { StaticMeshComponent = NewStaticMeshComponent; }
 	
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void EquipArmor(APlayerCharacter* PlayerCharacter);

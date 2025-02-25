@@ -8,6 +8,8 @@
 
 AArmor_Base::AArmor_Base()
 {
+	bReplicates = true;
+
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
 	
 	Name = NAME_None;
@@ -47,6 +49,19 @@ void AArmor_Base::BeginPlay()
 	}
 
 	
+}
+
+void AArmor_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AArmor_Base, StaticMeshComponent);
+
+}
+
+void AArmor_Base::OnRep_StaticMeshComponent()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnRep_StaticMeshComponent"));
 }
 
 void AArmor_Base::EquipArmor(APlayerCharacter* PlayerCharacter)
