@@ -2,7 +2,9 @@
 
 
 #include "GameplayActor//SupplyDrop/SupplyDrop.h"
-
+#include "Components/BoxComponent.h"
+#include "PUBG/Public/GameplayActor/ItemSpawn/ItemSpawnerComponent.h"
+#include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -15,6 +17,22 @@ ASupplyDrop::ASupplyDrop()
 
 	DropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DropMesh"));
 	RootComponent = DropMesh;
+
+	CollisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBoxComponent"));
+	CollisionBoxComponent->SetupAttachment(DropMesh);
+
+	FVector NewBoxCollisionComponentBoxExtent(70.0f, 70.0f, 70.0f);
+	CollisionBoxComponent->SetBoxExtent(NewBoxCollisionComponentBoxExtent);
+
+	//Item_01->SetupAttachment(DropMesh);
+
+	// Child Actor Component 생성
+	// ItemChildActorComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("ItemChildActorComp"));
+	// // 메시 컴포넌트 아래로 붙이기
+	// ItemChildActorComp->SetupAttachment(DropMesh);
+	// // 실제 붙일 클래스 설정 (BP_ItemBase_C 등)
+	// ItemChildActorComp->SetChildActorClass(AItemBase::StaticClass());
+
 	
 	//충돌
 	DropMesh->SetSimulatePhysics(true);
@@ -31,10 +49,13 @@ ASupplyDrop::ASupplyDrop()
 	//회전 잠금 (X, Y, Z 회전 고정)
 	DropMesh->BodyInstance.bLockXRotation = true;
 	DropMesh->BodyInstance.bLockYRotation = true;
-	DropMesh->BodyInstance.bLockZRotation = true;	
+	DropMesh->BodyInstance.bLockZRotation = true;
+
+	//스폰컴포넌트
+	ItemSpawnerComponent = CreateDefaultSubobject<UItemSpawnerComponent>(TEXT("ItemSpawnerComponent"));
 	
-	Balloon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Balloon"));
-	Balloon->SetupAttachment(DropMesh);
+	// Balloon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Balloon"));
+	// Balloon->SetupAttachment(DropMesh);
 }
 
 // Called when the game starts or when spawned
@@ -42,7 +63,36 @@ void ASupplyDrop::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	DropMesh->OnComponentHit.AddDynamic(this, &ASupplyDrop::OnHit);	
+	DropMesh->OnComponentHit.AddDynamic(this, &ASupplyDrop::OnHit);
+
+	// 아이템 블루프린트가 설정되지 않았다면 스폰하지 않음
+	if (!ItemClass) return;
+
+	// 스폰 파라미터 설정
+	// FActorSpawnParameters SpawnParams;
+	// SpawnParams.Owner = this;
+	// SpawnParams.Instigator = GetInstigator();
+
+	// 보급품의 위치를 기준으로 아이템을 약간 위쪽에 스폰
+	FVector SpawnLocation = GetActorLocation();
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	// 아이템 스폰
+	//SpawnedItem = GetWorld()->SpawnActor<AItemBase>(ItemClass, SpawnLocation, SpawnRotation);
+	
+	//if (SpawnedItem)
+	{
+		// TestItem2를 부착
+		//SpawnedItem->AttachToComponent(DropMesh, FAttachmentTransformRules::KeepWorldTransform);
+		//if(HasAuthority())
+		{
+			ItemSpawnerComponent->SpawnItems(true,this);
+		}
+		
+		// SpawnedItem->SetRandomProperties(GetRandomItemRowName());
+		//
+		// UE_LOG(LogTemp, Warning, TEXT("아이템 %s이(가) 보급품에 추가되었습니다!"), *SpawnedItem->GetName());
+	}
 }
 
 
@@ -73,6 +123,16 @@ void ASupplyDrop::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 			}
 		}
 	}
+}
+
+FName ASupplyDrop::GetRandomItemRowName()
+{
+	TArray<FName> RowNames = ItemDataTable->GetRowNames();
+	FName RandomRowName = RowNames[FMath::RandRange(0,RowNames.Num()-1)];
+
+	//UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
+	
+	return RandomRowName;
 }
 
 
