@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "GameFramework/Actor.h"
 #include "BaseLibrary/BaseStructType.h"
 #include "Airplane.generated.h"
 
@@ -26,7 +26,7 @@ struct FAirplaneData
 };
 
 UCLASS()
-class PUBG_API AAirplane : public APawn
+class PUBG_API AAirplane : public AActor
 {
 	GENERATED_BODY()
 

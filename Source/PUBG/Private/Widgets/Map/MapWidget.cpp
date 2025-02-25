@@ -100,9 +100,6 @@ void UMapWidget::UpdateCurrentZone()
 	
 	Scale = ConvertScale(Scale * 100.f);
 	
-	UE_LOG(LogTemp, Warning, TEXT("NewLocation : %s"), *NewLocation.ToString());	
-	UE_LOG(LogTemp, Warning, TEXT("Radius = %f"), Scale);
-
 	if (CurrentZoneMaterial)
 	{
 		CurrentZoneMaterial->SetVectorParameterValue(FName("Center"), FVector(NewLocation.X, NewLocation.Y, 0));
