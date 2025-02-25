@@ -17,5 +17,7 @@ class PUBG_API UGA_Weapon_Reload : public UPlayerGameplayAbility
 public:
 	UFUNCTION(BlueprintPure)
 	UAnimMontage* selectCurrentMontage_isProne_Reload(UAnimMontage* ReloadCharge_TrueMontage,UAnimMontage* ReloadCharge_falseMontage, UAnimMontage* ReloadTectical_TrueMontage, UAnimMontage* ReloadTectical_falseMontage,bool Selectbool);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void CheckZoom();
 };

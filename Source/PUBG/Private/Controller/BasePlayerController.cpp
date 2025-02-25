@@ -95,8 +95,9 @@ void ABasePlayerController::InputModeGame()
 	UWidgetBlueprintLibrary::SetInputMode_GameOnly(this);
 }
 
+
 void ABasePlayerController::HitEventServer_Implementation(AActor* TargetActor, FGameplayTag HitTag,
-	FGameplayEventData payload)
+                                                          FGameplayEventData payload)
 {
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, HitTag, payload);
 }

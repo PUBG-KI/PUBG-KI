@@ -19,12 +19,12 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 		DeActivateCamera->SetActive(false);
 		ActivateCamera->SetActive(true);
 		
-		ActivateCamera->bUsePawnControlRotation = false;
-		//Movementcomponent->bUseControllerDesiredRotation = true;
+	//	ActivateCamera->bUsePawnControlRotation = false;
+		Movementcomponent->bUseControllerDesiredRotation = true;
 
 		GetPlayerCharacterFromActorInfo()->IsZoom = true;
 		GetPlayerCharacterFromActorInfo()->SetCurrentCamera(ActivateCamera);
-		ActivateCamera->SetFieldOfView(75.0f);
+		ActivateCamera->SetFieldOfView(22.5f);
 	}
 }
 
@@ -33,10 +33,12 @@ void UGA_Zoom::DeActivatedZoom(UCameraComponent* ActivateCamera, UCameraComponen
 	if (GetPlayerCharacterFromActorInfo()->GetEquippedComponent()->GetCurrentWeapon())
 	{
 		UPlayerMovementComponent* Movementcomponent = Cast<UPlayerMovementComponent>(GetPlayerCharacterFromActorInfo()->GetMovementComponent());
-
-		DeActivateCamera->AttachToComponent(GetPlayerCharacterFromActorInfo()->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "camera_fppSocket");
+		
 		DeActivateCamera->SetActive(false);
 		ActivateCamera->SetActive(true);
+		DeActivateCamera->AttachToComponent(GetPlayerCharacterFromActorInfo()->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "camera_fppSocket");
+		DeActivateCamera->SetFieldOfView(90.0f);
+
 
 		Movementcomponent->bUseControllerDesiredRotation = false;
 		

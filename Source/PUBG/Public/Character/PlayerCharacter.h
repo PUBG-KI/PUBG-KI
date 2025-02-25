@@ -76,6 +76,10 @@ public:
 	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	void SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh);
+
+	UFUNCTION()
+	void CallCheckZoomAbility();
+	
 #pragma endregion
 
 #pragma region Animation

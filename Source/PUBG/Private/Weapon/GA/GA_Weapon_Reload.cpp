@@ -27,3 +27,11 @@ UAnimMontage* UGA_Weapon_Reload::selectCurrentMontage_isProne_Reload(UAnimMontag
 	}
 	return ReloadTectical_falseMontage;
 }
+
+void UGA_Weapon_Reload::CheckZoom()
+{
+	if (APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo())
+	{
+		PlayerCharacter->CallCheckZoomAbility();
+	}
+}
