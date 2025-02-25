@@ -12,7 +12,6 @@
 UGA_CrouchMotion::UGA_CrouchMotion()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	SetCanBeCanceled(false);
 }
 
 void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -20,11 +19,12 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                        const FGameplayAbilityActivationInfo ActivationInfo,
                                        const FGameplayEventData* TriggerEventData)
 {
+	SetCanBeCanceled(false);
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	UPlayerMovementComponent* MovementComponent = Cast<
 		UPlayerMovementComponent>(PUBGPlayer->GetMovementComponent());
-	if (MovementComponent->IsFalling() && PUBGPlayer->bAnimationIsPlaying)
+	if (MovementComponent->IsFalling())
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
@@ -32,7 +32,7 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 	if (PUBGPlayer->GetMovementComponent()->IsCrouching()) //크라우칭 상태면
 	{
-		if (!PUBGPlayer->bAnimationIsPlaying)
+		if (!(PUBGPlayer->GetMovementComponent()->Velocity.Size()>0.f))
 		{
 			FVector UnProneCameraOffset = FVector(0, 0, 40.f);
 
@@ -59,14 +59,19 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 				CrouchUnarmedMontagePlay(ECrouchMontageType::CrouchtoStand);
 			}
 		}
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		else
+		{
+			FVector UnProneCameraOffset = FVector(0, 0, 40.f);
+
+			PUBGPlayer->GetCameraBoom()->TimelineAddOffset(UnProneCameraOffset, 0.2f);
+			PUBGPlayer->UnCrouch();
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		}
 		return;
 	}
 
 	if (MovementComponent->RequestToStartProne) //누워있으면
 	{
-		if (!PUBGPlayer->bAnimationIsPlaying)
-		{
 			MovementComponent->StopProne();
 			PUBGPlayer->Crouch();
 			FVector ProneCameraOffset = FVector(0, 0, 40.f);
@@ -90,11 +95,11 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 			{
 				CrouchUnarmedMontagePlay(ECrouchMontageType::PronetoCrouch);
 			}
-		}
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		
 		return;
 	}
-	if (!PUBGPlayer->bAnimationIsPlaying)
+
+	if (!(PUBGPlayer->GetMovementComponent()->Velocity.Size()>0.f))
 	{
 		FVector ProneCameraOffset = FVector(0, 0, -40.f);
 		PUBGPlayer->GetCameraBoom()->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
@@ -118,6 +123,12 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		{
 			CrouchUnarmedMontagePlay(ECrouchMontageType::StandtoCrouch);
 		}
+	}
+	else
+	{
+		FVector ProneCameraOffset = FVector(0, 0, -40.f);
+		PUBGPlayer->GetCameraBoom()->TimelineAddOffset(ProneCameraOffset, 0.2f); //카메라 오프셋 이동
+		PUBGPlayer->Crouch();
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 	}
 }
@@ -146,7 +157,8 @@ void UGA_CrouchMotion::CrouchUnarmedMontagePlay(ECrouchMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -164,7 +176,8 @@ void UGA_CrouchMotion::CrouchRifleMontagePlay(ECrouchMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -182,7 +195,8 @@ void UGA_CrouchMotion::CrouchMeleeMontagePlay(ECrouchMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
@@ -200,7 +214,8 @@ void UGA_CrouchMotion::CrouchGrenadeMontagePlay(ECrouchMontageType MontageType)
 				this, NAME_None, SelectedMontage, FGameplayTagContainer(), 1.0f, NAME_None, false, 1.0f);
 			Task->OnBlendOut.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->OnCompleted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
-
+			Task->OnCancelled.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
+			Task->OnInterrupted.AddDynamic(this, &UGA_CrouchMotion::OnCompleted);
 			Task->ReadyForActivation();
 		}
 	}
