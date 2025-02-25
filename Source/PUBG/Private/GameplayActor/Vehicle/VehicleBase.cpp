@@ -276,7 +276,7 @@ void AVehicleBase::Client_SetUpRemotePlayerInput_Implementation(APlayerControlle
 
 FText AVehicleBase::LookAt()
 {
-	return FText::FromString("LookAt");
+	return FText::FromString("UAZ 탑승");
 }
 
 void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //이거는 서버에서 실행되는 함수임
@@ -289,8 +289,10 @@ void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //�
 		Character->SetOnTheVehicle(true); //애님인스턴스로 보내기 위함
 		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon(); //
 		Character->SetActorEnableCollision(false); // 콜리전을 꺼서 차량안으로 들어갈 수 있도록
+		//bool collision = Character->GetActorEnableCollision();
+		//UE_LOG(LogTemp, Warning, TEXT("collsion : %hhd"),collision);
 		SetCharacterCollision(Character);
-
+	
 		FRotator CharacterRotator = Character->GetCameraBoom()->GetTargetRotation();
 
 		Character->AttachToComponent(ArrowComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
