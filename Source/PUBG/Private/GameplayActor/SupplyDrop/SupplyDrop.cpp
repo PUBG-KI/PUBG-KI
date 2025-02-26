@@ -26,10 +26,10 @@ ASupplyDrop::ASupplyDrop()
 	InteractionComponent->SetIsReplicated(true);
 	InteractionComponent->SetupAttachment(DropMesh);
 
-	FVector NewBoxCollisionComponentBoxExtent(90.0f, 90.0f, 90.0f);
+	FVector NewBoxCollisionComponentBoxExtent(122.0f, 70.0f, 70.0f);
 	CollisionBoxComponent->SetBoxExtent(NewBoxCollisionComponentBoxExtent);
 
-	FVector NewInteractionComponentBoxExtent(50.0f, 50.0f, 50.0f);
+	FVector NewInteractionComponentBoxExtent(37.0f, 43.0f, 18.0f);
 	InteractionComponent->SetBoxExtent(NewInteractionComponentBoxExtent);
 
 	

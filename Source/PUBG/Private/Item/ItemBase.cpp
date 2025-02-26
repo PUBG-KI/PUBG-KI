@@ -249,8 +249,8 @@ void AItemBase::SetSupplyDropItemCollisionBox()
 	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
 	
 	FVector BoxLocation = ComponentBoundsStaticMeshBounds.Origin;
-	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 2.f);
-	FVector OutBoxScale = FVector(InnerBoxScale.X + 10.f, InnerBoxScale.Y + 10.f, InnerBoxScale.Z + 10.f);
+	FVector InnerBoxScale = FVector(20.0f, 25.0f, 10.0f);
+	FVector OutBoxScale = FVector(20.0f, 25.0f, 10.0f);
 
 	InteractionComponent->SetWorldLocation(BoxLocation);
 	BoxComponent->SetWorldLocation(BoxLocation);
