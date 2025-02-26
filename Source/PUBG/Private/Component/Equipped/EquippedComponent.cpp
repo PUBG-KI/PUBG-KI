@@ -490,7 +490,9 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 
 		EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(HelmetSlot);
 		Armor->SetEquipSlot(EquippedItemCategory);
-		Armor->GetStaticMeshComponent()->SetStaticMesh(Row->StaticMesh);
+		Armor->SetName(ItemID);
+		Armor->SetMesh(Row->StaticMesh);
+		UE_LOG(LogTemp, Warning, TEXT("Armor SpawnActorDeferred : %s"), *Row->StaticMesh->GetName());
 		
 		HelmetSlot = static_cast<int32>(Armor->GetEquipSlot()); // 장착될 슬롯값 가져오기
 		UE_LOG(LogTemp, Warning, TEXT("Helmet Slot : %d"), HelmetSlot);
@@ -511,12 +513,14 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		}
 		
 		Armor->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+		Armor->EquipArmor(PlayerCharacter);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Armor SpawnActorDeferred Failed"));
 	}
 
+	Item->Destroy(true);
 	GetOwner()->ForceNetUpdate();
 }
 
@@ -526,6 +530,13 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::DropArmor = EquippedItems[OutIndex]"));
 		ServerSpawnStaticMeshFromArmor(Cast<AArmor_Base>(EquippedItems[OutIndex]));
+		
+		if (AArmor_Base* Armor = Cast<AArmor_Base>(EquippedItems[OutIndex]))
+		{
+			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+			Armor->UnEquipArmor(PlayerCharacter);
+		}
+		
 		EquippedItems[OutIndex]->Destroy();
 		EquippedItems[OutIndex] = nullptr;
 	}
@@ -534,7 +545,7 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Base* OutCurrentArmor)
 {
 	FName ItemID = FName(OutCurrentArmor->GetArmorData().Name); // RowName 가져오기
-	UE_LOG(LogTemp, Warning, TEXT("ITemID : %s"), *ItemID.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("ItemID : %s"), *ItemID.ToString());
 	
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row")); // 테이블 가져오기
 	int32 RowIndex = GetRowIndex(ItemDataTable, ItemID); // RowName에 해당하는 인덱스 가져오기 
@@ -545,7 +556,7 @@ void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Ba
 	FVector SpawnLocation = DropLocation();
 	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 
-	UClass* ArmorItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/ArmorItem.ArmorItem_C"));
+	UClass* ArmorItemBPClass = LoadClass<AArmorItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/BP_ArmorItem.BP_ArmorItem_C"));
 	if (ArmorItemBPClass) // nullptr 체크 추가
 	{
 		if (AArmorItem* TempArmor = GetWorld()->SpawnActorDeferred<AArmorItem>(ArmorItemBPClass, FTransform(SpawnRotation, SpawnLocation)))

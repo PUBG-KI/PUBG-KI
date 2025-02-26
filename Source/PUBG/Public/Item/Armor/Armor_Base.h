@@ -71,6 +71,8 @@ public:
 	void SetWeight(float NewWeight) { Weight = NewWeight; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void SetStaticMeshComponent(UStaticMeshComponent* NewStaticMeshComponent) { StaticMeshComponent = NewStaticMeshComponent; }
+	UFUNCTION(BlueprintCallable, Category="Armor")
+	void SetMesh(UStaticMesh* NewStaticMesh);
 	
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void EquipArmor(APlayerCharacter* PlayerCharacter);
@@ -78,3 +80,5 @@ public:
 	void UnEquipArmor(APlayerCharacter* PlayerCharacter);
 	
 };
+
+

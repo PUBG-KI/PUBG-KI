@@ -25,12 +25,10 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicatedByDefault(true);
 
-	//MaxInventoryWeight = 50.0f;
-
-	
-	MaxInventoryWeight = 1000.0f; //임시값(1000)
+	MaxInventoryWeight = 50.0f;
+	//MaxInventoryWeight = 1000.0f; //임시값(1000)
 	CurrentInventoryWeight = 0.0f;
-
+	
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
 }
@@ -69,6 +67,8 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UInventoryComponent, PrimarySlot);
 	DOREPLIFETIME(UInventoryComponent, SecondarySlot);
 	DOREPLIFETIME(UInventoryComponent, SideArmSlot);
+	DOREPLIFETIME(UInventoryComponent, MaxInventoryWeight);
+	//DOREPLIFETIME(UInventoryComponent, CurrentInventoryWeight);
 	
 }
 
@@ -424,6 +424,17 @@ void UInventoryComponent::PrintContents()
 		
 		UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
 	}
+}
+
+void UInventoryComponent::PrintMaxInventoryWeight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%f"), MaxInventoryWeight);
+
+}
+
+void UInventoryComponent::ServerPrintMaxInventoryWeight_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("%f"), MaxInventoryWeight);
 }
 
 void UInventoryComponent::ServerPrintContents_Implementation()

@@ -73,19 +73,6 @@ void AArmorItem::InteractWith_Implementation(APlayerCharacter* Character)
 			int32 ItemCategory = static_cast<int32>(Row->Category);
 			
 			EquippedComponent->ServerEquiptHelmet(InventoryComponent->GetItem());
-			
-			// if (ItemCategory == 5)
-			// {
-			// 	EquippedComponent->ServerEquiptHelmet(InventoryComponent->GetItem());
-			// }
-			// else if (ItemCategory == 6)
-			// {
-			// 	EquippedComponent->ServerEquipSubWeapon(InventoryComponent->GetItem());
-			// }
-			// else if (ItemCategory == 7)
-			// {
-			// 	
-			// }
 		}
 		else
 		{

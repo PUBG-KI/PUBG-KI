@@ -42,9 +42,9 @@ protected:
 
 // 변수 영역
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
 	float MaxInventoryWeight; // 50 // 총알의 경우 0.5, 0.4임
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
+	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, category = "Inventory", meta=(AllowPrivateAccess=true))
 	float CurrentInventoryWeight;
 	
 	UPROPERTY(ReplicatedUsing = OnRep_Content, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
@@ -136,6 +136,10 @@ public:
 	void PrintContents();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerPrintContents();
+	UFUNCTION(BlueprintCallable)
+	void PrintMaxInventoryWeight();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerPrintMaxInventoryWeight();
 	
 
 	

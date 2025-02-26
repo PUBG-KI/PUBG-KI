@@ -11,12 +11,15 @@ AArmor_Base::AArmor_Base()
 	bReplicates = true;
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
+	RootComponent = StaticMeshComponent;
 	
 	Name = NAME_None;
 
 	Weight = -1.0f;
 	Defense = -1.0f;
 	Durability = -1.0f;
+	
+	StaticMeshComponent->SetIsReplicated(true);
 }
 
 void AArmor_Base::BeginPlay()
@@ -25,12 +28,17 @@ void AArmor_Base::BeginPlay()
 
 	if (!Name.IsNone())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *Name.ToString());
 		FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
-		UDataTable* ArmorTable = LoadObject<UDataTable>(nullptr, TEXT("ArmorTablePath"));
+		//UDataTable* ArmorTable = LoadObject<UDataTable>(nullptr, TEXT("ArmorTablePath"));
+		UDataTable* ArmorTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *ArmorTablePath));
 		FArmorStruct* FoundData = ArmorTable->FindRow<FArmorStruct>(Name, TEXT("Fail Find Row"));
-
+		
 		if (FoundData) // nullptr 체크 필수
 		{
+			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : FoundData"));
+			StaticMeshComponent->SetStaticMesh(FoundData->StaticMesh);
+			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *FoundData->StaticMesh->GetName());
 			ArmorData = *FoundData; // 구조체 값을 복사해서 대입
 		}
 	}
@@ -46,6 +54,7 @@ void AArmor_Base::BeginPlay()
 	if (Weight == -1)
 	{
 		Weight = ArmorData.Weight;
+		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay = %f"),Weight );
 	}
 
 	
@@ -68,10 +77,17 @@ void AArmor_Base::EquipArmor(APlayerCharacter* PlayerCharacter)
 {
 	PlayerCharacter->SetArmor(PlayerCharacter->GetArmor() + Defense);
 	PlayerCharacter->GetInventoryComponent()->SetMaxInventoryWeight(PlayerCharacter->GetInventoryComponent()->GetMaxInventoryWeight() + Weight);
+
+	UE_LOG(LogTemp, Warning, TEXT("EquipArmor : MaxInventoryWeight : %f"), PlayerCharacter->GetInventoryComponent()->GetMaxInventoryWeight());
 }
 
 void AArmor_Base::UnEquipArmor(APlayerCharacter* PlayerCharacter)
 {
 	PlayerCharacter->SetArmor(PlayerCharacter->GetArmor() - Defense);
 	PlayerCharacter->GetInventoryComponent()->SetMaxInventoryWeight(PlayerCharacter->GetInventoryComponent()->GetMaxInventoryWeight() - Weight);
+}
+
+void AArmor_Base::SetMesh(UStaticMesh* NewStaticMesh)
+{
+	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
 }
