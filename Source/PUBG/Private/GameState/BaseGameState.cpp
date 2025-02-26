@@ -168,6 +168,11 @@ void ABaseGameState::OnRep_IsVisibiltyRedZone()
 	if (GetLocalController())
 	{
 		LocalController->UpdateRedZone();
+		if (bIsVisibiltyRedZone)
+		{
+			FText Message = FText::FromString(TEXT("레드존이 활성화 됩니다"));		
+			ShowNotification(Message);		
+		}
 	}
 }
 
@@ -249,7 +254,7 @@ void ABaseGameState::FinishMoveAirplane()
 		
 		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
 		{
-			PS->GetAbilitySystemComponent()->TryActivateAbilityByClass(UGA_Airplane_Fall::StaticClass(), true );
+			PS->GetAbilitySystemComponent()->TryActivateAbilityByClass(FallAbility, true );
 		}
 	}
 }

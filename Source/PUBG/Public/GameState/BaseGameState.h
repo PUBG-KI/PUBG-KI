@@ -7,6 +7,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "BaseGameState.generated.h"
 
+class UPlayerGameplayAbility;
+
 /**
  * 
  */
@@ -141,5 +143,9 @@ public:
 
 	UPROPERTY()
 	ABasePlayerController* LocalController;
+	
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	TSubclassOf<UPlayerGameplayAbility> FallAbility;
 };
 
