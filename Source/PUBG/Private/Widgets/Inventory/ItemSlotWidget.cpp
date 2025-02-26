@@ -110,6 +110,7 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 				UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
 
 				FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
+				
 				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
 				if (Row)
 				{

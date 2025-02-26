@@ -10,8 +10,9 @@ AArmor_Base::AArmor_Base()
 {
 	bReplicates = true;
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
-	RootComponent = StaticMeshComponent;
+	//StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMesh");
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
+	RootComponent = SkeletalMeshComponent;
 	
 	Name = NAME_None;
 
@@ -19,27 +20,37 @@ AArmor_Base::AArmor_Base()
 	Defense = -1.0f;
 	Durability = -1.0f;
 	
-	StaticMeshComponent->SetIsReplicated(true);
+	SkeletalMeshComponent->SetIsReplicated(true);
 }
 
 void AArmor_Base::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
+	if (HasAuthority())  // 서버에서 실행 여부 체크
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay = Execute Server"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay = Execute Client"));
+	}
+	
 	if (!Name.IsNone())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *Name.ToString());
 		FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
-		//UDataTable* ArmorTable = LoadObject<UDataTable>(nullptr, TEXT("ArmorTablePath"));
 		UDataTable* ArmorTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *ArmorTablePath));
 		FArmorStruct* FoundData = ArmorTable->FindRow<FArmorStruct>(Name, TEXT("Fail Find Row"));
 		
 		if (FoundData) // nullptr 체크 필수
 		{
 			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : FoundData"));
-			StaticMeshComponent->SetStaticMesh(FoundData->StaticMesh);
-			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *FoundData->StaticMesh->GetName());
+			//StaticMeshComponent->SetStaticMesh(FoundData->StaticMesh);
+			//SkeletalMeshComponent->SetSkeletalMesh(FoundData->SkeletalMesh);
+			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *FoundData->SkeletalMesh->GetName());
 			ArmorData = *FoundData; // 구조체 값을 복사해서 대입
+			UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *FoundData->Image->GetName());
 		}
 	}
 
@@ -64,7 +75,9 @@ void AArmor_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AArmor_Base, StaticMeshComponent);
+	//DOREPLIFETIME(AArmor_Base, StaticMeshComponent);
+	DOREPLIFETIME(AArmor_Base, Name);
+	DOREPLIFETIME(AArmor_Base, SkeletalMeshComponent);
 
 }
 
@@ -89,5 +102,10 @@ void AArmor_Base::UnEquipArmor(APlayerCharacter* PlayerCharacter)
 
 void AArmor_Base::SetMesh(UStaticMesh* NewStaticMesh)
 {
-	StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+	//StaticMeshComponent->SetStaticMesh(NewStaticMesh);
+}
+
+void AArmor_Base::SetSetSkeletalMesh(USkeletalMesh* NewSkeletalMesh)
+{
+	SkeletalMeshComponent->SetSkeletalMesh(NewSkeletalMesh);
 }

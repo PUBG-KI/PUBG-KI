@@ -15,6 +15,10 @@ struct FArmorStruct : public FTableRowBase
 	UStaticMesh* StaticMesh;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USkeletalMesh* SkeletalMesh;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Durability; // 내구도
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -22,4 +26,7 @@ struct FArmorStruct : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Weight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Image;
 };

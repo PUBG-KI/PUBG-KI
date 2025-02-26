@@ -57,8 +57,7 @@ public:
 	
 	// 이준수
 	//EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
-	
-	virtual USkeletalMeshComponent* GetWeaponSkeletalMeshComponent() override { return WeaponSkeletalMeshComponent;}
+	//virtual USkeletalMeshComponent* GetWeaponSkeletalMeshComponent() override { return WeaponSkeletalMeshComponent;}
 
 protected:
 	//Setter

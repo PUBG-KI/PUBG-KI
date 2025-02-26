@@ -4,22 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/WidgetBase.h"
-#include "WeaponSlotWidget.generated.h"
+#include "WeaponSlotWidget1.generated.h"
 
-class AGun_Base;
+class UWeaponPartsSlot;
 enum class EBulletType : uint8;
-class USizeBox;
-class UTextBlock;
+class AGun_Base;
 class UImage;
+class UTextBlock;
+class USizeBox;
 /**
  * 
  */
 UCLASS()
-class PUBG_API UWeaponSlotWidget : public UWidgetBase
+class PUBG_API UWeaponSlotWidget1 : public UWidgetBase
 {
 	GENERATED_BODY()
 
-
+	
 private:
 	// Widget Variable
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
@@ -50,17 +51,21 @@ private:
 	USizeBox* SizeBox_Stock;
 	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_Grip;
+	UWeaponPartsSlot* WBP_WeaponPartsSlot_Grip;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_Barrel;
+	UWeaponPartsSlot* WBP_WeaponPartsSlot_Barrel;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_Magazine;
+	UWeaponPartsSlot* WBP_WeaponPartsSlot_Magazine;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_Sight;
+	UWeaponPartsSlot* WBP_WeaponPartsSlot_Sight;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_CantedSight;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
-	UImage* Image_Stock;
+	UWeaponPartsSlot* WBP_WeaponPartsSlot_Stock;
+
+	// Variable
+	UPROPERTY()
+	FName WeaponName;
+	UPROPERTY()
+	int32 WeaponIndex;
 	
 
 public:
@@ -91,18 +96,23 @@ public:
     USizeBox* GetSizeBoxCantedSight() const { return SizeBox_CantedSight; }
     UFUNCTION(BlueprintCallable, Category = "Widget")
     USizeBox* GetSizeBoxStock() const { return SizeBox_Stock; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageGrip() const { return Image_Grip; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageBarrel() const { return Image_Barrel; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageMagazine() const { return Image_Magazine; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageSight() const { return Image_Sight; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageCantedSight() const { return Image_CantedSight; }
-    UFUNCTION(BlueprintCallable, Category = "Widget")
-    UImage* GetImageStock() const { return Image_Stock; }
+
+	UFUNCTION(BlueprintCallable, Category = "WeaponParts")
+	UWeaponPartsSlot* GetWeaponPartsSlotGrip() const { return WBP_WeaponPartsSlot_Grip; }
+	UFUNCTION(BlueprintCallable, Category = "WeaponParts")
+	UWeaponPartsSlot* GetWeaponPartsSlotBarrel() const { return WBP_WeaponPartsSlot_Barrel; }
+	UFUNCTION(BlueprintCallable, Category = "WeaponParts")
+	UWeaponPartsSlot* GetWeaponPartsSlotMagazine() const { return WBP_WeaponPartsSlot_Magazine; }
+	UFUNCTION(BlueprintCallable, Category = "WeaponParts")
+	UWeaponPartsSlot* GetWeaponPartsSlotSight() const { return WBP_WeaponPartsSlot_Sight; }
+	UFUNCTION(BlueprintCallable, Category = "WeaponParts")
+	UWeaponPartsSlot* GetWeaponPartsSlotStock() const { return WBP_WeaponPartsSlot_Stock; }
+
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	FName GetWeaponName() const { return WeaponName; }
+	UFUNCTION(BlueprintCallable, Category = "Widget")
+	int32 GetWeaponIndex() const { return WeaponIndex;}
+	
 	
 	//Setter
 	void SetImage_RenderTargetWeapon(UImage* OutImage) { Image_RenderTargetWeapon = OutImage; }
@@ -112,5 +122,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FindEquiablePartsSlot(AGun_Base* OutGun);
 
-	
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponName(FName NewName) { WeaponName = NewName; }
+	UFUNCTION(BlueprintCallable)
+	void SetWeaponIndex(int32 NewIndex) { WeaponIndex = NewIndex; }
+
 };

@@ -49,6 +49,9 @@ void UEquippedComponent::BeginPlay()
 	// ...
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");	
 	ItemDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
+	FString ArmorDataTablePath = TEXT("/Game/Datatables/Armor/DT_Armor.DT_Armor");
+	ArmorDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *ArmorDataTablePath));
+
 
 	//EquippedMainWeapon.SetNum(2);
 	EquippedItems.SetNum(16);
@@ -472,6 +475,7 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 	FName ItemID = HelmetItem->GetItemDataComponent()->GetItemRowName();
 	UE_LOG(LogTemp, Warning, TEXT("ServerEquiptHelmet_Implementation : %s"), *ItemID.ToString());
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+	FArmorStruct* ArmorRow = ArmorDataTable->FindRow<FArmorStruct>(ItemID, TEXT("Find Armor"));
 	
 	int32 HelmetSlot = static_cast<int32>(HelmetItem->GetEquippedItemCategory()); // Item에 저장되어 있는 슬롯 값 가져오기 
 
@@ -491,7 +495,8 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(HelmetSlot);
 		Armor->SetEquipSlot(EquippedItemCategory);
 		Armor->SetName(ItemID);
-		Armor->SetMesh(Row->StaticMesh);
+		//Armor->SetMesh(Row->StaticMesh);
+		//Armor->GetSkeletalMeshComponent()->SetSkeletalMesh(ArmorRow->SkeletalMesh);
 		UE_LOG(LogTemp, Warning, TEXT("Armor SpawnActorDeferred : %s"), *Row->StaticMesh->GetName());
 		
 		HelmetSlot = static_cast<int32>(Armor->GetEquipSlot()); // 장착될 슬롯값 가져오기
@@ -501,15 +506,24 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		if (HelmetSlot == 5)
 		{
 			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("HeadSocket")));
+			//PlayerCharacter->SetMeshComponent(EPlayerMeshType::Head, ArmorRow->SkeletalMesh);
+			PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Head, ArmorRow->SkeletalMesh);
 		}
 		else if (HelmetSlot == 6)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HelmetSlot == 6"));
+			UE_LOG(LogTemp, Warning, TEXT("BagSlot == 6"));
 			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("BagSocket")));
+
+			UE_LOG(LogTemp, Warning, TEXT("BagSlot = %s "), *ArmorRow->SkeletalMesh->GetName());
+			PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Bottom, ArmorRow->SkeletalMesh);
+
 		}
 		else if (HelmetSlot == 7)
 		{
 			EquippedItems[HelmetSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("ArmorSocket")));
+			//PlayerCharacter->SetMeshComponent(EPlayerMeshType::Top, ArmorRow->SkeletalMesh);
+			PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Top, ArmorRow->SkeletalMesh);
+
 		}
 		
 		Armor->FinishSpawning(FTransform(FRotator(0), FVector(0)));
@@ -534,6 +548,21 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 		if (AArmor_Base* Armor = Cast<AArmor_Base>(EquippedItems[OutIndex]))
 		{
 			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+
+			if (OutIndex == 5)
+			{
+				PlayerCharacter->SetMeshComponent(EPlayerMeshType::Head, nullptr);
+			}
+			else if (OutIndex == 6)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("HelmetSlot == 6"));
+				PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Bottom, nullptr);
+			}
+			else if (OutIndex == 7)
+			{
+				PlayerCharacter->SetMeshComponent(EPlayerMeshType::Top, nullptr);
+			}
+			
 			Armor->UnEquipArmor(PlayerCharacter);
 		}
 		
@@ -693,16 +722,16 @@ void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, 
 	OutEquippedItem->GetSceneCaptureComponent()->bConsiderUnrenderedOpaquePixelAsFullyTranslucent = false;
 	OutEquippedItem->GetSceneCaptureComponent()->ShowOnlyActorComponents(OutEquippedItem, true);
 
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_ToneCurveAmount = true;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.ToneCurveAmount = 0.0f;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_BloomIntensity = true;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.BloomIntensity = 0.0f;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_AmbientOcclusionIntensity = true;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.AmbientOcclusionIntensity = 0.0f;
-	OutEquippedItem->GetSceneCaptureComponent()->PostProcessBlendWeight = 1.0f;
-	OutEquippedItem->GetSceneCaptureComponent()->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-	OutEquippedItem->GetSceneCaptureComponent()->ProjectionType = ECameraProjectionMode::Orthographic;
-	OutEquippedItem->GetSceneCaptureComponent()->OrthoWidth = 110.0f;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_ToneCurveAmount = true;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.ToneCurveAmount = 0.0f;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_BloomIntensity = true;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.BloomIntensity = 0.0f;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_AmbientOcclusionIntensity = true;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.AmbientOcclusionIntensity = 0.0f;
+	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessBlendWeight = 1.0f;
+	// OutEquippedItem->GetSceneCaptureComponent()->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
+	// OutEquippedItem->GetSceneCaptureComponent()->ProjectionType = ECameraProjectionMode::Orthographic;
+	// OutEquippedItem->GetSceneCaptureComponent()->OrthoWidth = 110.0f;
 
 	
 

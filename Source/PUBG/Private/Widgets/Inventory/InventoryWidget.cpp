@@ -19,6 +19,9 @@
 #include "Widgets/Inventory/WeaponSlotWidget.h"
 #include "Components/Image.h"
 #include "Components/SizeBox.h"
+#include "Item/Armor/Armor_Base.h"
+#include "Widgets/Inventory/ArmorSlotWidget.h"
+#include "Widgets/Inventory/WeaponSlotWidget1.h"
 
 
 UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -31,6 +34,9 @@ UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) 
 	WeaponSlotWidgetBPClass1 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot1.WBP_WeaponSlot1_C"));
 	WeaponSlotWidgetBPClass2 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot2.WBP_WeaponSlot2_C"));
 	WeaponSlotWidgetBPClass3 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot3.WBP_WeaponSlot3_C"));
+	WeaponSlotWidgetBPClass11 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot11.WBP_WeaponSlot11_C"));
+	WeaponSlotWidgetBPClass22 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot22.WBP_WeaponSlot22_C"));
+	WeaponSlotWidgetBPClass33 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot33.WBP_WeaponSlot33_C"));
 	
 	ItemZoneType = EItemZoneType::None;
 
@@ -140,7 +146,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 
 void UInventoryWidget::UpdateEquippedWidget()
 {
-	if (!WeaponSlotWidgetBPClass1 &&!WeaponSlotWidgetBPClass2 && !WeaponSlotWidgetBPClass3 && !EquippedComponent)
+	if (!WeaponSlotWidgetBPClass1 &&!WeaponSlotWidgetBPClass2 && !WeaponSlotWidgetBPClass3 && !EquippedComponent && !WeaponSlotWidgetBPClass11)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidgetClass None Or EquippedComponent None"));
 		return;
@@ -159,72 +165,115 @@ void UInventoryWidget::UpdateEquippedWidget()
 			switch (i)
 			{
 			case 0:
-				Weapon1SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass1);
-				
-				if (Weapon1SlotWidget)
-				{	
-					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
-					Weapon1SlotWidget = EquippedWeaponUIUpdate(Weapon1SlotWidget, Slot1Weapon, i);
+				Weapon11SlotWidget = CreateWidget<UWeaponSlotWidget1>(GetWorld(), WeaponSlotWidgetBPClass11);
 
-					SizeBox_1Slot->SetContent(Weapon1SlotWidget);
+				if (Weapon11SlotWidget)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
+					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon11SlotWidget = EquippedWeaponUIUpdate(Weapon11SlotWidget, Slot1Weapon, i);
+					Weapon11SlotWidget->SetWeaponName(FName(Slot1Weapon->GetWeaponDataAsset().GunName));
+					Weapon11SlotWidget->SetWeaponIndex(i);
+					SizeBox_1Slot->SetContent(Weapon11SlotWidget);
 					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
 					
-					// Weapon1SlotWidget->FindEquiablePartsSlot(Slot1Weapon);
-					//
-					// FString SlotNumber =  FString::FromInt(i + 1);
-					// Weapon1SlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
-					//
-					// FString WeaponName = Slot1Weapon->GetWeaponDataAsset().GunName;
-					// Weapon1SlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
-					//
-					//
-					// // 장전된 총알, 남은 총알 
-					//
-					// EBulletType WeaponBulletType = Slot1Weapon->GetWeaponDataAsset().BulletType;
-					// FString WeaponBulletName = Weapon1SlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
-					// Weapon1SlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정
-					//
-					// FName WeaponBulletFName = FName(*WeaponBulletName);
-					// FItemStruct* Row = Slot1Weapon->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
-					// Weapon1SlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
-					// Weapon1SlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
-					// Weapon1SlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
-					//
-					//
-					// SizeBox_1Slot->SetContent(Weapon1SlotWidget);
-					// UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
 				}
+				// if (Weapon1SlotWidget)
+				// {	
+				// 	AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+				// 	Weapon1SlotWidget = EquippedWeaponUIUpdate(Weapon1SlotWidget, Slot1Weapon, i);
+				//
+				// 	SizeBox_1Slot->SetContent(Weapon1SlotWidget);
+				// 	UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				// 	
+				// }
 				break;
 			case 1:
-				Weapon2SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass2);
-				
-				if (Weapon2SlotWidget)
-				{
-					AGun_Base* Slot2Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
-					Weapon2SlotWidget = EquippedWeaponUIUpdate(Weapon2SlotWidget, Slot2Weapon, i);
+				Weapon22SlotWidget = CreateWidget<UWeaponSlotWidget1>(GetWorld(), WeaponSlotWidgetBPClass22);
 
-					SizeBox_2Slot->SetContent(Weapon2SlotWidget);
-					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
-				}
-				else
+				if (Weapon22SlotWidget)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Weapon2SlotWidget None"));
+					UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
+					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon22SlotWidget = EquippedWeaponUIUpdate(Weapon22SlotWidget, Slot1Weapon, i);
+					Weapon11SlotWidget->SetWeaponName(FName(Slot1Weapon->GetWeaponDataAsset().GunName));
+					Weapon11SlotWidget->SetWeaponIndex(i);
+					SizeBox_2Slot->SetContent(Weapon22SlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+					
 				}
+				// Weapon2SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass2);
+				//
+				// if (Weapon2SlotWidget)
+				// {
+				// 	AGun_Base* Slot2Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+				// 	Weapon2SlotWidget = EquippedWeaponUIUpdate(Weapon2SlotWidget, Slot2Weapon, i);
+				//
+				// 	SizeBox_2Slot->SetContent(Weapon2SlotWidget);
+				// 	UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				// }
+				// else
+				// {
+				// 	UE_LOG(LogTemp, Warning, TEXT("Weapon2SlotWidget None"));
+				// }
 				break;
 			case 2:
-				Weapon3SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass3);
-				
-				if (Weapon3SlotWidget)
-				{
-					AGun_Base* Slot3Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
-					Weapon3SlotWidget = EquippedWeaponUIUpdate(Weapon3SlotWidget, Slot3Weapon, i);
+				Weapon33SlotWidget = CreateWidget<UWeaponSlotWidget1>(GetWorld(), WeaponSlotWidgetBPClass33);
 
-					SizeBox_3Slot->SetContent(Weapon3SlotWidget);
-					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
-				}
-				else
+				if (Weapon33SlotWidget)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Weapon3SlotWidget None"));
+					UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
+					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					Weapon33SlotWidget = EquippedWeaponUIUpdate(Weapon33SlotWidget, Slot1Weapon, i);
+					Weapon11SlotWidget->SetWeaponName(FName(Slot1Weapon->GetWeaponDataAsset().GunName));
+					Weapon11SlotWidget->SetWeaponIndex(i);
+					SizeBox_3Slot->SetContent(Weapon33SlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+					
+				}
+				// Weapon3SlotWidget = CreateWidget<UWeaponSlotWidget>(GetWorld(), WeaponSlotWidgetBPClass3);
+				//
+				// if (Weapon3SlotWidget)
+				// {
+				// 	AGun_Base* Slot3Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
+				// 	Weapon3SlotWidget = EquippedWeaponUIUpdate(Weapon3SlotWidget, Slot3Weapon, i);
+				//
+				// 	SizeBox_3Slot->SetContent(Weapon3SlotWidget);
+				// 	UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+				// }
+				// else
+				// {
+				// 	UE_LOG(LogTemp, Warning, TEXT("Weapon3SlotWidget None"));
+				// }
+				break;
+			case 5:
+				if (WBP_ArmorSlot_Helmet)
+				{
+					AArmor_Base* SlotHelmet = Cast<AArmor_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					WBP_ArmorSlot_Helmet->GetImageArmor()->SetVisibility(ESlateVisibility::HitTestInvisible);
+					WBP_ArmorSlot_Helmet->GetImageArmor()->SetBrushFromTexture(SlotHelmet->GetArmorData().Image);
+					WBP_ArmorSlot_Helmet->SetArmorName(SlotHelmet->GetArmorData().Name);
+					WBP_ArmorSlot_Helmet->SetArmorIndex(i);
+				}
+				break;
+			case 6:
+				if (WBP_ArmorSlot_Bag)
+				{
+					AArmor_Base* SlotBag = Cast<AArmor_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					WBP_ArmorSlot_Bag->GetImageArmor()->SetBrushFromTexture(SlotBag->GetArmorData().Image);
+					WBP_ArmorSlot_Bag->SetArmorName(SlotBag->GetArmorData().Name);
+					WBP_ArmorSlot_Bag->GetImageArmor()->SetVisibility(ESlateVisibility::HitTestInvisible);
+					WBP_ArmorSlot_Bag->SetArmorIndex(i);
+				}
+				break;
+			case 7:
+				if (WBP_ArmorSlot_Armor)
+				{
+					AArmor_Base* SlotArmor = Cast<AArmor_Base>(EquippedItems[i]); // GunBase로 캐스팅
+					WBP_ArmorSlot_Armor->GetImageArmor()->SetVisibility(ESlateVisibility::HitTestInvisible);
+					WBP_ArmorSlot_Armor->GetImageArmor()->SetBrushFromTexture(SlotArmor->GetArmorData().Image);
+					WBP_ArmorSlot_Armor->SetArmorName(SlotArmor->GetArmorData().Name);
+					WBP_ArmorSlot_Armor->SetArmorIndex(i);
 				}
 				break;
 			}
@@ -489,6 +538,39 @@ void UInventoryWidget::EquippedUIInit()
 }
 
 UWeaponSlotWidget* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::EquippedWeaponUIUpdate"));					
+	OutWeaponSlotWidget->FindEquiablePartsSlot(OutGunBase);
+
+	FString SlotNumber =  FString::FromInt(OutIndex + 1);
+	OutWeaponSlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정 
+					
+	FString WeaponName = OutGunBase->GetWeaponDataAsset().GunName;
+	OutWeaponSlotWidget->GetTextWeaponName()->SetText(FText::FromString(WeaponName)); // 총 이름 지정 
+
+
+	// 장전된 총알, 남은 총알 
+					
+	EBulletType WeaponBulletType = OutGunBase->GetWeaponDataAsset().BulletType;
+	FString WeaponBulletName = OutWeaponSlotWidget->SetBulletTypeTextBlock(WeaponBulletType);
+	OutWeaponSlotWidget->GetTextAmmoName()->SetText(FText::FromString(WeaponBulletName)); // 총알 이름 지정
+
+	FName WeaponBulletFName = FName(*WeaponBulletName);
+	UE_LOG(LogTemp, Warning, TEXT("EquippedWeaponUIUpdate : %s"), *WeaponBulletName);
+	FItemStruct* Row = OutGunBase->GetItemDataTable()->FindRow<FItemStruct>(WeaponBulletFName, TEXT("Find Row"));
+	
+	if (Row != nullptr)
+	{
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderTranslation(FVector2D(-5.0f, 0.0f));
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetRenderScale(FVector2D(2.0f, 2.0f));
+		OutWeaponSlotWidget->GetImageAmmoImage()->SetBrushFromTexture(Row->Image); // 총알 이미지 지정 
+	}
+
+	return OutWeaponSlotWidget;
+}
+
+UWeaponSlotWidget1* UInventoryWidget::EquippedWeaponUIUpdate(UWeaponSlotWidget1* OutWeaponSlotWidget,
+	AGun_Base* OutGunBase, int32 OutIndex)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UInventoryWidget::EquippedWeaponUIUpdate"));					
 	OutWeaponSlotWidget->FindEquiablePartsSlot(OutGunBase);
