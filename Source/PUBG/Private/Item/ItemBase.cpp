@@ -250,7 +250,7 @@ void AItemBase::SetSupplyDropItemCollisionBox()
 	
 	FVector BoxLocation = ComponentBoundsStaticMeshBounds.Origin;
 	FVector InnerBoxScale = FVector(ComponentBoundsStaticMeshBounds.BoxExtent.X * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Y * 2.f, ComponentBoundsStaticMeshBounds.BoxExtent.Z * 2.f);
-	FVector OutBoxScale = FVector(InnerBoxScale.X + 50.f, InnerBoxScale.Y + 50.f, InnerBoxScale.Z + 50.f);
+	FVector OutBoxScale = FVector(InnerBoxScale.X + 10.f, InnerBoxScale.Y + 10.f, InnerBoxScale.Z + 10.f);
 
 	InteractionComponent->SetWorldLocation(BoxLocation);
 	BoxComponent->SetWorldLocation(BoxLocation);
@@ -351,7 +351,11 @@ void AItemBase::SetMesh(UStaticMesh* NewMesh)
 		StaticMesh->SetHiddenInGame(true);
 		SetSupplyDropItemCollisionBox();
 	}
-	SetCollisionScale();
+	else
+	{
+		SetCollisionScale();
+	}
+	
 }
 
 void AItemBase::SetSlotFromCategory()

@@ -21,8 +21,7 @@ ASupplyDrop::ASupplyDrop()
 	CollisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBoxComponent"));
 	CollisionBoxComponent->SetIsReplicated(true);
 	CollisionBoxComponent->SetupAttachment(DropMesh);
-
-		
+	
 	InteractionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionComponent"));
 	InteractionComponent->SetIsReplicated(true);
 	InteractionComponent->SetupAttachment(DropMesh);
