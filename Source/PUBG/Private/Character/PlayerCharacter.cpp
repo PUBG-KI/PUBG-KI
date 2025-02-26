@@ -646,15 +646,8 @@ void APlayerCharacter::Die()
 		BaseAbilitySystemComponent->CancelAllAbilities();
 		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
 	}
-	SetLifeSpan(10.0f);
-	//if (DeathMontage)
-	{
-		//	PlayAnimMontage(DeathMontage);
-	}
-	//else
-	{
-		//Destroy();
-	}
+	// 안전하게 제거를 하려면 서버에서 타이머를 돌린 후 Destroy()하는게 좋을 거 같음
+	//SetLifeSpan(10.0f);
 }
 
 void APlayerCharacter::SetCurrentCamera(UCameraComponent* NewCamera)
