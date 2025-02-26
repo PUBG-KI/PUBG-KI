@@ -50,9 +50,12 @@ void UGA_Airplane_Fall::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	PlayerController->SetViewTargetWithBlend(PlayerCharacter, 1.0f);
 	PlayerController->Client_RemoveMappingContext();	
 	PlayerController->Client_UpdateAirplanebFall();
-	
-	GetBaseAbilitySystemComponentFromActorInfo()->RemoveAbilityByClass(StaticClass());
-	GetBaseAbilitySystemComponentFromActorInfo()->RemoveAbilityByClass(UGA_Airplane_Look::StaticClass());
+
+
+	for (TSubclassOf<UPlayerGameplayAbility> GAClass : PlayerGameplayAbilities)
+	{
+		GetBaseAbilitySystemComponentFromActorInfo()->RemoveAbilityByClass(GAClass);
+	}
 
 	PlayerCharacter->SetInFreefall(true);
 	EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
