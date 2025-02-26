@@ -68,8 +68,8 @@ void UGameEventManager::SpawnSupplyDrop()
 {
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
-	FActorSpawnParameters SpawnParameters;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	// FActorSpawnParameters SpawnParameters;
+	// SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
 	if (GI)
 	{
@@ -77,7 +77,7 @@ void UGameEventManager::SpawnSupplyDrop()
 		RandomPosition.Z += SpawnHeight;
 
 		// 보급품 스폰
-		ASupplyDrop* SpawnedActor = GetWorld()->SpawnActor<ASupplyDrop>(SupplyDropClass, RandomPosition, FRotator::ZeroRotator,SpawnParameters);
+		ASupplyDrop* SpawnedActor = GetWorld()->SpawnActor<ASupplyDrop>(SupplyDropClass, RandomPosition, FRotator::ZeroRotator);
 		SpawnedActor->SpawnSupplyDropItem();
 		if (SpawnedActor)
 		{

@@ -137,7 +137,6 @@ FName ASupplyDrop::GetRandomItemRowName()
 
 void ASupplyDrop::SpawnSupplyDropItem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASupplyDrop : SpawnSupplyDropItem()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
 	ItemSpawnerComponent->SpawnItems(true,this);
 }
 
