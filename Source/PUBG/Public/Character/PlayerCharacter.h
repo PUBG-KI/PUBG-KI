@@ -64,7 +64,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	
 
 public:
 #pragma region Mesh
@@ -90,16 +89,15 @@ public:
 	// FRotator ActorRotation;
 	UPROPERTY(ReplicatedUsing = OnRep_RotationValues)
 	FRotator NormalDeltaRotator;
-	 UPROPERTY(Replicated)
-	 float Yaw;
+	UPROPERTY(Replicated)
+	float Yaw;
 	// UPROPERTY(Replicated)
 	// float Pitch;
 	UFUNCTION(Server, Reliable, WithValidation)
 	void UpdateRotationValues();
 	UFUNCTION()
 	void OnRep_RotationValues();
-	
-	
+
 
 #pragma endregion
 
@@ -160,7 +158,7 @@ public:
 	bool bAnimationIsPlaying;
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetbAnimationIsPlaying(bool bNewAnimaitonIsPlaying) { bAnimationIsPlaying = bNewAnimaitonIsPlaying; }
-	
+
 	UPROPERTY(BlueprintReadWrite, Category = "Input")
 	bool IsZoom;
 
@@ -286,17 +284,33 @@ public:
 	{
 		VehicleVelocityBackWard = NewVelocityBackWard;
 	}
+
 	// FreeFalling 관련
 private:
 	UPROPERTY(Replicated)
 	bool InFreefall = false;
 	UPROPERTY(Replicated)
 	float MoveInput;
+
 public:
 	FORCEINLINE bool GetInFreefall() const { return InFreefall; }
-	FORCEINLINE void SetInFreefall(bool NewInFreefall){InFreefall = NewInFreefall;}
+	FORCEINLINE void SetInFreefall(bool NewInFreefall) { InFreefall = NewInFreefall; }
 	FORCEINLINE float GetMoveInput() const { return MoveInput; }
-	FORCEINLINE void SetMoveInput(float NewMoveInput){MoveInput = NewMoveInput;}
+	FORCEINLINE void SetMoveInput(float NewMoveInput) { MoveInput = NewMoveInput; }
+
+	//Swim관련
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
+	bool IsSwimming;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
+	bool UnderWater; //잠수
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
+	bool WaterFloating; //표류
+public:
+	FORCEINLINE bool GetIsSwimming() const { return IsSwimming; }
+	FORCEINLINE bool GetUnderWater() const { return UnderWater; }
+	FORCEINLINE bool GetWaterFloating() const { return WaterFloating; }
+	
 };
 
 inline void APlayerCharacter::OnRep_Controller()
@@ -305,5 +319,3 @@ inline void APlayerCharacter::OnRep_Controller()
 
 	UE_LOG(LogTemp, Warning, TEXT("OnRep_Controller"));
 }
-
-

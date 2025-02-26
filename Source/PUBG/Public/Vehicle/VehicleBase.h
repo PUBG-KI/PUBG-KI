@@ -67,6 +67,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void Client_SetUpRemotePlayerInput(APlayerController* PlayerController);
 	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_Attach(APlayerCharacter* Character);
+	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_Possess_GetOut(APlayerController* PlayerController);
 	UFUNCTION(NetMulticast, Reliable)
 	void MultiCast_SetActor(APlayerCharacter* Character);
@@ -86,6 +88,8 @@ public:
 	
 	float CalculateSpeedDamage();
 };
+
+
 
 
 

@@ -10,6 +10,7 @@
 #include "ChaosVehicleMovementComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AnimNodes/AnimNode_RandomPlayer.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 #include "Controller/BasePlayerController.h"
 
 
@@ -252,17 +253,29 @@ void AVehicleBase::InteractWith_Implementation(APlayerCharacter* Character) //�
 {
 	APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
 	PlayerCharacter = Character;
+
+	UE_LOG(LogTemp,Warning, TEXT("InteractWith"));
 	
 	if (PlayerController)
 	{
+		
 		Character->SetOnTheVehicle(true); //애님인스턴스로 보내기 위함
 		PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon();//
 		Character->SetActorEnableCollision(false); // 콜리전을 꺼서 차량안으로 들어갈 수 있도록
 		SetCharacterCollision(Character);
-
 		FRotator CharacterRotator = Character->GetCameraBoom()->GetTargetRotation();
-
-		Character->AttachToComponent(ArrowComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		
+		if (Character && Character->GetCharacterMovement())
+		{
+			Character->GetCharacterMovement()->StopMovementImmediately(); // 이동 즉시 멈추기
+			Character->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+		}
+		
+		Character->SetActorLocation(ArrowComponent->GetComponentLocation());
+		Character->SetActorRotation(ArrowComponent->GetComponentRotation());
+		Character->AttachToComponent(ArrowComponent, FAttachmentTransformRules::KeepWorldTransform);
+		
+		
 		//PlayerController->UnPossess(); // 기존 포세스를 해제
 		if (HasAuthority())
 		{
@@ -304,7 +317,23 @@ void AVehicleBase::SetActor(APlayerCharacter* Character)
 // 	return true;
 // }
 
+void AVehicleBase::Server_Attach_Implementation(APlayerCharacter* Character)
+{
+	// Character->SetOnTheVehicle(true); //애님인스턴스로 보내기 위함
+	// PlayerCharacter->WhenGetOntheVehicleUnequippedWeapon();//
+	// Character->SetActorEnableCollision(false); // 콜리전을 꺼서 차량안으로 들어갈 수 있도록
+	// SetCharacterCollision(Character);
+	//
+	// FRotator CharacterRotator = Character->GetCameraBoom()->GetTargetRotation();
+	// Character->SetActorLocation(ArrowComponent->GetComponentLocation());
+	// Character->SetActorRotation(ArrowComponent->GetComponentRotation());
+	// Character->AttachToComponent(ArrowComponent, FAttachmentTransformRules::KeepWorldTransform);
+}
 
+bool AVehicleBase::Server_Attach_Validate(APlayerCharacter* Character)
+{
+	return true;
+}
 void AVehicleBase::MultiCast_InteractWith_Implementation(APlayerCharacter* Character)
 {
 	SetCharacterCollision(Character);
