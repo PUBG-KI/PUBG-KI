@@ -17,21 +17,20 @@ ASupplyDrop::ASupplyDrop()
 
 	DropMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DropMesh"));
 	RootComponent = DropMesh;
-
+	
 	CollisionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBoxComponent"));
+	CollisionBoxComponent->SetIsReplicated(true);
 	CollisionBoxComponent->SetupAttachment(DropMesh);
+	
+	InteractionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionComponent"));
+	InteractionComponent->SetIsReplicated(true);
+	InteractionComponent->SetupAttachment(DropMesh);
 
-	FVector NewBoxCollisionComponentBoxExtent(70.0f, 70.0f, 70.0f);
+	FVector NewBoxCollisionComponentBoxExtent(122.0f, 70.0f, 70.0f);
 	CollisionBoxComponent->SetBoxExtent(NewBoxCollisionComponentBoxExtent);
 
-	//Item_01->SetupAttachment(DropMesh);
-
-	// Child Actor Component 생성
-	// ItemChildActorComp = CreateDefaultSubobject<UChildActorComponent>(TEXT("ItemChildActorComp"));
-	// // 메시 컴포넌트 아래로 붙이기
-	// ItemChildActorComp->SetupAttachment(DropMesh);
-	// // 실제 붙일 클래스 설정 (BP_ItemBase_C 등)
-	// ItemChildActorComp->SetChildActorClass(AItemBase::StaticClass());
+	FVector NewInteractionComponentBoxExtent(37.0f, 43.0f, 18.0f);
+	InteractionComponent->SetBoxExtent(NewInteractionComponentBoxExtent);
 
 	
 	//충돌
@@ -139,5 +138,12 @@ void ASupplyDrop::SpawnSupplyDropItem()
 {
 	ItemSpawnerComponent->SpawnItems(true,this);
 }
+
+FText ASupplyDrop::LookAt()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ASupplyDropLookAt"));
+	return FText::FromString(TEXT("보급품 열기"));
+}
+
 
 

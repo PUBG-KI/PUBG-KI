@@ -241,20 +241,21 @@ void AItemBase::ServerSetItemStruct_Implementation(FItemStruct OutItemStruct)
 	ItemStruct = OutItemStruct;
 }
 
-void AItemBase::SetCollisionBox(FVector Origin ,FVector CollisionBoxExtent)
+void AItemBase::SetSupplyDropItemCollisionBox()
 {
-	FVector NewInteractionComponentBoxExtent = CollisionBoxExtent * FVector(1.5f,1.5f,1.5f);
+	FBoxSphereBounds ComponentBoundsStaticMeshBounds = StaticMesh->Bounds;
+	ComponentBoundsStaticMeshBounds.BoxExtent = StaticMesh->GetStaticMesh()->GetBounds().BoxExtent;
 
-	//InteractionComponent새로운 위치, 박스 크기 설정
-	FVector NewInteractionComponentLocation = FVector(Origin.X,Origin.Y,Origin.Z + NewInteractionComponentBoxExtent.Z);
-	InteractionComponent->SetWorldLocation(NewInteractionComponentLocation);
-	InteractionComponent->SetBoxExtent(NewInteractionComponentBoxExtent);
+	UE_LOG(LogTemp, Warning, TEXT("ComponentBoundsStaticMeshBounds : %s"), *ComponentBoundsStaticMeshBounds.ToString());
+	
+	//FVector BoxLocation = FVector(20.0f, 25.0f, 10.0f);
+	FVector InnerBoxScale = FVector(20.0f, 25.0f, 10.0f);
+	FVector OutBoxScale = FVector(20.0f, 25.0f, 10.0f);
 
-	BoxComponent->SetWorldLocation(NewInteractionComponentLocation);
-	FVector NewBoxComponentBoxExtent = NewInteractionComponentBoxExtent * FVector(10.0f,10.0f,10.0f);
-	BoxComponent->SetBoxExtent(NewBoxComponentBoxExtent);
-
-	UE_LOG(LogTemp, Warning, TEXT("New Collision Box Extent"));
+	//InteractionComponent->SetWorldLocation(BoxLocation);
+	//BoxComponent->SetWorldLocation(BoxLocation);
+	InteractionComponent->SetBoxExtent(InnerBoxScale);
+	BoxComponent->SetBoxExtent(OutBoxScale);
 }
 
 FText AItemBase::LookAt()
@@ -344,7 +345,17 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 void AItemBase::SetMesh(UStaticMesh* NewMesh)
 {
 	StaticMesh->SetStaticMesh(NewMesh);
-	SetCollisionScale();
+	
+	if(bIsSupplyDrop)
+	{
+		StaticMesh->SetHiddenInGame(true);
+		SetSupplyDropItemCollisionBox();
+	}
+	else
+	{
+		SetCollisionScale();
+	}
+	
 }
 
 void AItemBase::SetSlotFromCategory()
@@ -424,7 +435,7 @@ void AItemBase::SetRandomProperties(FName ItemIdName)
 		
 	}
 
-	if (FoundItem && FoundItem->StaticMesh && bIsSupplyDrop == false)
+	if (FoundItem && FoundItem->StaticMesh)
 	{
 		//메쉬변경
 		SetMesh(FoundItem->StaticMesh);

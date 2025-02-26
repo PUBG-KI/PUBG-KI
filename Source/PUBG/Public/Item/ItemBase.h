@@ -110,9 +110,7 @@ public:
 	void SetItemTableRowName(FName OutItemTableRowName) { ItemTableRowName = OutItemTableRowName; }
 	
 	
-	//충돌 박스 크기 설정
-	UFUNCTION(BlueprintCallable)
-	virtual void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
+	
 	
 	virtual FText LookAt() override;
 
@@ -133,6 +131,10 @@ public:
 	void SetCollisionScale();
 	UFUNCTION(BlueprintCallable)
 	void SetStaticMeshScaleFromCategory(int32 InCategoryIndex);
+
+	//충돌 박스 크기 설정
+	UFUNCTION(BlueprintCallable)
+	virtual void SetSupplyDropItemCollisionBox();
 	
 
 private:
