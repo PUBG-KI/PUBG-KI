@@ -317,7 +317,21 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	MoveInput = MovementVector.Y; //애님인스턴스에 보내 블렌드스페이스의 애니메이션 변경하는 변수
 	MovementComponent->FreefallingVelocitySettings(MovementVector);
 	}
+	if (UnderWater)
+	{
+		const FRotator MovementRotation(Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Yaw, 0.f);
 
+		// 이동 방향 계산: Forward (전방) 방향 계산
+		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+		// 이동 방향 계산: Right (우측) 방향 계산
+		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+
+		// 수평과 수직 이동을 반영하여 방향 계산
+		FVector MoveDirection = ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X;
+
+		// 계산된 방향으로 이동
+		AddMovementInput(MoveDirection, 1.f); 
+	}
 	if (Controller)
 	{
 		const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전

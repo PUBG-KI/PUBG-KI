@@ -116,6 +116,8 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
 
 					InventoryComponent->RemoveFromInventory(Index, true);
+
+					
 				}
 			}
 			else if (NearComponent)

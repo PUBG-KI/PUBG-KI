@@ -19,24 +19,24 @@ class PUBG_API UBaseAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	virtual void NativeInitializeAnimation() override; 
+	virtual void NativeInitializeAnimation() override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
 
 	UPROPERTY()
 	ABaseCharacter* OwningCharacter;
 	UPROPERTY()
-	APlayerCharacter* OwningPlayer;	
+	APlayerCharacter* OwningPlayer;
 	UPROPERTY()
 	APlayerController* OwningPlayerController;
 	UPROPERTY()
 	UPlayerMovementComponent* OwningMovementComponent;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float Direction;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	float GroundSpeed;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	FVector Velocity;
 
@@ -51,7 +51,7 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	bool bIsCrouching;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Locomotion")
 	bool bIsProne;
 
@@ -60,29 +60,33 @@ public:
 
 	// UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	// FRotator AimRotation;
-	UPROPERTY(Replicated,BlueprintReadWrite , Category = "AimOffset")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "AimOffset")
 	float Yaw;
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "AimOffset")
 	float Pitch;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly ,Category = "AimOffset")
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "AimOffset")
 	float LeaningPressedValue;
-
+	//차량
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool PlayerOntheVehicle;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleFacetoBackward;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleVelocityBackWard;
-
+	//freefalling
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
 	bool InFreefalling;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
 	float Input;
-	
 
+	//Swim
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
+	bool Isfloating;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
+	bool UnderWater;
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;
@@ -92,6 +96,4 @@ protected:
 	// void ServerSetAimRotation(FRotator NewAimRotation);
 	// UFUNCTION(NetMulticast, Reliable)
 	// void MulticastSetAimRotation(FRotator NewAimRotation);
-	
 };
-

@@ -38,6 +38,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	Velocity = OwningCharacter->GetVelocity();
 	GroundSpeed = Velocity.Size2D();
 	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
+	
 
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 	bHasAcceleration = GroundSpeed > 0.f;
@@ -87,9 +88,13 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	LeaningPressedValue = OwningMovementComponent->LeaningValue;
 	PlayerOntheVehicle = OwningPlayer->GetOnTheVehicle();
 	VehicleFacetoBackward = OwningPlayer->GetVehicleFacetoBackward();
+	//UE_LOG(LogTemp, Warning, TEXT("VehicleFacetoBackward: %hhd"), VehicleFacetoBackward);
 	VehicleVelocityBackWard = OwningPlayer->GetVehicleVelocityBackWard();
+	//UE_LOG(LogTemp, Warning, TEXT("VehicleVelocityBackWard: %hhd"), VehicleVelocityBackWard);
 	InFreefalling = OwningPlayer->GetInFreefall();
 	Input = OwningPlayer->GetMoveInput();
+
+	UnderWater = OwningPlayer->GetUnderWater();
 	
 	
 }
