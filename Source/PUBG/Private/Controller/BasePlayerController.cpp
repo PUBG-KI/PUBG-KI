@@ -36,16 +36,24 @@ void ABasePlayerController::Tick(float DeltaTime)
 void ABasePlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
-	
+		
+}
+
+void ABasePlayerController::CreateHUD()
+{
 	if (!IsLocalPlayerController())
 	{		
 		UE_LOG(LogTemp, Warning, TEXT("!IsLocalPlayerController"));
 		return;
 	}
 
-	if (IsValid(NotificationWidgetClass))
+	if (NotificationWidget)
 	{
-		
+		return;
+	}
+
+	if (IsValid(NotificationWidgetClass))
+	{		
 		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass Loaded"));
 		NotificationWidget = CreateWidget<UNotificationWidget>(this, NotificationWidgetClass);
 		NotificationWidget->AddToViewport();
@@ -55,6 +63,11 @@ void ABasePlayerController::BeginPlayingState()
 		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass is NULL"));
 	}
 
+	if (HudWidget)
+	{
+		return;
+	}
+	
 	if (IsValid(HudWidgetClass))
 	{
 		

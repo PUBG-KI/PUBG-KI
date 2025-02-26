@@ -61,7 +61,8 @@ public:
 	void UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint, bool NewbIsVisibiltyAirplane);
 	void UpdateRedZone(FVector NewRedZoneCenter, float NewRedZoneScale, bool NewbIsVisibiltyRedZone);
 	void FinishMoveAirplane();
-	
+	int32 GetAlivePlayers();
+
 	// 플레이어 수 업데이트
 	void UpdatePlayerCount();
 	int32 GetPlayerCount();

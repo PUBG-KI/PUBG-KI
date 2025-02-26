@@ -28,7 +28,7 @@ ABasePlayerState::ABasePlayerState()
 	// AbilitySystemComponent를 소유한 액터의 하위 객체로 추가
 	// AbilitySystemComponent에 AttributeSet을 자동으로 등록합니다.
 	AttributeSetBase = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("AttributeSetBase"));
-
+	
 	// PlayerState의 NetUpdateFrequency를 캐릭터와 동일하게 설정합니다.
 	// PlayerStates의 기본값은 매우 낮으며 능력 시스템에 지연이 발생합니다.
 	// 100은 출시 게임에 비해 너무 높을 수 있으므로 필요에 맞게 조정할 수 있습니다.
@@ -101,6 +101,11 @@ float ABasePlayerState::GetMagazine() const
 float ABasePlayerState::GetMaxMagazine() const
 {
 	return AttributeSetBase->GetMaxMagazine();
+}
+
+bool ABasePlayerState::HasDeadTag() const
+{
+	return AbilitySystemComponent->HasMatchingGameplayTag(DeadTag);
 }
 
 void ABasePlayerState::BeginPlay()

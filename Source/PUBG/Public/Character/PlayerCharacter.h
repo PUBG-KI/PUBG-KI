@@ -41,6 +41,7 @@ enum class EPlayerMeshType : uint8
 	Body UMETA(DisplayName = "Body"),
 	Face UMETA(DisplayName = "Face"),
 	Hair UMETA(DisplayName = "Hair"),
+	Bage UMETA(DisplayName = "Bage"),
 };
 
 UENUM()

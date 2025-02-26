@@ -33,7 +33,9 @@ protected:
 private:
 	
 
-public:
+public:	
+	UFUNCTION(BlueprintCallable)
+	void CreateHUD();
 	UFUNCTION(BlueprintCallable)
 	void InputModeUI();
 	UFUNCTION(BlueprintCallable)

@@ -61,6 +61,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMaxMagazine() const;
 	
+	UFUNCTION(BlueprintCallable, Category = "Tag")
+	bool HasDeadTag() const;
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem")
 	class UBaseAbilitySystemComponent* AbilitySystemComponent;

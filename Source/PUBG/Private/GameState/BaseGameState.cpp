@@ -260,9 +260,26 @@ void ABaseGameState::FinishMoveAirplane()
 }
 
 
+int32 ABaseGameState::GetAlivePlayers()
+{
+	int32 PlayerNum = PlayerArray.Num();
+	
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
+		
+		if (PS && PS->HasDeadTag())  // PlayerState가 유효한 경우
+		{
+			PlayerNum--;
+		}
+	}
+	
+	return PlayerNum;
+}
+
 void ABaseGameState::UpdatePlayerCount()
 {	
-	PlayerCount = PlayerArray.Num();
+	PlayerCount = GetAlivePlayers();
 	OnRep_PlayerCount(); // 리슨 서버용
 }
 
