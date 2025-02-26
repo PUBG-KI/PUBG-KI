@@ -68,6 +68,9 @@ void UGameEventManager::SpawnSupplyDrop()
 {
 	UBaseGameInstance* GI = Cast<UBaseGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
+	// FActorSpawnParameters SpawnParameters;
+	// SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
 	if (GI)
 	{
 		FVector RandomPosition = GI->GetLandscapeManager()->GetRandomLocationOnLandscape();
@@ -75,11 +78,10 @@ void UGameEventManager::SpawnSupplyDrop()
 
 		// 보급품 스폰
 		ASupplyDrop* SpawnedActor = GetWorld()->SpawnActor<ASupplyDrop>(SupplyDropClass, RandomPosition, FRotator::ZeroRotator);
-		
+		SpawnedActor->SpawnSupplyDropItem();
 		if (SpawnedActor)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Supply drop spawned at: %s"), *RandomPosition.ToString());
-			
 		}
 	}
 }

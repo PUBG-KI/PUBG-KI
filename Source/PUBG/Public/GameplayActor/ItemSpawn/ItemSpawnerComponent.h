@@ -54,10 +54,10 @@ public:
 	
 	//TestItem 스폰시킬 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	void SpawnItem(FName ItemID,FVector SpawnLocation);
+	void SpawnItem(FName ItemID,FVector SpawnLocation,bool bAbleAttach, AActor* ParentActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	void SpawnItems();
+	void SpawnItems(bool bAbleAttach , AActor* ParentActor);
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();

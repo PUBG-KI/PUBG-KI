@@ -18,6 +18,6 @@ void AAHouse::BeginPlay()
 	
 	if(HasAuthority())
 	{		
-		ItemSpawnerComponent->SpawnItems();
+		ItemSpawnerComponent->SpawnItems(false, this);
 	}
 }

@@ -77,7 +77,7 @@ void UNearComponent::UpdateNear()
 			FItemStruct* LHSRow = DataTable->FindRow<FItemStruct>(LHS.GetItemDataComponent()->GetItemRowName(), TEXT("Get Item Row"));
 			FItemStruct* RHSRow = DataTable->FindRow<FItemStruct>(RHS.GetItemDataComponent()->GetItemRowName(), TEXT("Get Item Row"));
 			
-			UE_LOG(LogTemp, Warning, TEXT("LHS.ItemName: %s, RHS.ItemName: %s"), *LHSRow->Name.ToString(), *RHSRow->Name.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("LHS.ItemName: %s, RHS.ItemName: %s"), *LHSRow->Name.ToString(), *RHSRow->Name.ToString());
 			
 			//LHSRow 또는 RHSRow가 nullptr인 경우를 처리
 		   if (!LHSRow || !RHSRow)
@@ -125,7 +125,7 @@ void UNearComponent::ServerGetGroundItem_Implementation()
 
 void UNearComponent::ServerUpdateNear_Implementation()
 {
-	UpdateNear();
+	//UpdateNear();
 }
 
 void UNearComponent::ServerEmptyGroundItem_Implementation()
