@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/InteractInterface.h"
 #include "SupplyDrop.generated.h"
 
 class UItemSpawnerComponent;
@@ -11,7 +12,7 @@ class AItemBase;
 class UBoxComponent;
 
 UCLASS()
-class PUBG_API ASupplyDrop : public AActor
+class PUBG_API ASupplyDrop : public AActor , public IInteractInterface
 {
 	GENERATED_BODY()
 	
@@ -30,7 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	void SpawnSupplyDropItem();
-	
+
+	virtual FText LookAt() override;
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Smoke;
@@ -54,15 +57,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* CollisionBoxComponent;
 
-	//보급품 아이템
-	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	// TArray<AItemBase*> SupplyDropItems;
-	//
-	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	// AItemBase* Item;
-	//
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly , meta = (AllowPrivateAccess = "true"))
-	// UChildActorComponent* ItemChildActorComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UBoxComponent* InteractionComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SupplyDropItem",meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AItemBase> ItemClass;

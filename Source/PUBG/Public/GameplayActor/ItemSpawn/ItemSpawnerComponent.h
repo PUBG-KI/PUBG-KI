@@ -61,10 +61,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FName GetRandomItemRowName();
-
-	// UFUNCTION(BlueprintCallable, Category = "Spawn")
-	// void SetRandomProperties(AItemBase* Item, FName ItemRowName);
-
+	
 	//무기 확인 함수
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	bool IsWeapon(FName ItemID);

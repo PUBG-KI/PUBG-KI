@@ -112,7 +112,7 @@ public:
 	
 	//충돌 박스 크기 설정
 	UFUNCTION(BlueprintCallable)
-	virtual void SetCollisionBox(FVector Origin,FVector CollisionBoxExtent);
+	virtual void SetSupplyDropItemCollisionBox();
 	
 	virtual FText LookAt() override;
 
