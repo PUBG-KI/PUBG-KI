@@ -11,6 +11,8 @@
  * 
  */
 
+class UArmorSlotWidget;
+class UWeaponSlotWidget1;
 class USizeBox;
 class UWeaponSlotWidget;
 class UEquippedComponent;
@@ -34,19 +36,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	UEquippedComponent* EquippedComponent;
 	
-	UPROPERTY(EditAnywhere)
-	UItemSlotWidget* ItemSlotWidget;
-	UPROPERTY(EditAnywhere)
-	UItemSlotWidget* NearItemSlotWidget;
-	UPROPERTY(EditAnywhere)
-	UWeaponSlotWidget* Weapon1SlotWidget;
-	UPROPERTY(EditAnywhere)
-	UWeaponSlotWidget* Weapon2SlotWidget;
-	UPROPERTY(EditAnywhere)
-	UWeaponSlotWidget* Weapon3SlotWidget;
 
 	UPROPERTY()
 	EItemZoneType ItemZoneType;
+
+	UClass* ItemSlotWidgetBPClass;
+	UClass* WeaponSlotWidgetBPClass1;
+	UClass* WeaponSlotWidgetBPClass2;
+	UClass* WeaponSlotWidgetBPClass3;
+	UClass* WeaponSlotWidgetBPClass11;
+	UClass* WeaponSlotWidgetBPClass22;
+	UClass* WeaponSlotWidgetBPClass33;
 
 	// Widget Variable
 	UPROPERTY(meta = (BindWidget))
@@ -64,11 +64,30 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SizeBox_3Slot;
 
-	UClass* ItemSlotWidgetBPClass;
-	UClass* WeaponSlotWidgetBPClass1;
-	UClass* WeaponSlotWidgetBPClass2;
-	UClass* WeaponSlotWidgetBPClass3;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UArmorSlotWidget* WBP_ArmorSlot_Helmet;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UArmorSlotWidget* WBP_ArmorSlot_Bag;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UArmorSlotWidget* WBP_ArmorSlot_Armor;
 
+	UPROPERTY(EditAnywhere)
+	UItemSlotWidget* ItemSlotWidget;
+	UPROPERTY(EditAnywhere)
+	UItemSlotWidget* NearItemSlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* Weapon1SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* Weapon2SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget* Weapon3SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget1* Weapon11SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget1* Weapon22SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UWeaponSlotWidget1* Weapon33SlotWidget;
+	
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);
 	virtual void NativeOnInitialized() override;
@@ -106,5 +125,6 @@ public:
 	void EquippedUIInit();
 	// 장착된 총 UI 업데이트
 	UWeaponSlotWidget* EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex);
+	UWeaponSlotWidget1* EquippedWeaponUIUpdate(UWeaponSlotWidget1* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex);
 };
 

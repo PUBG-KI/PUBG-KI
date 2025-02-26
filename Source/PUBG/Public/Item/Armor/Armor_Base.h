@@ -24,12 +24,15 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 private:
-	UPROPERTY(ReplicatedUsing= OnRep_StaticMeshComponent, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
-	UStaticMeshComponent* StaticMeshComponent;
+	// UPROPERTY(ReplicatedUsing= OnRep_StaticMeshComponent, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	// UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	USkeletalMeshComponent* SkeletalMeshComponent;
+	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	FArmorStruct ArmorData;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	FName Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
@@ -55,8 +58,11 @@ public:
 	float GetDefense() const { return Defense; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	float GetWeight() const { return Weight; }
+	// UFUNCTION(BlueprintCallable, Category="Armor")
+	// UStaticMeshComponent* GetStaticMeshComponent() const { return StaticMeshComponent; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
-	UStaticMeshComponent* GetStaticMeshComponent() const { return StaticMeshComponent; }
+	USkeletalMeshComponent* GetSkeletalMeshComponent() const { return SkeletalMeshComponent; }
+
 
 	// Setter functions
 	UFUNCTION(BlueprintCallable, Category="Armor")
@@ -69,10 +75,14 @@ public:
 	void SetDefense(float NewDefense) { Defense = NewDefense; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void SetWeight(float NewWeight) { Weight = NewWeight; }
-	UFUNCTION(BlueprintCallable, Category="Armor")
-	void SetStaticMeshComponent(UStaticMeshComponent* NewStaticMeshComponent) { StaticMeshComponent = NewStaticMeshComponent; }
+	// UFUNCTION(BlueprintCallable, Category="Armor")
+	// void SetStaticMeshComponent(UStaticMeshComponent* NewStaticMeshComponent) { StaticMeshComponent = NewStaticMeshComponent; }
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void SetMesh(UStaticMesh* NewStaticMesh);
+	UFUNCTION(BlueprintCallable, Category="Armor")
+	void SetSkeletalMeshComponent(USkeletalMeshComponent* NewtSkeletalMeshComponent) { SkeletalMeshComponent = NewtSkeletalMeshComponent; }
+	UFUNCTION(BlueprintCallable, Category="Armor")
+	void SetSetSkeletalMesh(USkeletalMesh* NewSkeletalMesh);
 	
 	UFUNCTION(BlueprintCallable, Category="Armor")
 	void EquipArmor(APlayerCharacter* PlayerCharacter);

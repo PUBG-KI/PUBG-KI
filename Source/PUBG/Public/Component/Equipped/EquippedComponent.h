@@ -37,6 +37,8 @@ public:
 private:
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UDataTable* ItemDataTable;
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UDataTable* ArmorDataTable;
 	
 	// 무기 5칸, 방어구(헬멧, 가방, 조끼, 길리슈트) 4칸, 의상 (머리, 안경, 마스크, 셔츠, 겉옷, 한벌 옷, 바지, 신발) 8칸 총 17칸
 	// 01 = 주무기, 2 = 보조무기 , 3 = 근접무기, 4 = 투척무기, 5 = 헬멧, 6 = 가방, 7 = 조끼, 8 = 길리, 9 ~ 16 의상

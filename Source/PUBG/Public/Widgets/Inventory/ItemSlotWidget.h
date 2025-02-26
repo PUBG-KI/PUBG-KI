@@ -50,6 +50,8 @@ class PUBG_API UItemSlotWidget : public UWidgetBase
 	UNearComponent* NearComponent;
 	UPROPERTY()
 	int32 Index;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true), Category = "Inventory")
+	UDataTable* a;
 
 	// 드래그할 때 필요한 위젯들 
 	UPROPERTY()

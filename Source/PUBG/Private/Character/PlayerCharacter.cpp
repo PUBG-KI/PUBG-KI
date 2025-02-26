@@ -104,6 +104,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
+			//NewMesh->SetIsReplicated(true);
 
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
@@ -211,8 +212,36 @@ USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType Play
 
 void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh)
 {
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Server"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Client"));
+
+	}
+	UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent =  %s"), *SkeletalMesh->GetName());
+	
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent : SkeletalMeshComponent = %s"), *SkeletalMeshComponent->GetName());
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
+	}
+}
+
+void APlayerCharacter::Multicast_SetMeshComponent_Implementation(EPlayerMeshType PlayerMeshType,
+	USkeletalMesh* SkeletalMesh)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation"));
+	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation : %s"), *SkeletalMesh->GetName());
+	SetMeshComponent(PlayerMeshType, SkeletalMesh);
+}
+
+void APlayerCharacter::Client_SetMeshComponent_Implementation(EPlayerMeshType PlayerMeshType,
+	USkeletalMesh* SkeletalMesh)
+{
+	SetMeshComponent(PlayerMeshType, SkeletalMesh);
 }
 
 void APlayerCharacter::CallCheckZoomAbility()
