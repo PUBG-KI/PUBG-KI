@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Controller/BasePlayerController.h"
 #include "GameFramework/GameStateBase.h"
+#include "PlayerState/BasePlayerState.h"
 #include "BaseGameState.generated.h"
 
 class UPlayerGameplayAbility;
@@ -54,6 +55,7 @@ public:
 	
 	// 게임 상태 업데이트
 	void UpdateRemainingTime(int32 NewTime);
+	void SetAllPlayerCount();
 	void UpdateLandScapeBoundingBoxXY(FBox NewLandScapeBoundingBox);
 	void UpdateCurrentZone(FVector NewCurrentZoneCenter, float NewCurrentZoneScale);
 	void UpdateNextZone(FVector NewNextZoneCenter, float NewNextZoneScale, bool NewbIsVisibiltyNextZone);
@@ -61,24 +63,31 @@ public:
 	void UpdateIsVisibiltyAirplane(FVector NewStartAirplanePoint, FVector NewEndAirplanePoint, bool NewbIsVisibiltyAirplane);
 	void UpdateRedZone(FVector NewRedZoneCenter, float NewRedZoneScale, bool NewbIsVisibiltyRedZone);
 	void FinishMoveAirplane();
-	
+	int32 GetAlivePlayers();
+
+	void FinishGame();
 	// 플레이어 수 업데이트
 	void UpdatePlayerCount();
-	int32 GetPlayerCount();
+	int32 GetAllPlayerCount() const;
+	int32 GetCurrentPlayerCount() const;
 	
-	bool GetIsGameStarted();
-	FBox GetLandScapeBoundingBox();
+	bool GetIsGameStarted() const;
+	FBox GetLandScapeBoundingBox() const;
 
-	void initalize();
+	void Initialize();
 
 //private:
 	// 게임 시간
 	UPROPERTY(ReplicatedUsing=OnRep_RemainingTime, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
 	int32 RemainingTime;
 
+	// 게임에 참여한 플레이어 수
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
+	int32 AllPlayerCount;
+
 	// 플레이어 수
 	UPROPERTY(ReplicatedUsing=OnRep_PlayerCount, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))
-	int32 PlayerCount;
+	int32 CurrentPlayerCount;
 		
 	// 게임 시작 알림 (리플리케이션)
 	UPROPERTY(ReplicatedUsing = OnRep_GameStartNotification, BlueprintReadOnly, Category = "Game State", meta = (AllowPrivateAccess = "true"))

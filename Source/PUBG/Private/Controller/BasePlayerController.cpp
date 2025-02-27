@@ -15,10 +15,12 @@
 #include "Widgets/HUD/HudWidget.h"
 #include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 #include "Widgets/HUD/GameStatus/CurrentPlayerWidget.h"
+#include "Widgets/HUD/PlayerStatus/KillCountWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 #include "Widgets/Map/MapWidget.h"
 #include "Widgets/Map/WorldMapWidget.h"
 #include "Widgets/Notification/NotificationWidget.h"
+#include "Widgets/Result/ResultWidget.h"
 
 ABasePlayerController::ABasePlayerController()
 {
@@ -36,16 +38,24 @@ void ABasePlayerController::Tick(float DeltaTime)
 void ABasePlayerController::BeginPlayingState()
 {
 	Super::BeginPlayingState();
-	
+		
+}
+
+void ABasePlayerController::CreateHUD()
+{
 	if (!IsLocalPlayerController())
 	{		
 		UE_LOG(LogTemp, Warning, TEXT("!IsLocalPlayerController"));
 		return;
 	}
 
-	if (IsValid(NotificationWidgetClass))
+	if (NotificationWidget)
 	{
-		
+		return;
+	}
+
+	if (IsValid(NotificationWidgetClass))
+	{		
 		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass Loaded"));
 		NotificationWidget = CreateWidget<UNotificationWidget>(this, NotificationWidgetClass);
 		NotificationWidget->AddToViewport();
@@ -55,6 +65,11 @@ void ABasePlayerController::BeginPlayingState()
 		UE_LOG(LogTemp, Warning, TEXT("NotificationWidgetClass is NULL"));
 	}
 
+	if (HudWidget)
+	{
+		return;
+	}
+	
 	if (IsValid(HudWidgetClass))
 	{
 		
@@ -222,6 +237,18 @@ void ABasePlayerController::UpdateCurrentPlayer(int32 CurrentPlayer)
 	}
 }
 
+void ABasePlayerController::UpdateKillCount(int32 KillCount)
+{
+	if (HudWidget)
+	{		
+		UKillCountWidget* KillCountWidget = HudWidget->GetKillCountWidget();
+		if (KillCountWidget)
+		{
+			KillCountWidget->UpdateKillCount(KillCount);
+		}
+	}
+}
+
 void ABasePlayerController::UpdateMapCurrentZone()
 {
 	if (HudWidget)
@@ -270,6 +297,43 @@ void ABasePlayerController::ShowNotification(FText Text)
 	}
 }
 
+void ABasePlayerController::ShowResultWidget(int32 Rank)
+{
+	if (ResultWidget)
+	{
+		return;
+	}
+
+	if (ResultWidgetClass)
+	{
+		ResultWidget = CreateWidget<UResultWidget>(this, ResultWidgetClass);
+
+		ABaseGameState* GS = Cast<ABaseGameState>(GetWorld()->GetGameState());
+		ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
+		
+		if (GS && PS)
+		{			
+			ResultWidget->SetText_AllPlayerCount(GS->AllPlayerCount);
+			ResultWidget->SetText_Rank(Rank);
+			ResultWidget->SetText_KillCount(PS->GetKillCount());
+			
+			FString ResultMessage;
+			
+			if (Rank == 1)
+			{				
+				ResultMessage = TEXT("이겼닭! 오늘 저녁은 치킨이닭!");
+			}
+			else
+			{
+				ResultMessage = TEXT("그럴 수 있어. 이런 날도 있는 거지 뭐.");
+			}
+			ResultWidget->SetText_ResultMessage(ResultMessage);
+		}
+		
+		ResultWidget->AddToViewport();
+		InputModeUI();
+	}
+}
 
 
 void ABasePlayerController::Client_RemoveMappingContext_Implementation()

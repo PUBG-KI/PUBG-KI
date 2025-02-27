@@ -73,7 +73,10 @@ void UMapWidget::UpdatePlayerLocation()
 	}
 	else
 	{
-		PlayerLocation = ConvertWorldToMap(GetOwningPlayerPawn()->GetActorLocation());
+		if (APawn* Player = GetOwningPlayerPawn())
+		{
+			PlayerLocation = ConvertWorldToMap(Player->GetActorLocation());
+		}
 	}
 	
 	Image_Player->SetRenderTranslation(PlayerLocation);

@@ -102,6 +102,38 @@ float ABaseCharacter::GetMaxMagazine() const
 	return 0.0f;
 }
 
+float ABaseCharacter::GetArmor() const
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetArmor();
+	}
+
+	return 0.0f;
+}
+
+float ABaseCharacter::GetKillCount() const
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetKillCount();
+	}
+
+	return 0.0f;
+}
+
+
+float ABaseCharacter::GetRank() const
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		return BaseAttributeSet->GetRank();
+	}
+
+	return 0.0f;
+}
+
+
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
 	return BaseAbilitySystemComponent.Get();
@@ -109,9 +141,7 @@ UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 
 void ABaseCharacter::PossessedBy(AController* NewController)
 {
-	Super::PossessedBy(NewController);
-
-	
+	Super::PossessedBy(NewController);	
 }
 
 void ABaseCharacter::InitializeAttributes()
@@ -207,15 +237,22 @@ void ABaseCharacter::SetMaxMagazine(float MaxMagazine)
 	}
 }
 
-float ABaseCharacter::GetArmor()
+void ABaseCharacter::SetKillCount(float KillCount)
 {
 	if (BaseAttributeSet.IsValid())
 	{
-		return BaseAttributeSet->GetArmor();
+		BaseAttributeSet->SetKillCount(KillCount);
 	}
-
-	return 0.0;
 }
+
+void ABaseCharacter::SetRank(float Rank)
+{
+	if (BaseAttributeSet.IsValid())
+	{
+		BaseAttributeSet->SetRank(Rank);
+	}
+}
+
 
 
 

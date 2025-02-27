@@ -104,7 +104,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 			// Skeletal Mesh Component 생성
 			USkeletalMeshComponent* NewMesh = CreateDefaultSubobject<USkeletalMeshComponent>(SubobjectName);
 			NewMesh->SetupAttachment(GetMesh());
-			//NewMesh->SetIsReplicated(true);
+			NewMesh->SetIsReplicated(true);
 
 			// Enum 값으로 맵핑
 			EPlayerMeshType EnumValue = static_cast<EPlayerMeshType>(i);
@@ -112,8 +112,6 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 		}
 	}
 	
-	
-
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
@@ -251,6 +249,8 @@ void APlayerCharacter::CallCheckZoomAbility()
 		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(FGameplayTag::RequestGameplayTag("Player.Ability.Weapon.Zoom")));
 	}
 }
+
+
 
 
 void APlayerCharacter::UpdateRotationValues_Implementation()
@@ -613,6 +613,12 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 			}
 		}
 
+		ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
+		if (PC)
+		{
+			PC->CreateHUD();
+		}
+
 		// 나중에 플레이어의 연결을 끊었다가 다시 합류하는 것을 처리하는 경우 다시 합류로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
 		//InitializeAttributes();
@@ -683,12 +689,7 @@ void APlayerCharacter::Die()
 	// HeadMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);  // 초기 속도 설정 (필요 시)
 	// HeadMesh->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 	// HeadMesh->WakeAllRigidBodies();
-
-	if (BaseAbilitySystemComponent.IsValid())
-	{
-		BaseAbilitySystemComponent->CancelAllAbilities();
-		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
-	}
+		
 	// 안전하게 제거를 하려면 서버에서 타이머를 돌린 후 Destroy()하는게 좋을 거 같음
 	//SetLifeSpan(10.0f);
 }
@@ -919,11 +920,11 @@ void APlayerCharacter::OnRep_PlayerState()
 		// 지금은 소유 = 생성/재생이라고 가정합니다.
 		//InitializeAttributes();
 
-		// ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
-		// if (PC)
-		// {
-		// 	PC->CreateHUD();
-		// }
+		ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
+		if (PC)
+		{
+			PC->CreateHUD();
+		}
 		//
 		// // Simulated on proxies don't have their PlayerStates yet when BeginPlay is called so we call it again here
 		// InitializeFloatingStatusBar();

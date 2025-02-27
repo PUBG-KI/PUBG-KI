@@ -87,6 +87,16 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Magazine", ReplicatedUsing = OnRep_MaxMagazine)
     FGameplayAttributeData MaxMagazine;
     ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMagazine)
+	
+    // 킬 수
+    UPROPERTY(BlueprintReadOnly, Category = "KillCount", ReplicatedUsing = OnRep_KillCount)
+    FGameplayAttributeData KillCount;
+    ATTRIBUTE_ACCESSORS(UBaseAttributeSet, KillCount)
+	
+    // 등수
+    UPROPERTY(BlueprintReadOnly, Category = "Rank", ReplicatedUsing = OnRep_Rank)
+    FGameplayAttributeData Rank;
+    ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Rank)
 
 protected:
     // 연관된 최대 속성이 변경될 때 속성 값을 비례적으로 조정하는 도우미 함수입니다.
@@ -126,4 +136,10 @@ protected:
 	
 	UFUNCTION()
 	virtual void OnRep_MaxMagazine(const FGameplayAttributeData& OldMaxMagazine);
+	
+	UFUNCTION()
+	virtual void OnRep_KillCount(const FGameplayAttributeData& OldKillCount);
+	
+	UFUNCTION()
+	virtual void OnRep_Rank(const FGameplayAttributeData& OldRank);
 };

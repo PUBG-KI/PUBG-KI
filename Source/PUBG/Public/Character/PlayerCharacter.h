@@ -42,6 +42,7 @@ enum class EPlayerMeshType : uint8
 	Body UMETA(DisplayName = "Body"),
 	Face UMETA(DisplayName = "Face"),
 	Hair UMETA(DisplayName = "Hair"),
+	Bage UMETA(DisplayName = "Bage"),
 };
 
 UENUM()
@@ -92,7 +93,7 @@ public:
 	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
 	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
-	bool ActorHasTag(const FNativeGameplayTag& Tag);
+
 	// UPROPERTY()
 	// FRotator AimRotation;
 	// UPROPERTY()

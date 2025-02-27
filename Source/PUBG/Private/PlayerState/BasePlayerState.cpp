@@ -7,6 +7,7 @@
 #include "AbilitySystem/BaseGameplayTag.h"
 #include "Character/PlayerCharacter.h"
 #include "Controller/BasePlayerController.h"
+#include "GameState/BaseGameState.h"
 #include "Net/UnrealNetwork.h"
 
 // 위젯 추가
@@ -28,7 +29,7 @@ ABasePlayerState::ABasePlayerState()
 	// AbilitySystemComponent를 소유한 액터의 하위 객체로 추가
 	// AbilitySystemComponent에 AttributeSet을 자동으로 등록합니다.
 	AttributeSetBase = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("AttributeSetBase"));
-
+	
 	// PlayerState의 NetUpdateFrequency를 캐릭터와 동일하게 설정합니다.
 	// PlayerStates의 기본값은 매우 낮으며 능력 시스템에 지연이 발생합니다.
 	// 100은 출시 게임에 비해 너무 높을 수 있으므로 필요에 맞게 조정할 수 있습니다.
@@ -103,11 +104,28 @@ float ABasePlayerState::GetMaxMagazine() const
 	return AttributeSetBase->GetMaxMagazine();
 }
 
+float ABasePlayerState::GetKillCount() const
+{
+	return AttributeSetBase->GetKillCount();
+}
+
+float ABasePlayerState::GetRank() const
+{	
+	return AttributeSetBase->GetRank();
+}
+
+bool ABasePlayerState::HasDeadTag() const
+{
+	return AbilitySystemComponent->HasMatchingGameplayTag(DeadTag);
+}
+
 void ABasePlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ABasePlayerState::HealthChanged);
+	KillCountChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetKillCountAttribute()).AddUObject(this, &ABasePlayerState::KillCountChanged);
+	RankChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetRankAttribute()).AddUObject(this, &ABasePlayerState::RankChanged);
 }
 
 void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
@@ -120,91 +138,39 @@ void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
 		if (Player)
 		{
+			
 			Player->Die();
+			
+			if (HasAuthority())
+			{
+				if (AbilitySystemComponent)
+				{
+					AbilitySystemComponent->CancelAllAbilities();
+					AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+				}
+				
+				ABaseGameState* GS = Cast<ABaseGameState>(GetWorld()->GetGameState());
+				GS->UpdatePlayerCount();
+			}
 		}
-	}
-	
-	// Update floating status bar
-	//APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
-	//if (Player)
-	//{
-	//	UFloatingStatusBarWidget* PlayerFloatingStatusBar = Player->GetFloatingStatusBar();
-	//	if (PlayerFloatingStatusBar)
-	//	{
-	//		PlayerFloatingStatusBar->SetHealthPercentage(Health / GetMaxHealth());
-	//	}
-	//}
-
-	// Update the HUD
-	// Handled in the UI itself using the AsyncTaskAttributeChanged node as an example how to do it in Blueprint
-
-	// If the player died, handle death
-	//if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))
-	//{
-	//	if (Player)
-	//	{
-	//		Player->Die();
-	//	}
-	//}
+	}	
 }
 
 void ABasePlayerState::MaxHealthChanged(const FOnAttributeChangeData& Data)
 {
 	float MaxHealth = Data.NewValue;
-
-	// Update floating status bar
-	//APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
-	//if (Player)
-	//{
-	//	UFloatingStatusBarWidget* PlayerFloatingStatusBar = Player->GetFloatingStatusBar();
-	//	if (PlayerFloatingStatusBar)
-	//	{
-	//		PlayerFloatingStatusBar->SetHealthPercentage(GetHealth() / MaxHealth);n
-	//	}
-	//}
-
-	//// Update the HUD
-	//ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
-	//if (PC)
-	//{
-	//	UGDHUDWidget* HUD = PC->GetHUD();
-	//	if (HUD)
-	//	{
-	//		HUD->SetMaxHealth(MaxHealth);
-	//	}
-	//}
 }
 
 void ABasePlayerState::HealthRegenRateChanged(const FOnAttributeChangeData& Data)
 {
 	float HealthRegenRate = Data.NewValue;
 
-	// Update the HUD
-	//ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
-	//if (PC)
-	//{
-	//	UHUDWidget* HUD = PC->GetHUD();
-	//	if (HUD)
-	//	{
-	//		HUD->SetHealthRegenRate(HealthRegenRate);
-	//	}
-	//}
 }
 
 void ABasePlayerState::StaminaChanged(const FOnAttributeChangeData& Data)
 {	
 	float Stamina = Data.NewValue;
 	
-	// Update the HUD
-	// ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
-	// if (PC)
-	// {
-	// 	UHUDWidget* HUD = PC->GetHUD();
-	// 	if (HUD)
-	// 	{
-	// 		HUD->SetMaxStamina(Stamina);
-	// 	}
-	// }
 }
 
 void ABasePlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)  
@@ -213,38 +179,31 @@ void ABasePlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)
 
 	// Update floating status bar
 	APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
-	//if (Player)
-	//{
-	//	UFloatingStatusBarWidget* PlayerFloatingStatusBar = Player->GetFloatingStatusBar();
-	//	if (PlayerFloatingStatusBar)
-	//	{
-	//		PlayerFloatingStatusBar->SetHealthPercentage(GetStamina() / MaxStamina);
-	//	}
-	//}
-	// Update the HUD
-	// ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
-	// if (PC)
-	// {
-	// 	UHUDWidget* HUD = PC->GetHUD();
-	// 	if (HUD)
-	// 	{
-	// 		HUD->SetMaxStamina(MaxStamina);
-	// 	}
-	// }
 }
 
 void ABasePlayerState::StaminaRegenRateChanged(const FOnAttributeChangeData& Data)
 {
 	float StaminaRegenRate = Data.NewValue;
+}
 
-	// Update the HUD
-	// ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
-	// if (PC)
-	// {
-	// 	UHUDWidget* HUD = PC->GetHUD();
-	// 	if (HUD)
-	// 	{
-	// 		HUD->SetStaminaRegenRate(StaminaRegenRate);
-	// 	}
-	// }
+void ABasePlayerState::KillCountChanged(const FOnAttributeChangeData& Data)
+{
+	float KillCount = Data.NewValue;
+
+	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
+	if (PC && PC->IsLocalController())
+	{
+		PC->UpdateKillCount(KillCount);
+	}
+}
+
+void ABasePlayerState::RankChanged(const FOnAttributeChangeData& Data)
+{
+	float Rank = Data.NewValue;
+
+	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
+	if (PC && PC->IsLocalController())
+	{
+		PC->ShowResultWidget(Rank);
+	}
 }

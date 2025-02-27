@@ -5,9 +5,10 @@
 #include "Character/PlayerCharacter.h"
 #include "GameplayEffect.h"
 #include "GameplayEffectExtension.h"
-#include "BaseLibrary/BaseDebugHelper.h"
 #include "Net/UnrealNetwork.h"
 #include "Controller/BasePlayerController.h"
+#include "GameState/BaseGameState.h"
+#include "Kismet/GameplayStatics.h"
 
 UBaseAttributeSet::UBaseAttributeSet()
 {
@@ -37,8 +38,9 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-
+	
 	FGameplayEffectContextHandle Context = Data.EffectSpec.GetContext();
+	
 	UAbilitySystemComponent* Source = Context.GetOriginalInstigatorAbilitySystemComponent();
 	const FGameplayTagContainer& SourceTags = *Data.EffectSpec.CapturedSourceTags.GetAggregatedTags();
 	FGameplayTagContainer SpecAssetTags;
@@ -60,7 +62,7 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	AController* SourceController = nullptr;
 	APlayerCharacter* SourceCharacter = nullptr;
 	if (Source && Source->AbilityActorInfo.IsValid() && Source->AbilityActorInfo->AvatarActor.IsValid())
-	{
+	{		
 		SourceActor = Source->AbilityActorInfo->AvatarActor.Get();
 		SourceController = Source->AbilityActorInfo->PlayerController.Get();
 		if (SourceController == nullptr && SourceActor != nullptr)
@@ -111,21 +113,24 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			bool WasAlive = true;
 
 			if (TargetCharacter)
-			{
+			{				
 				WasAlive = TargetCharacter->IsAlive();
 			}
-
-			if (!TargetCharacter->IsAlive())
-			{
-				//UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
-			}
-
+		
 			// 상태 변경을 적용한 다음 고정합니다.
 			const float NewHealth = GetHealth() - LocalDamageDone;
 			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
 
-			if (TargetCharacter && WasAlive)
+			if (!TargetCharacter->IsAlive())
 			{
+				ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
+				TargetCharacter->SetRank(GS->CurrentPlayerCount);
+				SourceCharacter->SetKillCount(SourceCharacter->GetKillCount() + 1.0f);
+				UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
+			}
+			
+			if (TargetCharacter && WasAlive)
+			{				
 				// 받은 피해에 대한 로그 문입니다. 라이브 게임에서는 사용 중지되었습니다.
 				//UE_LOG(LogTemp, Log, TEXT("%s() %s Damage Received: %f"), TEXT(__FUNCTION__), *GetOwningActor()->GetName(), LocalDamageDone);
 
@@ -173,6 +178,8 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MoveSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Magazine, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMagazine, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, KillCount, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Rank, COND_None, REPNOTIFY_Always);
 }
 
 void UBaseAttributeSet::AdjustAttributeForMaxChange(FGameplayAttributeData& AffectedAttribute,
@@ -238,4 +245,14 @@ void UBaseAttributeSet::OnRep_Magazine(const FGameplayAttributeData& OldMagazine
 void UBaseAttributeSet::OnRep_MaxMagazine(const FGameplayAttributeData& OldMaxMagazine)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMagazine, OldMaxMagazine);
+}
+
+void UBaseAttributeSet::OnRep_KillCount(const FGameplayAttributeData& OldKillCount)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, KillCount, OldKillCount);
+}
+
+void UBaseAttributeSet::OnRep_Rank(const FGameplayAttributeData& OldRank)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Rank, OldRank);
 }

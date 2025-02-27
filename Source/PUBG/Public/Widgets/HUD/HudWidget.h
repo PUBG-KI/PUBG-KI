@@ -6,6 +6,7 @@
 #include "Widgets/WidgetBase.h"
 #include "HudWidget.generated.h"
 
+class UKillCountWidget;
 class UDisplayMessageItemWidget;
 class UCurrentPlayerWidget;
 class UPlayerStatusWidget;
@@ -26,6 +27,8 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UCurrentPlayerWidget* WBP_CurrentPlayer;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UKillCountWidget* WBP_KillCount;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UDisplayMessageItemWidget* WBP_DisplayMessageItem;
     UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UWorldMapWidget* WBP_WorldMap;
@@ -35,6 +38,8 @@ public:
 	UPlayerStatusWidget* GetPlayerStatusWidget() const { return WBP_PlayerStatus; }
 	UFUNCTION()
 	UCurrentPlayerWidget* GetCurrentPlayerWidget() const { return WBP_CurrentPlayer; }
+	UFUNCTION()
+	UKillCountWidget* GetKillCountWidget() const { return WBP_KillCount; }
 	UFUNCTION()
 	UDisplayMessageItemWidget* GetDisplayMessageItemWidget() const { return WBP_DisplayMessageItem; }
 	UFUNCTION()

@@ -49,7 +49,8 @@ void UBaseFunctionLibrary::BP_HasTag(AActor* Actor, FGameplayTag Tag, EBaseConfi
 }
 
 bool UBaseFunctionLibrary::HasTag(AActor* Actor, FGameplayTag Tag)
-{UBaseAbilitySystemComponent* ASC = NativeGetBaseAbilitySystemComponentFromActor(Actor);
+{
+	UBaseAbilitySystemComponent* ASC = NativeGetBaseAbilitySystemComponentFromActor(Actor);
 	return ASC->HasMatchingGameplayTag(Tag);
 }
 

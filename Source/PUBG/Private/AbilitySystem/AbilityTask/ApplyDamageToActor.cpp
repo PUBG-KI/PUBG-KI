@@ -5,7 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/Actor.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "BaseLibrary/BaseDebugHelper.h"
+#include "AbilitySystem/BaseGameplayTag.h"
 
 UApplyDamageToActor* UApplyDamageToActor::ApplyDamageToActor(UGameplayAbility* OwningAbility, FName TaskInstanceName, AActor* InSourceActor, AActor* InTargetActor, TSubclassOf<UGameplayEffect> InDamageGameplayEffect, float InDamage)
 {
@@ -31,6 +31,12 @@ void UApplyDamageToActor::Activate()
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 
 	if (!SourceASC || !TargetASC)
+	{
+		EndTask(); // ASC가 없으면 작업 종료
+		return;
+	}
+
+	if (TargetASC->HasMatchingGameplayTag(BaseGameplayTag::Player_State_Dead))
 	{
 		EndTask(); // ASC가 없으면 작업 종료
 		return;
