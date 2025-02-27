@@ -998,10 +998,13 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 						IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
 						if (InteractInterface)
 						{
-							FText result = InteractInterface->LookAt();
+							FText Result = InteractInterface->LookAt();
+							UTexture2D* ResultImage = InteractInterface->SetKeyTexture();
+							
 							if (PlayerController->GetHudWidget() != nullptr)
 							{
-								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetMessage(result);
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetMessage(Result);
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetKeyTexture(ResultImage);
 							}
 							//InteractInterface->InteractWith();
 						}

@@ -33,6 +33,7 @@ public:
 	void SpawnSupplyDropItem();
 
 	virtual FText LookAt() override;
+	virtual UTexture2D* SetKeyTexture() override;
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
@@ -69,7 +70,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UDataTable* ItemDataTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UTexture2D* TabKeyTexture;
+
 	//스폰컴포넌트
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Spawner",meta = (AllowPrivateAccess = "true"))
 	UItemSpawnerComponent* ItemSpawnerComponent;
+
+	
 };
