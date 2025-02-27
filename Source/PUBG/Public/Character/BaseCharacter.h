@@ -10,6 +10,7 @@
 class UBaseAbilitySystemComponent;
 class UBaseAttributeSet;
 class UDataAsset_StartupBase;
+class UGameplayEffect;
 
 UCLASS()
 class PUBG_API ABaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -80,26 +81,19 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	
-
-	
-protected:
-	// 스폰/리스폰 시 초기화를 위한 캐릭터의 기본 속성입니다.
-	// 이는 생성/재생 시 재설정되는 속성 값을 재정의하는 인스턴트 GE입니다.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	TSubclassOf<class UGameplayEffect> DefaultAttributes;
-	
-	// 이 효과는 시작 시 한 번만 적용됩니다.
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Abilities")
-	TArray<TSubclassOf<class UGameplayEffect>> StartupEffects;
+private:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayEffect> GE_UpdateHealth;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayEffect> GE_UpdateStamina;
 
 public:
-	// 캐릭터의 속성을 초기화합니다. 서버에서 실행해야 하지만 클라이언트에서도 실행합니다.
-	// 기다릴 필요가 없도록 합니다. 클라이언트에 대한 서버의 복제는 중요하지 않습니다.
-	// 값은 동일해야 합니다.
-	virtual void InitializeAttributes();
-	virtual void AddStartupEffects();
-	
-    /**
+	void ApplyHealthRegenEffect() const;
+	void RemoveHealthRegenEffect() const;
+	void ApplyStaminaRegenEffect() const;
+	void RemoveStaminaRegenEffect() const;
+
+	/**
 	* 속성에 대한 설정자. Respawning과 같은 특별한 경우에만 이것을 사용하고, 그렇지 않으면 GE를 사용하여 속성을 변경하십시오.
 	* 이는 속성의 기본 값을 변경합니다.
 	*/

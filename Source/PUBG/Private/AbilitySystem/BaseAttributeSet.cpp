@@ -156,6 +156,19 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		// 체력 변화를 처리합니다.
 		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
+
+		if (GetStamina() > 0.0f)
+		{
+			SetHealthRegenRate(3.0f);
+			TargetCharacter->ApplyHealthRegenEffect();
+			TargetCharacter->ApplyStaminaRegenEffect();
+		}
+		else
+		{
+			SetHealthRegenRate(0.0f);
+			TargetCharacter->RemoveHealthRegenEffect();
+			TargetCharacter->RemoveStaminaRegenEffect();
+		}
 	}
 	else if (Data.EvaluatedData.Attribute == GetMagazineAttribute())
 	{

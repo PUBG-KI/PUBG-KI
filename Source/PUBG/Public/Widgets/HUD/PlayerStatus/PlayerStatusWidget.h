@@ -24,6 +24,8 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_Health;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UProgressBar* ProgressBar_Stamina;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_FillingGaguge;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UProgressBar* ProgressBar_FillGaguge;
@@ -37,6 +39,10 @@ private:
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	float Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	float MaxStamina;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	float Stamina;
 public:
 	// Variable Setter
 	UFUNCTION(BlueprintCallable)
@@ -45,12 +51,20 @@ public:
 	void SetHealth(float OutHealth);
 	UFUNCTION(BlueprintCallable)
 	void SetMaxHealth(float OutMaxHealth);
+	UFUNCTION(BlueprintCallable)
+	void SetStamina(float OutStamina);
+	UFUNCTION(BlueprintCallable)
+	void SetMaxStamina(float OutMaxStamina);
 	
 	//Widget Getter
 	UFUNCTION()
 	UProgressBar* GetProgressBar_Health() const { return ProgressBar_Health; }
+	UFUNCTION()
+	UProgressBar* GetProgressBar_Stamina() const { return ProgressBar_Stamina; }
 
 	//Widget Setter
 	UFUNCTION(BlueprintCallable)
 	void SetProgressBar_Health(float OutHealth);
+	UFUNCTION(BlueprintCallable)
+	void SetProgressBar_Stamina(float OutStamina);
 };

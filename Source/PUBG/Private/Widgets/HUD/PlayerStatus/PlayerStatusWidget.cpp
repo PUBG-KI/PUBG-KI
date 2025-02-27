@@ -38,7 +38,7 @@ void UPlayerStatusWidget::NativePreConstruct()
 
 void UPlayerStatusWidget::SetHealth(float OutHealth)
 {
-	UE_LOG(LogTemp, Warning, TEXT("PlayerStatusWidget::SetHealth"));
+	//UE_LOG(LogTemp, Warning, TEXT("PlayerStatusWidget::SetHealth"));
 	Health = OutHealth;
 
 	SetProgressBar_Health(OutHealth);
@@ -49,6 +49,20 @@ void UPlayerStatusWidget::SetMaxHealth(float OutMaxHealth)
 	MaxHealth = OutMaxHealth;
 
 	SetProgressBar_Health(OutMaxHealth);
+}
+
+void UPlayerStatusWidget::SetStamina(float OutStamina)
+{
+	Stamina = OutStamina;
+
+	SetProgressBar_Stamina(OutStamina);
+}
+
+void UPlayerStatusWidget::SetMaxStamina(float OutMaxStamina)
+{
+	MaxStamina = OutMaxStamina;
+
+	SetProgressBar_Stamina(OutMaxStamina);
 }
 
 void UPlayerStatusWidget::SetProgressBar_Health(float OutHealth)
@@ -67,5 +81,17 @@ void UPlayerStatusWidget::SetProgressBar_Health(float OutHealth)
 	{
 		PlayAnimation(Anim_ProgressBar_Health,0.0f,0.0f);
 	}
+	else
+	{
+		StopAnimation(Anim_ProgressBar_Health);
+	}
+	
 	ProgressBar_Health->SetPercent(Health / MaxHealth);
 }
+
+
+void UPlayerStatusWidget::SetProgressBar_Stamina(float OutStamina)
+{
+	ProgressBar_Stamina->SetPercent(Stamina / MaxStamina);
+}
+

@@ -628,7 +628,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
 		SetHealth(GetMaxHealth());
-		SetStamina(0);
+		SetStamina(GetMaxStamina());
 		FirstAttribute = true;
 	}
 }
@@ -937,7 +937,7 @@ void APlayerCharacter::OnRep_PlayerState()
 
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
 		SetHealth(GetMaxHealth());
-		SetStamina(0);
+		SetStamina(GetMaxStamina());
 	}
 }
 
