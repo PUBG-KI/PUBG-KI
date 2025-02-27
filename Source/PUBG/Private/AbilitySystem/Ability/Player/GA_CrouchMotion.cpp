@@ -20,6 +20,7 @@ void UGA_CrouchMotion::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                        const FGameplayEventData* TriggerEventData)
 {
 	SetCanBeCanceled(false);
+	UE_LOG(LogTemp, Warning, TEXT("Crouch PLAY"));
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	APlayerCharacter* PUBGPlayer = GetPlayerCharacterFromActorInfo();
 	UPlayerMovementComponent* MovementComponent = Cast<

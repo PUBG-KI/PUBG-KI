@@ -318,10 +318,10 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Look);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Jump,
 	                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Jump);
-	// BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
-	//                                           ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
-	// BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
-	//                                           ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
+	//BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Crouch,
+	//                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Crouch);
+	//BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Prone,
+	//                                          ETriggerEvent::Started, this, &APlayerCharacter::Input_Prone);
 
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
@@ -346,12 +346,14 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	MoveInput = MovementVector.Y; //애님인스턴스에 보내 블렌드스페이스의 애니메이션 변경하는 변수
 	MovementComponent->FreefallingVelocitySettings(MovementVector);
 	}
-	if (UnderWater)
+	if (IsSwimming)
 	{
-		const FRotator MovementRotation(Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Yaw, 0.f);
+		
+		const FRotator MovementRotation = FRotator(Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Yaw, 0.f);
 
 		// 이동 방향 계산: Forward (전방) 방향 계산
 		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+		UE_LOG(LogTemp, Warning, TEXT("ForwardDirection : %s"),*ForwardDirection.ToString());
 		// 이동 방향 계산: Right (우측) 방향 계산
 		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
 
@@ -359,8 +361,10 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		FVector MoveDirection = ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X;
 
 		// 계산된 방향으로 이동
-		AddMovementInput(MoveDirection, 1.f); 
+		AddMovementInput(MoveDirection, 1.f);
+	
 	}
+	
 	if (Controller)
 	{
 		const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
@@ -375,9 +379,6 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 	{
 		return;
 	}
-
-
-	
 	if (MovementVector.Y <= 0.f)
 	{
 		MovementComponent->StartBackMovement();

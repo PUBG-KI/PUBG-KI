@@ -20,11 +20,12 @@ public:
 	FVector SetCurrentOffset(FVector NewVector);
 	void AddOffset(const FVector& OffsetDelta);
 	void TimelineAddOffset(FVector& OffsetDelta, float Duration);
+	UFUNCTION(BlueprintCallable)
+	void BP_TimelineAddOffset(FVector OffsetDelta, float Duration);
 	UFUNCTION()
 	void OnTimelineUpdate(float Alpha);
 	UFUNCTION()
 	void OnTimelineFinished();
-
 
 protected:
 	// 카메라 오프셋을 저장하는 변수

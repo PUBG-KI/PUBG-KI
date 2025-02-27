@@ -80,5 +80,31 @@ void UPUBGSpringArmComponent::OnTimelineFinished() // 타임라인 완료 후 �
 {
 }
 
+void UPUBGSpringArmComponent::BP_TimelineAddOffset(FVector OffsetDelta, float Duration)
+{
+	TargettingOffset += OffsetDelta;
+
+	// 로컬 좌표를 소켓의 오프셋으로 사용
+	CurrentOffset = SocketOffset;
+
+
+	// 타임라인에 사용할 곡선 생성
+	FloatCurve = NewObject<UCurveFloat>(this, UCurveFloat::StaticClass());
+	FloatCurve->FloatCurve.AddKey(0.0f, 0.0f); // 시작 점 (Alpha = 0)
+	FloatCurve->FloatCurve.AddKey(Duration, 1.0f); // 끝 점 (Alpha = 1)
+
+	if (TimelineComponent)
+	{
+		FOnTimelineFloat TimelineCallback;
+		TimelineCallback.BindDynamic(this, &UPUBGSpringArmComponent::OnTimelineUpdate);
+		TimelineComponent->AddInterpFloat(FloatCurve, TimelineCallback);
+
+		// 타임라인 완료 후 호출될 함수 설정
+		FOnTimelineEvent TimelineFinishedCallback;
+		TimelineFinishedCallback.BindDynamic(this, &UPUBGSpringArmComponent::OnTimelineFinished);
+		TimelineComponent->SetTimelineFinishedFunc(TimelineFinishedCallback);
+		TimelineComponent->PlayFromStart();
+	}
+}
 
 #pragma endregion

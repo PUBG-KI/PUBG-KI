@@ -38,8 +38,12 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	Velocity = OwningCharacter->GetVelocity();
 	GroundSpeed = Velocity.Size2D();
 	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
-	
-
+	if (OwningPlayer->GetController())
+	{
+		const FRotator MovementRotation = FRotator(OwningPlayer->GetController()->GetControlRotation().Pitch,0.f, 0.f);
+		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+		YDirection = ForwardDirection.Z;
+	}
 	bHasAcceleration = OwningMovementComponent->GetCurrentAcceleration().SizeSquared2D() > 0.f;
 	bHasAcceleration = GroundSpeed > 0.f;
 
@@ -94,7 +98,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	InFreefalling = OwningPlayer->GetInFreefall();
 	Input = OwningPlayer->GetMoveInput();
 
-	UnderWater = OwningPlayer->GetUnderWater();
+	IsSwimming = OwningPlayer->GetIsSwimming();
 	
 	
 }
