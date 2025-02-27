@@ -109,9 +109,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetItemTableRowName(FName OutItemTableRowName) { ItemTableRowName = OutItemTableRowName; }
 	
-	
-	
-	
 	virtual FText LookAt() override;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)

@@ -26,6 +26,10 @@ class PUBG_API IInteractInterface
 public:
 	UFUNCTION()
 	virtual FText LookAt() = 0;
+	//Set Image
+	UFUNCTION()
+	virtual UTexture2D* SetKeyTexture();
+	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void InteractWith(APlayerCharacter* Character);
 };

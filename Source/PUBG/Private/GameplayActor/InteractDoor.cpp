@@ -58,7 +58,7 @@ void AInteractDoor::InteractWith_Implementation(APlayerCharacter* Character)
 
 FText AInteractDoor::LookAt()
 {
-	return FText::FromString("LookAt");
+	return FText::FromString(TEXT("문 열기"));
 }
 
 void AInteractDoor::OpenDoor(float Value)

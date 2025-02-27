@@ -7,6 +7,7 @@
 #include "DisplayMessageItemWidget.generated.h"
 
 class UTextBlock;
+class UImage;
 /**
  * 
  */
@@ -20,9 +21,16 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UTextBlock* Text_DisplayMessageItem;
 
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UImage* Image_KeyImage;
+
+
 	// Variable
 	UPROPERTY()
 	FText Message;
+
+	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
+	UTexture2D* FKeyTexture;
 
 public:
 	// Getter
@@ -30,5 +38,9 @@ public:
 
 	// Setter
 	void SetMessage(FText& NewText);
+	
+	// Setter
+	void SetKeyTexture(UTexture2D* NewTexture);
+	
 	
 };

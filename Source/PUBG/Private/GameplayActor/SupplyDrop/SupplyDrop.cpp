@@ -26,7 +26,7 @@ ASupplyDrop::ASupplyDrop()
 	InteractionComponent->SetIsReplicated(true);
 	InteractionComponent->SetupAttachment(DropMesh);
 
-	FVector NewBoxCollisionComponentBoxExtent(122.0f, 70.0f, 70.0f);
+	FVector NewBoxCollisionComponentBoxExtent(150.0f, 120.0f, 90.0f);
 	CollisionBoxComponent->SetBoxExtent(NewBoxCollisionComponentBoxExtent);
 
 	FVector NewInteractionComponentBoxExtent(37.0f, 43.0f, 18.0f);
@@ -63,35 +63,6 @@ void ASupplyDrop::BeginPlay()
 	Super::BeginPlay();
 	
 	DropMesh->OnComponentHit.AddDynamic(this, &ASupplyDrop::OnHit);
-
-	// 아이템 블루프린트가 설정되지 않았다면 스폰하지 않음
-	//if (!ItemClass) return;
-
-	// 스폰 파라미터 설정
-	// FActorSpawnParameters SpawnParams;
-	// SpawnParams.Owner = this;
-	// SpawnParams.Instigator = GetInstigator();
-
-	// // 보급품의 위치를 기준으로 아이템을 약간 위쪽에 스폰
-	// FVector SpawnLocation = GetActorLocation();
-	// FRotator SpawnRotation = FRotator::ZeroRotator;
-
-	// 아이템 스폰
-	//SpawnedItem = GetWorld()->SpawnActor<AItemBase>(ItemClass, SpawnLocation, SpawnRotation);
-	
-	//if (SpawnedItem)
-	{
-		// TestItem2를 부착
-		//SpawnedItem->AttachToComponent(DropMesh, FAttachmentTransformRules::KeepWorldTransform);
-		// if(HasAuthority())
-		// {
-		// 	ItemSpawnerComponent->SpawnItems(true,this);
-		// }
-		
-		// SpawnedItem->SetRandomProperties(GetRandomItemRowName());
-		//
-		// UE_LOG(LogTemp, Warning, TEXT("아이템 %s이(가) 보급품에 추가되었습니다!"), *SpawnedItem->GetName());
-	}
 }
 
 
@@ -128,8 +99,6 @@ FName ASupplyDrop::GetRandomItemRowName()
 {
 	TArray<FName> RowNames = ItemDataTable->GetRowNames();
 	FName RandomRowName = RowNames[FMath::RandRange(0,RowNames.Num()-1)];
-
-	//UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *RandomRowName.ToString());
 	
 	return RandomRowName;
 }
@@ -143,6 +112,11 @@ FText ASupplyDrop::LookAt()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ASupplyDropLookAt"));
 	return FText::FromString(TEXT("보급품 열기"));
+}
+
+UTexture2D* ASupplyDrop::SetKeyTexture()
+{
+	return TabKeyTexture;
 }
 
 
