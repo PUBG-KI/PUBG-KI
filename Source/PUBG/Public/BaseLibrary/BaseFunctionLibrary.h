@@ -25,10 +25,10 @@ public:
 	static UBaseAbilitySystemComponent* NativeGetBaseAbilitySystemComponentFromActor(AActor* Actor);
 
 	UFUNCTION(BlueprintCallable, Category = "FuntionLibary")
-	static void AddGameplayTagToActor(AActor* Actor, FGameplayTag Tag);
+	static void AddGameplayTagToActor(AActor* Actor, FGameplayTag Tag, bool bShouldReplicate);
 
 	UFUNCTION(BlueprintCallable, Category = "FuntionLibary")
-	static void RemoveGameplayTagFromActor(AActor* Actor, FGameplayTag Tag);
+	static void RemoveGameplayTagFromActor(AActor* Actor, FGameplayTag Tag, bool bShouldReplicate);
 	
 	static bool NativeActorHasTag(AActor* Actor, FGameplayTag Tag);
 

@@ -20,7 +20,7 @@ AGun_Base::AGun_Base()
 	GripMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("GripSocket"));
 
 	LoopsMesh = CreateDefaultSubobject<UStaticMeshComponent>("LoopsMesh");
-	LoopsMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("LoopsSocket"));
+	LoopsMesh->SetupAttachment(WeaponSkeletalMeshComponent, FName("StockSocket"));
 
 	//SetReplicates(true);
 	bReplicates = true;
