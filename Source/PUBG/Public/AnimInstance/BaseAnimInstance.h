@@ -84,9 +84,10 @@ public:
 
 	//Swim
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
-	bool Isfloating;
+	bool IsSwimming;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
-	bool UnderWater;
+	float YDirection;
+	
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
 	bool OwnerHasTag(FGameplayTag Tag) const;

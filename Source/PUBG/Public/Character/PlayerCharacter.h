@@ -314,13 +314,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
 	bool IsSwimming;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
-	bool UnderWater; //잠수
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
-	bool WaterFloating; //표류
+	bool IsFloating;
 public:
 	FORCEINLINE bool GetIsSwimming() const { return IsSwimming; }
-	FORCEINLINE bool GetUnderWater() const { return UnderWater; }
-	FORCEINLINE bool GetWaterFloating() const { return WaterFloating; }
+	
 	
 };
 
