@@ -4,6 +4,7 @@
 #include "Widgets/Result/ResultWidget.h"
 
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
 #include "Widgets/Lobby/BaseButtonWidget.h"
 
 
@@ -27,24 +28,27 @@ void UResultWidget::SetText_ResultMessage(FString Text)
 	Text_ResultMessage->SetText(FText::FromString(Text));
 }
 
-void UResultWidget::SetText_Rank(FString Text)
+void UResultWidget::SetText_Rank(int32 Rank)
 {
+	FString Text = FString::FromInt(Rank);
 	FText Num = FText::FromString(Text);
 	Text_Rank_1->SetText(Num);
 	Text_Rank_2->SetText(Num);
 }
 
-void UResultWidget::SetText_PlayerNum(FString Text)
+void UResultWidget::SetText_AllPlayerCount(int32 AllPlayerCount)
 {
-	Text_PlayerNum->SetText(FText::FromString(Text));
+	FString Text = FString::FromInt(AllPlayerCount);
+	Text_AllPlayerCount->SetText(FText::FromString(Text));
 }
 
-void UResultWidget::SetText_Kill(FString Text)
+void UResultWidget::SetText_KillCount(int32 KillCount)
 {
-	Text_Kill->SetText(FText::FromString(Text));
+	FString Text = FString::FromInt(KillCount);
+	Text_KillCount->SetText(FText::FromString(Text));
 }
 
 void UResultWidget::OnResultButton_Clicked()
 {
-	
+	UGameplayStatics::OpenLevel(this, FName(TEXT("LobbyMap")));
 }

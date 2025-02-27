@@ -7,6 +7,7 @@
 #include "ResultWidget.generated.h"
 
 class UTextBlock;
+class UBaseButtonWidget;
 /**
  * 
  */
@@ -25,11 +26,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetText_ResultMessage(FString Text);
 	UFUNCTION(BlueprintCallable)
-	void SetText_Rank(FString Text);
+	void SetText_Rank(int32 Rank);
 	UFUNCTION(BlueprintCallable)
-	void SetText_PlayerNum(FString Text);
+	void SetText_AllPlayerCount(int32 AllPlayerCount);
 	UFUNCTION(BlueprintCallable)
-	void SetText_Kill(FString Text);
+	void SetText_KillCount(int32 KillCount);
 	UFUNCTION(BlueprintCallable)
 	void OnResultButton_Clicked();	
 	
@@ -39,11 +40,11 @@ private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UTextBlock* Text_Rank_1;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_PlayerNum;	
+	UTextBlock* Text_AllPlayerCount;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UTextBlock* Text_Rank_2;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
-	UTextBlock* Text_Kill;	
+	UTextBlock* Text_KillCount;	
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UBaseButtonWidget* WBP_ResultButton;
 	

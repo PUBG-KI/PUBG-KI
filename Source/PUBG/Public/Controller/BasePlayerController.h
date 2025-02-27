@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BasePlayerController.generated.h"
 
+class UResultWidget;
 class UInputMappingContext;
 class UWorldMapWidget;
 class AAirplane;
@@ -60,6 +61,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateCurrentPlayer(int32 CurrentPlayer);
 	UFUNCTION(BlueprintCallable)
+	void UpdateKillCount(int32 KillCount);
+	UFUNCTION(BlueprintCallable)
 	void UpdateMapCurrentZone();
 	UFUNCTION(BlueprintCallable)
 	void UpdateMapNextZone();
@@ -71,6 +74,8 @@ public:
 	void UpdateRedZone();
 	UFUNCTION(BlueprintCallable)
 	void ShowNotification(FText Text);
+	UFUNCTION(BlueprintCallable)
+	void ShowResultWidget(int32 Rank);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)
 	void Client_AddMappingContext(AAirplane* NewControlledAirplane, UInputMappingContext* InputMappingContext);
@@ -97,6 +102,11 @@ private:
 	TSubclassOf<UNotificationWidget> NotificationWidgetClass;
 	UPROPERTY()
 	UNotificationWidget* NotificationWidget;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Widget")
+	TSubclassOf<UResultWidget> ResultWidgetClass;
+	UPROPERTY()
+	UResultWidget* ResultWidget;
 	
 	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	AAirplane* ControlledAirplane;

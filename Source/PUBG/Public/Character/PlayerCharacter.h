@@ -88,7 +88,7 @@ public:
 	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
 	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
-	bool ActorHasTag(const FNativeGameplayTag& Tag);
+
 	// UPROPERTY()
 	// FRotator AimRotation;
 	// UPROPERTY()

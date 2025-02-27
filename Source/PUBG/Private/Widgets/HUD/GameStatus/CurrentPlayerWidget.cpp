@@ -13,7 +13,7 @@ void UCurrentPlayerWidget::NativeConstruct()
 	ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
 	if (GS)
 	{
-		UpdateCurrentPlayer(GS->GetPlayerCount());
+		UpdateCurrentPlayer(GS->GetCurrentPlayerCount());
 	}
 }
 

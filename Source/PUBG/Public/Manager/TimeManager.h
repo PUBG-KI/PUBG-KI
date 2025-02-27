@@ -44,6 +44,11 @@ private:
 	int32 CurrentGameTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	int32 StartGameTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool ActivateZone;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool ActivateGameEvent;
+	
 	float TickTime;
 
 	/** 클라이언트에 게임 시작 알림 */

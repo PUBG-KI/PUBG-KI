@@ -48,7 +48,16 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMaxMagazine() const;
-
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetArmor() const;
+		
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetKillCount() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetRank() const;
+	
 protected:
 	// TWeakObjectPtrs 대신 UPROPERTY() 하드 참조를 갖거나 참조가 전혀 없고 호출만 할 수도 있습니다.
 	// GetAbilitySystem()을 실행하고 PlayerState 또는 하위 클래스에서 읽을 수 있는 GetAttributeSetBase()를 만듭니다.
@@ -101,9 +110,9 @@ public:
 	virtual void SetMoveSpeed(float MoveSpeed);
 	virtual void SetMagazine(float Magazine);
 	virtual void SetMaxMagazine(float MaxMagazine);
+	virtual void SetKillCount(float KillCount);
+	virtual void SetRank(float Rank);
 
-	virtual float GetArmor();
-	
 };
 
 

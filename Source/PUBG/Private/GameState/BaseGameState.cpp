@@ -13,8 +13,8 @@
 
 ABaseGameState::ABaseGameState()
 {
-	PlayerCount = 0;
-	initalize();
+	CurrentPlayerCount = 0;
+	Initialize();
 }
 
 ABasePlayerController* ABaseGameState::GetLocalController()
@@ -45,7 +45,8 @@ void ABaseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	
 	// Replicated 변수 등록
 	DOREPLIFETIME(ABaseGameState, RemainingTime);
-	DOREPLIFETIME(ABaseGameState, PlayerCount);
+	DOREPLIFETIME(ABaseGameState, AllPlayerCount);
+	DOREPLIFETIME(ABaseGameState, CurrentPlayerCount);
 	DOREPLIFETIME(ABaseGameState, bIsGameStarted);
 	DOREPLIFETIME(ABaseGameState, bIsPlaneBoarding);
 	DOREPLIFETIME(ABaseGameState, CurrentZoneCenter);
@@ -105,7 +106,15 @@ void ABaseGameState::OnRep_RemainingTime()
 
 void ABaseGameState::OnRep_GameStartNotification()
 {
-	//UE_LOG(LogTemp, Log, TEXT("Game has started!"));
+	if (bIsGameStarted)
+	{		
+		UE_LOG(LogTemp, Log, TEXT("Game has started!"));
+	}
+	else if (!bIsGameStarted)
+	{				
+		UE_LOG(LogTemp, Log, TEXT("Game has finished!"));		
+		GetLocalController()->ShowResultWidget(CurrentPlayerCount);
+	}
 }
 
 void ABaseGameState::OnRep_BoardPlaneNotification()
@@ -184,7 +193,7 @@ void ABaseGameState::UpdatePlayerCountWidget()
 {
 	if (GetLocalController())
 	{
-		LocalController->UpdateCurrentPlayer(PlayerCount);
+		LocalController->UpdateCurrentPlayer(CurrentPlayerCount);
 	}
 }
 
@@ -200,6 +209,11 @@ void ABaseGameState::UpdateRemainingTime(int32 NewTime)
 {
 	RemainingTime = NewTime;
 	OnRep_RemainingTime(); //리슨 서버용
+}
+
+void ABaseGameState::SetAllPlayerCount()
+{
+	AllPlayerCount = PlayerArray.Num();
 }
 
 void ABaseGameState::UpdateLandScapeBoundingBoxXY(FBox NewLandScapeBoundingBox)
@@ -252,7 +266,7 @@ void ABaseGameState::FinishMoveAirplane()
 	{
 		ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
 		
-		if (PS && PS->GetOwner())  // PlayerState가 유효한 경우
+		if (PS && PS->GetOwner())  
 		{
 			PS->GetAbilitySystemComponent()->TryActivateAbilityByClass(FallAbility, true );
 		}
@@ -261,14 +275,23 @@ void ABaseGameState::FinishMoveAirplane()
 
 
 int32 ABaseGameState::GetAlivePlayers()
-{
-	int32 PlayerNum = PlayerArray.Num();
+{	
+	int32 PlayerNum;
 	
+	if (AllPlayerCount != 0)
+	{
+		PlayerNum = AllPlayerCount;
+	}
+	else
+	{
+		PlayerNum = PlayerArray.Num();
+	}
+
 	for (APlayerState* PlayerState : PlayerArray)
 	{
 		ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
 		
-		if (PS && PS->HasDeadTag())  // PlayerState가 유효한 경우
+		if (PS && PS->HasDeadTag())  
 		{
 			PlayerNum--;
 		}
@@ -277,28 +300,46 @@ int32 ABaseGameState::GetAlivePlayers()
 	return PlayerNum;
 }
 
-void ABaseGameState::UpdatePlayerCount()
-{	
-	PlayerCount = GetAlivePlayers();
-	OnRep_PlayerCount(); // 리슨 서버용
-}
-
-int32 ABaseGameState::GetPlayerCount()
+void ABaseGameState::FinishGame()
 {
-	return PlayerCount;
+	bIsGameStarted = false;	
 }
 
-bool ABaseGameState::GetIsGameStarted()
+void ABaseGameState::UpdatePlayerCount()
+{
+	if (HasAuthority())
+	{		
+		CurrentPlayerCount = GetAlivePlayers();
+		OnRep_PlayerCount(); // 리슨 서버용
+		
+		if (CurrentPlayerCount == 1 && bIsPlaneBoarding)
+		{
+			FinishGame();			
+		}
+	}
+}
+
+int32 ABaseGameState::GetAllPlayerCount() const
+{
+	return AllPlayerCount;
+}
+
+int32 ABaseGameState::GetCurrentPlayerCount() const
+{
+	return CurrentPlayerCount;
+}
+
+bool ABaseGameState::GetIsGameStarted() const
 {
 	return bIsGameStarted;
 }
 
-FBox ABaseGameState::GetLandScapeBoundingBox()
+FBox ABaseGameState::GetLandScapeBoundingBox() const
 {
 	return LandScapeBoundingBox;
 }
 
-void ABaseGameState::initalize()
+void ABaseGameState::Initialize()
 {
 	// 기본 값 설정
 	bIsGameStarted = false;

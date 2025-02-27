@@ -71,14 +71,14 @@ void UTimeManager::NotifyClientsToArrivePlane()
 	{
 		// 자기장 생성
 		UZoneManager* ZoneManager = GI->GetZoneManager();
-		if (ZoneManager)
+		if (ZoneManager && ActivateZone)
 		{
 			ZoneManager->SpawnZone();
 		}
 
 		// 이벤트 생성
 		UGameEventManager* GameEventManager  = GI->GetGameEventManager();
-		if (GameEventManager)
+		if (GameEventManager && ActivateGameEvent)
 		{
 			GameEventManager->StartGameEventTimer();
 		}
@@ -89,16 +89,17 @@ void UTimeManager::GameStartCountdown()
 {
 	CurrentGameTime -= TickTime;
 
-	ABaseGameState* GameState = GetWorld()->GetGameState<ABaseGameState>();
-	if (GameState && GameState->HasAuthority())
+	ABaseGameState* GS = GetWorld()->GetGameState<ABaseGameState>();
+	if (GS && GS->HasAuthority())
 	{
-		GameState->UpdateRemainingTime(CurrentGameTime); // 비행기 탑승 알림 설정
-	}
-
-	if (CurrentGameTime <= 0)
-	{
-		InitializeManager();
-		StartGameFlow();
+		GS->UpdateRemainingTime(CurrentGameTime); // 비행기 탑승 알림 설정
+		
+		if (CurrentGameTime <= 0)
+		{		
+			GS->SetAllPlayerCount();
+			InitializeManager();
+			StartGameFlow();
+		}
 	}
 }
 

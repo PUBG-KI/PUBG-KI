@@ -225,6 +225,8 @@ void APlayerCharacter::CallCheckZoomAbility()
 }
 
 
+
+
 void APlayerCharacter::UpdateRotationValues_Implementation()
 {
 	if (HasAuthority())
@@ -647,12 +649,7 @@ void APlayerCharacter::Die()
 	// HeadMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);  // 초기 속도 설정 (필요 시)
 	// HeadMesh->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 	// HeadMesh->WakeAllRigidBodies();
-
-	if (BaseAbilitySystemComponent.IsValid())
-	{
-		BaseAbilitySystemComponent->CancelAllAbilities();
-		BaseAbilitySystemComponent->AddLooseGameplayTag(DeadTag);
-	}
+		
 	// 안전하게 제거를 하려면 서버에서 타이머를 돌린 후 Destroy()하는게 좋을 거 같음
 	//SetLifeSpan(10.0f);
 }

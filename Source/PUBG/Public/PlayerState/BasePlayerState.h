@@ -20,8 +20,7 @@ public:
 	ABasePlayerState();
 	
 	// Implement IAbilitySystemInterface
-	class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
+	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	class UBaseAttributeSet* GetAttributeSetBase() const;
 
 	UFUNCTION(BlueprintCallable, Category = "PlayerState")
@@ -61,6 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetMaxMagazine() const;
 	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetKillCount() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	float GetRank() const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	bool HasDeadTag() const;
 	
@@ -79,6 +84,8 @@ protected:
 	FDelegateHandle StaminaChangedDelegateHandle;
 	FDelegateHandle MaxStaminaChangedDelegateHandle;
 	FDelegateHandle StaminaRegenRateChangedDelegateHandle;
+	FDelegateHandle KillCountChangedDelegateHandle;
+	FDelegateHandle RankChangedDelegateHandle;
 	
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -91,4 +98,7 @@ protected:
 	virtual void StaminaChanged(const FOnAttributeChangeData& Data);
 	virtual void MaxStaminaChanged(const FOnAttributeChangeData& Data);
 	virtual void StaminaRegenRateChanged(const FOnAttributeChangeData& Data);
+	virtual void KillCountChanged(const FOnAttributeChangeData& Data);
+	virtual void RankChanged(const FOnAttributeChangeData& Data);
 };
+
