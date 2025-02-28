@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Misc/MapErrors.h"
 #include "ArmorStruct.generated.h"
 
 USTRUCT(BlueprintType)
@@ -8,6 +9,16 @@ struct FArmorStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
+	FArmorStruct()
+	{
+		Name = NAME_None;
+		StaticMesh = nullptr;
+		SkeletalMesh = nullptr;
+		Durability = -1.0f;
+		Defense = -1.0f;
+		Weight = -1.0f;
+		Image = nullptr;
+	}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
 	

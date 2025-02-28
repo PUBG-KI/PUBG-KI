@@ -8,7 +8,16 @@ struct FBoosterEffectStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FBoosterEffectStruct();
+	FBoosterEffectStruct()
+	{
+		Name = NAME_None;
+		SkeletalMesh = nullptr;
+		StaticMesh = nullptr;
+		AnimationAsset = nullptr;
+		UseTime = -1.0f;
+		StaminaChargeValue = -1.0f;
+		AnimationMontage = nullptr;
+	}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Name;
@@ -26,7 +35,3 @@ struct FBoosterEffectStruct : public FTableRowBase
 	UAnimMontage* AnimationMontage; // 아이템 사용 시 캐릭터 애니메이션 몽타주 
 };
 
-inline FBoosterEffectStruct::FBoosterEffectStruct()
-{
-	
-}

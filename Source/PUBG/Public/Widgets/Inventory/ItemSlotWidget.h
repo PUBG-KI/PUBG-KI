@@ -7,6 +7,8 @@
 #include "Component/NearArea/NearComponent.h"
 #include "ItemSlotWidget.generated.h"
 
+enum class EItemCategory : uint8;
+class UEquippedComponent;
 enum class EItemZoneType : uint8;
 class UVerticalBox;
 class UInventoryWidget;
@@ -45,13 +47,15 @@ class PUBG_API UItemSlotWidget : public UWidgetBase
 	UPROPERTY()
 	int32 Quantity;
 	UPROPERTY()
+	EItemCategory ItemCategory;
+	UPROPERTY()
 	UInventoryComponent* InventoryComponent;
 	UPROPERTY()
 	UNearComponent* NearComponent;
 	UPROPERTY()
+	UEquippedComponent* EquippedComponent;
+	UPROPERTY()
 	int32 Index;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true), Category = "Inventory")
-	UDataTable* a;
 
 	// 드래그할 때 필요한 위젯들 
 	UPROPERTY()
@@ -87,13 +91,21 @@ public:
 	void SetNearComponent(UNearComponent* OutNearComponent) { NearComponent = OutNearComponent; }
 	void SetIndex(int32 OutIndex) { Index = OutIndex; }
 	void SetInventoryWidget(UInventoryWidget* OutInventoryWidget) { InventoryWidget = OutInventoryWidget; }
-
+	void SetEquippedComponent(UEquippedComponent* OutEquippedComponent) { EquippedComponent = OutEquippedComponent; }
+	void SetItemCategory(EItemCategory NewItemCategory) { ItemCategory = NewItemCategory; }
+	
 	// Getter
 	UTextBlock* GetTextBlock_Use() const { return TextBlock_Use; }
 	UTextBlock* GetText_ItemName() const { return Text_ItemName; }
 	UFUNCTION(BlueprintCallable)
 	void UpdateItemSlotWidget();
+	UFUNCTION(BlueprintCallable)
+	UEquippedComponent* GetEquippedComponent() const { return EquippedComponent; }
+	UFUNCTION(BlueprintCallable)
+	EItemCategory GetItemCategory() const { return ItemCategory; }
+	
 
+	
 	UFUNCTION(BlueprintCallable)
 	void OnButton_ItemSlotHovered();
 	UFUNCTION(BlueprintCallable)

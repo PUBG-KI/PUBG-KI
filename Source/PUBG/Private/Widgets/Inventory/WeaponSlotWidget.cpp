@@ -7,6 +7,15 @@
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Weapon/Guns/Gun_Base.h"
 
+FReply UWeaponSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
+
+	UE_LOG(LogTemp, Warning, TEXT("UWeaponSlotWidget::NativeOnPreviewMouseButtonDown"));
+
+	return FReply::Handled();
+}
+
 FString UWeaponSlotWidget::SetBulletTypeTextBlock(EBulletType OutEBulletType)
 {
 	switch (OutEBulletType)

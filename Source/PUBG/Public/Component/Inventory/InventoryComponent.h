@@ -18,6 +18,11 @@ struct FUsingItem
 {
 	GENERATED_BODY()
 
+	FUsingItem()
+	{
+		Item = FItemSlotStruct();
+		Index = -1;
+	}
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FItemSlotStruct Item;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -100,15 +105,15 @@ public:
 	void ServerGetItem();
 
 	UFUNCTION(BlueprintCallable)
-	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight);
+	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
 	UFUNCTION(BlueprintCallable)
 	int32 FindItemSlot(FName ItemID);
 	UFUNCTION(BlueprintCallable)
-	void AddToStack(int32 Index, int32 Quantity, int32 Weight);
+	void AddToStack(int32 Index, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
 	UFUNCTION(BlueprintCallable)
-	void CreateNewStack(FName ItemID, int32 Quantity, int32 Weight, int32 Index);
+	void CreateNewStack(FName ItemID, int32 Quantity, int32 Weight, int32 Index, EItemCategory ItemCategory );
 	UFUNCTION(BlueprintCallable)
-	void AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight);
+	void AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
 	UFUNCTION(BlueprintCallable)
 	int32 GetMaxStackSize(FName ItemID);
 	// 아이템 카테고리 분류하고 함수 실행

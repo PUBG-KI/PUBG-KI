@@ -13,6 +13,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "DragDrop/DDInventorySlot.h"
+#include "Item/ArmorItem.h"
 #include "Item/WeaponItem.h"
 #include "Widgets/Inventory/DragItemWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
@@ -60,7 +61,10 @@ void UItemSlotWidget::UpdateItemSlotWidget()
 			FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Get Item Row"));
 
 			Image_Icon->SetBrushFromTexture(Row->Image);
-			Text_Quantity->SetText(FText::AsNumber(Quantity));
+			if (Row->IsStackAble == true)
+			{
+				Text_Quantity->SetText(FText::AsNumber(Quantity));
+			}
 			Text_ItemName->SetText(FText::FromName(ItemName));
 		}
 		else
@@ -71,13 +75,63 @@ void UItemSlotWidget::UpdateItemSlotWidget()
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : DataTable None"));
-
 	}
 }
 
 void UItemSlotWidget::OnButton_ItemSlotHovered()
 {
+	if (InventoryComponent)
+	{
+		if (DataTable)
+		{
+			if (ItemName != NAME_None)
+			{
+				FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Get Item Row"));
+				int32 Category = static_cast<int32>(Row->Category);
+
+				if (Category == 4 || Category == 12)
+				{
+					FString Text = TEXT("장착");
+					TextBlock_Use->SetText(FText::FromString(Text));
+				}
+				else if (Category == 10 || Category == 11)
+				{
+					FString Text = TEXT("사용");
+					TextBlock_Use->SetText(FText::FromString(Text));
+				}
+				else
+				{
+					FString Text = TEXT("");
+					TextBlock_Use->SetText(FText::FromString(Text));
+				}
+			}
+		}
+	}
+	else if (NearComponent)
+	{
+		if (DataTable)
+		{
+			if (ItemName != NAME_None)
+			{
+				FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Get Item Row"));
+				int32 Category = static_cast<int32>(Row->Category);
+
+				if (Category == 0 || Category == 2 || Category == 3 || Category == 4 || Category == 6 || Category == 7 || Category == 8)
+				{
+					FString Text = TEXT("장착");
+					TextBlock_Use->SetText(FText::FromString(Text));
+				}
+				else
+				{
+					FString Text = TEXT("줍기");
+					TextBlock_Use->SetText(FText::FromString(Text));
+				}
+			}
+		}
+	}
+
 	TextBlock_Use->SetVisibility(ESlateVisibility::Visible);
+
 }
 
 void UItemSlotWidget::OnButton_ItemSlotUnHovered()
@@ -104,42 +158,66 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 		else if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton) // 우클릭일 경우
 		{
 			UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton"));
+			
 			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
 			{
 				FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
 				UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
 
 				FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
-				
 				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
 				if (Row)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
 
 					InventoryComponent->RemoveFromInventory(Index, true);
-
-					
 				}
 			}
 			else if (NearComponent)
 			{
+				UE_LOG(LogTemp, Warning, TEXT("EKeys::RightMouseButton = NearComponent"));
+
+				APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
+				EquippedComponent = PlayerCharacter->GetEquippedComponent();
+				InventoryComponent = PlayerCharacter->GetInventoryComponent();
+
+				FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Find Row"));
+				int32 Category = static_cast<int32>(Row->Category);
+				
 				if (AWeaponItem* Weapon = Cast<AWeaponItem>(NearComponent->GetGroundItems()[Index]))
 				{
-					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
-					UEquippedComponent* EquippedComponent = PlayerCharacter->GetEquippedComponent();
-
-					FItemStruct* Row = DataTable->FindRow<FItemStruct>(ItemName, TEXT("Find Row"));
-
-					int32 ItemCategory = static_cast<int32>(Row->Category);
-
-					if (ItemCategory == 0)
+					if (Category == 0)
 					{
+						UE_LOG(LogTemp, Warning, TEXT("EKeys::RightMouseButton, ItemCategory = %d"), Category);
 						EquippedComponent->ServerEquipMainItem(NearComponent->GetGroundItems()[Index]);
 					}
-					else if (ItemCategory == 2)
+					else if (Category == 2)
 					{
+						UE_LOG(LogTemp, Warning, TEXT("EKeys::RightMouseButton, ItemCategory = %d"), Category);
 						EquippedComponent->ServerEquipSubWeapon(NearComponent->GetGroundItems()[Index]);
 					}
+				}
+				else if (AArmorItem* Armor = Cast<AArmorItem>(NearComponent->GetGroundItems()[Index]))
+				{
+					if (Category == 5 || Category == 6 || Category == 7)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("EKeys::RightMouseButton, ItemCategory = %d"), Category);
+						EquippedComponent->ServerEquiptHelmet(NearComponent->GetGroundItems()[Index]);
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("EKeys::RightMouseButton, ItemCategory = %d"), Category);
+
+					InventoryComponent->ServerSetNearItem(NearComponent->GetGroundItems()[Index]);
+					InventoryComponent->Server_InteractItem(PlayerCharacter->GetInventoryComponent()->GetNearItem());
+			
+					// if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetOwningPlayer()))
+					// {
+					// 	PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
+					// }
+
+					PlayerCharacter->GetInventoryComponent()->SetNearItem(nullptr);
 				}
 			}
 		}

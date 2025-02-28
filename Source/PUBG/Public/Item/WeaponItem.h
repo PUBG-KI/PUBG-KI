@@ -16,6 +16,7 @@ class PUBG_API AWeaponItem : public AItemBase
 
 	AWeaponItem();
 
+	void BeginPlay() override;
 public:
 	void InteractWith(APlayerCharacter* Character);
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;

@@ -14,6 +14,11 @@ AWeaponItem::AWeaponItem()
 	//SetReplicates(true);
 }
 
+void AWeaponItem::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	//Super::InteractWith_Implementation(Character);

@@ -6,6 +6,7 @@
 #include "Widgets/WidgetBase.h"
 #include "WeaponSlotWidget1.generated.h"
 
+class UEquippedComponent;
 class UWeaponPartsSlot;
 enum class EBulletType : uint8;
 class AGun_Base;
@@ -20,6 +21,9 @@ class PUBG_API UWeaponSlotWidget1 : public UWidgetBase
 {
 	GENERATED_BODY()
 
+public:
+	virtual FReply NativeOnPreviewMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent ) override;
+	
 	
 private:
 	// Widget Variable
@@ -66,6 +70,8 @@ private:
 	FName WeaponName;
 	UPROPERTY()
 	int32 WeaponIndex;
+	UPROPERTY()
+	UEquippedComponent* EquippedComponent;
 	
 
 public:
@@ -126,5 +132,7 @@ public:
 	void SetWeaponName(FName NewName) { WeaponName = NewName; }
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponIndex(int32 NewIndex) { WeaponIndex = NewIndex; }
+	UFUNCTION(BlueprintCallable)
+	void SetEquipmentComponent(UEquippedComponent* NewEquippedComponent) { EquippedComponent = NewEquippedComponent; }
 
 };

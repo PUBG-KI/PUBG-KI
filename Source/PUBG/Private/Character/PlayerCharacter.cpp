@@ -221,11 +221,11 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Client"));
 
 	}
-	UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent =  %s"), *SkeletalMesh->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent =  %s"), *SkeletalMesh->GetName());
 	
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent : SkeletalMeshComponent = %s"), *SkeletalMeshComponent->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent : SkeletalMeshComponent = %s"), *SkeletalMeshComponent->GetName());
 		SkeletalMeshComponent->SetSkeletalMesh(SkeletalMesh);
 	}
 }
@@ -234,7 +234,7 @@ void APlayerCharacter::Multicast_SetMeshComponent_Implementation(EPlayerMeshType
 	USkeletalMesh* SkeletalMesh)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation"));
-	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation : %s"), *SkeletalMesh->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation : %s"), *SkeletalMesh->GetName());
 	SetMeshComponent(PlayerMeshType, SkeletalMesh);
 }
 

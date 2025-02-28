@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
+#include "CompatibleWeaponPartsTypeStruct.h"
 #include "GameplayTagContainer.h"
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Engine/DataTable.h"
@@ -15,7 +16,18 @@ struct FItemStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FItemStruct();
+	FItemStruct()
+	{
+		StaticMesh = nullptr;
+		BP_Item = nullptr;
+		Image = nullptr;
+		Weight = -1.0f;
+		Category = EItemCategory::FullBody;
+		IsStackAble = false;
+		StackSize = -1;
+		Quantity = -1;
+		Tag = FGameplayTag::EmptyTag;
+	}
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName Name;
@@ -40,20 +52,10 @@ struct FItemStruct : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 Quantity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FCompatibleWeaponPartsTypeStruct CompatibleWeaponPartsTypeStruct;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag Tag;
 	
 	
 };
 
-inline FItemStruct::FItemStruct()
-{
-	StaticMesh = nullptr;
-	BP_Item = nullptr;
-	Image = nullptr;
-	Weight = -1.0f;
-	Category = EItemCategory::FullBody;
-	IsStackAble = false;
-	StackSize = -1;
-	Quantity = -1;
-	Tag = FGameplayTag::EmptyTag;
-}
