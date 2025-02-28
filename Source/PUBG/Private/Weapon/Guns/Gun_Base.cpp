@@ -138,7 +138,7 @@ bool AGun_Base::EquipParts(FPartsData& PartsData)
 	{
 		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
 
-		if (!PartsSlot[PartsCategory_int].IsNone())
+		if (PartsSlot[PartsCategory_int] != NAME_None)
 		{
 			PartsSlot[PartsCategory_int] = PartsName;
 			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = %s"), *PartsString);

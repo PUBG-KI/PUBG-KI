@@ -661,27 +661,38 @@ void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 {
 	if (PartsItem != nullptr) // F로 장착
 	{
-		
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts PartsItem"));
 	}
 	else if (Index != -1) // UI로 장착 
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Index"));
+
 		// FItemSlot이 들어오면 이름으로 데이터 테이블 접근 후
 		
 	}
 	else if (ItemSlot != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts ItemSlot"));
+
 		FName Name = ItemSlot->ItemName;
 		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(Name, TEXT("UEquippedComponent::ServerEquipParts Fail Row"));
 		if (Row)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts = Row"));
+
 			TArray<int32> EquippedGunIndex = GetEquippedGunIndex(); // 현재 장착된 무기 인덱스 반환
 
 			if (EquippedGunIndex.Num() > 0)
 			{
-				TArray<int32> CompatibleWeapon = CheckEquippedWeaponCompatibleParts(Name, EquippedGunIndex); // 현재 장착 중인 무기에 파츠를 낄 수 있는지
+				UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts EquippedGunIndex.Num = %d"), EquippedGunIndex.Num());
 
+				TArray<int32> CompatibleWeapon = CheckEquippedWeaponCompatibleParts(Name, EquippedGunIndex); // 현재 장착 중인 무기에 파츠를 낄 수 있는지
+				
+				
 				if (CompatibleWeapon.Num() > 0) // 파츠 장착이 가능한 무기가 있다는 것 
 				{
+					UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts CompatibleWeapon.Num = %d"), CompatibleWeapon.Num());
+
 					//FName PartsName = FName(*(Name.ToString() + "_" + );  
 					// 우선 순위를 결정
 					// 1. 빈 칸인지 (다 빈 칸이면 손에 들고 있는 무기 > 1번 슬롯 부터)
@@ -693,13 +704,16 @@ void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 					{
 						if (PartsDT)
 						{
+							UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts CompatibleWeapon[i] = %d"), CompatibleWeapon[i]);
+
 							AGun_Base* Gun = Cast<AGun_Base>(EquippedItems[CompatibleWeapon[i]]);
 							if (Gun)
 							{
+								UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Gun Casting"));
 								FString PartsString = Name.ToString() + "_" + Gun->GetWeaponDataAsset().GunName;
 								FName PartsName = FName(*PartsString);
 								FPartsData* PartsDataRow = PartsDT->FindRow<FPartsData>(PartsName, TEXT("Parts"));
-
+							
 								if (Row)
 								{
 									if (Gun->EquipParts(*PartsDataRow))
@@ -775,6 +789,8 @@ TArray<int32> UEquippedComponent::CheckEquippedWeaponCompatibleParts(FName Name,
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::CheckEquippedWeaponCompatibleParts = EquippedWeaponParts.Num %d"), EquippedWeaponParts.Num());
+
 	return EquippedWeaponParts;
 }
 
@@ -790,6 +806,7 @@ TArray<int32> UEquippedComponent::GetEquippedGunIndex()
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::GetEquippedGunIndex = EquippedGuns.Num %d"), EquippedGuns.Num());
 	return EquippedGuns;
 }
 
