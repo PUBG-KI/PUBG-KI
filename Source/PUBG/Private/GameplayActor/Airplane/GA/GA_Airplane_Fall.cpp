@@ -4,6 +4,7 @@
 #include "GameplayActor/Airplane/GA/GA_Airplane_Fall.h"
 
 #include "Character/PlayerCharacter.h"
+#include "Component/Movement/PlayerMovementComponent.h"
 #include "Controller/BasePlayerController.h"
 #include "GameInstance/BaseGameInstance.h"
 #include "GameplayActor/Airplane/Airplane.h"
@@ -58,6 +59,10 @@ void UGA_Airplane_Fall::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	PlayerCharacter->SetInFreefall(true);
+	UPlayerMovementComponent* MovementComponent = Cast<
+			UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
+	MovementComponent->GravityScale = 0.2f;
+	
 	EndAbility(Handle, ActorInfo, ActivationInfo, false, true);
 }
 

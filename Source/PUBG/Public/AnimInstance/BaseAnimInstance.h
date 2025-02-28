@@ -78,10 +78,11 @@ public:
 	//freefalling
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
 	bool InFreefalling;
-
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
-	float Input;
-
+	float FreefallingMovementInputY;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
+	float FreefallingMovementInputX;
+	
 	//Swim
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
 	bool IsSwimming;

@@ -88,6 +88,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Crouch, "Player.State.Crouch");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Dead, "Player.State.Dead");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Turn, "Player.Ability.Turn");
+	UE_DEFINE_GAMEPLAY_TAG(Player_State_Swim, "Player.State.Swim");
 	
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Hit, "Player.Event.Action.Hit");
 

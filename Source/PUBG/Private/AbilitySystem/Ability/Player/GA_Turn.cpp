@@ -39,7 +39,8 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
 	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
 	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleLeftMontage, ETurnMontageType::Crouch);
 	 		}
@@ -59,10 +60,11 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 	else if (PlayerMovementComponent->RequestToStartProne) //누운상태
 	 	{
 	 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleLeftMontage, ETurnMontageType::Prone);
 	 		}
@@ -82,10 +84,11 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 	else //서있는 상태
 	 	{
 	 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleLeftMontage, ETurnMontageType::Stand);
 	 		}
@@ -111,10 +114,11 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 	if (PUBGPlayer->bIsCrouched) //앉은상태
 	 	{
 	 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleRightMontage, ETurnMontageType::Crouch);
 	 		}
@@ -134,10 +138,11 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 	else if (PlayerMovementComponent->RequestToStartProne) //누운상태
 	 	{
 	 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 			UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleRightMontage, ETurnMontageType::Prone);
 	 		}
@@ -157,10 +162,11 @@ void UGA_Turn::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	 	else //서있는 상태
 	 	{
 	 		if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
-	 		UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol))
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+				 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	 		{
 	 			SelectedMontagePlay(RifleRightMontage, ETurnMontageType::Stand);
 	 		}

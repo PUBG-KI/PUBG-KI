@@ -118,6 +118,6 @@ public:
 	float SubCTRLProne = 60.f;
 	float SubCTRLCrouch =170.f;
 
-	UFUNCTION()
-	void FreefallingVelocitySettings(FVector2D MovementVector);
+	// UFUNCTION()
+	// void FreefallingVelocitySettings(FVector2D MovementVector);
 };
