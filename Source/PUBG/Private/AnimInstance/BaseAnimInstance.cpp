@@ -36,7 +36,9 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	}
 	
 	Velocity = OwningCharacter->GetVelocity();
+	UE_LOG(LogTemp, Warning, TEXT("Velocity:%s"), *Velocity.ToString());
 	GroundSpeed = Velocity.Size2D();
+	UE_LOG(LogTemp, Warning, TEXT("GroundSpeed:%f"), GroundSpeed);
 	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
 	if (OwningPlayer->GetController())
 	{
@@ -96,7 +98,9 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	VehicleVelocityBackWard = OwningPlayer->GetVehicleVelocityBackWard();
 	//UE_LOG(LogTemp, Warning, TEXT("VehicleVelocityBackWard: %hhd"), VehicleVelocityBackWard);
 	InFreefalling = OwningPlayer->GetInFreefall();
-	Input = OwningPlayer->GetMoveInput();
+	FreefallingMovementInputY = OwningPlayer->GetFreefallingMoveInputY();
+	FreefallingMovementInputX = OwningPlayer->GetFreefallingMoveInputX();
+	//UE_LOG(LogTemp, Warning, TEXT("InFreefalling: %hhd"), InFreefalling)
 
 	IsSwimming = OwningPlayer->GetIsSwimming();
 	

@@ -285,6 +285,9 @@ public:
 	FORCEINLINE void SetVehicleFacetoBackward(bool NewOnTheVehicle) { VehicleFacetoBackward = NewOnTheVehicle; }
 	UFUNCTION()
 	void WhenGetOntheVehicleUnequippedWeapon();
+	UFUNCTION(BlueprintCallable)
+	void WeaponDisarmament();
+	
 	UFUNCTION(Client, Reliable)
 	void Client_InputMappingContextRemove(UInputMappingContext* MappingContext);
 	FORCEINLINE bool GetVehicleVelocityBackWard() const { return VehicleVelocityBackWard; }
@@ -296,15 +299,17 @@ public:
 	// FreeFalling 관련
 private:
 	UPROPERTY(Replicated)
-	bool InFreefall = false;
-	UPROPERTY(Replicated)
-	float MoveInput;
+	bool InFreefall;
+	float FreefallingMoveInputY;
+	float FreefallingMoveInputX;
 
 public:
 	FORCEINLINE bool GetInFreefall() const { return InFreefall; }
 	FORCEINLINE void SetInFreefall(bool NewInFreefall) { InFreefall = NewInFreefall; }
-	FORCEINLINE float GetMoveInput() const { return MoveInput; }
-	FORCEINLINE void SetMoveInput(float NewMoveInput) { MoveInput = NewMoveInput; }
+	FORCEINLINE float GetFreefallingMoveInputY() const { return FreefallingMoveInputY; }
+	FORCEINLINE void SetFreefallingMoveInputY(float NewFreefallingMoveInput) { FreefallingMoveInputY = NewFreefallingMoveInput; }
+	FORCEINLINE float GetFreefallingMoveInputX() const { return FreefallingMoveInputX; }
+	FORCEINLINE void SetFreefallingMoveInputX(float NewFreefallingMoveInput) { FreefallingMoveInputX = NewFreefallingMoveInput; }
 
 	//Swim관련
 private:

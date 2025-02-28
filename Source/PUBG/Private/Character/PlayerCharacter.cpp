@@ -341,11 +341,7 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
 	}
 	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
-	if (InFreefall)//비행기 탄경우
-	{
-	MoveInput = MovementVector.Y; //애님인스턴스에 보내 블렌드스페이스의 애니메이션 변경하는 변수
-	MovementComponent->FreefallingVelocitySettings(MovementVector);
-	}
+	
 	if (IsSwimming)
 	{
 		
@@ -399,6 +395,14 @@ void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+	if (InFreefall)
+	{
+		FreefallingMoveInputY = MovementVector.Y;
+		FreefallingMoveInputX = MovementVector.X;
+		float MousePitch = Controller->GetControlRotation().Pitch;
+		float Speed = FMath::GetMappedRangeValueClamped(FVector2D(-90.f, 90.f), FVector2D(0.f, 100000000000000.f), MousePitch);
+		AddMovementInput(MovementRotation.RotateVector(FVector::ForwardVector), Speed,true);
+	}
 }
 
 void APlayerCharacter::Server_SetActorRotation_Implementation(FRotator Rotator)
@@ -420,7 +424,8 @@ void APlayerCharacter::Input_MoveReleased(const FInputActionValue& InputActionVa
 {
 	if (InFreefall)
 	{
-	MoveInput = 0.f; 
+		FreefallingMoveInputY = 0.f;
+		FreefallingMoveInputX = 0.f;
 	}
 	bUseControllerRotationYaw = false;
 }
@@ -450,7 +455,7 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	if (GetCharacterMovement()->IsFalling())
+	if (GetCharacterMovement()->IsFalling()||UBaseFunctionLibrary::NativeActorHasTag(this, FGameplayTag::RequestGameplayTag(FName("Player.State.Swim"))))
 	{
 		return;
 	}
@@ -802,6 +807,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	//DOREPLIFETIME(APlayerCharacter, ActorRotation);
 	DOREPLIFETIME(APlayerCharacter, NormalDeltaRotator);
 	DOREPLIFETIME(APlayerCharacter, Yaw);
+	DOREPLIFETIME(APlayerCharacter, InFreefall);
 	//DOREPLIFETIME(APlayerCharacter, Pitch);
 }
 
@@ -812,43 +818,53 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 		AWeapon_Base* CachedCurrentWeapon = GetEquippedComponent()->GetCurrentWeapon();
 		if (CachedCurrentWeapon)
 		{
-			if (CachedCurrentWeapon == GetEquippedComponent()->GetPrimarySlotWeapon())
-			{
-				CachedCurrentWeapon->AttachToComponent(
-					GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-					FName("slot_primarySocket"));
-				UE_LOG(LogTemp, Warning, TEXT("PrimarySocket"));
-			}
-			else if (CachedCurrentWeapon == GetEquippedComponent()->GetSecondarySlot())
-			{
-				CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform,
-				                                       FName("slot_secondarySocket"));
-				UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
-			}
-			// else if (CurrentWeapon == GetInventoryComponent()->GetSideArmSlot())   지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
-			// {
-			// 	
-			// }
-			// else if (CurrentWeapon == GetInventoryComponent()->GetMeleeSlot())
-			// {
-			// 	
-			// }
-			// else if (CurrentWeapon == GetInventoryComponent()->GetThrowableSlot())
-			// {
-			// 	
-			// }
-
+			WeaponDisarmament();
 			FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData();
 			//웨폰데이터 구조체 가져오기(맵핑컨텍스트, 테그, 어빌리티)
 			UInputMappingContext* CachedInputMappingContext = WeaponData.WeaponInputMappingContext;
-			GetEquippedComponent()->SetCurrentWeapon(nullptr);
-			Server_SetAnimLayer(nullptr); //애님레이어 교체 nullptr시 unarmed기본설정되어있음
 			Client_InputMappingContextRemove(CachedInputMappingContext);
-			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag, true); //테그 삭제
-			TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->
-				GetGrantedAbilitySpecHandles(); //어빌리티 삭제
-			BaseAbilitySystemComponent->RemoveGrantedPlayerWeaponAbilities(CachedAbilitySpecHandle); //어빌리티 삭제
 		}
+	}
+}
+
+void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHICLE 탑승 사용
+{
+	AWeapon_Base* CachedCurrentWeapon = GetEquippedComponent()->GetCurrentWeapon();
+	if (CachedCurrentWeapon)
+	{
+		if (CachedCurrentWeapon == GetEquippedComponent()->GetPrimarySlotWeapon())
+		{
+			CachedCurrentWeapon->AttachToComponent(
+				GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+				FName("slot_primarySocket"));
+			UE_LOG(LogTemp, Warning, TEXT("PrimarySocket"));
+		}
+		else if (CachedCurrentWeapon == GetEquippedComponent()->GetSecondarySlot())
+		{
+			CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+												   FName("slot_secondarySocket"));
+			UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
+		}
+		else if (CachedCurrentWeapon == GetInventoryComponent()->GetSideArmSlot())   //지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
+		{
+			CachedCurrentWeapon->AttachToComponent(
+	   GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+	   FName("SideArm"));
+		}
+		
+		else if (CachedCurrentWeapon == GetInventoryComponent()->GetThrowableSlot())
+		{
+			CachedCurrentWeapon->AttachToComponent(
+		GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		FName("throwable_Socket"));
+		}
+		FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData();
+		Server_SetAnimLayer(nullptr);
+		UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag, true); //테그 삭제
+		TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->
+			GetGrantedAbilitySpecHandles(); //어빌리티 삭제
+		GetEquippedComponent()->SetCurrentWeapon(nullptr);
+		
 	}
 }
 
