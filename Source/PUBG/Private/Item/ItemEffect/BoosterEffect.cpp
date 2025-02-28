@@ -3,7 +3,7 @@
 
 #include "Item/ItemEffect/BoosterEffect.h"
 
-#include "BaseLibrary/DataStruct/BoosterEffectStruct.h"
+#include "BaseLibrary/DataStruct/ConsumeEffectStruct.h"
 
 ABoosterEffect::ABoosterEffect()
 {
@@ -21,11 +21,11 @@ void ABoosterEffect::BeginPlay()
 
 	if (!BoosterEffectTableRowName.IsNone())
 	{
-		FBoosterEffectStruct* Row = BoosterEffectTable->FindRow<FBoosterEffectStruct>(BoosterEffectTableRowName, TEXT("Find Row"));
+		FConsumeEffectStruct* Row = BoosterEffectTable->FindRow<FConsumeEffectStruct>(BoosterEffectTableRowName, TEXT("Find Row"));
 
 		
 		UseTime = Row->UseTime; // 사용 시간 지정
-		StaminaChargeValue = Row->StaminaChargeValue; // 회복량 지정 
+		//StaminaChargeValue = Row->StaminaChargeValue; // 회복량 지정 
 		// 애니메이션 에셋 지정
 		// 몽타주 지정 
 	}

@@ -3,7 +3,7 @@
 
 #include "Widgets/Inventory/ItemSlotWidget.h"
 
-#include "BaseLibrary/DataStruct/BoosterEffectStruct.h"
+#include "BaseLibrary/DataStruct/ConsumeEffectStruct.h"
 #include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
@@ -163,8 +163,12 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 			{
 				// 카테고리로 다시 분류
 				int32 Category = static_cast<int32>(ItemCategory);
-
+				
 				if (Category == 10 || Category == 11) // 힐, 부스터
+
+				FConsumeEffectStruct* Row = EffectTable->FindRow<FConsumeEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
+				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
+				if (Row)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10 or Category == 11"));
 

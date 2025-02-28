@@ -47,7 +47,6 @@ AItemBase::AItemBase()
 
 	
 	TableIndex = -1;
-	
 }
 
 void AItemBase::BeginPlay()

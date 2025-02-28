@@ -1,22 +1,25 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "BoosterEffectStruct.generated.h"
+#include "ConsumeEffectStruct.generated.h"
+
+
 
 USTRUCT(BlueprintType)
-struct FBoosterEffectStruct : public FTableRowBase
+struct FConsumeEffectStruct : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FBoosterEffectStruct()
+	FConsumeEffectStruct()
 	{
 		Name = NAME_None;
 		SkeletalMesh = nullptr;
 		StaticMesh = nullptr;
 		AnimationAsset = nullptr;
 		UseTime = -1.0f;
-		StaminaChargeValue = -1.0f;
+		Level = 1;
 		AnimationMontage = nullptr;
+		GameplayEffectClass = nullptr;
 	}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -30,8 +33,10 @@ struct FBoosterEffectStruct : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float UseTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float StaminaChargeValue;
+	int32 Level;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* AnimationMontage; // 아이템 사용 시 캐릭터 애니메이션 몽타주 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UGameplayEffect> GameplayEffectClass; // 아이템 사용 시 캐릭터 애니메이션 몽타주 
 };
 

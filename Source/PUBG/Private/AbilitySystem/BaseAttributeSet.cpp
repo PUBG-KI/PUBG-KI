@@ -156,15 +156,38 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		// 체력 변화를 처리합니다.
 		float NewStamina = FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina());
 		
+		if (NewStamina > 90.0f)
+		{
+			SetHealthRegenRate(4.f);			
+		}
+		else if (NewStamina > 60.0f)
+		{
+			SetHealthRegenRate(3.0f);	
+			SetMoveSpeed(350.0f * 1.0625f);		
+		}
+		else if (NewStamina > 20.0f)
+		{
+			SetHealthRegenRate(2.0f);
+			SetMoveSpeed(350.0f * 1.025f);			
+		}
+		else if (NewStamina > 0.0f)
+		{
+			SetHealthRegenRate(1.0f);
+			SetMoveSpeed(350.0f * 1.01f);
+		}
+		else
+		{			
+			SetHealthRegenRate(0.0f);
+			SetMoveSpeed(350.0f);
+		}
+		
 		if (NewStamina > 0.0f)
 		{
-			SetHealthRegenRate(3.0f);
 			TargetCharacter->ApplyHealthRegenEffect();
 			TargetCharacter->ApplyStaminaDecayEffect();
 		}
 		else
 		{
-			SetHealthRegenRate(0.0f);
 			TargetCharacter->RemoveHealthRegenEffect();
 			TargetCharacter->RemoveStaminaDecayEffect();
 		}

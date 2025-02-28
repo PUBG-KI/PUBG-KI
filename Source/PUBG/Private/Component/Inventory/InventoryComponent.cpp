@@ -357,7 +357,8 @@ void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, in
 		UsingItem.Item = Content[InIndex];
 		UsingItem.Index = InIndex;
 		
-		// 능력 활성화 
+		// 능력 활성화
+		
 	}
 	else
 	{
