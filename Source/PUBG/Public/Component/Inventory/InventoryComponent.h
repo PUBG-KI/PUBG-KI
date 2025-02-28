@@ -54,9 +54,8 @@ private:
 	
 	UPROPERTY(ReplicatedUsing = OnRep_Content, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	TArray<FItemSlotStruct> Content;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
+	UPROPERTY(ReplicatedUsing = OnRep_UsingItem, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	FUsingItem UsingItem;
-
 	
 	UPROPERTY(ReplicatedUsing= OnRep_Item, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* Item;
@@ -72,6 +71,8 @@ public:
 	UFUNCTION()
 	void OnRep_Content();
 	UFUNCTION()
+	void OnRep_UsingItem();
+	UFUNCTION()
 	void OnRep_Item();
 	
 	// Setter
@@ -81,6 +82,8 @@ public:
 	void SetNearItem(AItemBase* OutNearItem) { NearItem = OutNearItem; }
 	UFUNCTION(BlueprintCallable)
 	void SetContent(TArray<FItemSlotStruct> OutContent) { Content = OutContent; }
+	UFUNCTION(BlueprintCallable)
+	void SetUsingItem(FUsingItem OutUsingItem) { UsingItem = OutUsingItem; }
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetNearItem(AItemBase* OutNearItem);
@@ -133,7 +136,11 @@ public:
 	
 	// 아이템 버리기
 	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSetUsingItem(FUsingItem OutUsingItem);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerDropItem(int32 InIndex, int32 OutQuantity);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRemoveItem(int32 InIndex, int32 OutQuantity);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerSpawnItem(int32 InIndex,	int32 OutQuantity);
 	

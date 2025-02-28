@@ -162,14 +162,15 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
 			{
 				// 카테고리로 다시 분류
-				int32 Category = static_cast<int32>(ItemCategory);
+				EItemCategory Category = ItemCategory;
 				
-				if (Category == 10 || Category == 11) // 힐, 부스터
+				if (Category == EItemCategory::Heal || Category == EItemCategory::Booster) // 힐, 부스터
 				{
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10, 11"));
-					
+
+					InventoryComponent->RemoveFromInventory(Index, true);					
 				}
-				else if (Category == 12) // 파츠
+				else if (Category == EItemCategory::WeaponPart) // 파츠
 				{
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 12"));
 

@@ -19,6 +19,7 @@ UGA_ToggleInventory::UGA_ToggleInventory()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalOnly;
+	AbilityTags = FGameplayTagContainer(BaseGameplayTag::InputTag_Toggle_Inventory);
 }
 
 void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
