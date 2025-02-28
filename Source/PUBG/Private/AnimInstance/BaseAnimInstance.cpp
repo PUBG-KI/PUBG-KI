@@ -36,10 +36,9 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	}
 	
 	Velocity = OwningCharacter->GetVelocity();
-	UE_LOG(LogTemp, Warning, TEXT("Velocity:%s"), *Velocity.ToString());
 	GroundSpeed = Velocity.Size2D();
-	UE_LOG(LogTemp, Warning, TEXT("GroundSpeed:%f"), GroundSpeed);
 	Direction = UKismetAnimationLibrary::CalculateDirection(OwningCharacter->GetVelocity(), OwningCharacter->GetActorRotation());
+	
 	if (OwningPlayer->GetController())
 	{
 		const FRotator MovementRotation = FRotator(OwningPlayer->GetController()->GetControlRotation().Pitch,0.f, 0.f);
