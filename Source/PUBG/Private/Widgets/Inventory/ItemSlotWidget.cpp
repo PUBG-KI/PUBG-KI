@@ -165,14 +165,9 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 				int32 Category = static_cast<int32>(ItemCategory);
 				
 				if (Category == 10 || Category == 11) // 힐, 부스터
-
-				FConsumeEffectStruct* Row = EffectTable->FindRow<FConsumeEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
-				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
-				if (Row)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10 or Category == 11"));
-
-					//InventoryComponent->RemoveFromInventory(Index, true);
+					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10, 11"));
+					
 				}
 				else if (Category == 12) // 파츠
 				{
