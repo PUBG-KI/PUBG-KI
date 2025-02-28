@@ -135,7 +135,7 @@ void ABasePlayerState::BeginPlay()
 
 void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 {	
-	UE_LOG(LogTemp, Warning, TEXT("HealthChanged"));
+	//UE_LOG(LogTemp, Warning, TEXT("HealthChanged"));
 	float Health = Data.NewValue;
 
 	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))

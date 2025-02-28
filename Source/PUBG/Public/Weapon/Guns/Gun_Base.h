@@ -96,7 +96,7 @@ public:
 	UDataTable* WeaponDataTable;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Replicated)
+	UPROPERTY(EditAnywhere, Replicated)
 	TArray<FName> PartsSlot;
 
 public:

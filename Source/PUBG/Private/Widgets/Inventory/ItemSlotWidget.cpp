@@ -179,10 +179,10 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					ItemSlot.ItemName = ItemName;
 					ItemSlot.ItemCategory = ItemCategory;
 
-					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
+					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(InventoryComponent->GetOwner());
 					EquippedComponent = PlayerCharacter->GetEquippedComponent();
 
-					EquippedComponent->ServerEquipParts();
+					EquippedComponent->ServerEquipParts(nullptr, -1, &ItemSlot);
 					
 					//InventoryComponent->RemoveFromInventory(Index, true);
 				}
