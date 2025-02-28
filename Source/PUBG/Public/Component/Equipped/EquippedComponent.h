@@ -79,7 +79,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipMainItem(AItemBase* Item);
 	// 메인 무기 바닥에 버리기
-	int32 DropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr);
+	int32 DropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
+	UFUNCTION(Server, Reliable)
+	void ServerDropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
 	// 스태틱 메인 무기 소환
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromMainWeapon(AGun_Base* OutCurrentWeapon);
@@ -89,6 +91,8 @@ public:
 	void ServerEquipSubWeapon(AItemBase* Item);
 	// 서브 무기 바닥에 버리기
 	void DropSUbWeapon(AGun_Base* OutCurrentWeapon = nullptr);
+	UFUNCTION(Server, Reliable)
+	void ServerDropSUbWeapon(AGun_Base* OutCurrentWeapon = nullptr);
 	// 스태틱 서브 무기 소환
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromSubWeapon(AGun_Base* OutCurrentWeapon);
@@ -98,6 +102,8 @@ public:
 	void ServerEquiptHelmet(AItemBase* Item);
 	// 헬멧 바닥에 버리기
 	void DropArmor(int32 OutIndex);
+	UFUNCTION(Server, Reliable)
+	void ServerDropArmor(int32 OutIndex);
 	// 스태틱 헬멧 소환
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromArmor(AArmor_Base* OutCurrentArmor);
@@ -110,6 +116,8 @@ public:
 	// 장착중인 배열 가져오기 
 	UFUNCTION(BlueprintCallable)
 	void PrintEquippedItems();
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void ServerPrintEquippedItems();
 	// 무기 장착 시 씬캡쳐 컴포넌트 연결
 	void EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT);
 	
@@ -196,6 +204,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetPistol_GunBase() const { return Cast<AGun_Base>(SideArmSlot);}
 };
+
+
+
 
 
 

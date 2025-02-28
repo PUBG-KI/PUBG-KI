@@ -7,6 +7,7 @@
 #include "Widgets/WidgetBase.h"
 #include "ArmorSlotWidget.generated.h"
 
+class UEquippedComponent;
 struct FItemStruct;
 class UButton;
 class UImage;
@@ -20,6 +21,9 @@ class PUBG_API UArmorSlotWidget : public UWidgetBase
 
 public:
 	virtual void NativeConstruct() override;
+
+	virtual FReply NativeOnPreviewMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent ) override;
+
 
 private:
 	// Widget Variable
@@ -43,6 +47,8 @@ private:
 	int32 ArmorIndex;
 	UPROPERTY()
 	FItemStruct ArmorData;
+	UPROPERTY()
+	UEquippedComponent* EquippedComponent;
 public:
 	// Getter
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -81,4 +87,8 @@ public:
 	void SetArmorName(FName Newname) { ArmorName = Newname; }
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetArmorIndex(int32 NewIndex) { ArmorIndex = NewIndex; }
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetEquippedComponent(UEquippedComponent* NewEquippedComponent) { EquippedComponent = NewEquippedComponent; }
+
+	void InitArmorSlot();
 };

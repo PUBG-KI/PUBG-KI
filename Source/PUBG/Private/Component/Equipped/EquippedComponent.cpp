@@ -74,7 +74,7 @@ void UEquippedComponent::OnRep_EquippedItems()
 	UTextureRenderTarget2D* LoadedRTSlot2 = nullptr;
 	UTextureRenderTarget2D* LoadedRTSlot3 = nullptr;
 
-	for (int i = 0; i < EquippedItems.Num(); i++)
+	for (int i = 0; i < EquippedItems.Num() || EquippedItems.Num() == 0; i++)
 	{
 		if (EquippedItems[i] != nullptr)
 		{
@@ -126,8 +126,6 @@ void UEquippedComponent::OnRep_EquippedItems()
 				// EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
 				break;
 			}
-			
-			
 		}
 	}
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
@@ -285,7 +283,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 
 }
 
-int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon)
+int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon, int32 OutIndex)
 {
 	// 버리는 것은 무조건 UI에서만, 지정해서
 	// 교체할 때 쓰기 위해서는 버릴 아이템을 매개변수로 
@@ -317,8 +315,7 @@ int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon)
 			
 			int32 DropIndex = static_cast<int32>(EquippedItems[1]->GetEquipSlot());
 			UE_LOG(LogTemp, Warning, TEXT("Drop Index : %d"), DropIndex);
-
-			EquippedItems[1]->Destroy(); 
+			EquippedItems[1]->Destroy();
 			EquippedItems[1] = nullptr;
 			return DropIndex;
 
@@ -326,12 +323,25 @@ int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon)
 	}
 	else
 	{
-		ServerSpawnStaticMeshFromMainWeapon(Cast<AGun_Base>(OutCurrentWeapon));
+		UE_LOG(LogTemp, Warning, TEXT("OutCurrentWeaponSlot not Null"));
+		UE_LOG(LogTemp, Warning, TEXT("OutCurrentWeaponSlot %d"), OutIndex);
+
+		ServerSpawnStaticMeshFromMainWeapon(Cast<AGun_Base>(EquippedItems[OutIndex]));
 
 		int32 DropIndex = static_cast<int32>(OutCurrentWeapon->GetEquipSlot());
+
+		EquippedItems[OutIndex]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		EquippedItems[OutIndex]->Destroy(true);
+		EquippedItems[OutIndex] = nullptr;
 		OutCurrentWeapon = nullptr;
+		OnRep_EquippedItems();
 		return DropIndex;
 	}
+}
+
+void UEquippedComponent::ServerDropMainWeapon_Implementation(AGun_Base* OutCurrentWeapon, int32 OutIndex)
+{
+	DropMainWeapon(OutCurrentWeapon, OutIndex);
 }
 
 void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun_Base* OutCurrentWeapon)
@@ -347,17 +357,27 @@ void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun
 	FVector SpawnLocation = DropLocation();
 	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 
-	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/TestWeaponItem.TestWeaponItem_C"));
+	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/BP_WeaponItem.BP_WeaponItem_C"));
 	if (MainWeaponItemBPClass) // nullptr 체크 추가
 	{
 		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
 		{
 			//TempWeapon->SetTableIndex(RowIndex);
 			TempWeapon->SetItemTableRowName(ItemID);
-			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함 
-			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
-			UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
+			UE_LOG(LogTemp, Warning, TEXT("TempWeapon ItemID : %s"), *ItemID.ToString());
+			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함
 
+			if (TempWeapon->GetItemDataComponent())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ServerSpawnStaticMeshFromMainWeapon_Implementation = GetItemDataComponent"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("ServerSpawnStaticMeshFromMainWeapon_Implementation = GetItemDataComponent None"));
+
+			}
+			TempWeapon->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+			//UE_LOG(LogTemp, Warning, TEXT("TempWeapon GetItemRowName : %s"), *TempWeapon->GetItemDataComponent()->GetItemRowName().ToString());
 		}
 	}
 	else
@@ -412,26 +432,45 @@ void UEquippedComponent::DropSUbWeapon(AGun_Base* OutCurrentWeapon)
 	{
 		// 권총은 하나이므로 권총 슬롯과 바로 비교 
 		ServerSpawnStaticMeshFromSubWeapon(Cast<AGun_Base>(OutCurrentWeapon));
-		OutCurrentWeapon->Destroy();
-		CurrentWeapon = nullptr;
+		OutCurrentWeapon->Destroy(true);
+		
+		EquippedItems[2]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		EquippedItems[2]->Destroy(true);
+		EquippedItems[2] = nullptr;
+		OutCurrentWeapon = nullptr;
+		OnRep_EquippedItems();
+
 	}
 	else // 교체되는 것 
 	{
 		if (CurrentWeapon != nullptr && CurrentWeapon->GetEquipSlot() == EEquippedItemCategory::SubWeapon) // 현재 손에 권총이 있으면 
 		{
 			ServerSpawnStaticMeshFromSubWeapon(Cast<AGun_Base>(CurrentWeapon));
-			CurrentWeapon->Destroy();
+			CurrentWeapon->Destroy(true);
 			// 능력과 레이어 뺴는 곳 
 			CurrentWeapon = nullptr;
+			EquippedItems[2]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			EquippedItems[2]->Destroy(true);
+			EquippedItems[2] = nullptr;
+			OnRep_EquippedItems();
 		}
 		else if (EquippedItems[2] != nullptr)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("EquippedItems[2]"));
 			ServerSpawnStaticMeshFromSubWeapon(Cast<AGun_Base>(EquippedItems[2]));
-			EquippedItems[2]->Destroy();
+
+			EquippedItems[2]->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			EquippedItems[2]->Destroy(true);
 			EquippedItems[2] = nullptr;
+			OutCurrentWeapon = nullptr;
+			OnRep_EquippedItems();
 		}
 	}
+}
+
+void UEquippedComponent::ServerDropSUbWeapon_Implementation(AGun_Base* OutCurrentWeapon)
+{
+	DropSUbWeapon(OutCurrentWeapon);
 }
 
 void UEquippedComponent::ServerSpawnStaticMeshFromSubWeapon_Implementation(AGun_Base* OutCurrentWeapon)
@@ -448,7 +487,7 @@ void UEquippedComponent::ServerSpawnStaticMeshFromSubWeapon_Implementation(AGun_
 	FVector SpawnLocation = DropLocation();
 	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 
-	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/TestWeaponItem.TestWeaponItem_C"));
+	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/BP_WeaponItem.BP_WeaponItem_C"));
 	if (MainWeaponItemBPClass) // nullptr 체크 추가
 	{
 		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
@@ -542,7 +581,7 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 {
 	if (EquippedItems[OutIndex] != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::DropArmor = EquippedItems[OutIndex]"));
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::DropArmor = EquippedItems[%d]"), OutIndex);
 		ServerSpawnStaticMeshFromArmor(Cast<AArmor_Base>(EquippedItems[OutIndex]));
 		
 		if (AArmor_Base* Armor = Cast<AArmor_Base>(EquippedItems[OutIndex]))
@@ -551,7 +590,7 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 
 			if (OutIndex == 5)
 			{
-				PlayerCharacter->SetMeshComponent(EPlayerMeshType::Head, nullptr);
+				PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Head, nullptr);
 			}
 			else if (OutIndex == 6)
 			{
@@ -560,15 +599,31 @@ void UEquippedComponent::DropArmor(int32 OutIndex)
 			}
 			else if (OutIndex == 7)
 			{
-				PlayerCharacter->SetMeshComponent(EPlayerMeshType::Top, nullptr);
+				PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Top, nullptr);
 			}
 			
 			Armor->UnEquipArmor(PlayerCharacter);
 		}
-		
-		EquippedItems[OutIndex]->Destroy();
+
+		EquippedItems[OutIndex]->Destroy(true);
 		EquippedItems[OutIndex] = nullptr;
+
+		if (EquippedItems[OutIndex] == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("EquippedItems[%d] = NULL"), OutIndex);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("EquippedItems[%d] = %s"), OutIndex, *EquippedItems[OutIndex]->GetActorNameOrLabel());
+
+		}
+		OnRep_EquippedItems();
 	}
+}
+
+void UEquippedComponent::ServerDropArmor_Implementation(int32 OutIndex)
+{
+	DropArmor(OutIndex);
 }
 
 void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Base* OutCurrentArmor)
@@ -684,6 +739,36 @@ FVector UEquippedComponent::DropLocation()
 }
 
 void UEquippedComponent::PrintEquippedItems()
+{
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintEquippedItems"));
+
+		for (int i = 0; i < EquippedItems.Num(); i++)
+		{
+			if (EquippedItems[i] != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorNameOrLabel());
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintEquippedItems"));
+
+		for (int i = 0; i < EquippedItems.Num(); i++)
+		{
+			if (EquippedItems[i] != nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%d : %s"), i, *EquippedItems[i]->GetActorNameOrLabel());
+			
+			}
+		}
+		
+	}
+}
+
+void UEquippedComponent::ServerPrintEquippedItems_Implementation()
 {
 	if (GetOwner()->HasAuthority())
 	{

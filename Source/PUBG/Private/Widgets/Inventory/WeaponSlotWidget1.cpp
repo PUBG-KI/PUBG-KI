@@ -3,9 +3,44 @@
 
 #include "Widgets/Inventory/WeaponSlotWidget1.h"
 
+#include "Component/Equipped/EquippedComponent.h"
 #include "Components/SizeBox.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Weapon/Guns/Gun_Base.h"
+
+FReply UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry,
+	const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
+
+	UE_LOG(LogTemp, Warning, TEXT("UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown1"));
+
+	
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown = EKeys::RightMouseButton"));
+		
+		if (!EquippedComponent)
+		{
+			return FReply::Handled();
+		}
+		
+		if (WeaponIndex == 0 || WeaponIndex == 1)
+		{
+			AGun_Base* EquippedWeapon = Cast<AGun_Base>(EquippedComponent->GetEquippedItems()[WeaponIndex]);
+			EquippedComponent->ServerDropMainWeapon(EquippedWeapon, WeaponIndex);
+			//EquippedComponent->DropMainWeapon(EquippedWeapon, WeaponIndex);
+		}
+		else if (WeaponIndex == 2)
+		{
+			AGun_Base* EquippedWeapon = Cast<AGun_Base>(EquippedComponent->GetEquippedItems()[WeaponIndex]);
+			EquippedComponent->ServerDropSUbWeapon(EquippedWeapon);
+			//EquippedComponent->DropSUbWeapon(EquippedWeapon);
+		}
+	}
+
+	return FReply::Handled();
+}
 
 FString UWeaponSlotWidget1::SetBulletTypeTextBlock(EBulletType OutEBulletType)
 {

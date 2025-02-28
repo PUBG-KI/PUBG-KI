@@ -145,7 +145,7 @@ void UInventoryComponent::ServerGetItem_Implementation()
 	GetItem();
 }
 
-int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 Weight)
+int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory)
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
@@ -169,12 +169,12 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 		if (SlotIndex == -1)
 		{
 			// -1면 아이템이 없는 것으로 마지막에 추가
-			AddToLastIndexNewStack(ItemID, 1, Weight);
+			AddToLastIndexNewStack(ItemID, 1, Weight, ItemCategory);
 		}
 		else
 		{
 			// -1이 아니면 이미 인벤토리에 같은 아이템이 존재하므로 거기에 쌓음 꽉 찼을 경우 새로운 스택을 만들어야 함 
-			AddToStack(SlotIndex, 1, Weight);
+			AddToStack(SlotIndex, 1, Weight, ItemCategory);
 
 			//CreateNewStack(Content.LastIndex())
 		}
@@ -207,12 +207,12 @@ int32 UInventoryComponent::FindItemSlot(FName ItemID)
 	return LastIndex;
 }
 
-void UInventoryComponent::AddToStack(int32 Index, int32 Quantity, int32 Weight)
+void UInventoryComponent::AddToStack(int32 Index, int32 Quantity, int32 Weight, EItemCategory ItemCategory)
 {
 	// 현재 인덱스의 아이템 StackSize가 꽉 차면 새로운 Stack 만들기
 	if (Content[Index].Quantity == GetMaxStackSize(Content[Index].ItemName))
 	{
-		CreateNewStack(Content[Index].ItemName, 1, Weight, Index + 1);
+		CreateNewStack(Content[Index].ItemName, 1, Weight, Index + 1, ItemCategory);
 
 		return;
 	}
@@ -220,13 +220,14 @@ void UInventoryComponent::AddToStack(int32 Index, int32 Quantity, int32 Weight)
 	FItemSlotStruct ItemSlot;
 	ItemSlot.ItemName = Content[Index].ItemName;
 	ItemSlot.Quantity = Content[Index].Quantity + Quantity;
+	ItemSlot.ItemCategory = Content[Index].ItemCategory;
 	CurrentInventoryWeight += Weight;
 
 	Content[Index] = ItemSlot;
 	
 }
 
-void UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity, int32 Weight, int32 Index)
+void UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity, int32 Weight, int32 Index, EItemCategory ItemCategory)
 {
 	UE_LOG(LogTemp, Warning, TEXT("CreateNewStack : %d"), Index);
 	
@@ -235,6 +236,7 @@ void UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity, int32 Wei
 	FItemSlotStruct ItemSlot;
 	ItemSlot.ItemName = ItemID;
 	ItemSlot.Quantity = Quantity;
+	ItemSlot.ItemCategory = ItemCategory;
 
 	//Content.Insert(ItemSlot, Index);
 	//Content[Index] = ItemSlot;
@@ -245,11 +247,12 @@ void UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity, int32 Wei
 	
 }
 
-void UInventoryComponent::AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight)
+void UInventoryComponent::AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory)
 {
 	FItemSlotStruct ItemSlot;
 	ItemSlot.ItemName = ItemID;
 	ItemSlot.Quantity = Quantity;
+	ItemSlot.ItemCategory = ItemCategory;
 	CurrentInventoryWeight += Weight;
 	
 	Content.Add(ItemSlot);

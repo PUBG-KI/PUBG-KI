@@ -137,11 +137,11 @@ void UNearComponent::PrintGroundItems()
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server ServerPrintGroundItems_Implementation"));
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server PrintGroundItems"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client ServerPrintGroundItems_Implementation"));
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client PrintGroundItems"));
 	}
 	
 	for (int32 Index = 0; Index < GroundItems.Num(); ++Index)

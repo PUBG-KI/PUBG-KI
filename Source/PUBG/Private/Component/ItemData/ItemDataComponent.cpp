@@ -20,11 +20,11 @@ UItemDataComponent::UItemDataComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicatedByDefault(true);
-	
 
 	ItemID.DataTable = nullptr;
 	ItemID.RowName = NAME_None;
 	Quantity = 0;
+	ItemCategory = EItemCategory::FullBody;
 }
 
 
@@ -39,6 +39,14 @@ void UItemDataComponent::BeginPlay()
 	//if (Owner)
 	{
 		//	Owner->SetReplicates(true);
+	}
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItemBase::AItemBase = Execute : Server"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AItemBase::AItemBase = Execute : Client"));
 	}
 
 	AActor* MyOwner = GetOwner(); // 이 컴포넌트가 속한 액터 가져오기
@@ -168,7 +176,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 		UE_LOG(LogTemp, Warning, TEXT("%s, %d"), *ItemID.RowName.ToString(), Quantity);
 
 		// 0이 아니면 인벤이 꽉 차서 아이템이 다 안들어간 것 
-		int32 RemainItemQuantity = Inventory->AddToInventory(ItemID.RowName, Quantity, Weight);
+		int32 RemainItemQuantity = Inventory->AddToInventory(ItemID.RowName, Quantity, Weight, ItemCategory);
 
 		if (Quantity != RemainItemQuantity)
 		{
@@ -248,7 +256,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 
 void UItemDataComponent::SetItemID(UDataTable* ItemDataTable,FName ItemIdName)
 {
-	if (!ItemDataTable)
+	if (!ItemDataTable || ItemIdName == NAME_None)
 	{
 		return;
 	}

@@ -91,6 +91,5 @@ public:
 	// 이준수
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
 	UDataTable* WeaponDataTable;
+	
 };
-
-

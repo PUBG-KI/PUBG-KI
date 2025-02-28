@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "Components/ActorComponent.h"
 #include "Interface/InteractInterface.h"
 #include "ItemDataComponent.generated.h"
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,6 +32,9 @@ private:
 	int32 Quantity;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
 	float Weight;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Components", meta=(AllowPrivateAccess=true))
+	EItemCategory ItemCategory;
+
 	
 	
 
@@ -44,6 +49,9 @@ public:
 	int32 GetQuantity() const { return Quantity; }
 	UFUNCTION()
 	float GetWeight() const { return Weight; }
+	UFUNCTION()
+	EItemCategory GetItemCategory() const { return  ItemCategory; }
+
 
 	UFUNCTION()
 	virtual FText LookAt() override;
@@ -55,6 +63,8 @@ public:
 	void SetItemID(UDataTable* ItemDataTable,FName ItemIdName);
 	void SetItemWeight(int32 ItemWeight);
 	void SetItemQuantity(float ItemQuantity);
+	UFUNCTION()
+	void SetItemCategory(EItemCategory NewEItemCategory) { ItemCategory = NewEItemCategory; }
 
 	
 };

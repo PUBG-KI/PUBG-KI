@@ -13,5 +13,6 @@ void UWeaponPartsSlot::NativeConstruct()
 	Image_Pressed->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Disabled->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Parts->SetVisibility(ESlateVisibility::Collapsed);
+	Image_Equipable->SetVisibility(ESlateVisibility::Collapsed);
 	//Image_Normal->SetVisibility(ESlateVisibility::Collapsed);
 }

@@ -35,9 +35,7 @@ private:
 	FItemStruct ItemStruct;
 	UPROPERTY(Replicated, EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	FItemStruct Item;
-
 	
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, ReplicatedUsing=OnRep_ItemID, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
@@ -48,7 +46,7 @@ private:
 	UBoxComponent* BoxComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UBoxComponent* InteractionComponent;
-	UPROPERTY(ReplicatedUsing = OnRep_ItemDataComponent, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(ReplicatedUsing = OnRep_ItemDataComponent, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UItemDataComponent* ItemDataComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
@@ -56,7 +54,7 @@ private:
 	//static int32 BeginOverlapCount;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UDataTable* ItemDataTable;
 
 	UPROPERTY(Replicated, EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))

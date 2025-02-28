@@ -82,7 +82,6 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Mesh")
 	void Client_SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeletalMesh* SkeletalMesh);
 	
-
 	UFUNCTION()
 	void CallCheckZoomAbility();
 	
