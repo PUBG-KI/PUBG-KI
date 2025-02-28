@@ -4,6 +4,8 @@
 #include "Weapon/Guns/Gun_Base.h"
 
 #include "BaseLibrary/DataEnum/ItemEnum.h"
+#include "BaseLibrary/DataStruct/ArmorStruct.h"
+#include "Weapon/DataTable/DT_PartsData.h"
 
 AGun_Base::AGun_Base()
 {
@@ -99,6 +101,51 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 	DOREPLIFETIME(AGun_Base, BulletArmo);
 	DOREPLIFETIME(AGun_Base, MagMesh);
+}
+
+TArray<EPartsCategory> AGun_Base::GetInstalledParts() const
+{
+	TArray<EPartsCategory> InstalledParts;
+	if (WeaponDataAsset.Installable_Parts.Scope) InstalledParts.Add(EPartsCategory::Scope);
+	if (WeaponDataAsset.Installable_Parts.Mag) InstalledParts.Add(EPartsCategory::Mag);
+	if (WeaponDataAsset.Installable_Parts.Muzzle) InstalledParts.Add(EPartsCategory::Muzzle);
+	
+	return InstalledParts;
+}
+
+bool AGun_Base::IsEquipParts(EPartsCategory PartsCategory)
+{
+	TArray<EPartsCategory> EquippableParts = GetInstalledParts();
+
+	for (int32 i = 0; i < EquippableParts.Num(); i++)
+	{
+		if (EquippableParts[i] == PartsCategory)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool AGun_Base::EquipParts(FPartsData& PartsData)
+{
+
+	FString PartsString = PartsData.TypeName.ToString() + "_" + WeaponDataAsset.GunName;
+	FName PartsName = FName(*PartsString);
+	
+	if (IsEquipParts(PartsData.PartsCategory))
+	{
+		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
+
+		if (!PartsSlot[PartsCategory_int].IsNone())
+		{
+			PartsSlot[PartsCategory_int] = PartsName;
+			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = %s"), *PartsString);
+			return true;
+		}
+	}
+	return false;
 }
 
 void AGun_Base::Server_SetBulletArom_Implementation(float Armo)

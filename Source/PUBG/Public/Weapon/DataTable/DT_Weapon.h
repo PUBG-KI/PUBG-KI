@@ -54,6 +54,15 @@ struct FInstallable_parts : public FTableRowBase
 	bool Loops; // 샷건
 };
 
+UENUM(BlueprintType)
+enum class EPartsCategory : uint8
+{
+	None = 0 UMETA(DisplayName = "None"),
+	Scope UMETA(DisplayName = "Scope"),
+	Mag UMETA(DisplayName = "Mag"),
+	Muzzle UMETA(DisplayName = "Muzzle"),
+};
+
 USTRUCT(Atomic, BlueprintType)
 struct FRecoilMontage : public FTableRowBase
 {
