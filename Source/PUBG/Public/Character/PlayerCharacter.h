@@ -36,13 +36,11 @@ enum class EPlayerMeshType : uint8
 	// 플레이어 뼈대를 가진 파츠들 나열 ex) 머리, 손, 발, 상의, 하의 등등
 	// 바디는 기본 mesh로 설정 후 리더포즈컴포넌트로 다른 파츠들의 애니메이션 따라오게 만듬
 	Head UMETA(DisplayName = "Head"),
-	Bag UMETA(DisplayName = "Bag"),
 	Top UMETA(DisplayName = "Top"),
 	Bottom UMETA(DisplayName = "Bottom"),
 	Body UMETA(DisplayName = "Body"),
 	Face UMETA(DisplayName = "Face"),
 	Hair UMETA(DisplayName = "Hair"),
-	Bage UMETA(DisplayName = "Bage"),
 };
 
 UENUM()
