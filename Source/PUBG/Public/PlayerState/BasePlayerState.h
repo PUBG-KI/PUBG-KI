@@ -66,6 +66,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Attributes")
 	float GetRank() const;
 	
+	UFUNCTION(BlueprintCallable, Category = "Attributes")
+	void SetRank(float Rank) const;
+	
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	bool HasDeadTag() const;
 	

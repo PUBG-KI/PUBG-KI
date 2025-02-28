@@ -113,7 +113,7 @@ void ABaseGameState::OnRep_GameStartNotification()
 	else if (!bIsGameStarted)
 	{				
 		UE_LOG(LogTemp, Log, TEXT("Game has finished!"));		
-		GetLocalController()->ShowResultWidget(CurrentPlayerCount);
+		//GetLocalController()->ShowResultWidget(CurrentPlayerCount);
 	}
 }
 
@@ -302,7 +302,17 @@ int32 ABaseGameState::GetAlivePlayers()
 
 void ABaseGameState::FinishGame()
 {
-	bIsGameStarted = false;	
+	bIsGameStarted = false;
+
+	for (APlayerState* PlayerState : PlayerArray)
+	{
+		ABasePlayerState* PS = Cast<ABasePlayerState>(PlayerState);
+		
+		if (PS && !PS->HasDeadTag())  
+		{
+			PS->SetRank(CurrentPlayerCount);
+		}
+	}
 }
 
 void ABaseGameState::UpdatePlayerCount()

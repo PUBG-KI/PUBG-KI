@@ -174,6 +174,37 @@ void UBaseAbilitySystemComponent::RemoveAbilityByClass(TSubclassOf<UGameplayAbil
 	}
 }
 
+void UBaseAbilitySystemComponent::ResetAllGameplayEffects()
+{
+	// GetActiveEffects로 활성 게임 이펙트 핸들을 가져오기
+	TArray<FActiveGameplayEffectHandle> ActiveEffectHandles = this->GetActiveEffects(FGameplayEffectQuery());
+
+	// 모든 게임 이펙트 제거
+	for (const FActiveGameplayEffectHandle& EffectHandle : ActiveEffectHandles)
+	{
+		this->RemoveActiveGameplayEffect(EffectHandle);
+	}
+}
+
+void UBaseAbilitySystemComponent::ResetAllTags()
+{
+	// 부여된 모든 태그를 제거
+	FGameplayTagContainer Tags;
+	GetOwnedGameplayTags(Tags);
+
+	for (const FGameplayTag& Tag : Tags)
+	{
+		SetLooseGameplayTagCount(Tag, 0);
+	}
+}
+
+void UBaseAbilitySystemComponent::ResetAbilitySystem()
+{
+	ClearAllAbilities();
+	ResetAllGameplayEffects();
+	ResetAllTags();
+}
+
 void UBaseAbilitySystemComponent::ReceiveDamage(UBaseAbilitySystemComponent* SourceASC, float UnmitigatedDamage,
                                                 float MitigatedDamage)
 {

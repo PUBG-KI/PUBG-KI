@@ -50,6 +50,13 @@ public:
 
 	void RemoveAbilityByClass(TSubclassOf<UGameplayAbility> AbilityClass);
 
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void ResetAllGameplayEffects();
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void ResetAllTags();
+	UFUNCTION(BlueprintCallable, Category = "Ability")
+	void ResetAbilitySystem();
+
 	bool bCharacterAbilitiesGiven = false;
 	bool bStartupEffectsApplied = false;
 

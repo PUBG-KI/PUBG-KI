@@ -83,15 +83,15 @@ public:
 	
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UGameplayEffect> GE_UpdateHealth;
+	TSubclassOf<UGameplayEffect> GE_HealthRegen;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UGameplayEffect> GE_UpdateStamina;
+	TSubclassOf<UGameplayEffect> GE_StaminaDecay;
 
 public:
 	void ApplyHealthRegenEffect() const;
 	void RemoveHealthRegenEffect() const;
-	void ApplyStaminaRegenEffect() const;
-	void RemoveStaminaRegenEffect() const;
+	void ApplyStaminaDecayEffect() const;
+	void RemoveStaminaDecayEffect() const;
 
 	/**
 	* 속성에 대한 설정자. Respawning과 같은 특별한 경우에만 이것을 사용하고, 그렇지 않으면 GE를 사용하여 속성을 변경하십시오.

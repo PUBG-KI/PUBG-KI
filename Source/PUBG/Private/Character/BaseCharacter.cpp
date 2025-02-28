@@ -6,6 +6,7 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 
 // 무브먼트
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 
 
@@ -146,42 +147,42 @@ void ABaseCharacter::PossessedBy(AController* NewController)
 
 
 void ABaseCharacter::ApplyHealthRegenEffect() const
-{
-	if (BaseAbilitySystemComponent.Get() && GE_UpdateHealth)
+{	
+	if (BaseAbilitySystemComponent.Get() && GE_HealthRegen)
 	{
-		FGameplayEffectSpecHandle HealthRegenEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_UpdateHealth, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
+		FGameplayEffectSpecHandle HealthRegenEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_HealthRegen, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
 		if (HealthRegenEffect.IsValid())
-		{
-			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*HealthRegenEffect.Data.Get());
+		{			
+			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*HealthRegenEffect.Data.Get());		
 		}
 	}
 }
 
 void ABaseCharacter::RemoveHealthRegenEffect() const
 {
-	if (BaseAbilitySystemComponent.Get() && GE_UpdateHealth)
+	if (BaseAbilitySystemComponent.Get() && GE_HealthRegen)
 	{
-		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_UpdateHealth, BaseAbilitySystemComponent.Get());
+		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_HealthRegen, BaseAbilitySystemComponent.Get());
 	}
 }
 
-void ABaseCharacter::ApplyStaminaRegenEffect() const
+void ABaseCharacter::ApplyStaminaDecayEffect() const
 {
-	if (BaseAbilitySystemComponent.Get() && GE_UpdateStamina)
+	if (BaseAbilitySystemComponent.Get() && GE_StaminaDecay)
 	{
-		FGameplayEffectSpecHandle StaminaRegenEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_UpdateStamina, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
-		if (StaminaRegenEffect.IsValid())
+		FGameplayEffectSpecHandle StaminaDecayEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_StaminaDecay, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
+		if (StaminaDecayEffect.IsValid())
 		{
-			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*StaminaRegenEffect.Data.Get());
+			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*StaminaDecayEffect.Data.Get());
 		}
 	}
 }
 
-void ABaseCharacter::RemoveStaminaRegenEffect() const
+void ABaseCharacter::RemoveStaminaDecayEffect() const
 {
-	if (BaseAbilitySystemComponent.Get() && GE_UpdateStamina)
+	if (BaseAbilitySystemComponent.Get() && GE_StaminaDecay)
 	{
-		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_UpdateStamina, BaseAbilitySystemComponent.Get());
+		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_StaminaDecay, BaseAbilitySystemComponent.Get());
 	}
 }
 
