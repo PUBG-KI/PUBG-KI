@@ -47,18 +47,6 @@ AItemBase::AItemBase()
 
 	
 	TableIndex = -1;
-
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AItemBase::AItemBase = Execute : Server"));
-		AddReplicatedSubObject(ItemDataComponent);
-
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AItemBase::AItemBase = Execute : Client"));
-	}
-
 }
 
 void AItemBase::BeginPlay()

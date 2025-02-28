@@ -3,7 +3,7 @@
 
 #include "Widgets/Inventory/ItemSlotWidget.h"
 
-#include "BaseLibrary/DataStruct/BoosterEffectStruct.h"
+#include "BaseLibrary/DataStruct/ConsumeEffectStruct.h"
 #include "BaseLibrary/DataStruct/ItemStruct.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Character/PlayerCharacter.h"
@@ -164,7 +164,7 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 				FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
 				UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
 
-				FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
+				FConsumeEffectStruct* Row = EffectTable->FindRow<FConsumeEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
 				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
 				if (Row)
 				{
