@@ -853,7 +853,7 @@ void APlayerCharacter::WhenGetOntheVehicleUnequippedWeapon()
 			GetEquippedComponent()->SetCurrentWeapon(nullptr);
 			Server_SetAnimLayer(nullptr); //애님레이어 교체 nullptr시 unarmed기본설정되어있음
 			Client_InputMappingContextRemove(CachedInputMappingContext);
-			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag); //테그 삭제
+			UBaseFunctionLibrary::RemoveGameplayTagFromActor(this, WeaponData.WeaponTag, true); //테그 삭제
 			TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->
 				GetGrantedAbilitySpecHandles(); //어빌리티 삭제
 			BaseAbilitySystemComponent->RemoveGrantedPlayerWeaponAbilities(CachedAbilitySpecHandle); //어빌리티 삭제

@@ -17,21 +17,32 @@ UBaseAbilitySystemComponent* UBaseFunctionLibrary::NativeGetBaseAbilitySystemCom
 	return CastChecked<UBaseAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Actor));
 }
 
-void UBaseFunctionLibrary::AddGameplayTagToActor(AActor* Actor, FGameplayTag Tag)
+void UBaseFunctionLibrary::AddGameplayTagToActor(AActor* Actor, FGameplayTag Tag, bool bShouldReplicate)
 {
 	UBaseAbilitySystemComponent* ASC = NativeGetBaseAbilitySystemComponentFromActor(Actor);
 	if (!ASC->HasMatchingGameplayTag(Tag))
 	{
 		ASC->AddLooseGameplayTag(Tag);
+
+		if (bShouldReplicate)
+		{
+			ASC->AddReplicatedLooseGameplayTag(Tag);
+		}
+	
 	}
 }
 
-void UBaseFunctionLibrary::RemoveGameplayTagFromActor(AActor* Actor, FGameplayTag Tag)
+void UBaseFunctionLibrary::RemoveGameplayTagFromActor(AActor* Actor, FGameplayTag Tag, bool bShouldReplicate)
 {
 	UBaseAbilitySystemComponent* ASC = NativeGetBaseAbilitySystemComponentFromActor(Actor);
 	if (ASC->HasMatchingGameplayTag(Tag))
 	{
 		ASC->RemoveLooseGameplayTag(Tag);
+
+		if (bShouldReplicate)
+		{
+			ASC->RemoveReplicatedLooseGameplayTag(Tag);
+		}
 	}
 }
 
