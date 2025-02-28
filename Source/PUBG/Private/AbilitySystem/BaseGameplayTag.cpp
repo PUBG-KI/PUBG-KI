@@ -105,5 +105,5 @@ namespace BaseGameplayTag
 	
 	// Data Tag
 	UE_DEFINE_GAMEPLAY_TAG(Data_Damage, "Data.Damage");
-
+	UE_DEFINE_GAMEPLAY_TAG(Effect_HealthRegen, "Effect.HealthRegen");
 }

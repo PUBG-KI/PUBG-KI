@@ -106,6 +106,7 @@ namespace BaseGameplayTag
 
 	// Data Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Effect_HealthRegen);
 
 	
 }

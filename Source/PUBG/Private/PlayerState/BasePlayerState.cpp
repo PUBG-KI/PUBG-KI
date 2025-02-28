@@ -114,6 +114,11 @@ float ABasePlayerState::GetRank() const
 	return AttributeSetBase->GetRank();
 }
 
+void ABasePlayerState::SetRank(float Rank) const
+{
+	AttributeSetBase->SetRank(Rank);
+}
+
 bool ABasePlayerState::HasDeadTag() const
 {
 	return AbilitySystemComponent->HasMatchingGameplayTag(DeadTag);
@@ -137,20 +142,23 @@ void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
 		if (Player)
-		{
-			
+		{			
 			Player->Die();
 			
 			if (HasAuthority())
-			{
-				if (AbilitySystemComponent)
-				{
-					AbilitySystemComponent->CancelAllAbilities();
-					AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
-				}
+			{				
+				ABaseGameState* GS = Cast<ABaseGameState>(GetWorld()->GetGameState());				
+
+				AbilitySystemComponent->CancelAllAbilities();
+				AbilitySystemComponent->ResetAbilitySystem();
+				AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
 				
-				ABaseGameState* GS = Cast<ABaseGameState>(GetWorld()->GetGameState());
-				GS->UpdatePlayerCount();
+				Player->SetRank(GS->CurrentPlayerCount);
+
+				if (GS)
+				{
+					GS->UpdatePlayerCount();			
+				}
 			}
 		}
 	}	
@@ -205,5 +213,5 @@ void ABasePlayerState::RankChanged(const FOnAttributeChangeData& Data)
 	if (PC && PC->IsLocalController())
 	{
 		PC->ShowResultWidget(Rank);
-	}
+	}	
 }

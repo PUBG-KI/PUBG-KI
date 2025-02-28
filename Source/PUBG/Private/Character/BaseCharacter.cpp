@@ -6,6 +6,7 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 
 // 무브먼트
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 
 
@@ -144,49 +145,45 @@ void ABaseCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);	
 }
 
-void ABaseCharacter::InitializeAttributes()
-{
-	if (!BaseAbilitySystemComponent.IsValid())
-	{
-		return;
-	}
 
-	if (!DefaultAttributes)
+void ABaseCharacter::ApplyHealthRegenEffect() const
+{	
+	if (BaseAbilitySystemComponent.Get() && GE_HealthRegen)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s() Missing DefaultAttributes for %s. Please fill in the character's Blueprint."), *FString(__FUNCTION__), *GetName());
-		return;
-	}
-
-	// 서버와 클라이언트에서 실행 가능
-	FGameplayEffectContextHandle EffectContext = BaseAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	FGameplayEffectSpecHandle NewHandle = BaseAbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes, 1, EffectContext);
-	if (NewHandle.IsValid())
-	{
-		FActiveGameplayEffectHandle ActiveGEHandle = BaseAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), BaseAbilitySystemComponent.Get());
+		FGameplayEffectSpecHandle HealthRegenEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_HealthRegen, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
+		if (HealthRegenEffect.IsValid())
+		{			
+			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*HealthRegenEffect.Data.Get());		
+		}
 	}
 }
 
-void ABaseCharacter::AddStartupEffects()
+void ABaseCharacter::RemoveHealthRegenEffect() const
 {
-	if (GetLocalRole() != ROLE_Authority || !BaseAbilitySystemComponent.IsValid() || BaseAbilitySystemComponent->bStartupEffectsApplied)
+	if (BaseAbilitySystemComponent.Get() && GE_HealthRegen)
 	{
-		return;
+		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_HealthRegen, BaseAbilitySystemComponent.Get());
 	}
+}
 
-	FGameplayEffectContextHandle EffectContext = BaseAbilitySystemComponent->MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-
-	for (TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
+void ABaseCharacter::ApplyStaminaDecayEffect() const
+{
+	if (BaseAbilitySystemComponent.Get() && GE_StaminaDecay)
 	{
-		FGameplayEffectSpecHandle NewHandle = BaseAbilitySystemComponent->MakeOutgoingSpec(GameplayEffect, 1, EffectContext);
-		if (NewHandle.IsValid())
+		FGameplayEffectSpecHandle StaminaDecayEffect = BaseAbilitySystemComponent->MakeOutgoingSpec(GE_StaminaDecay, 1.0f, BaseAbilitySystemComponent->MakeEffectContext());
+		if (StaminaDecayEffect.IsValid())
 		{
-			FActiveGameplayEffectHandle ActiveGEHandle = BaseAbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), BaseAbilitySystemComponent.Get());
+			BaseAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*StaminaDecayEffect.Data.Get());
 		}
 	}
-	BaseAbilitySystemComponent->bStartupEffectsApplied = true;
+}
+
+void ABaseCharacter::RemoveStaminaDecayEffect() const
+{
+	if (BaseAbilitySystemComponent.Get() && GE_StaminaDecay)
+	{
+		BaseAbilitySystemComponent->RemoveActiveGameplayEffectBySourceEffect(GE_StaminaDecay, BaseAbilitySystemComponent.Get());
+	}
 }
 
 void ABaseCharacter::SetHealth(float Health)

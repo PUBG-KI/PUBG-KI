@@ -123,10 +123,9 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 			if (!TargetCharacter->IsAlive())
 			{
-				ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));
-				TargetCharacter->SetRank(GS->CurrentPlayerCount);
+				ABaseGameState* GS = Cast<ABaseGameState>(UGameplayStatics::GetGameState(GetWorld()));				
 				SourceCharacter->SetKillCount(SourceCharacter->GetKillCount() + 1.0f);
-				UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
+				//UE_LOG(LogTemp, Warning, TEXT("%s() %s is NOT alive when receiving damage"), TEXT(__FUNCTION__), *TargetCharacter->GetName());
 			}
 			
 			if (TargetCharacter && WasAlive)
@@ -155,7 +154,22 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	else if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
 	{
 		// 체력 변화를 처리합니다.
-		SetStamina(FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina()));
+		float NewStamina = FMath::Clamp(GetStamina(), 0.0f, GetMaxStamina());
+		
+		if (NewStamina > 0.0f)
+		{
+			SetHealthRegenRate(3.0f);
+			TargetCharacter->ApplyHealthRegenEffect();
+			TargetCharacter->ApplyStaminaDecayEffect();
+		}
+		else
+		{
+			SetHealthRegenRate(0.0f);
+			TargetCharacter->RemoveHealthRegenEffect();
+			TargetCharacter->RemoveStaminaDecayEffect();
+		}
+		
+		SetStamina(NewStamina);
 	}
 	else if (Data.EvaluatedData.Attribute == GetMagazineAttribute())
 	{

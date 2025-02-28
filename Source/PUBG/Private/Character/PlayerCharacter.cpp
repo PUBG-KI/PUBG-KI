@@ -594,6 +594,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		check(Subsystem);
 		Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 	}
+	
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
 	if (PS && !FirstAttribute)
 	{
@@ -619,17 +620,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		{
 			PC->CreateHUD();
 		}
-
-		// 나중에 플레이어의 연결을 끊었다가 다시 합류하는 것을 처리하는 경우 다시 합류로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
-		// 지금은 소유 = 생성/재생이라고 가정합니다.
-		//InitializeAttributes();
-
-		// 리스폰 관련 특정 작업을 종료합니다.
-		//AddStartupEffects();
-
-		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
-		SetHealth(GetMaxHealth());
-		SetStamina(0);
+		
 		FirstAttribute = true;
 	}
 }
@@ -912,33 +903,16 @@ void APlayerCharacter::OnRep_PlayerState()
 
 		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
 		BaseAttributeSet = PS->GetAttributeSetBase();
-
-		// 플레이어 입력을 AbilitySystemComponent에 바인딩합니다. 잠재적인 경쟁 조건으로 인해 SetupPlayerInputComponent에서도 호출됩니다.
-		//BindASCInput();
-
-
-		// 나중에 플레이어 연결 끊김과 재참여를 처리하는 경우 재참여로 인한 소유권이 속성을 재설정하지 않도록 이를 변경해야 합니다.
-		// 지금은 소유 = 생성/재생이라고 가정합니다.
-		//InitializeAttributes();
-
+		
 		ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
 		if (PC)
 		{
 			PC->CreateHUD();
 		}
-		//
-		// // Simulated on proxies don't have their PlayerStates yet when BeginPlay is called so we call it again here
-		// InitializeFloatingStatusBar();
-		//
-		//
-		// // Respawn specific things that won't affect first possession.
-		//
-		// // Forcibly set the DeadTag count to 0
-		// AbilitySystemComponent->SetTagMapCount(DeadTag, 0);
 
 		// 체력/마나/스태미나를 최대치로 설정합니다. 이는 *Respawn*에만 필요합니다.
-		SetHealth(GetMaxHealth());
-		SetStamina(0);
+		//SetHealth(GetMaxHealth());
+		//SetStamina(GetMaxStamina());
 	}
 }
 
