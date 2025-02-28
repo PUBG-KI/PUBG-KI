@@ -161,17 +161,43 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 			
 			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
 			{
-				FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
-				UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
+				// 카테고리로 다시 분류
+				int32 Category = static_cast<int32>(ItemCategory);
 
-				FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
-				// RowName을 가져올 수 있으면 사용할 수 있는 아이템
-				if (Row)
+				if (Category == 10 || Category == 11) // 힐, 부스터
 				{
-					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
+					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10 or Category == 11"));
 
-					InventoryComponent->RemoveFromInventory(Index, true);
+					//InventoryComponent->RemoveFromInventory(Index, true);
 				}
+				else if (Category == 12) // 파츠
+				{
+					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 12"));
+
+					FItemSlotStruct ItemSlot;
+					ItemSlot.Quantity = Quantity;
+					ItemSlot.ItemName = ItemName;
+					ItemSlot.ItemCategory = ItemCategory;
+
+					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(NearComponent->GetOwner());
+					EquippedComponent = PlayerCharacter->GetEquippedComponent();
+
+					EquippedComponent->ServerEquipParts();
+					
+					//InventoryComponent->RemoveFromInventory(Index, true);
+				}
+				
+				// FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
+				// UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
+				//
+				// FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
+				// // RowName을 가져올 수 있으면 사용할 수 있는 아이템
+				// if (Row)
+				// {
+				// 	UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
+				//
+				// 	InventoryComponent->RemoveFromInventory(Index, true);
+				// }
 			}
 			else if (NearComponent)
 			{

@@ -13,6 +13,7 @@
 #include "Item/WeaponItem.h"
 #include "Item/Armor/Armor_Base.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Weapon/DataTable/DT_PartsData.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 // Sets default values for this component's properties
@@ -118,8 +119,7 @@ void UEquippedComponent::OnRep_EquippedItems()
 				));
 
 				EquippingWeaponUpdate(EquippedItems[i], LoadedRTSlot3);
-
-
+				
 				// EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRTSlot3;
 				// EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
 				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
@@ -165,10 +165,7 @@ void UEquippedComponent::EquipItem(AItemBase* Item)
 		
 	AEquipableItem* EquipableItem = GetWorld()->SpawnActor<AEquipableItem>(Row->BP_Item.Get());
 	
-
 	
-	
-
 }
 
 int32 UEquippedComponent::FindSlotMainWeapon()
@@ -658,6 +655,142 @@ void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Ba
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load blueprint class! Check the path: /Game/Blueprint/Item/Farming/TestWeaponItem.TestWeaponItem_C"));
 	}
+}
+
+void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
+{
+	if (PartsItem != nullptr) // F로 장착
+	{
+		
+	}
+	else if (Index != -1) // UI로 장착 
+	{
+		// FItemSlot이 들어오면 이름으로 데이터 테이블 접근 후
+		
+	}
+	else if (ItemSlot != nullptr)
+	{
+		FName Name = ItemSlot->ItemName;
+		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(Name, TEXT("UEquippedComponent::ServerEquipParts Fail Row"));
+		if (Row)
+		{
+			TArray<int32> EquippedGunIndex = GetEquippedGunIndex(); // 현재 장착된 무기 인덱스 반환
+
+			if (EquippedGunIndex.Num() > 0)
+			{
+				TArray<int32> CompatibleWeapon = CheckEquippedWeaponCompatibleParts(Name, EquippedGunIndex); // 현재 장착 중인 무기에 파츠를 낄 수 있는지
+
+				if (CompatibleWeapon.Num() > 0) // 파츠 장착이 가능한 무기가 있다는 것 
+				{
+					//FName PartsName = FName(*(Name.ToString() + "_" + );  
+					// 우선 순위를 결정
+					// 1. 빈 칸인지 (다 빈 칸이면 손에 들고 있는 무기 > 1번 슬롯 부터)
+
+					FString PartsDataTablePath = "/Game/Blueprint/Weapon/Datatable/DT_PartsData.DT_PartsData";
+					UDataTable* PartsDT = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *PartsDataTablePath));
+					
+					for (int i=0; i<CompatibleWeapon.Num(); i++)
+					{
+						if (PartsDT)
+						{
+							AGun_Base* Gun = Cast<AGun_Base>(EquippedItems[CompatibleWeapon[i]]);
+							if (Gun)
+							{
+								FString PartsString = Name.ToString() + "_" + Gun->GetWeaponDataAsset().GunName;
+								FName PartsName = FName(*PartsString);
+								FPartsData* PartsDataRow = PartsDT->FindRow<FPartsData>(PartsName, TEXT("Parts"));
+
+								if (Row)
+								{
+									if (Gun->EquipParts(*PartsDataRow))
+									{
+										break;
+									}
+									else
+									{
+										
+									}
+								}
+							}
+						}
+					}
+					// 2. 다 파츠가 장착되어 있으면 (손에 들고 있는 무기 > 1번 슬롯 부터)
+				}
+			}
+			
+		}
+	}
+	
+}
+
+TArray<EGunType> UEquippedComponent::GetCompatibleWeaponType(FName Name) const
+{
+	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(Name, TEXT("Find Row"));
+	
+	TArray<EGunType> CompatibleWeaponType;
+	if (Row->CompatibleWeaponPartsTypeStruct.Pistol) CompatibleWeaponType.Add(EGunType::Pistol);
+	if (Row->CompatibleWeaponPartsTypeStruct.AR) CompatibleWeaponType.Add(EGunType::AR);
+	if (Row->CompatibleWeaponPartsTypeStruct.SG) CompatibleWeaponType.Add(EGunType::SG);
+	if (Row->CompatibleWeaponPartsTypeStruct.SR) CompatibleWeaponType.Add(EGunType::SR);
+	if (Row->CompatibleWeaponPartsTypeStruct.DMR) CompatibleWeaponType.Add(EGunType::DMR);
+	if (Row->CompatibleWeaponPartsTypeStruct.SMG) CompatibleWeaponType.Add(EGunType::SMG);
+	
+	return CompatibleWeaponType;
+}
+
+bool UEquippedComponent::IsCompatibleWeaponParts(FName Name, AGun_Base* Gun)
+{
+	TArray<EGunType> GunTypes = GetCompatibleWeaponType(Name);
+
+	for (int i = 0; i<GunTypes.Num(); i++)
+	{
+		if (Gun->GetWeaponDataAsset().Type == GunTypes[i])
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+TArray<int32> UEquippedComponent::CheckEquippedWeaponCompatibleParts(FName Name, TArray<int32> EquippedGunIndex)
+{
+	TArray<int32> EquippedWeaponParts;
+
+	TArray<EGunType> GunTypes = GetCompatibleWeaponType(Name);
+
+	for (int i= 0; i<EquippedGunIndex.Num(); i++)
+	{
+		AGun_Base* Gun = Cast<AGun_Base>(EquippedItems[EquippedGunIndex[i]]);
+
+		if (Gun)
+		{
+			for (int l = 0; l < GunTypes.Num(); l++)
+			{
+				if (Gun->GetWeaponDataAsset().Type == GunTypes[l])
+				{
+					EquippedWeaponParts.Add(EquippedGunIndex[i]);
+					break;
+				}
+			}
+		}
+	}
+
+	return EquippedWeaponParts;
+}
+
+TArray<int32> UEquippedComponent::GetEquippedGunIndex()
+{
+	TArray<int32> EquippedGuns;
+
+	for (int i = 0; i <= 2 ; i++)
+	{
+		if (EquippedItems[i] != nullptr)
+		{
+			EquippedGuns.Add(i);
+		}
+	}
+
+	return EquippedGuns;
 }
 
 int32 UEquippedComponent::GetRowIndex(UDataTable* DataTable, FName TargetRowName)

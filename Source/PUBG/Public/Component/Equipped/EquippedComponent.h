@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseLibrary/DataStruct/ItemSlotStruct.h"
 #include "Components/ActorComponent.h"
 #include "Weapon/Guns/Gun_Base.h"
 #include "EquippedComponent.generated.h"
@@ -108,6 +109,18 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromArmor(AArmor_Base* OutCurrentArmor);
 
+	// 파츠 장착
+	// UFUNCTION(Server, Reliable)
+	void ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
+
+	UFUNCTION()
+	TArray<EGunType> GetCompatibleWeaponType(FName Name) const; 
+	UFUNCTION()
+	bool IsCompatibleWeaponParts(FName Name, AGun_Base* Gun); // 그 무기에 파츠를 장착할 수 있는지 
+	UFUNCTION()
+	TArray<int32> CheckEquippedWeaponCompatibleParts(FName Name, TArray<int32> EquippedGunIndex); // 그 무기에 파츠를 장착할 수 있는지 
+	UFUNCTION()
+	TArray<int32> GetEquippedGunIndex();
 	
 	// 데이터 테이블 행 인덱스 가져오기
 	int32 GetRowIndex(UDataTable* DataTable, FName TargetRowName);

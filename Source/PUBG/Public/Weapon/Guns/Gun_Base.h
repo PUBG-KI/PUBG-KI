@@ -8,6 +8,7 @@
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Gun_Base.generated.h"
 
+struct FPartsData;
 /**
  * 
  */
@@ -88,8 +89,27 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Mag")
 	void Server_SetBulletArom(float Armo);
 
-	// 이준수
+// 이준수 ================================
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
-	UDataTable* WeaponDataTable;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "Mag")
+	UDataTable* WeaponDataTable;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Replicated)
+	TArray<FName> PartsSlot;
+
+public:
+	// Getter
+	UFUNCTION()
+	TArray<FName> GetPartsSlot() { return PartsSlot; } 
+	
+	UFUNCTION()
+	TArray<EPartsCategory> GetInstalledParts() const; // 현재 무기에 무착할 수 있는 파츠 종류들 
+	UFUNCTION()
+	bool IsEquipParts(EPartsCategory PartsCategory); // 파츠가 들어왔을 때 장착할 수 있는지
+	UFUNCTION()
+	bool EquipParts(FPartsData& PartsData);
+
+	// =====================================
 };

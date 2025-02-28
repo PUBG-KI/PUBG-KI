@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DT_Weapon.h"
 #include "Engine/DataTable.h"
 #include "DT_PartsData.generated.h"
 
@@ -25,6 +26,12 @@ struct FPartsData : public FTableRowBase
 	FName GunName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* Image;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPartsCategory PartsCategory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ChangedValues;
 	
 	UPROPERTY(editanywhere, BlueprintReadWrite)
@@ -32,6 +39,7 @@ struct FPartsData : public FTableRowBase
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* Parts_StaticMesh;
+	
 	
 };
 
