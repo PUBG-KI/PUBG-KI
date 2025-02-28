@@ -137,11 +137,12 @@ bool AGun_Base::EquipParts(FPartsData& PartsData)
 	if (IsEquipParts(PartsData.PartsCategory))
 	{
 		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
+		UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
 
 		if (PartsSlot[PartsCategory_int] != NAME_None)
 		{
 			PartsSlot[PartsCategory_int] = PartsName;
-			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = %s"), *PartsString);
+			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
 			return true;
 		}
 	}

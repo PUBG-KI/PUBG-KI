@@ -96,7 +96,7 @@ public:
 	UDataTable* WeaponDataTable;
 
 private:
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, meta = (AllowPrivateAccess = "true"))
 	TArray<FName> PartsSlot;
 
 public:
