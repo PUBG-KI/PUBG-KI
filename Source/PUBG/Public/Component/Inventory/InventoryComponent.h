@@ -106,6 +106,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerAddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
 	UFUNCTION(BlueprintCallable)
 	int32 FindItemSlot(FName ItemID);
 	UFUNCTION(BlueprintCallable)
@@ -145,6 +147,8 @@ public:
 	void PrintMaxInventoryWeight();
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerPrintMaxInventoryWeight();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRemoveAt(int32 Index);
 	
 
 	

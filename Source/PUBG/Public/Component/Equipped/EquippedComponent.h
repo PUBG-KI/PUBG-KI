@@ -111,7 +111,7 @@ public:
 
 	// 파츠 장착
 	// UFUNCTION(Server, Reliable)
-	void ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
+	bool ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
 
 	UFUNCTION()
 	TArray<EGunType> GetCompatibleWeaponType(FName Name) const; 
@@ -131,6 +131,8 @@ public:
 	void PrintEquippedItems();
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void ServerPrintEquippedItems();
+	UFUNCTION(BlueprintCallable)
+	void PrintWeaponParts();
 	// 무기 장착 시 씬캡쳐 컴포넌트 연결
 	void EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT);
 	

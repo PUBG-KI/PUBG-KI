@@ -657,7 +657,7 @@ void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Ba
 	}
 }
 
-void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
+bool UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
 {
 	if (PartsItem != nullptr) // F로 장착
 	{
@@ -668,7 +668,6 @@ void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Index"));
 
 		// FItemSlot이 들어오면 이름으로 데이터 테이블 접근 후
-		
 	}
 	else if (ItemSlot != nullptr)
 	{
@@ -713,16 +712,18 @@ void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 								FString PartsString = Name.ToString() + "_" + Gun->GetWeaponDataAsset().GunName;
 								FName PartsName = FName(*PartsString);
 								FPartsData* PartsDataRow = PartsDT->FindRow<FPartsData>(PartsName, TEXT("Parts"));
-							
+
+								 // 무게, 종류, 이름 스태틱 메쉬
 								if (Row)
 								{
-									if (Gun->EquipParts(*PartsDataRow))
+									if (Gun->EquipParts(*PartsDataRow, Row->Weight, Row->Category))
 									{
-										break;
+										UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Gun->EquipParts = true"));
+										return true;
 									}
 									else
 									{
-										
+										UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Gun->EquipParts = false"));
 									}
 								}
 							}
@@ -731,10 +732,9 @@ void UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 					// 2. 다 파츠가 장착되어 있으면 (손에 들고 있는 무기 > 1번 슬롯 부터)
 				}
 			}
-			
 		}
 	}
-	
+	return false;
 }
 
 TArray<EGunType> UEquippedComponent::GetCompatibleWeaponType(FName Name) const
@@ -945,6 +945,22 @@ void UEquippedComponent::ServerPrintEquippedItems_Implementation()
 			}
 		}
 		
+	}
+}
+
+void UEquippedComponent::PrintWeaponParts()
+{
+	for (int i=0; i<=2; i++)
+	{
+		if (EquippedItems[i] != nullptr)
+		{
+			if (AGun_Base* Gun = Cast<AGun_Base>(EquippedItems[i]))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::PrintWeaponParts() = EquippedItems[%d]"), i);
+				Gun->PrintPartsSlot();
+				Gun->ServerPrintPartsSlot();
+			}
+		}
 	}
 }
 

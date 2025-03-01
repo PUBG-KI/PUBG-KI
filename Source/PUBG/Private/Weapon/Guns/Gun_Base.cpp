@@ -128,7 +128,7 @@ bool AGun_Base::IsEquipParts(EPartsCategory PartsCategory)
 	return false;
 }
 
-bool AGun_Base::EquipParts(FPartsData& PartsData)
+bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory ItemCategory)
 {
 
 	FString PartsString = PartsData.TypeName.ToString() + "_" + WeaponDataAsset.GunName;
@@ -139,14 +139,66 @@ bool AGun_Base::EquipParts(FPartsData& PartsData)
 		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
 		UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
 
-		if (PartsSlot[PartsCategory_int] != NAME_None)
+		if (WeaponParts[PartsCategory_int].PartsName == NAME_None)
 		{
-			PartsSlot[PartsCategory_int] = PartsName;
+			WeaponParts[PartsCategory_int].PartsName = PartsName;
+			WeaponParts[PartsCategory_int].ItemCategory = ItemCategory;
+			WeaponParts[PartsCategory_int].Weight = Weight;
+			WeaponParts[PartsCategory_int].StaticMesh = PartsData.Parts_StaticMesh;
+			
 			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
+			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
 			return true;
 		}
+		
+		// if (PartsSlot[PartsCategory_int] == NAME_None)
+		// {
+		// 	PartsSlot[PartsCategory_int] = PartsName;
+		// 	UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
+		// 	return true;
+		// }
 	}
 	return false;
+}
+
+void AGun_Base::PrintPartsSlot()
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintPartsSlot"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintPartsSlot"));
+	}
+
+	for (int32 i = 0; i < WeaponParts.Num(); i++)
+	{
+		if (WeaponParts[i].PartsName != NAME_None)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
+		}
+	}
+}
+
+void AGun_Base::ServerPrintPartsSlot_Implementation()
+{
+	if (HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintPartsSlot_Implementation"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ServerPrintPartsSlot_Implementation"));
+	}
+
+	for (int32 i = 0; i < PartsSlot.Num(); i++)
+	{
+		if (WeaponParts[i].PartsName != NAME_None)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
+		}
+	}
 }
 
 void AGun_Base::Server_SetBulletArom_Implementation(float Armo)

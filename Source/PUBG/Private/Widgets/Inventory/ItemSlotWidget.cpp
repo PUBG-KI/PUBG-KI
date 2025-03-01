@@ -142,7 +142,7 @@ void UItemSlotWidget::OnButton_ItemSlotUnHovered()
 FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
-
+	
 	if (ItemName == NAME_None)
 	{
 		return FReply::Unhandled();
@@ -181,7 +181,13 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(InventoryComponent->GetOwner());
 					EquippedComponent = PlayerCharacter->GetEquippedComponent();
 
-					EquippedComponent->ServerEquipParts(nullptr, -1, &ItemSlot);
+					if (EquippedComponent->ServerEquipParts(nullptr, -1, &ItemSlot))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : true"));
+						UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : GetContent[%d]"), Index);
+
+						InventoryComponent->ServerRemoveAt(Index);
+					}
 					
 					//InventoryComponent->RemoveFromInventory(Index, true);
 				}

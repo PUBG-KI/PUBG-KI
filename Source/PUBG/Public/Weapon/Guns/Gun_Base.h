@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseLibrary/DataStruct/WeaponPartsStruct.h"
 #include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon_Base.h"
 #include "Weapon/DataTable/DT_Weapon.h"
@@ -98,18 +99,26 @@ public:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, meta = (AllowPrivateAccess = "true"))
 	TArray<FName> PartsSlot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, meta = (AllowPrivateAccess = "true"))
+	TArray<FWeaponPartsStruct> WeaponParts;
 
 public:
 	// Getter
 	UFUNCTION()
 	TArray<FName> GetPartsSlot() { return PartsSlot; } 
+	UFUNCTION()
+	TArray<FWeaponPartsStruct>& GetWeaponParts() { return WeaponParts; }
 	
 	UFUNCTION()
 	TArray<EPartsCategory> GetInstalledParts() const; // 현재 무기에 무착할 수 있는 파츠 종류들 
 	UFUNCTION()
 	bool IsEquipParts(EPartsCategory PartsCategory); // 파츠가 들어왔을 때 장착할 수 있는지
 	UFUNCTION()
-	bool EquipParts(FPartsData& PartsData);
+	bool EquipParts(FPartsData& PartsData, float Weight, EItemCategory ItemCategory);
 
+	UFUNCTION(BlueprintCallable)
+	void PrintPartsSlot();
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerPrintPartsSlot();
 	// =====================================
 };

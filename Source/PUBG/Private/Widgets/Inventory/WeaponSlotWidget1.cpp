@@ -7,12 +7,13 @@
 #include "Components/SizeBox.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Weapon/Guns/Gun_Base.h"
+#include "Widgets/Inventory/WeaponPartsSlot.h"
 
 FReply UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown(const FGeometry& InGeometry,
-	const FPointerEvent& InMouseEvent)
+                                                          const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnPreviewMouseButtonDown(InGeometry, InMouseEvent);
-
+	
 	UE_LOG(LogTemp, Warning, TEXT("UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown1"));
 
 	
@@ -22,7 +23,7 @@ FReply UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown(const FGeometry& InGeo
 		
 		if (!EquippedComponent)
 		{
-			return FReply::Handled();
+			return FReply::Unhandled();
 		}
 		
 		if (WeaponIndex == 0 || WeaponIndex == 1)
@@ -39,7 +40,16 @@ FReply UWeaponSlotWidget1::NativeOnPreviewMouseButtonDown(const FGeometry& InGeo
 		}
 	}
 
-	return FReply::Handled();
+	return FReply::Unhandled();
+}
+
+void UWeaponSlotWidget1::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+
+	WBP_WeaponPartsSlot_Sight->SetPartsIndex(1);
+	WBP_WeaponPartsSlot_Magazine->SetPartsIndex(2); 
+	WBP_WeaponPartsSlot_Barrel->SetPartsIndex(3);
 }
 
 FString UWeaponSlotWidget1::SetBulletTypeTextBlock(EBulletType OutEBulletType)

@@ -126,5 +126,6 @@ public:
 	// 장착된 총 UI 업데이트
 	UWeaponSlotWidget* EquippedWeaponUIUpdate(UWeaponSlotWidget* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex);
 	UWeaponSlotWidget1* EquippedWeaponUIUpdate(UWeaponSlotWidget1* OutWeaponSlotWidget, AGun_Base* OutGunBase, int32 OutIndex);
+	UWeaponSlotWidget1* PartsUIUpdate(UDataTable* PartsDT, UWeaponSlotWidget1* OutWeaponSlotWidget, AGun_Base* OutGunBase);
 };
 

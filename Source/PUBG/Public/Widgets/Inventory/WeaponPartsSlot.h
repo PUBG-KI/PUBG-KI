@@ -6,6 +6,8 @@
 #include "Widgets/WidgetBase.h"
 #include "WeaponPartsSlot.generated.h"
 
+class UInventoryComponent;
+class AGun_Base;
 class UButton;
 class UImage;
 /**
@@ -16,7 +18,12 @@ class PUBG_API UWeaponPartsSlot : public UWidgetBase
 {
 	GENERATED_BODY()
 public:
-	virtual void NativeConstruct() override;
+	virtual void NativeOnInitialized() override;
+
+	//virtual FReply NativeOnPreviewMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent ) override;
+	virtual FReply NativeOnMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent );
+
+
 	
 private:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
@@ -33,6 +40,14 @@ private:
 	UImage* Image_Parts;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UImage* Image_Equipable;
+
+	// Variable
+	UPROPERTY()
+	int32 PartsIndex;
+	UPROPERTY()
+	AGun_Base* Gun;
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
 
 public:
 	// Getter Functions
@@ -54,6 +69,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UImage* GetImageParts() const { return Image_Parts; }
 
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	int32 GetPartsIndex() const { return PartsIndex; }
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	AGun_Base* GetGun() const { return Gun; }
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	
 	// Setter Functions
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetButtonParts(UButton* NewButton) { Button_Parts = NewButton; }
@@ -72,5 +96,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void SetImageParts(UImage* NewImage) { Image_Parts = NewImage; }
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetPartsIndex(int32 NewIndex) { PartsIndex = NewIndex; }
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetGun(AGun_Base* NewGun) { Gun = NewGun;}
 	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void SetInventoryComponent(UInventoryComponent* NewInventory) { InventoryComponent = NewInventory; }
 };

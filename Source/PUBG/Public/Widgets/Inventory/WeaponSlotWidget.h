@@ -64,6 +64,9 @@ private:
 	UImage* Image_CantedSight;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	UImage* Image_Stock;
+
+	
+
 	
 
 public:

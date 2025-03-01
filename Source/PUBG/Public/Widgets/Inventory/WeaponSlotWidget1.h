@@ -24,7 +24,8 @@ class PUBG_API UWeaponSlotWidget1 : public UWidgetBase
 public:
 	virtual FReply NativeOnPreviewMouseButtonDown( const FGeometry& InGeometry, const FPointerEvent& InMouseEvent ) override;
 	
-	
+	virtual void NativeOnInitialized() override;
+
 private:
 	// Widget Variable
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))

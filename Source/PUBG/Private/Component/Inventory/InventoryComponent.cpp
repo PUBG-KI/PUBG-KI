@@ -189,6 +189,13 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 	return RemainingQuantity;
 }
 
+void UInventoryComponent::ServerAddToInventory_Implementation(FName ItemID, int32 Quantity, int32 Weight,
+	EItemCategory ItemCategory)
+{
+	AddToInventory( ItemID,  Quantity,  Weight,  ItemCategory);
+}
+
+
 int32 UInventoryComponent::FindItemSlot(FName ItemID)
 {
 	// 아이템이 이미 있는지 확인 함수
@@ -436,6 +443,11 @@ void UInventoryComponent::PrintMaxInventoryWeight()
 
 }
 
+void UInventoryComponent::ServerRemoveAt_Implementation(int32 Index)
+{
+	Content.RemoveAt(Index);
+}
+
 void UInventoryComponent::ServerPrintMaxInventoryWeight_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%f"), MaxInventoryWeight);
@@ -551,6 +563,7 @@ void UInventoryComponent::OnRep_Content()
 			{
 				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
 				PlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
+				PlayerController->GetInventoryWidget()->UpdateEquippedWidget();
 				UE_LOG(LogTemp, Warning, TEXT("OnRep_Content : Widget Update!"));
 			}
 		}
