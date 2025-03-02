@@ -17,12 +17,15 @@ class PUBG_API AGrenade_Base : public AWeapon_Base
 
 public:
 	AGrenade_Base();
-
+	
 	virtual void BeginPlay() override;
+
+	void SetHitCollisionActivate();
+	void SetHitCollisionDeActivate();
 	
 private:
-	UPROPERTY(EditAnywhere)
-	USkeletalMeshComponent* GrenadeMeshComponent;
+	UPROPERTY()
+	FTimerHandle CollisionSettingTimerHandle;
 
 	UPROPERTY(EditAnywhere)
 	USphereComponent* GrenadeSphereCollision;

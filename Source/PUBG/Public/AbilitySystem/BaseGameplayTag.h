@@ -78,6 +78,7 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_ReloadEnd);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_HideMag);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_VisibleMag);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Throw);
 
 	// Hit Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Hit);
@@ -97,12 +98,16 @@ namespace BaseGameplayTag
 	
 	
 	
-	
+	// state
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Prone);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Stand);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Crouch);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Dead);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_Zoom);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_State_ThrowsReady);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Turn);
+	
+	
 
 	// Data Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage);

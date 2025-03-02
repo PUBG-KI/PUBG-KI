@@ -7,18 +7,13 @@
 
 AGrenade_Base::AGrenade_Base()
 {
-	GrenadeMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("GrenadeMeshComponent");
-	GrenadeMeshComponent->SetupAttachment(RootComponent);
-
 	// 물리 활성화
-	GrenadeMeshComponent->SetSimulatePhysics(true);
+	//WeaponSkeletalMeshComponent->SetSimulatePhysics(true);
 
-	//GrenadeSphereCollision->CreateDefaultSubobject<USphereComponent>("GrenadeSphereCollision");
-	//GrenadeSphereCollision->SetupAttachment(GrenadeMeshComponent);
-	//GrenadeSphereCollision->Deactivate();
-	//GrenadeSphereCollision->SetSphereRadius(220.0f);
-
-	
+	GrenadeSphereCollision = CreateDefaultSubobject<USphereComponent>("GrenadeSphereCollision");
+	GrenadeSphereCollision->SetupAttachment(WeaponSkeletalMeshComponent, FName("CollisionSocket"));
+	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GrenadeSphereCollision->SetSphereRadius(260.0f);
 }
 
 void AGrenade_Base::BeginPlay()
@@ -28,12 +23,28 @@ void AGrenade_Base::BeginPlay()
 	GrenadeSphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AGrenade_Base::OnComponentBeginOverlap);
 }
 
+// 활성화
+void AGrenade_Base::SetHitCollisionActivate()
+{
+	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetWorld()->GetTimerManager().SetTimer(CollisionSettingTimerHandle, this, &AGrenade_Base::SetHitCollisionDeActivate, 0.1f, false);
+}
+
+// 비활성화
+void AGrenade_Base::SetHitCollisionDeActivate()
+{
+	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+
+// 피격시 
 void AGrenade_Base::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(OtherActor->GetInstigatorController()))
 	{
-		//PlayerController->HitEventServer()
+		UE_LOG(LogTemp, Warning, TEXT("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"));
 	}
 	
 }
