@@ -19,7 +19,7 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 		DeActivateCamera->SetActive(false);
 		ActivateCamera->SetActive(true);
 		
-	//	ActivateCamera->bUsePawnControlRotation = false;
+		//ActivateCamera->bUsePawnControlRotation = false;
 		Movementcomponent->bUseControllerDesiredRotation = true;
 
 		GetPlayerCharacterFromActorInfo()->IsZoom = true;

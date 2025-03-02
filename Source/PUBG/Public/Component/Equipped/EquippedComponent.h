@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseLibrary/DataStruct/ItemSlotStruct.h"
 #include "Components/ActorComponent.h"
+#include "Weapon/Grenade/Grenade_Base.h"
 #include "Weapon/Guns/Gun_Base.h"
 #include "EquippedComponent.generated.h"
 
@@ -178,8 +179,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetMeleeSlot() const { return Cast<AWeapon_Base>(EquippedItems[3]); }
 
+	// UFUNCTION(BlueprintCallable)
+	// AWeapon_Base* GetThrowableSlot() const { return Cast<AWeapon_Base>(EquippedItems[4]); }
+	
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetThrowableSlot() const { return Cast<AWeapon_Base>(EquippedItems[4]); }
+	AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
 
 	// setter
 	UFUNCTION(BlueprintCallable)
@@ -218,6 +222,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	AGun_Base* GetPistol_GunBase() const { return Cast<AGun_Base>(SideArmSlot);}
+
+	UFUNCTION(BlueprintCallable)
+	AGrenade_Base* GetThrow_GrenadeBase() const { return Cast<AGrenade_Base>(ThrowableSlot);}
 };
 
 

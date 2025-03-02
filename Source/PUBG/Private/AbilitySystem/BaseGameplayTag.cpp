@@ -81,12 +81,15 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_ReloadEnd, "Player.Event.Action.ReloadEnd");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_HideMag, "Player.Event.Action.HideMag");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_VisibleMag, "Player.Event.Action.VisibleMag");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Throw, "Player.Event.Action.Throw");
 
 	// player Event Tag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Prone, "Player.State.Prone");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Stand, "Player.State.Stand");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Crouch, "Player.State.Crouch");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Dead, "Player.State.Dead");
+	UE_DEFINE_GAMEPLAY_TAG(Player_State_Zoom, "Player.State.Zoom");
+	UE_DEFINE_GAMEPLAY_TAG(Player_State_ThrowsReady, "Player.State.ThrowsReady");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Turn, "Player.Ability.Turn");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Swim, "Player.State.Swim");
 	
