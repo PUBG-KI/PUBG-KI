@@ -186,6 +186,7 @@ int32 UInventoryComponent::AddToInventory(FName ItemID, int32 Quantity, int32 We
 	
 	UE_LOG(LogTemp, Warning, TEXT("CurrentRemainingQuantity : %d"), RemainingQuantity);
 	UE_LOG(LogTemp, Warning, TEXT("CurrentInventoryWeight : %f"), CurrentInventoryWeight);
+	//OnRep_Content();
 	return RemainingQuantity;
 }
 
@@ -193,6 +194,8 @@ void UInventoryComponent::ServerAddToInventory_Implementation(FName ItemID, int3
 	EItemCategory ItemCategory)
 {
 	AddToInventory( ItemID,  Quantity,  Weight,  ItemCategory);
+
+	//OnRep_Content();
 }
 
 
@@ -520,6 +523,15 @@ void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
 		}
 	case 4: // Helmet
 		{
+			UItemDataComponent* ItemDataComponent = InItem->GetItemDataComponent();
+			ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
+
+			AActor* Owner = GetOwner();
+			if (APlayerCharacter* Character = Cast<APlayerCharacter>(Owner))
+			{
+				ItemDataComponent->InteractWith(Character);
+			}
+			break;
 			break;
 		}
 	case 5: // Bag

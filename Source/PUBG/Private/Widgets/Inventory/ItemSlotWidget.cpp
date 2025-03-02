@@ -191,18 +191,33 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					
 					//InventoryComponent->RemoveFromInventory(Index, true);
 				}
-				
-				// FString EffectTablePath= "/Game/Datatables/ItemEffect/BoosterEffect/DT_BoosterEffect.DT_BoosterEffect";
-				// UDataTable* EffectTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *EffectTablePath));
-				//
-				// FBoosterEffectStruct* Row = EffectTable->FindRow<FBoosterEffectStruct>(ItemName, TEXT("Fail BoosterEffect"));
-				// // RowName을 가져올 수 있으면 사용할 수 있는 아이템
-				// if (Row)
-				// {
-				// 	UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : Row"));
-				//
-				// 	InventoryComponent->RemoveFromInventory(Index, true);
-				// }
+				else if (Category == 4)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 12"));
+
+					FItemSlotStruct ItemSlot;
+					ItemSlot.Quantity = Quantity;
+					ItemSlot.ItemName = ItemName;
+					ItemSlot.ItemCategory = ItemCategory;
+
+					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(InventoryComponent->GetOwner());
+					EquippedComponent = PlayerCharacter->GetEquippedComponent();
+
+					EquippedComponent->ServerEquipThrow(nullptr, &ItemSlot);
+					
+					UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : true"));
+					UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : GetContent[%d]"), Index);
+
+					if (InventoryComponent->GetContent()[Index].Quantity >1)
+					{
+						InventoryComponent->GetContent()[Index].Quantity -= 1;
+					}
+					else if (InventoryComponent->GetContent()[Index].Quantity  == 1)
+					{
+						InventoryComponent->ServerRemoveAt(Index);
+					}
+					
+				}
 			}
 			else if (NearComponent)
 			{

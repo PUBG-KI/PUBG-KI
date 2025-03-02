@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GrandeSlotWIdget.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Widgets/WidgetBase.h"
 #include "InventoryWidget.generated.h"
@@ -47,6 +48,8 @@ private:
 	UClass* WeaponSlotWidgetBPClass11;
 	UClass* WeaponSlotWidgetBPClass22;
 	UClass* WeaponSlotWidgetBPClass33;
+	UClass* GrenadeSlotWidgetBPClass;
+	
 
 	// Widget Variable
 	UPROPERTY(meta = (BindWidget))
@@ -63,6 +66,8 @@ private:
 	USizeBox* SizeBox_2Slot;
 	UPROPERTY(meta = (BindWidget))
 	USizeBox* SizeBox_3Slot;
+	UPROPERTY(meta = (BindWidget))
+	USizeBox* SizeBox_5Slot;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UArmorSlotWidget* WBP_ArmorSlot_Helmet;
@@ -87,6 +92,8 @@ private:
 	UWeaponSlotWidget1* Weapon22SlotWidget;
 	UPROPERTY(EditAnywhere)
 	UWeaponSlotWidget1* Weapon33SlotWidget;
+	UPROPERTY(EditAnywhere)
+	UGrandeSlotWIdget* GrenadeSlotWidget;
 	
 public:
 	UInventoryWidget(const FObjectInitializer& ObjectInitializer);

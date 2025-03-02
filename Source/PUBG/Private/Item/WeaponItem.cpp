@@ -50,6 +50,10 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 			{
 				EquippedComponent->ServerEquipSubWeapon(InventoryComponent->GetItem());
 			}
+			// else if (ItemCategory == 4) // 수류탄
+			// {
+			// 	EquippedComponent->ServerEquiptThrow(InventoryComponent->GetItem());
+			// }
 		}
 		else
 		{

@@ -152,8 +152,6 @@ void AItemBase::BeginPlay()
 				{
 					UE_LOG(LogTemp, Warning, TEXT("AItemBase::BeginPlay ItemDataComponent None"));
 				}
-		
-			
 			}
 			else
 			{

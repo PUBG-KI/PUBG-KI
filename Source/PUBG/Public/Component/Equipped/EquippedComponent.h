@@ -62,7 +62,8 @@ public:
 	void OnRep_EquippedItems();
 
 	// Getter
-	TArray<AEquipableItem*> GetEquippedItems () { return EquippedItems; }
+	TArray<AEquipableItem*> &GetEquippedItems () { return EquippedItems; }
+	UDataTable* GetItemDataTable() const { return ItemDataTable; }
 	
 	// 1. F를 누르면 아이템이 들어옴
 	// 2. 아이템을 통해 카테고리를 나눔
@@ -110,6 +111,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSpawnStaticMeshFromArmor(AArmor_Base* OutCurrentArmor);
 
+	// 수류탄 장착
+	//UFUNCTION(Server, Reliable)
+	void ServerEquipThrow(AItemBase* Item = nullptr, FItemSlotStruct* ItemSlot = nullptr);
+	
 	// 파츠 장착
 	// UFUNCTION(Server, Reliable)
 	bool ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);

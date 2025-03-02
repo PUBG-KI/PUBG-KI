@@ -45,8 +45,7 @@ FReply UWeaponPartsSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 			UE_LOG(LogTemp, Warning, TEXT("UWeaponPartsSlot::NativeOnMouseButtonDown = GunName %s"), *Gun->GetActorNameOrLabel());
 			
 			
-			Gun->GetWeaponParts()[PartsIndex].PartsName = NAME_None;
-			Gun->GetWeaponParts()[PartsIndex].StaticMesh = nullptr;
+ 			Gun->GetWeaponParts()[PartsIndex].StaticMesh = nullptr;
 			 
 			InventoryComponent->ServerAddToInventory(NewPartsName, 1, Weight, Category);
 		}

@@ -39,6 +39,8 @@ UInventoryWidget::UInventoryWidget(const FObjectInitializer& ObjectInitializer) 
 	WeaponSlotWidgetBPClass11 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot11.WBP_WeaponSlot11_C"));
 	WeaponSlotWidgetBPClass22 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot22.WBP_WeaponSlot22_C"));
 	WeaponSlotWidgetBPClass33 = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_WeaponSlot33.WBP_WeaponSlot33_C"));
+	GrenadeSlotWidgetBPClass = LoadClass<UUserWidget>(nullptr, TEXT("/Game/Blueprint/Widgets/ItemSlot/WBP_Grande.WBP_Grande_C"));
+	
 	
 	ItemZoneType = EItemZoneType::None;
 
@@ -275,9 +277,41 @@ void UInventoryWidget::UpdateEquippedWidget()
 					PartsUIUpdate(PartsDataTable, Weapon33SlotWidget, Slot1Weapon);
 					SizeBox_3Slot->SetContent(Weapon33SlotWidget);
 					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
-					
 				}
 				break;
+			case 4:
+				UE_LOG(LogTemp, Warning, TEXT("Case 4"));
+				GrenadeSlotWidget = CreateWidget<UGrandeSlotWIdget>(GetWorld(), GrenadeSlotWidgetBPClass);
+				if (GrenadeSlotWidget)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
+					AGrenade_Base* Slot5Grennade = Cast<AGrenade_Base>(EquippedItems[i]); // GunBase로 캐스팅
+
+					FString SlotNumber =  FString::FromInt(i + 1);
+					GrenadeSlotWidget->GetTextSlotNumber()->SetText(FText::FromString(SlotNumber)); // 슬롯 번호 지정
+					GrenadeSlotWidget->GetTextGrenadeName()->SetText(FText::FromString(Slot5Grennade->GetWeaponDataAsset().GunName));
+					GrenadeSlotWidget->GetTextGrenadeName()->SetText(FText::FromString(Slot5Grennade->GetWeaponDataAsset().GunName));
+
+					FName GrenadeName = FName(Slot5Grennade->GetWeaponDataAsset().GunName);
+
+					if (Slot5Grennade->GetItemDataTable())
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Slot5 ItemDataTable"));
+						UE_LOG(LogTemp, Warning, TEXT("Slot5 %s"), *GrenadeName.ToString());
+					}
+					FItemStruct* Row = Slot5Grennade->GetItemDataTable()->FindRow<FItemStruct>(GrenadeName, TEXT("Find Row"));
+
+					GrenadeSlotWidget->GetImageGrenade()->SetBrushFromTexture(Row->Image);
+					GrenadeSlotWidget->SetName(GrenadeName);
+					GrenadeSlotWidget->SetInventoryComponent(InventoryComponent);
+					GrenadeSlotWidget->SetEquippedComponent(EquippedComponent);
+					GrenadeSlotWidget->SetIndex(i);
+
+					SizeBox_5Slot->SetContent(GrenadeSlotWidget);
+					UE_LOG(LogTemp, Warning, TEXT("%d : SetContent"), i);
+					
+				}
+
 			case 5:
 				if (WBP_ArmorSlot_Helmet)
 				{
@@ -623,6 +657,12 @@ void UInventoryWidget::EquippedUIInit()
 	if (IsValid(WBP_ArmorSlot_Armor))
 	{
 		WBP_ArmorSlot_Armor->InitArmorSlot();
+	}
+	if (IsValid(GrenadeSlotWidget))
+	{
+		GrenadeSlotWidget->RemoveFromParent();
+		GrenadeSlotWidget->ConditionalBeginDestroy(); // 즉시 삭제
+		GrenadeSlotWidget = nullptr;
 	}
 }
 

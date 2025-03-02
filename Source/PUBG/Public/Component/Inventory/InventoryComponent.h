@@ -92,7 +92,7 @@ public:
 	// Getter
 	AItemBase* GetItem() const { return Item; }
 	AItemBase* GetNearItem() const { return NearItem; }
-	TArray<FItemSlotStruct> GetContent() { return Content; }
+	TArray<FItemSlotStruct> &GetContent() { return Content; }
 	FUsingItem GetUsingItem() { return UsingItem; }
 	UFUNCTION(BlueprintCallable)
 	float GetMaxInventoryWeight() { return MaxInventoryWeight; }
