@@ -33,10 +33,10 @@ public:
 	// 이준수
 	virtual void BeginPlay() override;
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts", replicated)
 	UStaticMeshComponent* ScopeMesh;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts", replicated)
 	UStaticMeshComponent* MuzzleMesh;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts", replicated)
@@ -89,6 +89,13 @@ public:
 
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = "Mag")
 	void Server_SetBulletArom(float Armo);
+
+	// 스테틱메쉬 셋팅
+	UFUNCTION()
+	void SettingStaticmesh(int32 PartsDataArray);
+
+	UFUNCTION(Server , Reliable, WithValidation)
+	void Server_SettingParts(int32 partsIndex);
 
 // 이준수 ================================
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
