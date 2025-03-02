@@ -3,6 +3,7 @@
 
 #include "Weapon/Guns/Gun_Base.h"
 
+#include "NaniteSceneProxy.h"
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "BaseLibrary/DataStruct/ArmorStruct.h"
 #include "Weapon/DataTable/DT_PartsData.h"
@@ -43,9 +44,7 @@ AGun_Base::AGun_Base()
 void AGun_Base::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
-
 	int32 WeaponType = static_cast<int32>(GetWeaponDataAsset().Type);
 
 	if (WeaponType == 5)
@@ -100,7 +99,37 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGun_Base, BulletArmo);
+	DOREPLIFETIME(AGun_Base, WeaponParts);
 	DOREPLIFETIME(AGun_Base, MagMesh);
+	DOREPLIFETIME(AGun_Base, ScopeMesh);
+	DOREPLIFETIME(AGun_Base, MuzzleMesh);
+}
+
+// 스테틱 메쉬 셋팅
+void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
+{
+	if (PartsDataArray == 1) ScopeMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+	if (PartsDataArray == 2) MagMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+	if (PartsDataArray == 3) MuzzleMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+}
+
+void AGun_Base::Server_SettingParts_Implementation(int32 partsIndex)
+{
+	SettingStaticmesh(partsIndex);
+	
+	if (WeaponParts[partsIndex].PartsName.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : %s"), *WeaponParts[partsIndex].PartsName.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : NoValid"));
+	}
+}
+
+bool AGun_Base::Server_SettingParts_Validate(int32 partsIndex)
+{
+	return true;
 }
 
 TArray<EPartsCategory> AGun_Base::GetInstalledParts() const
@@ -145,6 +174,8 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 			WeaponParts[PartsCategory_int].ItemCategory = ItemCategory;
 			WeaponParts[PartsCategory_int].Weight = Weight;
 			WeaponParts[PartsCategory_int].StaticMesh = PartsData.Parts_StaticMesh;
+
+			Server_SettingParts(PartsCategory_int);
 			
 			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
 			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
