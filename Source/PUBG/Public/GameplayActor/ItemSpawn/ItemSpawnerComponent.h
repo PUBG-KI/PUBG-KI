@@ -32,11 +32,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TArray<FVector> SpawnLocations;
 
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	// TArray<FVector> SelectedLocations;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AItemBase> ItemBaseClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AWeaponItem> WeaponItemClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	int32 LocationCount;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 SpawnItemCount;
 
@@ -73,6 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 	FVector GetRandomOffset();
 
+	UFUNCTION(BlueprintCallable, Category = "Spawn")
+	FVector GetRandomLocation();
+	
 	
 };
 

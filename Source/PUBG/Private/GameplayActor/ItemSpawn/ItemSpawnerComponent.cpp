@@ -9,6 +9,8 @@
 #include "Component/ItemData/ItemDataComponent.h"
 #include "GameplayActor/SupplyDrop/SupplyDrop.h"
 #include "Item/ItemBase.h"
+#include "Algo/RandomShuffle.h"
+
 #include "Item/WeaponItem.h"
 
 // Sets default values for this component's properties
@@ -84,18 +86,25 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 void UItemSpawnerComponent::SpawnItems(bool bAbleAttach , AActor* ParentActor)
 {
 	AActor* Owner = GetOwner();
-	
+
+	TArray<FVector> ShuffledLocations = SpawnLocations;
+	Algo::RandomShuffle(ShuffledLocations);
+
 	//랜덤 위치 랜덤 아이템 스폰
-	for (const FVector& SpawnLocation : SpawnLocations)
+	for (int k = 0; k < LocationCount; k++)
 	{
+		FVector SpawnLocation = ShuffledLocations[k];
+		
 		for (int i = 0; i < SpawnItemCount; i++)
 		{
 			FVector WorldSpawnLocation = Owner->GetTransform().TransformPosition(SpawnLocation);
+			
+			UE_LOG(LogTemp, Warning, TEXT("GetRandomLocation()"));
 			FVector FinalLocation = WorldSpawnLocation + GetRandomOffset();
 			
 			//스폰시킬 아이템 정하기
 			FName SpawnedItemName = GetRandomItemRowName();
-			UE_LOG(LogTemp, Warning, TEXT("RandomRowName: %s") , *SpawnedItemName.ToString());
+			UE_LOG(LogTemp, Warning, TEXT("dddd: %s") , *SpawnedItemName.ToString());
 
 			if (bAbleAttach) //보급품 아이템 스폰
 			{
@@ -177,4 +186,11 @@ FVector UItemSpawnerComponent::GetRandomOffset()
 		FMath::RandRange(-ItemSpawnRadius, ItemSpawnRadius),
 		0.0f
 	);
+}
+
+FVector UItemSpawnerComponent::GetRandomLocation()
+{
+	int32 RandomIndex = FMath::RandRange(0, SpawnLocations.Num() - 1);
+	UE_LOG(LogTemp, Warning, TEXT("RandomIndex : %d"),RandomIndex);
+	return SpawnLocations[RandomIndex];
 }
