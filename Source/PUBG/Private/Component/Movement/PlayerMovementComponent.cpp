@@ -112,8 +112,8 @@ void UPlayerMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 	RequestToStartWalking = (Flags & FSavedMove_Character::FLAG_Custom_1) != 0;
 	RequestToStartProne = (Flags & FSavedMove_Character::FLAG_Custom_2) != 0;	
 	RequestToBackMovement = (Flags & FSavedMove_Character::FLAG_Custom_3) != 0;
-	RequestFreefalling = (Flags & FSavedMove_Character::FLAG_Custom_4_New) != 0;
-	RequestParachute = (Flags & FSavedMove_Character::FLAG_Custom_5_New) != 0;
+	RequestFreefalling = (Flags & FSavedMove_Character::FLAG_Reserved_1) != 0;
+	RequestParachute = (Flags & FSavedMove_Character::FLAG_Reserved_2) != 0;
 }
 
 void UPlayerMovementComponent::FGDSavedMove::Clear()
@@ -154,13 +154,13 @@ uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
 	}
 	if (SavedRequestFreefalling)
 	{
-		Result |= FLAG_Custom_4_New;  // 4번 비트 설정
+		Result |= FLAG_Reserved_1;  // 4번 비트 설정
 	}
 
 	// SavedRequestParachute에 대해 FLAG_Custom_5 사용
 	if (SavedRequestParachute)
 	{
-		Result |= FLAG_Custom_5_New;   // 5번 비트 설정
+		Result |= FLAG_Reserved_2;   // 5번 비트 설정
 	}
 	
 	return Result;
