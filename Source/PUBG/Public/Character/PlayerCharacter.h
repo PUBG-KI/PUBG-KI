@@ -5,9 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
 #include "GameplayTagContainer.h"
-#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
-#include "PlayerState/BasePlayerState.h"
 #include "PlayerCharacter.generated.h"
 
 

@@ -3,10 +3,7 @@
 
 #include "Widgets/Map/MapWidget.h"
 
-#include "ToolContextInterfaces.h"
 #include "Components/Image.h"
-#include "DSP/MidiNoteQuantizer.h"
-#include "DynamicMesh/MeshTransforms.h"
 #include "GameState/BaseGameState.h"
 #include "Kismet/GameplayStatics.h"
 

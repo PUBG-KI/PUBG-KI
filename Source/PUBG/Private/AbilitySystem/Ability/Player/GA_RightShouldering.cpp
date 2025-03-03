@@ -5,7 +5,6 @@
 #include "Component/PUBGSpringArmComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
-#include "AbilitySystem/BaseGameplayTag.h"
 
 
 UGA_RightShouldering::UGA_RightShouldering()

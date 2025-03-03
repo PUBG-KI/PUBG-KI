@@ -5,7 +5,6 @@
 
 #include "Camera/CameraComponent.h"
 #include "Character/PlayerCharacter.h"
-#include "GameFramework/SpringArmComponent.h"
 
 void UGA_CameraTransition::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                            const FGameplayAbilityActorInfo* ActorInfo,
