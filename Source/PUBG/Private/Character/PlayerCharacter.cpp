@@ -111,7 +111,7 @@ APlayerCharacter::APlayerCharacter(const class FObjectInitializer& ObjectInitial
 			CharacterEquipmentMap.Add(EnumValue, NewMesh);
 		}
 	}
-	
+
 	// 무브먼트 설정
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
@@ -190,6 +190,18 @@ void APlayerCharacter::BeginPlay()
 	// 	}
 	// }
 	//
+	if (HasAuthority())
+	{
+		SetOwner(this); // 서버에서 PlayerCharacter를 소유자로 설정
+	}
+	else
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+		if (PlayerController)
+		{
+			SetOwner(PlayerController); // 클라이언트에서는 플레이어 컨트롤러를 소유자로 설정
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -199,8 +211,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		UpdateRotationValues();
 	}
-
-	
 }
 
 USkeletalMeshComponent* APlayerCharacter::FindMeshComponent(EPlayerMeshType PlayerMeshType)
@@ -217,10 +227,9 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Client"));
-
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent =  %s"), *SkeletalMesh->GetName());
-	
+
 	if (USkeletalMeshComponent* SkeletalMeshComponent = FindMeshComponent(PlayerMeshType))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent : SkeletalMeshComponent = %s"), *SkeletalMeshComponent->GetName());
@@ -229,7 +238,7 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 }
 
 void APlayerCharacter::Multicast_SetMeshComponent_Implementation(EPlayerMeshType PlayerMeshType,
-	USkeletalMesh* SkeletalMesh)
+                                                                 USkeletalMesh* SkeletalMesh)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation"));
 	//UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation : %s"), *SkeletalMesh->GetName());
@@ -237,7 +246,7 @@ void APlayerCharacter::Multicast_SetMeshComponent_Implementation(EPlayerMeshType
 }
 
 void APlayerCharacter::Client_SetMeshComponent_Implementation(EPlayerMeshType PlayerMeshType,
-	USkeletalMesh* SkeletalMesh)
+                                                              USkeletalMesh* SkeletalMesh)
 {
 	SetMeshComponent(PlayerMeshType, SkeletalMesh);
 }
@@ -246,11 +255,10 @@ void APlayerCharacter::CallCheckZoomAbility()
 {
 	if (IsZoom)
 	{
-		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(FGameplayTagContainer(FGameplayTag::RequestGameplayTag("Player.Ability.Weapon.Zoom")));
+		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(
+			FGameplayTagContainer(FGameplayTag::RequestGameplayTag("Player.Ability.Weapon.Zoom")));
 	}
 }
-
-
 
 
 void APlayerCharacter::UpdateRotationValues_Implementation()
@@ -311,7 +319,7 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	UBaseInputComponent* BaseInputComponent = CastChecked<UBaseInputComponent>(PlayerInputComponent);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
-	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move);
+	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move_Implementation);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
 	                                          ETriggerEvent::Completed, this, &APlayerCharacter::Input_MoveReleased);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look,
@@ -326,84 +334,142 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 	BaseInputComponent->BindAbilityInputAction(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed,
 	                                           &APlayerCharacter::Input_AbilityInputReleased);
 
-	BaseInputComponent->BindAbilityInputAction_Tab(InputConfigDataAsset, this, &APlayerCharacter::Input_AbilityInputPressed);
+	BaseInputComponent->BindAbilityInputAction_Tab(InputConfigDataAsset, this,
+	                                               &APlayerCharacter::Input_AbilityInputPressed);
 }
 
-
-void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
+void APlayerCharacter::Input_Move_Implementation(const FInputActionValue& InputActionValue)
 {
-	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
-	bUseControllerRotationYaw = false;
-	UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<
-		UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
-	if (AbilitySystemComponent)
+	// 현재 MovementMode 확인
+	EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
+	//UE_LOG(LogTemp, Warning, TEXT("CurrentMovementMode: %s"), *UEnum::GetValueAsString(CurrentMovementMode));
+	Input_Move(InputActionValue);
+if (!OntheParachute)
 	{
-		AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
-	}
-	const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
-	
-	if (IsSwimming)
-	{
-		
-		const FRotator MovementRotation = FRotator(Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Yaw, 0.f);
+		UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+		bUseControllerRotationYaw = false;
+		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<
+			UBaseAbilitySystemComponent>(GetAbilitySystemComponent()); // 턴 중 Input_Move 들어오면 캔슬 
+		if (AbilitySystemComponent)
+		{
+			AbilitySystemComponent->TryCancelAbilityByTag(BaseGameplayTag::Player_Ability_Turn);
+		}
+		const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
 
-		// 이동 방향 계산: Forward (전방) 방향 계산
-		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-		UE_LOG(LogTemp, Warning, TEXT("ForwardDirection : %s"),*ForwardDirection.ToString());
-		// 이동 방향 계산: Right (우측) 방향 계산
-		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+		if (IsSwimming)
+		{
+			const FRotator MovementRotation = FRotator(Controller->GetControlRotation().Pitch,
+			                                           Controller->GetControlRotation().Yaw, 0.f);
 
-		// 수평과 수직 이동을 반영하여 방향 계산
-		FVector MoveDirection = ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X;
+			// 이동 방향 계산: Forward (전방) 방향 계산
+			const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			UE_LOG(LogTemp, Warning, TEXT("ForwardDirection : %s"), *ForwardDirection.ToString());
+			// 이동 방향 계산: Right (우측) 방향 계산
+			const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
 
-		// 계산된 방향으로 이동
-		AddMovementInput(MoveDirection, 1.f);
-	
-	}
-	
-	if (Controller)
-	{
-		const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
-		FRotator CurrentRotation = GetActorRotation(); // 현재 회전
-		// 부드럽게 회전 (보간을 통해)
-		FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(),
-		                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
-		// 회전 적용
-		Server_SetActorRotation(InterpolatedRotation);
-	}
-	else
-	{
-		return;
-	}
-	if (MovementVector.Y <= 0.f)
-	{
-		MovementComponent->StartBackMovement();
-	}
-	else
-	{
-		MovementComponent->StopBackMovement();
-	}
+			// 수평과 수직 이동을 반영하여 방향 계산
+			FVector MoveDirection = ForwardDirection * MovementVector.Y + RightDirection * MovementVector.X;
 
-	const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
-	if (MovementVector.Y != 0.f)
-	{
-		const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-		AddMovementInput(ForwardDirection, MovementVector.Y);
+			// 계산된 방향으로 이동
+			AddMovementInput(MoveDirection, 1.f);
+		}
+
+		if (Controller)
+		{
+			const FRotator TargetRotation = FRotator(0.f, Controller->GetControlRotation().Yaw, 0.f); // 목표 회전
+			FRotator CurrentRotation = GetActorRotation(); // 현재 회전
+			// 부드럽게 회전 (보간을 통해)
+			FRotator InterpolatedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation,
+			                                                 GetWorld()->GetDeltaSeconds(),
+			                                                 10.f); // 10.f는 회전 속도, 더 높은 값일수록 빨리 회전
+			// 회전 적용
+			Server_SetActorRotation(InterpolatedRotation);
+		}
+		else
+		{
+			return;
+		}
+		if (MovementVector.Y <= 0.f)
+		{
+			MovementComponent->StartBackMovement();
+		}
+		else
+		{
+			MovementComponent->StopBackMovement();
+		}
+
+		const FRotator MovementRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
+		if (MovementVector.Y != 0.f)
+		{
+			const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+		}
+		if (MovementVector.X != 0.f)
+		{
+			const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
+		if (InFreefall)
+		{
+			FreefallingMoveInputY = MovementVector.Y;
+			FreefallingMoveInputX = MovementVector.X;
+			// MovementComponent->StartFreeFalling();
+			const float FreefallSpeedMultiplier = 10.0f;	
+			if (MovementVector.Y != 0.f)
+			{
+				const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+				AddMovementInput(ForwardDirection, MovementVector.Y*FreefallSpeedMultiplier);
+			}
+			if (MovementVector.X != 0.f)
+			{
+				const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
+				AddMovementInput(RightDirection, MovementVector.X*FreefallSpeedMultiplier);
+			}
+		}
 	}
-	if (MovementVector.X != 0.f)
+	else if (OntheParachute)
 	{
-		const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-	if (InFreefall)
-	{
-		FreefallingMoveInputY = MovementVector.Y;
-		FreefallingMoveInputX = MovementVector.X;
-		float MousePitch = Controller->GetControlRotation().Pitch;
-		float Speed = FMath::GetMappedRangeValueClamped(FVector2D(-90.f, 90.f), FVector2D(0.f, 100000000000000.f), MousePitch);
-		AddMovementInput(MovementRotation.RotateVector(FVector::ForwardVector), Speed,true);
+		UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
+		MovementComponent->StartParachute();
+		const FVector2D MovementVector = InputActionValue.Get<FVector2D>();
+		FRotator MovementRotation = GetActorRotation();
+		if (MovementVector.Y != 0.f)
+		{
+			const float ParachuteSpeedMultiplier = 10.0f; 
+			const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
+			AddMovementInput(ForwardDirection, MovementVector.Y*ParachuteSpeedMultiplier);
+			UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+		}
+		if (MovementVector.X != 0.f)
+		{
+			if (MovementVector.X < 0.f)
+			{
+				const float ParachuteSpeedMultiplier = 10.0f; 
+				ActorRotate = GetActorRotation().Roll;
+				FRotator RightDirection = FRotator(GetActorRotation().Pitch,GetActorRotation().Yaw, ActorRotate-1.f);
+				FVector RightVector = RightDirection.RotateVector(FVector::RightVector);
+				AddMovementInput(RightVector, MovementVector.X*ParachuteSpeedMultiplier);
+				UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+				
+				
+			}
+			if (MovementVector.X > 0.f)
+			{const float ParachuteSpeedMultiplier = 10.0f; 
+				ActorRotate = GetActorRotation().Roll;
+				FRotator RightDirection = FRotator(GetActorRotation().Pitch,GetActorRotation().Yaw, ActorRotate+1.f);
+				FVector RightVector = RightDirection.RotateVector(FVector::RightVector);
+				AddMovementInput(RightVector,MovementVector.X*ParachuteSpeedMultiplier);
+				UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+			}
+		}
 	}
 }
+
+
+// void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
+// {
+// 	
+// }
 
 void APlayerCharacter::Server_SetActorRotation_Implementation(FRotator Rotator)
 {
@@ -455,7 +521,8 @@ void APlayerCharacter::Input_Look(const FInputActionValue& InputActionValue)
 
 void APlayerCharacter::Input_Jump(const FInputActionValue& InputActionValue)
 {
-	if (GetCharacterMovement()->IsFalling()||UBaseFunctionLibrary::NativeActorHasTag(this, FGameplayTag::RequestGameplayTag(FName("Player.State.Swim"))))
+	if (GetCharacterMovement()->IsFalling() || UBaseFunctionLibrary::NativeActorHasTag(
+		this, FGameplayTag::RequestGameplayTag(FName("Player.State.Swim"))))
 	{
 		return;
 	}
@@ -588,9 +655,9 @@ void APlayerCharacter::Input_AbilityInputTab(FGameplayTag InputTag)
 void APlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
+
 	APlayerController* PlayerController = Cast<APlayerController>(NewController);
-	
+
 	ULocalPlayer* LocalPlayer = PlayerController ? PlayerController->GetLocalPlayer() : nullptr;
 	if (LocalPlayer)
 	{
@@ -599,7 +666,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		check(Subsystem);
 		Subsystem->AddMappingContext(InputConfigDataAsset->DefaultMappingContext, 0);
 	}
-	
+
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
 	if (PS && !FirstAttribute)
 	{
@@ -625,7 +692,7 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 		{
 			PC->CreateHUD();
 		}
-		
+
 		FirstAttribute = true;
 	}
 }
@@ -686,7 +753,7 @@ void APlayerCharacter::Die()
 	// HeadMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);  // 초기 속도 설정 (필요 시)
 	// HeadMesh->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 	// HeadMesh->WakeAllRigidBodies();
-		
+
 	// 안전하게 제거를 하려면 서버에서 타이머를 돌린 후 Destroy()하는게 좋을 거 같음
 	//SetLifeSpan(10.0f);
 }
@@ -808,6 +875,9 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	DOREPLIFETIME(APlayerCharacter, NormalDeltaRotator);
 	DOREPLIFETIME(APlayerCharacter, Yaw);
 	DOREPLIFETIME(APlayerCharacter, InFreefall);
+	DOREPLIFETIME(APlayerCharacter, OntheParachute);
+	DOREPLIFETIME(APlayerCharacter, IsSwimming);
+	
 	//DOREPLIFETIME(APlayerCharacter, Pitch);
 }
 
@@ -842,21 +912,22 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 		else if (CachedCurrentWeapon == GetEquippedComponent()->GetSecondarySlot())
 		{
 			CachedCurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-												   FName("slot_secondarySocket"));
+			                                       FName("slot_secondarySocket"));
 			UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
 		}
-		else if (CachedCurrentWeapon == GetInventoryComponent()->GetSideArmSlot())   //지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
+		else if (CachedCurrentWeapon == GetInventoryComponent()->GetSideArmSlot())
+		//지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
 		{
 			CachedCurrentWeapon->AttachToComponent(
-	   GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-	   FName("SideArm"));
+				GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+				FName("SideArm"));
 		}
-		
+
 		else if (CachedCurrentWeapon == GetInventoryComponent()->GetThrowableSlot())
 		{
 			CachedCurrentWeapon->AttachToComponent(
-		GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-		FName("throwable_Socket"));
+				GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+				FName("throwable_Socket"));
 		}
 		FPlayerWeaponData WeaponData = CachedCurrentWeapon->GetPlayerWeaponData();
 		Server_SetAnimLayer(nullptr);
@@ -864,8 +935,64 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 		TArray<FGameplayAbilitySpecHandle> CachedAbilitySpecHandle = CachedCurrentWeapon->
 			GetGrantedAbilitySpecHandles(); //어빌리티 삭제
 		GetEquippedComponent()->SetCurrentWeapon(nullptr);
-		
 	}
+}
+
+
+
+
+
+
+void APlayerCharacter::Server_ModifyGravity_Implementation(float GravityMultiplier)
+{
+	if (HasAuthority())
+	{
+		GetCharacterMovement()->GravityScale = GravityMultiplier;
+		Multi_ModifyGravity(GravityMultiplier);
+		UE_LOG(LogTemp, Warning, TEXT("Server O"));
+	}
+}
+
+bool APlayerCharacter::Server_ModifyGravity_Validate(float GravityMultiplier)
+{
+	return true;
+}
+
+void APlayerCharacter::Multi_ModifyGravity_Implementation(float GravityMultiplier)
+{
+	if (!HasAuthority())
+	{
+		GetCharacterMovement()->GravityScale = GravityMultiplier;
+		UE_LOG(LogTemp, Warning, TEXT("multi"));
+	}
+}
+
+void APlayerCharacter::ModifyGravity(float GravityMultiplier)
+{
+	if (HasAuthority())
+	{
+		// 서버에서는 바로 처리
+		GetCharacterMovement()->GravityScale = GravityMultiplier;
+		Multi_ModifyGravity(GravityMultiplier);
+		UE_LOG(LogTemp, Warning, TEXT("Server OOO"));
+	}
+	else
+	{
+		// 서버로 요청
+		GetCharacterMovement()->GravityScale = GravityMultiplier;
+		Server_ModifyGravity(GravityMultiplier);
+		UE_LOG(LogTemp, Warning, TEXT("Server ELSE"));
+	}
+}
+
+bool APlayerCharacter::GetOntheParachute() const
+{
+	return OntheParachute;
+}
+
+void APlayerCharacter::SetOntheParachute(bool NewParachuteState)
+{
+	OntheParachute = NewParachuteState;
 }
 
 void APlayerCharacter::Client_InputMappingContextRemove_Implementation(UInputMappingContext* MappingContext)
@@ -919,7 +1046,7 @@ void APlayerCharacter::OnRep_PlayerState()
 
 		// 편의 속성 함수를 위해 AttributeSetBase를 설정합니다.
 		BaseAttributeSet = PS->GetAttributeSetBase();
-		
+
 		ABasePlayerController* PC = Cast<ABasePlayerController>(GetController());
 		if (PC)
 		{
@@ -952,7 +1079,7 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 			UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OnComponentBeginOverlap PlayerController None"));
 			return;
 		}
-		
+
 		FTimerDelegate TimerDelegate;
 		TimerDelegate.BindLambda([this, OtherActor, PlayerController ]()
 		{
@@ -965,7 +1092,7 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 			//ActorsToIgnore.Add(TestCharacter);
 			ETraceTypeQuery TraceType = UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1);
 
-			
+
 			// if (!PlayerController)
 			// {
 			// 	UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::OnComponentBeginOverlap PlayerController None"));
@@ -977,8 +1104,8 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 				UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
 				                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
 				                                      FLinearColor(0, 1, 0, 1));
-				
-				
+
+
 				if (Hit.GetActor() != nullptr)
 				{
 					// FVector HitLocation = Hit.Location;
@@ -986,17 +1113,18 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 					if (LookAtActor != Hit.GetActor())
 					{
 						LookAtActor = Hit.GetActor();
-						
+
 						IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
 						if (InteractInterface)
 						{
 							FText Result = InteractInterface->LookAt();
 							UTexture2D* ResultImage = InteractInterface->SetKeyTexture();
-							
+
 							if (PlayerController->GetHudWidget() != nullptr)
 							{
 								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetMessage(Result);
-								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetKeyTexture(ResultImage);
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetKeyTexture(
+									ResultImage);
 							}
 							//InteractInterface->InteractWith();
 						}
@@ -1005,7 +1133,8 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 							LookAtActor = nullptr;
 							if (PlayerController->GetHudWidget() != nullptr)
 							{
-								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(
+									ESlateVisibility::Collapsed);
 							}
 							InventoryComponent->SetItem(nullptr);
 						}
@@ -1016,7 +1145,8 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 					LookAtActor = nullptr;
 					if (PlayerController->GetHudWidget() != nullptr)
 					{
-						PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+						PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(
+							ESlateVisibility::Collapsed);
 					}
 					InventoryComponent->SetItem(nullptr);
 				}

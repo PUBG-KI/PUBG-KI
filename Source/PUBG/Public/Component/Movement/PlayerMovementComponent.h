@@ -46,7 +46,9 @@ class PUBG_API UPlayerMovementComponent : public UCharacterMovementComponent
 		
 		// BackMovement		
 		uint8 SavedRequestToBackMovement : 1;
-		
+
+		uint8 SavedRequestFreefalling : 1;
+		uint8 SavedRequestParachute : 1;
 	};
 	
 	class FGDNetworkPredictionData_Client : public FNetworkPredictionData_Client_Character
@@ -73,6 +75,11 @@ public:
 	uint8 RequestToStartProne : 1;
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	uint8 RequestToBackMovement : 1;
+	
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	uint8 RequestFreefalling : 1;
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	uint8 RequestParachute : 1;
 	
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	float LeaningValue;
@@ -110,6 +117,17 @@ public:
 	void StartBackMovement();
 	UFUNCTION(BlueprintCallable, Category = "Back")
 	void StopBackMovement();
+	
+
+	UFUNCTION(BlueprintCallable, Category = "FreeFalling")
+	void StartFreeFalling();
+	UFUNCTION(BlueprintCallable, Category = "FreeFalling")
+	void StopFreeFalling();
+
+	UFUNCTION(BlueprintCallable, Category = "Parachute")
+	void StartParachute();
+	UFUNCTION(BlueprintCallable, Category = "Parachute")
+	void StopParachute();
 	
 	float AddSHIFTSprint = 150.0f;
 	float SubProne = 240.0f;

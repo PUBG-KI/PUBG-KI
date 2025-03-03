@@ -90,7 +90,7 @@ public:
 	void Server_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
 	UFUNCTION(BlueprintCallable, NetMulticast, Reliable, Category = "Animation")
 	void NetMulticast_SetAnimLayer(TSubclassOf<UPlayerAnimInstance> PlayerAnimInstance);
-
+	
 	// UPROPERTY()
 	// FRotator AimRotation;
 	// UPROPERTY()
@@ -136,8 +136,9 @@ private:
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void Input_Move(const FInputActionValue& InputActionValue);
+	virtual void Input_Move_Implementation(const FInputActionValue& InputActionValue);
 	void Input_MoveReleased(const FInputActionValue& InputActionValue);
 	void Input_Look(const FInputActionValue& InputActionValue);
 	void Input_Jump(const FInputActionValue& InputActionValue);
@@ -298,14 +299,15 @@ public:
 
 	// FreeFalling 관련
 private:
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated,EditAnywhere, Category = "Freefall")
 	bool InFreefall;
 	float FreefallingMoveInputY;
 	float FreefallingMoveInputX;
 
 public:
 	FORCEINLINE bool GetInFreefall() const { return InFreefall; }
-	FORCEINLINE void SetInFreefall(bool NewInFreefall) { InFreefall = NewInFreefall; }
+	FORCEINLINE void SetInFreefall(bool NewInFreefall){InFreefall = NewInFreefall;}
+	
 	FORCEINLINE float GetFreefallingMoveInputY() const { return FreefallingMoveInputY; }
 	FORCEINLINE void SetFreefallingMoveInputY(float NewFreefallingMoveInput) { FreefallingMoveInputY = NewFreefallingMoveInput; }
 	FORCEINLINE float GetFreefallingMoveInputX() const { return FreefallingMoveInputX; }
@@ -313,15 +315,44 @@ public:
 
 	//Swim관련
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere,Replicated, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
 	bool IsSwimming;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Swim", meta = (AllowPrivateAccess = "true"))
-	bool IsFloating;
+	
 public:
 	FORCEINLINE bool GetIsSwimming() const { return IsSwimming; }
+
+private:
+	//Parachute 관련
+	UPROPERTY(EditAnywhere,Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	bool OntheParachute = false;
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	float ActorRotate;
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	float RotateSpeed;
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	FVector RotateVector;
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	bool OnTheFirstAirPlane = false;
+
+	UFUNCTION(server, Reliable, WithValidation)
+	void Server_ModifyGravity(float GravityMultiplier);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multi_ModifyGravity(float GravityMultiplier);
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void ModifyGravity(float GravityMultiplier);
+public:
+	FORCEINLINE bool GetFirstAirplane() const { return OnTheFirstAirPlane; }
+	FORCEINLINE void SetFirstAirplane(bool NewOnTheFirstAirPlane) { OnTheFirstAirPlane=NewOnTheFirstAirPlane; }
 	
+public:
+	UFUNCTION(BlueprintCallable)
+	bool GetOntheParachute() const;
+	UFUNCTION(BlueprintCallable)
+	void SetOntheParachute(bool NewParachuteState);
 	
 };
+
+
 
 inline void APlayerCharacter::OnRep_Controller()
 {
