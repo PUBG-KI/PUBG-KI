@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerGameplayAbility.h"
 #include "GA_CrouchMotion.generated.h"
+
 UENUM(BlueprintType)
 enum class ECrouchMontageType : uint8
 {

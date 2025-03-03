@@ -3,11 +3,8 @@
 
 #include "GameplayActor/ItemSpawn/ItemSpawnerComponent.h"
 
-#include "AsyncTreeDifferences.h"
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Weapon/DataTable/DT_Weapon.h"
-#include "Component/ItemData/ItemDataComponent.h"
-#include "GameplayActor/SupplyDrop/SupplyDrop.h"
 #include "Item/ItemBase.h"
 #include "Algo/RandomShuffle.h"
 

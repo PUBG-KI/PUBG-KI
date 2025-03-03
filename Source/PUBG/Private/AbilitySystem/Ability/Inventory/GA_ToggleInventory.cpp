@@ -4,16 +4,13 @@
 #include "AbilitySystem/Ability/Inventory/GA_ToggleInventory.h"
 
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/AbilityTask/FindFarmingItem.h"
 #include "Component/NearArea/NearComponent.h"
 #include "Item/ItemBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "GameplayTagContainer.h"
 #include "Abilities/GameplayAbility.h"
-#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseGameplayTag.h"
 #include "Controller/BasePlayerController.h"
-#include "BaseLibrary/BaseDebugHelper.h"
 
 UGA_ToggleInventory::UGA_ToggleInventory()
 {

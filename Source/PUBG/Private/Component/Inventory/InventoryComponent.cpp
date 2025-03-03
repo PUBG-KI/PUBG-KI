@@ -5,11 +5,10 @@
 
 #include "AudioMixerBlueprintLibrary.h"
 #include "GameplayTagsManager.h"
-#include "Character/TestCharacter.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
-//#include "Math/UnrealMathNeon.h"
 #include "AbilitySystem/BaseGameplayTag.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Component/Equipped/EquippedComponent.h"
@@ -450,13 +449,13 @@ void UInventoryComponent::PrintContents()
 		UE_LOG(LogTemp, Warning, TEXT("클라이언트에서 실행됨"));
 	}
 	
-	for (int32 Index = 0; Index < Content.Num(); ++Index)
-	{
-		FString Msg = Content[Index].ItemName.ToString();
-		int32 Quantity = Content[Index].Quantity;
+	//for (int32 Index = 0; Index < Content.Num(); ++Index)
+	//{//
+	//	FString Msg = Content[Index].ItemName.ToString();
+	//	int32 Quantity = Content[Index].Quantity;
 		
-		UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
-	}
+		//UE_LOG(LogTemp, Warning, TEXT("%d, %s, %d"), Index, *Msg, Quantity);
+	//}
 }
 
 void UInventoryComponent::PrintMaxInventoryWeight()

@@ -192,7 +192,7 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					
 					//InventoryComponent->RemoveFromInventory(Index, true);
 				}
-				else if (Category == 4)
+				else if (Category == EItemCategory::Throw)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 12"));
 

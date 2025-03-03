@@ -25,16 +25,12 @@
 #include "DataAsset/Input/DataAsset_InputConfig.h"
 
 // 어빌리티
-#include "FrameTypes.h"
 #include "AbilitySystem//BaseGameplayTag.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
-#include "AnimInstance/BaseAnimInstance.h"
 #include "DataAsset/Startup/DataAsset_StartupBase.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Component/NearArea/NearComponent.h"
-#include "Components/WrapBox.h"
 #include "Interface/InteractInterface.h"
 
 //자기장
@@ -44,21 +40,15 @@
 
 #include "Component/Equipped/EquippedComponent.h"
 
-#include "BaseLibrary/BaseDebugHelper.h"
-
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Item/ItemBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
-#include "Rendering/RenderCommandPipes.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 //Weapon
-#include "NavigationSystemTypes.h"
 #include "Weapon/Weapon_Base.h"
 #include "BaseLibrary/BaseStructType.h"
-#include "BaseLibrary/BaseFunctionLibrary.h"
-#include "PhysicsEngine/PhysicsConstraintComponent.h"
 #include "Widgets/DisplayMessage/DisplayMessageItemWidget.h"
 #include "Widgets/HUD/HudWidget.h"
 
