@@ -56,6 +56,7 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Reload);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_ChangeFireMode);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_Zoom);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Action_UseItem);
 
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Ability_Pickup);
 
@@ -78,6 +79,7 @@ namespace BaseGameplayTag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_ReloadEnd);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_HideMag);
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_VisibleMag);
+	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_CompleteUseItem);
 
 	// Hit Event Tag
 	PUBG_API UE_DECLARE_GAMEPLAY_TAG_EXTERN(Player_Event_Action_Hit);

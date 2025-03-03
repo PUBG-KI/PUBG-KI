@@ -5,7 +5,7 @@
 #include "Components/TextBlock.h"
 
 
-void UNotificationWidget::PlayWidgetAnimation()
+void UNotificationWidget::PlayNotifyAnimation()
 {
 	if (NotifyAnimation)
 	{
@@ -17,7 +17,24 @@ void UNotificationWidget::PlayWidgetAnimation()
 void UNotificationWidget::ShowNotification(FText Message)
 {
 	Text_Notification->SetText(Message);
-	PlayWidgetAnimation();
+	PlayNotifyAnimation();
+}
+
+void UNotificationWidget::PlayKillLogAnimation()
+{
+	if (KillLogAnimation)
+	{
+		StopAnimation(KillLogAnimation);  // 애니메이션 중지
+		PlayAnimation(KillLogAnimation, 0.0f, 1, EUMGSequencePlayMode::Forward, 1.0f);
+	}
+}
+
+void UNotificationWidget::ShowKillLog(int32 KillCount)
+{
+	FString Text = FString::FromInt(KillCount);
+	FText Num = FText::FromString(Text);
+	Text_KillLog->SetText(Num);
+	PlayKillLogAnimation();
 }
 
 void UNotificationWidget::NativeConstruct()

@@ -16,7 +16,6 @@ UCLASS()
 class PUBG_API UGA_ToggleInventory : public UPlayerGameplayAbility
 {
 	GENERATED_BODY()
-
 public:
 	UGA_ToggleInventory();
 

@@ -10,6 +10,7 @@
 #include "Interface/InteractInterface.h"
 #include "Item/ItemBase.h"
 //#include "Math/UnrealMathNeon.h"
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Component/Equipped/EquippedComponent.h"
 #include "Controller/BasePlayerController.h"
@@ -60,6 +61,8 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	
 	DOREPLIFETIME_CONDITION(UInventoryComponent, Content, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UInventoryComponent, NearItem, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(UInventoryComponent, UsingItem, COND_OwnerOnly);
+	
 	DOREPLIFETIME(UInventoryComponent, Item);
 	
 	DOREPLIFETIME(UInventoryComponent, CurrentWeapon);
@@ -364,19 +367,35 @@ void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, in
 		// }
 		UE_LOG(LogTemp, Warning, TEXT("RemoveFromInventory : IsConsumed true"));
 
-		UsingItem.Item = Content[InIndex];
-		UsingItem.Index = InIndex;
+		FUsingItem OutUsingItem;
+		OutUsingItem.Item = Content[InIndex];
+		OutUsingItem.Index = InIndex;
 		
 		// 능력 활성화
-		
+		ServerSetUsingItem(OutUsingItem);
 	}
 	else
 	{
 		// 현재 양보다 많이 넣으면 안되게, 음수도 안되게
 		UE_LOG(LogTemp, Warning, TEXT("RemoveFromInventory : IsConsumed false"));
 
-		ServerDropItem(InIndex, InQuantity);
-		
+		ServerDropItem(InIndex, InQuantity);		
+	}
+}
+
+void UInventoryComponent::ServerSetUsingItem_Implementation(FUsingItem OutUsingItem)
+{
+	SetUsingItem(OutUsingItem);
+}
+
+void UInventoryComponent::ServerRemoveItem_Implementation(int32 InIndex, int32 OutQuantity)
+{
+	Content[InIndex].Quantity -= OutQuantity;
+	UE_LOG(LogTemp, Warning, TEXT("ServerDropItem_Implementation : InIndex = %d Quantity = %d"), InIndex, Content[InIndex].Quantity);
+
+	if (Content[InIndex].Quantity == 0)
+	{
+		Content.RemoveAt(InIndex);
 	}
 }
 
@@ -578,6 +597,20 @@ void UInventoryComponent::OnRep_Content()
 				PlayerController->GetInventoryWidget()->UpdateEquippedWidget();
 				UE_LOG(LogTemp, Warning, TEXT("OnRep_Content : Widget Update!"));
 			}
+		}
+	}
+}
+
+void UInventoryComponent::OnRep_UsingItem()
+{
+	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	if (PlayerCharacter)
+	{
+		UBaseAbilitySystemComponent* ASC = Cast<UBaseAbilitySystemComponent>(PlayerCharacter->GetAbilitySystemComponent());
+		if (ASC)
+		{
+			ASC->TryActivateAbilityByTag(BaseGameplayTag::Player_Ability_Action_UseItem);
+			ASC->TryActivateAbilityByTag(BaseGameplayTag::InputTag_Toggle_Inventory);
 		}
 	}
 }

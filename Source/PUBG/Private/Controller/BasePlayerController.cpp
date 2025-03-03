@@ -299,6 +299,14 @@ void ABasePlayerController::ShowNotification(FText Text)
 	}
 }
 
+void ABasePlayerController::ShowKillLog(int32 Killcount)
+{
+	if (NotificationWidget)
+	{
+		NotificationWidget->ShowKillLog(Killcount);
+	}
+}
+
 void ABasePlayerController::ShowResultWidget(int32 Rank)
 {
 	if (ResultWidget)

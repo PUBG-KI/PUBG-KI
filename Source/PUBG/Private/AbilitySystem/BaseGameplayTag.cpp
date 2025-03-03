@@ -61,6 +61,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Reload, "Player.Ability.Weapon.Reload");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_ChangeFireMode, "Player.Ability.Weapon.ChangeFireMode");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_Zoom, "Player.Ability.Weapon.Zoom");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Action_UseItem, "Player.Ability.Action.UseItem");
 
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Pickup,"Player.Ability.Pickup");
 
@@ -82,6 +83,7 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_HideMag, "Player.Event.Action.HideMag");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_VisibleMag, "Player.Event.Action.VisibleMag");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Throw, "Player.Event.Action.Throw");
+	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_CompleteUseItem, "Player.Event.Action.CompleteUseItem");
 
 	// player Event Tag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Prone, "Player.State.Prone");
