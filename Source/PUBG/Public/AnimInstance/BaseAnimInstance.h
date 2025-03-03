@@ -76,7 +76,7 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Vehicle")
 	bool VehicleVelocityBackWard;
 	//freefalling
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
+	UPROPERTY(VisibleDefaultsOnly,Replicated, BlueprintReadOnly, Category = "Freefalling")
 	bool InFreefalling;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Freefalling")
 	float FreefallingMovementInputY;
@@ -88,6 +88,10 @@ public:
 	bool IsSwimming;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Swimming")
 	float YDirection;
+
+	//Parachute
+	UPROPERTY(VisibleDefaultsOnly, Replicated, BlueprintReadOnly, Category = "Parachute")
+	bool OntheParachute;
 	
 protected:
 	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))

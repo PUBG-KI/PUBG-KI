@@ -85,7 +85,7 @@ private:
 	// 실제 카메라
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* Camera;
-
+	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UTimelineComponent* TimelineComponent;
 

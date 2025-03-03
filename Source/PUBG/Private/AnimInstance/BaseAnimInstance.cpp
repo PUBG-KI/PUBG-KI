@@ -102,6 +102,7 @@ void UBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	//UE_LOG(LogTemp, Warning, TEXT("InFreefalling: %hhd"), InFreefalling)
 
 	IsSwimming = OwningPlayer->GetIsSwimming();
+	OntheParachute = OwningPlayer->GetOntheParachute();
 	
 	
 }
@@ -121,4 +122,7 @@ void UBaseAnimInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	
 	DOREPLIFETIME(UBaseAnimInstance, Yaw);
 	DOREPLIFETIME(UBaseAnimInstance, Pitch);
+	DOREPLIFETIME(UBaseAnimInstance, OntheParachute);
+	DOREPLIFETIME(UBaseAnimInstance, InFreefalling);
+	
 }

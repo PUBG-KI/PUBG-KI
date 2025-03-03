@@ -12,7 +12,7 @@
 
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
-	SetIsReplicatedByDefault(true); 
+	SetIsReplicatedByDefault(true);
 }
 
 void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -22,6 +22,9 @@ void UPlayerMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(UPlayerMovementComponent, RequestToStartProne);
 	DOREPLIFETIME(UPlayerMovementComponent, LeaningValue);
 	DOREPLIFETIME(UPlayerMovementComponent, RequestToBackMovement);
+	DOREPLIFETIME(UPlayerMovementComponent, RequestParachute);
+	DOREPLIFETIME(UPlayerMovementComponent, RequestFreefalling);
+	
 }
 
 float UPlayerMovementComponent::GetMaxSpeed() const
@@ -75,7 +78,15 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 		}
 		
 	}
-	
+	else if (RequestFreefalling&&MovementMode == MOVE_Falling)
+	{
+		BaseSpeed += 700.f;
+	}
+	else if (RequestParachute&&MovementMode ==MOVE_Falling)
+	{
+		BaseSpeed += 1000.f;
+	}
+	UE_LOG(LogTemp,Warning,TEXT("BaseSpeed:%f"), BaseSpeed);
 	return BaseSpeed; //350
 }
 // 걷기 350 
@@ -100,7 +111,9 @@ void UPlayerMovementComponent::UpdateFromCompressedFlags(uint8 Flags)
 	RequestToStartSprinting = (Flags & FSavedMove_Character::FLAG_Custom_0) != 0;
 	RequestToStartWalking = (Flags & FSavedMove_Character::FLAG_Custom_1) != 0;
 	RequestToStartProne = (Flags & FSavedMove_Character::FLAG_Custom_2) != 0;	
-	RequestToBackMovement = (Flags & FSavedMove_Character::FLAG_Custom_3) != 0;	
+	RequestToBackMovement = (Flags & FSavedMove_Character::FLAG_Custom_3) != 0;
+	RequestFreefalling = (Flags & FSavedMove_Character::FLAG_Custom_4_New) != 0;
+	RequestParachute = (Flags & FSavedMove_Character::FLAG_Custom_5_New) != 0;
 }
 
 void UPlayerMovementComponent::FGDSavedMove::Clear()
@@ -111,6 +124,9 @@ void UPlayerMovementComponent::FGDSavedMove::Clear()
 	SavedRequestToStartWalking = false;
 	SavedRequestToStartProne = false;
 	SavedRequestToBackMovement = false;
+	SavedRequestFreefalling = false;
+	SavedRequestParachute = false;
+
 }
 
 uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
@@ -135,6 +151,16 @@ uint8 UPlayerMovementComponent::FGDSavedMove::GetCompressedFlags() const
 	if (SavedRequestToBackMovement)
 	{
 		Result |= FLAG_Custom_3;
+	}
+	if (SavedRequestFreefalling)
+	{
+		Result |= FLAG_Custom_4_New;  // 4번 비트 설정
+	}
+
+	// SavedRequestParachute에 대해 FLAG_Custom_5 사용
+	if (SavedRequestParachute)
+	{
+		Result |= FLAG_Custom_5_New;   // 5번 비트 설정
 	}
 	
 	return Result;
@@ -163,6 +189,14 @@ bool UPlayerMovementComponent::FGDSavedMove::CanCombineWith(const FSavedMovePtr&
 	{
 		return false;
 	}
+	if (SavedRequestFreefalling != ((FGDSavedMove*)&NewMove)->SavedRequestFreefalling)
+	{
+		return false;
+	}
+	if (SavedRequestParachute != ((FGDSavedMove*)&NewMove)->SavedRequestParachute)
+	{
+		return false;
+	}
 	
 	return Super::CanCombineWith(NewMove, Character, MaxDelta);
 }
@@ -179,6 +213,8 @@ void UPlayerMovementComponent::FGDSavedMove::SetMoveFor(ACharacter* Character, f
 		SavedRequestToStartWalking = CharacterMovement->RequestToStartWalking;
 		SavedRequestToStartProne = CharacterMovement->RequestToStartProne;
 		SavedRequestToBackMovement = CharacterMovement->RequestToBackMovement;
+		SavedRequestFreefalling = CharacterMovement->RequestFreefalling;
+		SavedRequestParachute = CharacterMovement->RequestParachute;
 	}
 }
 
@@ -277,33 +313,28 @@ void UPlayerMovementComponent::StopBackMovement()
 	RequestToBackMovement = false;
 }
 
-// void UPlayerMovementComponent::FreefallingVelocitySettings(FVector2D MovementVector)
-// {
-// 	APlayerCharacter* Owner = Cast<APlayerCharacter>(GetOwner());
-// 	
-// 	if (MovementVector.Y>0.f)
-// 	{
-// 	FRotator Aimrot = Owner->GetBaseAimRotation();
-// 		if (Aimrot.Pitch>=270.f)
-// 		{
-// 			Aimrot.Pitch-=360.f;
-// 		}
-// 		float ZSpeed = 10010.f * GetWorld()->GetDeltaSeconds() * (Aimrot.Pitch / 90.f);
-// 		FVector CurrentVelocity = Owner->GetVelocity();
-// 		CurrentVelocity.Z += ZSpeed;
-// 		Owner->GetCharacterMovement()->Velocity = CurrentVelocity;
-// 		//마우스 방향 비례 속도 조정
-// 	}
-// 	else if (MovementVector.Y<=0.f)
-// 	{
-// 		//정해진 중력의 속도그대로 z방향으로 추락
-// 	}
-// 	if (MovementVector.X>0.f)
-// 	{
-// 		//오른쪽으로 가기
-// 	}
-// 	else if (MovementVector.X<0.f)
-// 	{
-// 		//왼쪽으로 가기
-// 	}
-// }
+void UPlayerMovementComponent::StartFreeFalling()
+{
+	RequestFreefalling = true;
+}
+
+void UPlayerMovementComponent::StopFreeFalling()
+{
+	RequestFreefalling = false;
+}
+
+void UPlayerMovementComponent::StartParachute()
+{
+	RequestParachute = true;
+}
+
+void UPlayerMovementComponent::StopParachute()
+{
+	RequestParachute = false;
+}
+
+
+
+
+
+

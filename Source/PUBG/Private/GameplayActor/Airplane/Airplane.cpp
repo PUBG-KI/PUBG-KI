@@ -35,7 +35,7 @@ AAirplane::AAirplane()
 	// 스프링 암 생성 및 설정
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(PlaneMesh);
-	SpringArm->TargetArmLength = 600.0f;  // 카메라 거리 조절
+	SpringArm->TargetArmLength = 800.0f;  // 카메라 거리 조절
 	SpringArm->bEnableCameraLag = true;
 	SpringArm->CameraLagSpeed = 3.0f;
 
