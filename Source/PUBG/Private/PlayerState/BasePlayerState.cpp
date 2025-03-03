@@ -201,6 +201,7 @@ void ABasePlayerState::KillCountChanged(const FOnAttributeChangeData& Data)
 	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
 	if (PC && PC->IsLocalController())
 	{
+		PC->ShowKillLog(KillCount);
 		PC->UpdateKillCount(KillCount);
 	}
 }

@@ -75,6 +75,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowNotification(FText Text);
 	UFUNCTION(BlueprintCallable)
+	void ShowKillLog(int32 Killcount);
+	UFUNCTION(BlueprintCallable)
 	void ShowResultWidget(int32 Rank);
 
 	UFUNCTION(Client, Reliable, BlueprintCallable)

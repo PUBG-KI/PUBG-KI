@@ -20,19 +20,26 @@ class PUBG_API UNotificationWidget : public UWidgetBase
 public:
 	// 애니메이션을 찾아서 재생하는 함수 선언
 	UFUNCTION(BlueprintCallable)
-	void PlayWidgetAnimation();
+	void PlayNotifyAnimation();
 	UFUNCTION(BlueprintCallable)
 	void ShowNotification(FText Message);
+	UFUNCTION(BlueprintCallable)
+	void PlayKillLogAnimation();
+	UFUNCTION(BlueprintCallable)
+	void ShowKillLog(int32 KillCount);
 
 protected:
 	virtual void NativeConstruct() override;
-
-	// 블루프린트에서 애니메이션을 가져오기 위한 변수
+	
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* NotifyAnimation;
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* KillLogAnimation;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text_Notification;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Text_KillLog;
 
 	
 };
