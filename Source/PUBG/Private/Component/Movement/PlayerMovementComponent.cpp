@@ -86,7 +86,7 @@ float UPlayerMovementComponent::GetMaxSpeed() const
 	{
 		BaseSpeed += 1000.f;
 	}
-	UE_LOG(LogTemp,Warning,TEXT("BaseSpeed:%f"), BaseSpeed);
+	//UE_LOG(LogTemp,Warning,TEXT("BaseSpeed:%f"), BaseSpeed);
 	return BaseSpeed; //350
 }
 // 걷기 350 

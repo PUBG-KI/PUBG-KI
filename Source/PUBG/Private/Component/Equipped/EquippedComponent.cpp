@@ -751,7 +751,7 @@ void UEquippedComponent::ServerSpawnStaticMeshFromArmor_Implementation(AArmor_Ba
 // }
 
 
-void UEquippedComponent::ServerEquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
+void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 {
 	if (Item != nullptr)
 	{
@@ -815,6 +815,99 @@ void UEquippedComponent::ServerEquipThrow(AItemBase* Item, FItemSlotStruct* Item
 			
 			float Weight = Row->Weight;
 			EItemCategory ItemCategory = ItemSlot->ItemCategory;
+			
+			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
+		}
+
+		TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		if (AGrenade_Base* Grenade = GetWorld()->SpawnActorDeferred<AGrenade_Base>(GrenadeClass, FTransform(FRotator(0), FVector(0))))
+		{
+			//TempWeapon->SetTableIndex(RowIndex);
+			FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+			
+			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+
+			EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(GrenadeSlot);
+			Grenade->SetEquipSlot(EquippedItemCategory);
+			
+			GrenadeSlot = static_cast<int32>(Grenade->GetEquipSlot()); // 장착될 슬롯값 가져오기
+			UE_LOG(LogTemp, Warning, TEXT("Grenade Slot : %d"), GrenadeSlot);
+
+			EquippedItems[GrenadeSlot] = Grenade;
+			EquippedItems[GrenadeSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("throwable_Socket")));
+			
+			Grenade->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+
+			GetOwner()->ForceNetUpdate();
+			//Item->Destroy(true);
+		}
+	}
+}
+
+void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemSlotStruct ItemSlot)
+{
+	if (Item != nullptr)
+	{
+		AWeaponItem* GrenadeItem = Cast<AWeaponItem>(Item);
+
+		FName ItemID = GrenadeItem->GetItemDataComponent()->GetItemRowName();
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemID.ToString());
+		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
+	
+		int32 GrenadeSlot = static_cast<int32>(GrenadeItem->GetEquippedItemCategory()); // Item에 저장되어 있는 슬롯 값 가져오기
+		
+		if (EquippedItems[4] != nullptr) 
+		{
+			// 이미 있으면 인벤토리에 추가
+			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+			UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+
+			FName Name = Item->GetItemDataComponent()->GetItemRowName();
+			float Weight = Item->GetItemDataComponent()->GetWeight();
+			EItemCategory ItemCategory = Item->GetItemDataComponent()->GetItemCategory();
+		
+			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
+		}
+
+		TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		if (AGrenade_Base* Grenade = GetWorld()->SpawnActorDeferred<AGrenade_Base>(GrenadeClass, FTransform(FRotator(0), FVector(0))))
+		{
+			//TempWeapon->SetTableIndex(RowIndex);
+			FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+			
+			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+
+			EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(GrenadeSlot);
+			Grenade->SetEquipSlot(EquippedItemCategory);
+			
+			GrenadeSlot = static_cast<int32>(Grenade->GetEquipSlot()); // 장착될 슬롯값 가져오기
+			UE_LOG(LogTemp, Warning, TEXT("Grenade Slot : %d"), GrenadeSlot);
+
+			EquippedItems[GrenadeSlot] = Grenade;
+			EquippedItems[GrenadeSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("throwable_Socket")));
+			
+			Grenade->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+
+			GetOwner()->ForceNetUpdate();
+			//Item->Destroy(true);
+		}
+	}
+	else if (ItemSlot.ItemName != NAME_None)
+	{
+		FName Name = ItemSlot.ItemName;
+		UE_LOG(LogTemp, Warning, TEXT("ItemSlot != nullptr = %s"), *Name.ToString())
+		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(Name, TEXT("Find Row"));
+
+		int32 GrenadeSlot = static_cast<int32>(Row->Category); // Item에 저장되어 있는 슬롯 값 가져오기
+		
+		if (EquippedItems[4] != nullptr) 
+		{
+			// 이미 있으면 인벤토리에 추가
+			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+			UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+			
+			float Weight = Row->Weight;
+			EItemCategory ItemCategory = ItemSlot.ItemCategory;
 			
 			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
 		}

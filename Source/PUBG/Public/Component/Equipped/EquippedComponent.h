@@ -113,10 +113,12 @@ public:
 
 	// 수류탄 장착
 	//UFUNCTION(Server, Reliable)
-	void ServerEquipThrow(AItemBase* Item = nullptr, FItemSlotStruct* ItemSlot = nullptr);
+	void EquipThrow(AItemBase* Item = nullptr, FItemSlotStruct* ItemSlot = nullptr);
+	UFUNCTION(Server, Reliable)
+	void ServerEquipThrow(AItemBase* Item = nullptr, FItemSlotStruct ItemSlot = FItemSlotStruct());
 	
 	// 파츠 장착
-	// UFUNCTION(Server, Reliable)
+	//UFUNCTION(Server, Reliable)
 	bool ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
 
 	UFUNCTION()
