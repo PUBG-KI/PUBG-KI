@@ -27,6 +27,11 @@ AGun_Base::AGun_Base()
 
 	//SetReplicates(true);
 	bReplicates = true;
+
+	// 파츠 정보 초기화
+	ActivateMag = false;
+	ActivateMuzzle = false;
+	ActivateScope = false;
 	
 	// 이준수
 	FString DataTablePath = TEXT("/Game/Blueprint/Weapon/Datatable/DT_WeaponData.DT_WeaponData");
@@ -108,9 +113,23 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 // 스테틱 메쉬 셋팅
 void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
 {
-	if (PartsDataArray == 1) ScopeMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
-	if (PartsDataArray == 2) MagMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
-	if (PartsDataArray == 3) MuzzleMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+	if (PartsDataArray == 1)
+	{
+		ScopeMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+		ActivateScope = true;
+	}
+
+	if (PartsDataArray == 2) 
+	{
+		MagMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+		ActivateMag = true;
+	}
+	
+	if (PartsDataArray == 3)
+	{
+		MuzzleMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
+		ActivateMuzzle = true;
+	}
 }
 
 void AGun_Base::Server_SettingParts_Implementation(int32 partsIndex)
