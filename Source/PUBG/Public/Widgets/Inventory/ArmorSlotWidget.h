@@ -91,4 +91,9 @@ public:
 	void SetEquippedComponent(UEquippedComponent* NewEquippedComponent) { EquippedComponent = NewEquippedComponent; }
 
 	void InitArmorSlot();
+
+	UFUNCTION(BlueprintCallable)
+	void OnButton_ArmorSlotHovered();
+	UFUNCTION(BlueprintCallable)
+	void OnButton_ArmorSlotUnHovered();
 };
