@@ -1113,8 +1113,7 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 							if (PlayerController->GetHudWidget() != nullptr)
 							{
 								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetMessage(Result);
-								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetKeyTexture(
-									ResultImage);
+								PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetKeyTexture(ResultImage);
 							}
 							//InteractInterface->InteractWith();
 						}
@@ -1159,6 +1158,14 @@ void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp
 		{
 			LookAtActor = nullptr;
 			InventoryComponent->SetItem(nullptr);
+
+			ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetController());
+
+			if (PlayerController->GetHudWidget() != nullptr)
+			{
+				PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+			}
+			
 			GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);
 		}
 	}

@@ -248,6 +248,7 @@ void UItemDataComponent::InteractWith_Implementation(APlayerCharacter* Character
 			AActor* Owner = GetOwner();
 			if (Owner)
 			{
+				Character->SetLookAtActor(nullptr);
 				Owner->Destroy();
 			}
 		}

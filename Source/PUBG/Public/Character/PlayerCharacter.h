@@ -203,6 +203,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UEquippedComponent* GetEquippedComponent() const { return EquippedComponent; }
 
+	// Setter
+	UFUNCTION(BlueprintCallable)
+	void SetLookAtActor(AActor* NewActor) { LookAtActor = NewActor; }
 	//자기장
 public:
 	UPROPERTY(VisibleAnywhere, Category="Post Process")

@@ -892,6 +892,7 @@ void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemS
 			
 			Grenade->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 
+			Grenade->SetOwner(PlayerCharacter);
 			GetOwner()->ForceNetUpdate();
 			//Item->Destroy(true);
 		}
