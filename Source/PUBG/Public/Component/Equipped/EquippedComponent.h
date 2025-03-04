@@ -119,7 +119,7 @@ public:
 	
 	// 파츠 장착
 	//UFUNCTION(Server, Reliable)
-	bool ServerEquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
+	bool EquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
 
 	UFUNCTION()
 	TArray<EGunType> GetCompatibleWeaponType(FName Name) const; 

@@ -115,6 +115,8 @@ void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
 
 void AGun_Base::Server_SettingParts_Implementation(int32 partsIndex)
 {
+	UE_LOG(LogTemp, Warning, TEXT("AGun_Base::Server_SettingParts_Implementations"));
+
 	SettingStaticmesh(partsIndex);
 	
 	if (WeaponParts[partsIndex].PartsName.IsValid())
@@ -174,6 +176,8 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 			WeaponParts[PartsCategory_int].ItemCategory = ItemCategory;
 			WeaponParts[PartsCategory_int].Weight = Weight;
 			WeaponParts[PartsCategory_int].StaticMesh = PartsData.Parts_StaticMesh;
+			
+			ServerSetParts(PartsCategory_int, PartsName, Weight, ItemCategory, PartsData.Parts_StaticMesh);
 
 			Server_SettingParts(PartsCategory_int);
 			
@@ -190,6 +194,15 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 		// }
 	}
 	return false;
+}
+
+void AGun_Base::ServerSetParts_Implementation(int32 NewIndex,FName NewName, float Weight, EItemCategory ItemCategory,
+	UStaticMesh* NewStaticMesh)
+{
+	WeaponParts[NewIndex].PartsName = NewName;
+	WeaponParts[NewIndex].ItemCategory = ItemCategory;
+	WeaponParts[NewIndex].Weight = Weight;
+	WeaponParts[NewIndex].StaticMesh = NewStaticMesh;
 }
 
 void AGun_Base::PrintPartsSlot()
