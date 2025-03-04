@@ -95,3 +95,4 @@ void UPlayerStatusWidget::SetProgressBar_Stamina(float OutStamina)
 	ProgressBar_Stamina->SetPercent(Stamina / MaxStamina);
 }
 
+

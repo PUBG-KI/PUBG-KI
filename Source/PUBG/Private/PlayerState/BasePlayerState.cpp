@@ -9,6 +9,8 @@
 #include "Controller/BasePlayerController.h"
 #include "GameState/BaseGameState.h"
 #include "Net/UnrealNetwork.h"
+#include "Widgets/HUD/HudWidget.h"
+#include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 
 // 위젯 추가
 //#include "UI/HUDWidget.h"
@@ -129,6 +131,7 @@ void ABasePlayerState::BeginPlay()
 	Super::BeginPlay();
 	
 	HealthChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetHealthAttribute()).AddUObject(this, &ABasePlayerState::HealthChanged);
+	StaminaChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetStaminaAttribute()).AddUObject(this, &ABasePlayerState::StaminaChanged);
 	KillCountChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetKillCountAttribute()).AddUObject(this, &ABasePlayerState::KillCountChanged);
 	RankChangedDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AttributeSetBase->GetRankAttribute()).AddUObject(this, &ABasePlayerState::RankChanged);
 }
@@ -138,6 +141,12 @@ void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 	//UE_LOG(LogTemp, Warning, TEXT("HealthChanged"));
 	float Health = Data.NewValue;
 
+	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
+	if (PC && PC->IsLocalController())
+	{
+		PC->GetHudWidget()->GetPlayerStatusWidget()->SetHealth(Health);
+	}
+	
 	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))
 	{
 		APlayerCharacter* Player = Cast<APlayerCharacter>(GetPawn());
@@ -178,7 +187,12 @@ void ABasePlayerState::HealthRegenRateChanged(const FOnAttributeChangeData& Data
 void ABasePlayerState::StaminaChanged(const FOnAttributeChangeData& Data)
 {	
 	float Stamina = Data.NewValue;
-	
+
+	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
+	if (PC && PC->IsLocalController())
+	{
+		PC->GetHudWidget()->GetPlayerStatusWidget()->SetStamina(Stamina);
+	}
 }
 
 void ABasePlayerState::MaxStaminaChanged(const FOnAttributeChangeData& Data)  
