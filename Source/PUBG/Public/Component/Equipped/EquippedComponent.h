@@ -186,11 +186,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AWeapon_Base* GetMeleeSlot() const { return Cast<AWeapon_Base>(EquippedItems[3]); }
 
-	// UFUNCTION(BlueprintCallable)
-	// AWeapon_Base* GetThrowableSlot() const { return Cast<AWeapon_Base>(EquippedItems[4]); }
-	
 	UFUNCTION(BlueprintCallable)
-	AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
+	AWeapon_Base* GetThrowableSlot() const { return Cast<AWeapon_Base>(EquippedItems[4]); }
+	
+	// UFUNCTION(BlueprintCallable)
+	// AWeapon_Base* GetThrowableSlot() const { return ThrowableSlot; }
 
 	// setter
 	UFUNCTION(BlueprintCallable)

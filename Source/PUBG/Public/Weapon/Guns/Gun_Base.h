@@ -60,6 +60,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	FVector WeaponProjectileSocketLocation;
 
+	UPROPERTY()
+	bool ActivateScope;
+
+	UPROPERTY()
+	bool ActivateMuzzle;
+	
+	UPROPERTY()
+	bool ActivateMag;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "FireMode")
 	FORCEINLINE EFiremodes GetFireMode() const { return FireMode; }
@@ -96,6 +105,16 @@ public:
 
 	UFUNCTION(Server , Reliable, WithValidation)
 	void Server_SettingParts(int32 partsIndex);
+
+	// 장착 여부 셋팅
+	UFUNCTION()
+	bool GetEquippedScope() {return ActivateScope;}
+	
+	UFUNCTION()
+	bool GetEquippedMuzzle() {return ActivateMuzzle;}
+
+	UFUNCTION()
+	bool GetEquippedMag() {return ActivateMag;}
 
 // 이준수 ================================
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
