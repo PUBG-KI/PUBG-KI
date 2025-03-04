@@ -237,6 +237,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 			EquippedItems[MainWeaponSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("slot_secondarySocket")));
 		}
 		
+		MainWeapon->SetOwner(PlayerCharacter);
 		MainWeapon->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 	}
 	else
@@ -415,7 +416,8 @@ void UEquippedComponent::ServerEquipSubWeapon_Implementation(AItemBase* Item)
 
 		EquippedItems[SubWeaponSlot] = SubWeapon;
 		EquippedItems[SubWeaponSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("SideArm")));
-		
+
+		SubWeapon->SetOwner(PlayerCharacter);
 		SubWeapon->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 	}
 
@@ -561,7 +563,8 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 			PlayerCharacter->Multicast_SetMeshComponent(EPlayerMeshType::Top, ArmorRow->SkeletalMesh);
 
 		}
-		
+
+		Armor->SetOwner(PlayerCharacter);
 		Armor->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 		Armor->EquipArmor(PlayerCharacter);
 	}
@@ -792,7 +795,8 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 
 			EquippedItems[GrenadeSlot] = Grenade;
 			EquippedItems[GrenadeSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("throwable_Socket")));
-			
+
+			Grenade->SetOwner(PlayerCharacter);
 			Grenade->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 
 			GetOwner()->ForceNetUpdate();
@@ -937,7 +941,7 @@ void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemS
 	}
 }
 
-bool UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
+bool UEquippedComponent::EquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
 {
 	if (PartsItem != nullptr) // F로 장착
 	{
@@ -1016,6 +1020,7 @@ bool UEquippedComponent::ServerEquipParts(AItemBase* PartsItem, int32 Index, FIt
 	}
 	return false;
 }
+
 
 TArray<EGunType> UEquippedComponent::GetCompatibleWeaponType(FName Name) const
 {

@@ -182,7 +182,7 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 					APlayerCharacter* PlayerCharacter =  Cast<APlayerCharacter>(InventoryComponent->GetOwner());
 					EquippedComponent = PlayerCharacter->GetEquippedComponent();
 
-					if (EquippedComponent->ServerEquipParts(nullptr, -1, &ItemSlot))
+					if (EquippedComponent->EquipParts(nullptr, -1, &ItemSlot))
 					{
 						UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : true"));
 						UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::NativeOnPreviewMouseButtonDown = EquippedComponent->ServerEquipParts : GetContent[%d]"), Index);
