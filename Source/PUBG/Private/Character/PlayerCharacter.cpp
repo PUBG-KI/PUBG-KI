@@ -309,7 +309,8 @@ void APlayerCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 	UBaseInputComponent* BaseInputComponent = CastChecked<UBaseInputComponent>(PlayerInputComponent);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
-	                                          ETriggerEvent::Triggered, this, &APlayerCharacter::Input_Move_Implementation);
+	                                          ETriggerEvent::Triggered, this,
+	                                          &APlayerCharacter::Input_Move_Implementation);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Move,
 	                                          ETriggerEvent::Completed, this, &APlayerCharacter::Input_MoveReleased);
 	BaseInputComponent->BindNativeInputAction(InputConfigDataAsset, BaseGameplayTag::InputTag_Look,
@@ -333,8 +334,9 @@ void APlayerCharacter::Input_Move_Implementation(const FInputActionValue& InputA
 	// 현재 MovementMode 확인
 	EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
 	//UE_LOG(LogTemp, Warning, TEXT("CurrentMovementMode: %s"), *UEnum::GetValueAsString(CurrentMovementMode));
+
 	Input_Move(InputActionValue);
-if (!OntheParachute)
+	if (!OntheParachute)
 	{
 		UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(GetMovementComponent());
 		bUseControllerRotationYaw = false;
@@ -404,16 +406,16 @@ if (!OntheParachute)
 			FreefallingMoveInputY = MovementVector.Y;
 			FreefallingMoveInputX = MovementVector.X;
 			// MovementComponent->StartFreeFalling();
-			const float FreefallSpeedMultiplier = 10.0f;	
+			const float FreefallSpeedMultiplier = 10.0f;
 			if (MovementVector.Y != 0.f)
 			{
 				const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-				AddMovementInput(ForwardDirection, MovementVector.Y*FreefallSpeedMultiplier);
+				AddMovementInput(ForwardDirection, MovementVector.Y * FreefallSpeedMultiplier);
 			}
 			if (MovementVector.X != 0.f)
 			{
 				const FVector RightDirection = MovementRotation.RotateVector(FVector::RightVector);
-				AddMovementInput(RightDirection, MovementVector.X*FreefallSpeedMultiplier);
+				AddMovementInput(RightDirection, MovementVector.X * FreefallSpeedMultiplier);
 			}
 		}
 	}
@@ -425,36 +427,34 @@ if (!OntheParachute)
 		FRotator MovementRotation = GetActorRotation();
 		if (MovementVector.Y != 0.f)
 		{
-			const float ParachuteSpeedMultiplier = 10.0f; 
+			const float ParachuteSpeedMultiplier = 10.0f;
 			const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
-			AddMovementInput(ForwardDirection, MovementVector.Y*ParachuteSpeedMultiplier);
-			UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+			AddMovementInput(ForwardDirection, MovementVector.Y * ParachuteSpeedMultiplier);
+			UE_LOG(LogTemp, Warning, TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
 		}
 		if (MovementVector.X != 0.f)
 		{
 			if (MovementVector.X < 0.f)
 			{
-				const float ParachuteSpeedMultiplier = 10.0f; 
+				const float ParachuteSpeedMultiplier = 10.0f;
 				ActorRotate = GetActorRotation().Roll;
-				FRotator RightDirection = FRotator(GetActorRotation().Pitch,GetActorRotation().Yaw, ActorRotate-1.f);
+				FRotator RightDirection = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, ActorRotate - 1.f);
 				FVector RightVector = RightDirection.RotateVector(FVector::RightVector);
-				AddMovementInput(RightVector, MovementVector.X*ParachuteSpeedMultiplier);
-				UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
-				
-				
+				AddMovementInput(RightVector, MovementVector.X * ParachuteSpeedMultiplier);
+				UE_LOG(LogTemp, Warning, TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
 			}
 			if (MovementVector.X > 0.f)
-			{const float ParachuteSpeedMultiplier = 10.0f; 
+			{
+				const float ParachuteSpeedMultiplier = 10.0f;
 				ActorRotate = GetActorRotation().Roll;
-				FRotator RightDirection = FRotator(GetActorRotation().Pitch,GetActorRotation().Yaw, ActorRotate+1.f);
+				FRotator RightDirection = FRotator(GetActorRotation().Pitch, GetActorRotation().Yaw, ActorRotate + 1.f);
 				FVector RightVector = RightDirection.RotateVector(FVector::RightVector);
-				AddMovementInput(RightVector,MovementVector.X*ParachuteSpeedMultiplier);
-				UE_LOG(LogTemp,Warning,TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+				AddMovementInput(RightVector, MovementVector.X * ParachuteSpeedMultiplier);
+				UE_LOG(LogTemp, Warning, TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
 			}
 		}
 	}
 }
-
 
 // void APlayerCharacter::Input_Move(const FInputActionValue& InputActionValue)
 // {
@@ -867,7 +867,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	DOREPLIFETIME(APlayerCharacter, InFreefall);
 	DOREPLIFETIME(APlayerCharacter, OntheParachute);
 	DOREPLIFETIME(APlayerCharacter, IsSwimming);
-	
+
 	//DOREPLIFETIME(APlayerCharacter, Pitch);
 }
 
@@ -927,10 +927,6 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 		GetEquippedComponent()->SetCurrentWeapon(nullptr);
 	}
 }
-
-
-
-
 
 
 void APlayerCharacter::Server_ModifyGravity_Implementation(float GravityMultiplier)
