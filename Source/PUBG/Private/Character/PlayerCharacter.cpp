@@ -773,7 +773,7 @@ void APlayerCharacter::CheckRotationForTurn()
 	{
 		CheckDeltaRotation.Yaw += 360.0f;
 	}
-	if (!OntheVehicle)
+	if (!OntheVehicle&&!InFreefall&&!OntheParachute)
 	{
 		UBaseAbilitySystemComponent* AbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(
 			GetAbilitySystemComponent());
@@ -926,6 +926,11 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 			GetGrantedAbilitySpecHandles(); //어빌리티 삭제
 		GetEquippedComponent()->SetCurrentWeapon(nullptr);
 	}
+}
+
+void APlayerCharacter::Server_SetInFreefall_Implementation(bool NewInFreefall)
+{
+	InFreefall = NewInFreefall;
 }
 
 

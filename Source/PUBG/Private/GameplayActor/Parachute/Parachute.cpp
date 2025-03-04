@@ -13,7 +13,8 @@ AParachute::AParachute()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TimelineComponent = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
-	
+	SetReplicates(true);
+	// bReplicates = true;
 	
 }
 
@@ -76,7 +77,7 @@ void AParachute::Tick(float DeltaTime)
 	{ 
 		if (PlayerCharacter->GetActorLocation().Z <= 5000.f && PlayerCharacter->GetInFreefall()&&PlayerCharacter->GetFirstAirplane())
 		{
-			PlayerCharacter->SetInFreefall(false);
+			PlayerCharacter->Server_SetInFreefall(false);
 			PlayerCharacter->SetOntheParachute(true);
 			UE_LOG(LogTemp, Warning, TEXT("123PlayerCharacter->GetOntheParachute(): %hhd"),PlayerCharacter->GetOntheParachute());
 			//Server_ChangeVelocity();
