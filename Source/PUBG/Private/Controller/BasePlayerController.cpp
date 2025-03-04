@@ -81,6 +81,8 @@ void ABasePlayerController::CreateHUD()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
 	}
+
+	InputModeGame();	
 	
 	ABasePlayerState* PS = GetPlayerState<ABasePlayerState>();
 	if (!PS)
@@ -97,7 +99,6 @@ void ABasePlayerController::CreateHUD()
 	HudWidget->GetPlayerStatusWidget()->SetMaxStamina(PS->GetMaxStamina());
 	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
 	
-	InputModeGame();	
 }
 
 void ABasePlayerController::InputModeUI()
