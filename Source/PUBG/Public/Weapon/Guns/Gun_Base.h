@@ -66,7 +66,7 @@ protected:
 	UPROPERTY()
 	bool ActivateMuzzle;
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool ActivateMag;
 
 public:
@@ -103,17 +103,17 @@ public:
 	UFUNCTION()
 	void SettingStaticmesh(int32 PartsDataArray);
 
-	UFUNCTION(Server , Reliable, WithValidation)
+	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SettingParts(int32 partsIndex);
 
 	// 장착 여부 셋팅
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool GetEquippedScope() {return ActivateScope;}
 	
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool GetEquippedMuzzle() {return ActivateMuzzle;}
 
-	UFUNCTION()
+	UFUNCTION(BlueprintPure)
 	bool GetEquippedMag() {return ActivateMag;}
 
 // 이준수 ================================
