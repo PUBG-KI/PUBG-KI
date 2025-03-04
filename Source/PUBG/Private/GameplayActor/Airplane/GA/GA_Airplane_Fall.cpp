@@ -1,5 +1,6 @@
 #include "GameplayActor/Airplane/GA/GA_Airplane_Fall.h"
 
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Component/PUBGSpringArmComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
