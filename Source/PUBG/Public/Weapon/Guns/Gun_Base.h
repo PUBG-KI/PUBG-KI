@@ -60,14 +60,17 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	FVector WeaponProjectileSocketLocation;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool ActivateScope;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool ActivateMuzzle;
 	
 	UPROPERTY(Replicated)
 	bool ActivateMag;
+
+	UPROPERTY(Replicated)
+	float Changevalue;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "FireMode")
@@ -115,6 +118,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool GetEquippedMag() {return ActivateMag;}
+	
+	// UFUNCTION()
+	// float GetMagChangeValue(float CurrentBullet);
 
 // 이준수 ================================
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
@@ -150,3 +156,7 @@ public:
 	void ServerPrintPartsSlot();
 	// =====================================
 };
+
+
+
+
