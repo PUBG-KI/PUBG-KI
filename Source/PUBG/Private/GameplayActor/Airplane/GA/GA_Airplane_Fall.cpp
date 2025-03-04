@@ -70,7 +70,7 @@ void UGA_Airplane_Fall::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	}
 
 	// 플레이어를 자유 낙하 상태로 설정
-	PlayerCharacter->SetInFreefall(true);
+	PlayerCharacter->Server_SetInFreefall(true);
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
 	MovementComponent->GravityScale = 0.2f;
 	EndAbility(Handle, ActorInfo, ActivationInfo, false, true);	

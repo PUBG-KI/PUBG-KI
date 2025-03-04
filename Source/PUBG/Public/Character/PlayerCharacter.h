@@ -307,7 +307,8 @@ private:
 
 public:
 	FORCEINLINE bool GetInFreefall() const { return InFreefall; }
-	FORCEINLINE void SetInFreefall(bool NewInFreefall){InFreefall = NewInFreefall;}
+	UFUNCTION(Server, Reliable)
+	void Server_SetInFreefall(bool NewInFreefall);
 	
 	FORCEINLINE float GetFreefallingMoveInputY() const { return FreefallingMoveInputY; }
 	FORCEINLINE void SetFreefallingMoveInputY(float NewFreefallingMoveInput) { FreefallingMoveInputY = NewFreefallingMoveInput; }
