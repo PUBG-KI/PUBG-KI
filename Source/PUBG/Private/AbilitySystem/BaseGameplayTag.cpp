@@ -94,7 +94,6 @@ namespace BaseGameplayTag
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_ThrowsReady, "Player.State.ThrowsReady");
 	UE_DEFINE_GAMEPLAY_TAG(Player_Ability_Turn, "Player.Ability.Turn");
 	UE_DEFINE_GAMEPLAY_TAG(Player_State_Swim, "Player.State.Swim");
-	
 	UE_DEFINE_GAMEPLAY_TAG(Player_Event_Action_Hit, "Player.Event.Action.Hit");
 
 	
