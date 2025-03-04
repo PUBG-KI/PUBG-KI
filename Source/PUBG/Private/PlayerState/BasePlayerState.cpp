@@ -12,8 +12,6 @@
 #include "Widgets/HUD/HudWidget.h"
 #include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 
-// 위젯 추가
-//#include "UI/HUDWidget.h"
 
 ABasePlayerState::ABasePlayerState()
 {
@@ -144,7 +142,10 @@ void ABasePlayerState::HealthChanged(const FOnAttributeChangeData& Data)
 	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
 	if (PC && PC->IsLocalController())
 	{
-		PC->GetHudWidget()->GetPlayerStatusWidget()->SetHealth(Health);
+		if(UHudWidget* Hud = PC->GetHudWidget())
+        {
+			Hud->GetPlayerStatusWidget()->SetHealth(Health);
+        }		
 	}
 	
 	if (!IsAlive() && !AbilitySystemComponent->HasMatchingGameplayTag(DeadTag))
@@ -191,7 +192,10 @@ void ABasePlayerState::StaminaChanged(const FOnAttributeChangeData& Data)
 	ABasePlayerController* PC = Cast<ABasePlayerController>(GetOwner());
 	if (PC && PC->IsLocalController())
 	{
-		PC->GetHudWidget()->GetPlayerStatusWidget()->SetStamina(Stamina);
+		if(UHudWidget* Hud = PC->GetHudWidget())
+		{
+			Hud->GetPlayerStatusWidget()->SetStamina(Stamina);
+		}		
 	}
 }
 
