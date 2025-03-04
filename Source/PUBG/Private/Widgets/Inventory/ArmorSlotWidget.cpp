@@ -4,6 +4,7 @@
 #include "Widgets/Inventory/ArmorSlotWidget.h"
 
 #include "Component/Equipped/EquippedComponent.h"
+#include "Components/Button.h"
 #include "Components/Image.h"
 
 void UArmorSlotWidget::NativeConstruct()
@@ -15,6 +16,10 @@ void UArmorSlotWidget::NativeConstruct()
 	Image_Pressed->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Disabled->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Armor->SetVisibility(ESlateVisibility::Collapsed);
+	
+	Button_Armor->OnHovered.AddDynamic(this, &UArmorSlotWidget::OnButton_ArmorSlotHovered);
+	Button_Armor->OnUnhovered.AddDynamic(this, &UArmorSlotWidget::OnButton_ArmorSlotUnHovered);
+	UE_LOG(LogTemp, Warning, TEXT("UArmorSlotWidget::NativeConstruct"));
 	
 }
 
@@ -45,4 +50,17 @@ void UArmorSlotWidget::InitArmorSlot()
 	Image_Pressed->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Disabled->SetVisibility(ESlateVisibility::Collapsed);
 	Image_Armor->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UArmorSlotWidget::OnButton_ArmorSlotHovered()
+{
+	UE_LOG(LogTemp, Warning, TEXT("UArmorSlotWidget::OnButton_ArmorSlotHovered"));
+	Image_Normal->SetVisibility(ESlateVisibility::Collapsed);
+	Image_Hovered->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UArmorSlotWidget::OnButton_ArmorSlotUnHovered()
+{
+	Image_Normal->SetVisibility(ESlateVisibility::Visible);
+	Image_Hovered->SetVisibility(ESlateVisibility::Collapsed);
 }
