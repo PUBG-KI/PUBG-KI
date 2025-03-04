@@ -33,6 +33,8 @@ AGun_Base::AGun_Base()
 	ActivateMag = false;
 	ActivateMuzzle = false;
 	ActivateScope = false;
+
+	Changevalue = 0.0f;
 	
 	// 이준수
 	FString DataTablePath = TEXT("/Game/Blueprint/Weapon/Datatable/DT_WeaponData.DT_WeaponData");
@@ -111,6 +113,7 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGun_Base, MuzzleMesh);
 
 	DOREPLIFETIME(AGun_Base, ActivateMag);
+	DOREPLIFETIME(AGun_Base, Changevalue);
 
 
 }
@@ -140,29 +143,19 @@ void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
 
 void AGun_Base::Server_SettingParts_Implementation(int32 partsIndex)
 {
-	UE_LOG(LogTemp, Warning, TEXT("In Function"));
-	
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("InIn Function"));
-		
 		SettingStaticmesh(partsIndex);
 		
-		if (WeaponParts[partsIndex].PartsName.IsValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : %s"), *WeaponParts[partsIndex].PartsName.ToString());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : NoValid"));
-		}
+		// if (WeaponParts[partsIndex].PartsName.IsValid())
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : %s"), *WeaponParts[partsIndex].PartsName.ToString());
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("EquipedPartsName : NoValid"));
+		// }
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No Authority"));
-	}
-
-	
 	
 }
 
@@ -214,6 +207,10 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 			WeaponParts[PartsCategory_int].Weight = Weight;
 			WeaponParts[PartsCategory_int].StaticMesh = PartsData.Parts_StaticMesh;
 
+			Changevalue = PartsData.ChangedValues;
+
+			ServerSetParts(PartsCategory_int, PartsName,Weight,  ItemCategory,PartsData.Parts_StaticMesh);
+
 			if (PartsCategory_int)
 			{
 				Server_SettingParts(PartsCategory_int);
@@ -235,6 +232,15 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 		// }
 	}
 	return false;
+}
+
+void AGun_Base::ServerSetParts_Implementation(int32 NewIndex, FName NewName, float Weight, EItemCategory ItemCategory,
+	UStaticMesh* NewStaticMesh)
+{
+	WeaponParts[NewIndex].PartsName = NewName;
+	WeaponParts[NewIndex].ItemCategory = ItemCategory;
+	WeaponParts[NewIndex].Weight = Weight;
+	WeaponParts[NewIndex].StaticMesh = NewStaticMesh;
 }
 
 void AGun_Base::PrintPartsSlot()
@@ -286,5 +292,21 @@ bool AGun_Base::Server_SetBulletArom_Validate(float Armo)
 {
 	return true;
 }
+
+// float AGun_Base::GetMagChangeValue(float CurrentBullet)
+// {
+// 	if (ActivateMag)
+// 	{
+// 		if (GetBulletArmo() != 0.0f) return 40.0 - GetBulletArmo();
+// 		
+// 		if (GetBulletArmo() == 0.0f) return 0.0;
+// 		
+// 	}
+// 	else
+// 	{
+// 		//if (GetBulletArmo() != 0.0f)
+// 		return 0.0;
+// 	}
+// }
 
 
