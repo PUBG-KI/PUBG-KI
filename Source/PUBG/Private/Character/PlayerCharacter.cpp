@@ -430,7 +430,7 @@ void APlayerCharacter::Input_Move_Implementation(const FInputActionValue& InputA
 			const float ParachuteSpeedMultiplier = 10.0f;
 			const FVector ForwardDirection = MovementRotation.RotateVector(FVector::ForwardVector);
 			AddMovementInput(ForwardDirection, MovementVector.Y * ParachuteSpeedMultiplier);
-			UE_LOG(LogTemp, Warning, TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
+			//UE_LOG(LogTemp, Warning, TEXT("CurrentsPEED:%f"), MovementComponent->GetMaxSpeed());
 		}
 		if (MovementVector.X != 0.f)
 		{
