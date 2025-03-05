@@ -53,14 +53,18 @@ ASupplyDrop::ASupplyDrop()
 	//스폰컴포넌트
 	ItemSpawnerComponent = CreateDefaultSubobject<UItemSpawnerComponent>(TEXT("ItemSpawnerComponent"));
 	
-	// Balloon = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Balloon"));
-	// Balloon->SetupAttachment(DropMesh);
 }
 
 // Called when the game starts or when spawned
 void ASupplyDrop::BeginPlay()
 {
 	Super::BeginPlay();
+
+
+	if (HasAuthority())
+	{
+		SpawnSupplyDropItem();
+	}
 	
 	DropMesh->OnComponentHit.AddDynamic(this, &ASupplyDrop::OnHit);
 }

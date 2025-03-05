@@ -60,19 +60,20 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 	case EItemCategory::MainWeapon:
 	case EItemCategory::SubWeapon:
 		{
-			SpawnedItem = World->SpawnActor<AWeaponItem>(WeaponItemClass, SpawnLocation, FRotator::ZeroRotator);
+			SpawnedItem = World->SpawnActorDeferred<AWeaponItem>(WeaponItemClass,FTransform(FRotator(0), FVector(0)));
 			break;
 		}
 	case EItemCategory::Helmet:
 	case EItemCategory::Vest:
 	case EItemCategory::Bag:
 		{
-			SpawnedItem = World->SpawnActor<AArmorItem>(ArmorItemClass, SpawnLocation, FRotator::ZeroRotator);
+			SpawnedItem = World->SpawnActorDeferred<AArmorItem>(ArmorItemClass,FTransform(FRotator(0), FVector(0)));
 			break;
 		}
 	default:
 		{
-			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);			
+			SpawnedItem = World->SpawnActorDeferred<AItemBase>(ItemBaseClass,FTransform(FRotator(0), FVector(0)));
+			break;
 		}
 	}
 
@@ -83,8 +84,12 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 			SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
 		}
 		
-		SpawnedItem->SetItemID(ItemID,bAbleAttach);
+		//SpawnedItem->SetItemID(ItemID,bAbleAttach);
+		SpawnedItem->SetItemTableRowName(ItemID);
+		SpawnedItem->SetIsSupplyDrop(bAbleAttach);
+		SpawnedItem->FinishSpawning(FTransform(FRotator::ZeroRotator, SpawnLocation));
 	}
+
 }
 
 void UItemSpawnerComponent::SpawnItems(bool bAbleAttach , AActor* ParentActor)

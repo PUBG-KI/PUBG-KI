@@ -22,7 +22,7 @@ enum class EItemCategory : uint8
 	
 	WeaponPart = 12 UMETA(Display = "WeaponPart"),
 
-	Head = 9 UMETA(Display = "Head"),
+	Head  UMETA(Display = "Head"),
 	Mask UMETA(Display = "Mask"),
 	Glasses UMETA(Display = "Glasses"),
 

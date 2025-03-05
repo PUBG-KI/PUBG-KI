@@ -94,6 +94,7 @@ public:
 
 	// Setter
 	void SetItemID(FName NewItemID,bool bIsSupplyDrop);
+	void SetIsSupplyDrop(bool NewIsSupplyDrop);
 	UFUNCTION(BlueprintCallable)
 	void SetItem(FItemStruct const &OutItem) { Item = OutItem; }
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -125,7 +126,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetCollisionScale();
 	UFUNCTION(BlueprintCallable)
-	void SetStaticMeshScaleFromCategory(int32 InCategoryIndex);
+	void SetStaticMeshScaleFromCategory(EItemCategory InCategoryIndex);
 
 	//충돌 박스 크기 설정
 	UFUNCTION(BlueprintCallable)
