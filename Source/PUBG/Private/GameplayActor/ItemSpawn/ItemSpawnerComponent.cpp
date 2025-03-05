@@ -72,8 +72,7 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 		}
 	default:
 		{
-			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);
-			
+			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);			
 		}
 	}
 	
