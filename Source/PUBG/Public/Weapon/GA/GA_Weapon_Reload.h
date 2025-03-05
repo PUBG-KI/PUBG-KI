@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/PlayerGameplayAbility.h"
+#include "Weapon/Guns/Gun_Base.h"
 #include "GA_Weapon_Reload.generated.h"
 
 /**
@@ -20,4 +21,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CheckZoom();
+
+	UFUNCTION(BlueprintPure)
+	float EquippedMagPart_BulletCalulate(AGun_Base* CurrentWeapon, float CurrentBullet, float IsMag_changed_BulletValue);
+
+	UFUNCTION(BlueprintCallable)
+	void SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon, float CurrentBullet, float IsMag_changed_BulletValue, FName BulletName);
+
+	UFUNCTION(blueprintPure)
+	bool CheckCurrentBullet(AGun_Base* CurrentWeapon, float DT_BulletArmo, FName BulletName);
+
+	UFUNCTION()
+	FName CheckBulletTypeName(FName BulletName);
 };

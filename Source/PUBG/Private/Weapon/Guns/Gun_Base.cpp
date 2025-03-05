@@ -124,6 +124,24 @@ void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
 	
 	if (PartsDataArray == 1)
 	{
+		FString ScopeName = WeaponParts[1].PartsName.ToString();
+		FString GunName = GetWeaponDataAsset().GunName;
+	
+		ScopeName.ReplaceInline(*FString(TEXT("_") + GunName), TEXT(""));
+		FName NewPartsName = FName(*ScopeName);
+		
+
+		if (NewPartsName == "ACOG_01")
+		{
+			FRotator NewRotator = FRotator(0, -90, 0);
+			ScopeMesh->SetRelativeRotation(NewRotator);
+		}
+		else
+		{
+			FRotator NewRotator = FRotator(0, 0, 0);
+			ScopeMesh->SetRelativeRotation(NewRotator);
+		}
+		
 		ScopeMesh->SetStaticMesh(WeaponParts[PartsDataArray].StaticMesh);
 		ActivateScope = true;
 	}
@@ -140,6 +158,7 @@ void AGun_Base::SettingStaticmesh(int32 PartsDataArray)
 		ActivateMuzzle = true;
 	}
 }
+
 
 void AGun_Base::Server_SettingParts_Implementation(int32 partsIndex)
 {
@@ -206,11 +225,10 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 			WeaponParts[PartsCategory_int].ItemCategory = ItemCategory;
 			WeaponParts[PartsCategory_int].Weight = Weight;
 			WeaponParts[PartsCategory_int].StaticMesh = PartsData.Parts_StaticMesh;
-
-			Changevalue = PartsData.ChangedValues;
-
-			ServerSetParts(PartsCategory_int, PartsName,Weight,  ItemCategory,PartsData.Parts_StaticMesh);
-
+			WeaponParts[PartsCategory_int].ChangeValue = PartsData.ChangedValues;
+			
+			ServerSetParts(PartsCategory_int, PartsName,Weight,  ItemCategory,PartsData.Parts_StaticMesh, PartsData.ChangedValues);
+			
 			if (PartsCategory_int)
 			{
 				Server_SettingParts(PartsCategory_int);
@@ -235,12 +253,13 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 }
 
 void AGun_Base::ServerSetParts_Implementation(int32 NewIndex, FName NewName, float Weight, EItemCategory ItemCategory,
-	UStaticMesh* NewStaticMesh)
+	UStaticMesh* NewStaticMesh, float _Changevalue)
 {
 	WeaponParts[NewIndex].PartsName = NewName;
 	WeaponParts[NewIndex].ItemCategory = ItemCategory;
 	WeaponParts[NewIndex].Weight = Weight;
 	WeaponParts[NewIndex].StaticMesh = NewStaticMesh;
+	WeaponParts[NewIndex].ChangeValue = _Changevalue;
 }
 
 void AGun_Base::PrintPartsSlot()
@@ -293,20 +312,6 @@ bool AGun_Base::Server_SetBulletArom_Validate(float Armo)
 	return true;
 }
 
-// float AGun_Base::GetMagChangeValue(float CurrentBullet)
-// {
-// 	if (ActivateMag)
-// 	{
-// 		if (GetBulletArmo() != 0.0f) return 40.0 - GetBulletArmo();
-// 		
-// 		if (GetBulletArmo() == 0.0f) return 0.0;
-// 		
-// 	}
-// 	else
-// 	{
-// 		//if (GetBulletArmo() != 0.0f)
-// 		return 0.0;
-// 	}
-// }
+
 
 

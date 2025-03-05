@@ -244,6 +244,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : MainWeapon Casting Fail"));
 	}
+	GetOwner()->SetNetDormancy(DORM_Awake);
 	GetOwner()->ForceNetUpdate();
 	Item->Destroy(true);
 	

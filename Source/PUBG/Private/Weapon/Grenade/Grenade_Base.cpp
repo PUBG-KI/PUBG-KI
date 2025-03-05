@@ -3,6 +3,7 @@
 
 #include "Weapon/Grenade/Grenade_Base.h"
 
+#include "Character/PlayerCharacter.h"
 #include "Controller/BasePlayerController.h"
 
 AGrenade_Base::AGrenade_Base()
@@ -26,15 +27,16 @@ void AGrenade_Base::BeginPlay()
 // 활성화
 void AGrenade_Base::SetHitCollisionActivate()
 {
-	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-	GetWorld()->GetTimerManager().SetTimer(CollisionSettingTimerHandle, this, &AGrenade_Base::SetHitCollisionDeActivate, 0.1f, false);
+	GetWorld()->GetTimerManager().SetTimer(CollisionSettingTimerHandle, this, &AGrenade_Base::SetHitCollisionDeActivate, 0.2f, false);
 }
 
 // 비활성화
 void AGrenade_Base::SetHitCollisionDeActivate()
 {
 	GrenadeSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	this->Destroy();
 }
 
 
@@ -42,9 +44,10 @@ void AGrenade_Base::SetHitCollisionDeActivate()
 void AGrenade_Base::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(OtherActor->GetInstigatorController()))
+	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(OtherActor))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"));
+		UE_LOG(LogTemp, Error, TEXT("ssssssssssssssssssssssssssssssss"));
+		//UE_LOG(LogTemp, Error, TEXT("%s"), *this->GetOwner()->GetName());
 	}
 	
 }

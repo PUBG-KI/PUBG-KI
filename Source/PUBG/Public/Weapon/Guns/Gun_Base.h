@@ -73,6 +73,9 @@ protected:
 	float Changevalue;
 
 public:
+	UFUNCTION()
+	UStaticMeshComponent* getScopeMesh() {return ScopeMesh;}
+	
 	UFUNCTION(BlueprintCallable, Category = "FireMode")
 	FORCEINLINE EFiremodes GetFireMode() const { return FireMode; }
 
@@ -118,9 +121,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	bool GetEquippedMag() {return ActivateMag;}
-	
-	// UFUNCTION()
-	// float GetMagChangeValue(float CurrentBullet);
+
+	UFUNCTION(BlueprintPure)
+	float GetchangeValue() {return Changevalue;}
 
 // 이준수 ================================
 	EEquippedItemCategory GetEquipSlot() const override { return EquipSlot; }
@@ -148,7 +151,7 @@ public:
 	UFUNCTION()
 	bool EquipParts(FPartsData& PartsData, float Weight, EItemCategory ItemCategory);
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void ServerSetParts(int32 NewIndex, FName NewName, float Weight, EItemCategory ItemCategory, UStaticMesh* NewStaticMesh);
+	void ServerSetParts(int32 NewIndex, FName NewName, float Weight, EItemCategory ItemCategory, UStaticMesh* NewStaticMesh, float _Changevalue);
 
 	UFUNCTION(BlueprintCallable)
 	void PrintPartsSlot();
