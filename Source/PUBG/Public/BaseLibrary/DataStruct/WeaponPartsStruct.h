@@ -15,6 +15,7 @@ struct FWeaponPartsStruct : public FTableRowBase
 		Weight = -1.0f;
 		ItemCategory = EItemCategory::FullBody;
 		StaticMesh = nullptr;
+		ChangeValue = 0.0f;
 	}
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -25,4 +26,6 @@ struct FWeaponPartsStruct : public FTableRowBase
 	EItemCategory ItemCategory;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* StaticMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ChangeValue;
 };

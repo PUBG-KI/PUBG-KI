@@ -11,11 +11,41 @@
 void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* ActivateCamera,
                              UCameraComponent* DeActivateCamera)
 {
-	if (GetPlayerCharacterFromActorInfo()->GetEquippedComponent()->GetCurrentWeapon())
+	APlayerCharacter* playercharacter = GetPlayerCharacterFromActorInfo();
+	
+	if (playercharacter->GetEquippedComponent()->GetCurrentWeapon())
 	{
 		UPlayerMovementComponent* Movementcomponent = Cast<UPlayerMovementComponent>(GetPlayerCharacterFromActorInfo()->GetMovementComponent());
 		
-		ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket");
+		FString ScopeName = playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->GetWeaponParts()[1].PartsName.ToString();
+		float FOV_Value = playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->GetWeaponParts()[1].ChangeValue;
+		
+		FString GunName = playercharacter->GetEquippedComponent()->GetCurrentWeapon()->GetWeaponDataAsset().GunName;
+		
+		ScopeName.ReplaceInline(*FString(TEXT("_") + GunName), TEXT(""));
+		FName NewPartsName = FName(*ScopeName);
+
+		if (NewPartsName == NAME_None)
+		{
+			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_IronSight");
+			ActivateCamera->SetFieldOfView(90.0f);
+		}
+		else if (NewPartsName == "DotSight")
+		{
+			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_RDS");
+			ActivateCamera->SetFieldOfView(FOV_Value);
+		}
+		else if (NewPartsName == "ACOG_01")
+		{
+			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_ACOG");
+			ActivateCamera->SetFieldOfView(FOV_Value);
+		}
+		else if (NewPartsName == "CQBSS")
+		{
+			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_CQBSS");
+			ActivateCamera->SetFieldOfView(FOV_Value);
+		}
+		
 		DeActivateCamera->SetActive(false);
 		ActivateCamera->SetActive(true);
 		
@@ -24,7 +54,7 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 
 		GetPlayerCharacterFromActorInfo()->IsZoom = true;
 		GetPlayerCharacterFromActorInfo()->SetCurrentCamera(ActivateCamera);
-		ActivateCamera->SetFieldOfView(22.5f);
+
 	}
 }
 

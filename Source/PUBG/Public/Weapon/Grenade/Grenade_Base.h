@@ -20,15 +20,20 @@ public:
 	
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Grenade")
 	void SetHitCollisionActivate();
+	
 	void SetHitCollisionDeActivate();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USphereComponent* GrenadeSphereCollision;
+
+	FTimerHandle GrenadeTimer;
+
 	
 private:
 	UPROPERTY()
 	FTimerHandle CollisionSettingTimerHandle;
-
-	UPROPERTY(EditAnywhere)
-	USphereComponent* GrenadeSphereCollision;
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
