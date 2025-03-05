@@ -1162,7 +1162,7 @@ void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp
 
 			ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetController());
 
-			if (PlayerController->GetHudWidget() != nullptr)
+			if (PlayerController && PlayerController->GetHudWidget() != nullptr)
 			{
 				PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
 			}

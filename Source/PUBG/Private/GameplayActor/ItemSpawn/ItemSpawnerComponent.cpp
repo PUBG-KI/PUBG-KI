@@ -75,15 +75,15 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);			
 		}
 	}
-	
-	if (SpawnedItem && bAbleAttach) //보급품 아이템 스폰
+
+	if (SpawnedItem)
 	{
-		SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
-		SpawnedItem->SetItemID(ItemID,true);
-	}
-	else if (SpawnedItem && bAbleAttach == false)
-	{		
-		SpawnedItem->SetItemID(ItemID,false);
+		if (bAbleAttach)
+		{
+			SpawnedItem->AttachToComponent(ParentActor->GetRootComponent(), FAttachmentTransformRules::KeepWorldTransform);
+		}
+		
+		SpawnedItem->SetItemID(ItemID,bAbleAttach);
 	}
 }
 
@@ -109,16 +109,8 @@ void UItemSpawnerComponent::SpawnItems(bool bAbleAttach , AActor* ParentActor)
 			//스폰시킬 아이템 정하기
 			FName SpawnedItemName = GetRandomItemRowName();
 			UE_LOG(LogTemp, Warning, TEXT("dddd: %s") , *SpawnedItemName.ToString());
-
-			if (bAbleAttach) //보급품 아이템 스폰
-			{
-				SpawnItem(SpawnedItemName,FinalLocation,bAbleAttach,ParentActor);
-			}
-			else //집 내부 스폰
-			{
-				SpawnItem(SpawnedItemName,FinalLocation,bAbleAttach,ParentActor);
-			}
-			
+					
+			SpawnItem(SpawnedItemName,FinalLocation,bAbleAttach,ParentActor);
 			
 			//랜덤값이 무기인지 확인
 			if (IsWeapon(SpawnedItemName))
@@ -130,19 +122,16 @@ void UItemSpawnerComponent::SpawnItems(bool bAbleAttach , AActor* ParentActor)
 				{
 					FName BulletTypeName = GetBulletTypeName(WeaponData->BulletType);
 					UE_LOG(LogTemp, Warning, TEXT("BulletTypeName: %s") , *BulletTypeName.ToString());
-
-					if (bAbleAttach == false)
+					
+					//무기에 맞는 총알 찾기					
+					for (int BulletCount = 0; BulletCount < 2; BulletCount++)
 					{
-						//무기에 맞는 총알 찾기					
-						for (int BulletCount = 0; BulletCount < 2; BulletCount++)
-						{
-							UE_LOG(LogTemp, Warning, TEXT("BulletCount: %d") , BulletCount);
-						
-							FVector BulletRandomOffset = GetRandomOffset();
-						
-							SpawnItem(BulletTypeName,FinalLocation + BulletRandomOffset,bAbleAttach,ParentActor);
-						}//for
-					}//if
+						UE_LOG(LogTemp, Warning, TEXT("BulletCount: %d") , BulletCount);
+					
+						FVector BulletRandomOffset = GetRandomOffset();
+					
+						SpawnItem(BulletTypeName,FinalLocation + BulletRandomOffset,bAbleAttach,ParentActor);
+					}//for
 				}//if
 			}//if
 		}//for
