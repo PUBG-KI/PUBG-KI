@@ -71,12 +71,12 @@ void UGA_Weapon_Reload::SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon,
 	if (CurrentWeapon->GetEquippedMag())
 	{
 		CurrentWeapon->SetBulletArom(CurrentBullet + ChangeValue);
-		UE_LOG(LogTemp, Error, TEXT("asdfffffffffffffffffff"));
+		//UE_LOG(LogTemp, Error, TEXT("asdfffffffffffffffffff"));
 	}
 	else
 	{
 		CurrentWeapon->SetBulletArom(CurrentBullet);
-		UE_LOG(LogTemp, Error, TEXT("assssssssssssssssssssssssss"));
+		//UE_LOG(LogTemp, Error, TEXT("assssssssssssssssssssssssss"));
 	}
 }
 

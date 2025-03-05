@@ -28,8 +28,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* GrenadeSphereCollision;
 
+	UPROPERTY(EditAnywhere, Replicated)
+	APlayerCharacter* OwningPlayerCharacter;
+	
 	FTimerHandle GrenadeTimer;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION(BlueprintCallable)
+	void SettingThrowable();
 	
 private:
 	UPROPERTY()
@@ -41,3 +48,4 @@ private:
 							 const FHitResult& SweepResult);
 	
 };
+
