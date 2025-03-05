@@ -7,6 +7,7 @@
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "ItemSpawnerComponent.generated.h"
 
+class AArmorItem;
 class AItemBase;
 class AWeaponItem;
 struct FItemStruct;
@@ -39,6 +40,8 @@ public:
 	TSubclassOf<AItemBase> ItemBaseClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	TSubclassOf<AWeaponItem> WeaponItemClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
+	TSubclassOf<AArmorItem> ArmorItemClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn")
 	int32 LocationCount;

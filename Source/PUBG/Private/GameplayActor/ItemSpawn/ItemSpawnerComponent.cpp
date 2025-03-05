@@ -7,6 +7,7 @@
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Item/ItemBase.h"
 #include "Algo/RandomShuffle.h"
+#include "Item/ArmorItem.h"
 
 #include "Item/WeaponItem.h"
 
@@ -62,10 +63,16 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 			SpawnedItem = World->SpawnActor<AWeaponItem>(WeaponItemClass, SpawnLocation, FRotator::ZeroRotator);
 			break;
 		}
+	case EItemCategory::Helmet:
+	case EItemCategory::Vest:
+	case EItemCategory::Bag:
+		{
+			SpawnedItem = World->SpawnActor<AWeaponItem>(ArmorItemClass, SpawnLocation, FRotator::ZeroRotator);
+			break;
+		}
 	default:
 		{
-			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);
-			
+			SpawnedItem = World->SpawnActor<AItemBase>(ItemBaseClass, SpawnLocation, FRotator::ZeroRotator);			
 		}
 	}
 	
