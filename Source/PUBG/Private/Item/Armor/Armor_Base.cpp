@@ -14,13 +14,13 @@ AArmor_Base::AArmor_Base()
 	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>("SkeletalMeshComponent");
 	RootComponent = SkeletalMeshComponent;
 	
+	SkeletalMeshComponent->SetIsReplicated(true);
 	Name = NAME_None;
 
 	Weight = -1.0f;
 	Defense = -1.0f;
 	Durability = -1.0f;
 	
-	SkeletalMeshComponent->SetIsReplicated(true);
 }
 
 void AArmor_Base::BeginPlay()

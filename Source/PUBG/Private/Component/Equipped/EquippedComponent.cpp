@@ -193,13 +193,22 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
 
 	int32 MainWeaponSlot = static_cast<int32>(WeaponItem->GetEquippedItemCategory());
+
 	
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
 	
+	//TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
 	
-	if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
+	UClass* GunClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
+	//UClass* GunClass1 = Cast<UClass>(Row->BP_Item.Get());
+	
+	//UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipMainItem = GunClass Name %s"), *GunClass->GetName());
+
+	FVector SpawnLocation(0, 0, 0);  
+	FRotator SpawnRotation(0, 0, 0);
+	FActorSpawnParameters SpawnParams; 
+
+	if (AGun_Base* MainWeapon = GetWorld()->SpawnActor<AGun_Base>(GunClass, SpawnLocation, SpawnRotation, SpawnParams))
 	{
-		//TempWeapon->SetTableIndex(RowIndex);
 		FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 		
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
@@ -238,12 +247,62 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 		}
 		
 		MainWeapon->SetOwner(PlayerCharacter);
-		MainWeapon->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : MainWeapon Casting Fail"));
+		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipMainItem == Fail Spawn"));
+
 	}
+
+	
+	// if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
+	// {
+	// 	//TempWeapon->SetTableIndex(RowIndex);
+	// 	FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+	// 	
+	// 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+	// 	
+	//
+	// 	int32 RemainSlot = FindSlotMainWeapon();
+	// 	UE_LOG(LogTemp, Warning, TEXT("RemainSlot : %d"), RemainSlot);
+	//
+	// 	EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(MainWeaponSlot);
+	// 	MainWeapon->SetEquipSlot(EquippedItemCategory);
+	// 	MainWeaponSlot = static_cast<int32>(MainWeapon->GetEquipSlot()); // 장착될 슬롯값 가져오기
+	//
+	// 	if (RemainSlot == -1) // Main 무기 슬롯이 가득찬 것 
+	// 	{
+	// 		int32 DropMainWeaponSlot = DropMainWeapon();
+	// 		RemainSlot = DropMainWeaponSlot;
+	// 		UE_LOG(LogTemp, Warning, TEXT("DropMainWeapon RemainSlot : %d"), RemainSlot);
+	// 	}
+	//
+	// 	if (RemainSlot == 0) // 1번 슬롯이 비어있는 것 
+	// 	{
+	// 		// 필요한 값 넣기 MainWeapon -> Weapon
+	// 		
+	// 		EquippedItems[MainWeaponSlot] = MainWeapon;
+	// 		EquippedItems[MainWeaponSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("slot_primarySocket")));
+	// 		UE_LOG(LogTemp, Warning, TEXT(" Test Debug!!!!!!!!!!!!!!!!!!!!!!!!!!!!"))
+	//
+	// 	}
+	// 	else if (RemainSlot == 1) // 2번 슬롯이 비어있는 것 
+	// 	{
+	// 		MainWeapon->SetEquipSlot(EEquippedItemCategory::SecondarySlot);
+	// 		MainWeaponSlot = static_cast<int32>(MainWeapon->GetEquipSlot());
+	// 		
+	// 		EquippedItems[MainWeaponSlot] = MainWeapon;
+	// 		EquippedItems[MainWeaponSlot]->AttachToComponent(PlayerCharacter->GetMesh(), Rule, FName(TEXT("slot_secondarySocket")));
+	// 	}
+	// 	
+	// 	MainWeapon->SetOwner(PlayerCharacter);
+	// 	MainWeapon->FinishSpawning(FTransform(FRotator(0), FVector(0)));
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : MainWeapon Casting Fail"));
+	// }
+	
 	GetOwner()->ForceNetUpdate();
 	Item->Destroy(true);
 	
@@ -400,7 +459,9 @@ void UEquippedComponent::ServerEquipSubWeapon_Implementation(AItemBase* Item)
 		DropSUbWeapon();
 	}
 
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
+	//TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
+	UClass* GunClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
+
 	if (AGun_Base* SubWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
 	{
 		//TempWeapon->SetTableIndex(RowIndex);
@@ -522,7 +583,9 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		DropArmor(HelmetSlot);
 	}
 
-	TSubclassOf<AArmor_Base> ArmorClass = Cast<UClass>(Row->BP_Item.Get());
+	//TSubclassOf<AArmor_Base> ArmorClass = Cast<UClass>(Row->BP_Item.Get());
+	UClass* ArmorClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
+
 	if (AArmor_Base* Armor = GetWorld()->SpawnActorDeferred<AArmor_Base>(ArmorClass, FTransform(FRotator(0), FVector(0))))
 	{
 		//TempWeapon->SetTableIndex(RowIndex);
@@ -778,8 +841,10 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 		
 			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
 		}
+		
+		//TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		UClass* GrenadeClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
 
-		TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
 		if (AGrenade_Base* Grenade = GetWorld()->SpawnActorDeferred<AGrenade_Base>(GrenadeClass, FTransform(FRotator(0), FVector(0))))
 		{
 			//TempWeapon->SetTableIndex(RowIndex);
@@ -823,7 +888,9 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
 		}
 
-		TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		//TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		UClass* GrenadeClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
+
 		if (AGrenade_Base* Grenade = GetWorld()->SpawnActorDeferred<AGrenade_Base>(GrenadeClass, FTransform(FRotator(0), FVector(0))))
 		{
 			//TempWeapon->SetTableIndex(RowIndex);
@@ -846,6 +913,7 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 			//Item->Destroy(true);
 		}
 	}
+	
 }
 
 void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemSlotStruct ItemSlot)
