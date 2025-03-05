@@ -157,8 +157,10 @@ void AZone::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 			//적용할 대상, 적용할 게임 이펙트, 레벨, 이펙트 컨텍스트 
 			ASC->RemoveActiveGameplayEffectBySourceEffect(GameplayEffectClass,nullptr,-1);
 
-			// 이거 대상의 클라이언트 에서만 적용되게 수정해야함
-			//PlayerCharacter->PostProcessComponent->SetVisibility(false);
+			if (PlayerCharacter->IsLocallyControlled())
+			{
+				PlayerCharacter->PostProcessComponent->SetVisibility(false);
+			}
 		}
 	}
 }
@@ -179,7 +181,10 @@ void AZone::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 				//적용할 대상, 적용할 게임 이펙트, 레벨, 이펙트 컨텍스트 
 				ASC->ApplyGameplayEffectToSelf(GameplayEffect, Level, ASC->MakeEffectContext());
 				
-				//PlayerCharacter->PostProcessComponent->SetVisibility(true);
+				if (PlayerCharacter->IsLocallyControlled())
+				{
+					PlayerCharacter->PostProcessComponent->SetVisibility(true);
+				}
 			}
 		}
 }
@@ -239,7 +244,7 @@ void AZone::StartShrinkTimer()
 	CurrentScale = GetMeshWorldScale();
 	
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, ShirnkTime * 2.0f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AZone::NotifySize, ShirnkTime, false);
 }
 
 void AZone::SetShirnkTime(int NewShirnkTime)

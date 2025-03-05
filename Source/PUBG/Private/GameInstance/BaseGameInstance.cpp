@@ -4,6 +4,7 @@
 #include "GameInstance/BaseGameInstance.h"
 
 #include "Manager/AirplaneManager.h"
+#include "Manager/DataTableManager.h"
 #include "Manager/GameEventManager.h"
 #include "Manager/LandscapeManager.h"
 #include "Manager/TimeManager.h"
@@ -29,4 +30,6 @@ void UBaseGameInstance::Init()
 	ZoneManager->InitializeManager();
 	AirplaneManager = NewObject<UAirplaneManager>(this, AirplaneManagerClass);
 	AirplaneManager->InitializeManager();
+	DataTableManager = NewObject<UDataTableManager>(this, DataTableManagerClass);
+	DataTableManager->InitializeManager();
 }

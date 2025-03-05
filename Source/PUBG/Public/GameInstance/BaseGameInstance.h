@@ -11,6 +11,7 @@ class UTimeManager;
 class UGameEventManager;
 class UZoneManager;
 class ULandscapeManager;
+class UDataTableManager;
 
 /**
  * 
@@ -36,6 +37,8 @@ public:
 	UZoneManager* ZoneManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	UAirplaneManager* AirplaneManager;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	UDataTableManager* DataTableManager;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UTimeManager> TimeManagerClass;
@@ -47,10 +50,13 @@ public:
 	TSubclassOf<UZoneManager> ZoneManagerClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	TSubclassOf<UAirplaneManager> AirplaneManagerClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	TSubclassOf<UDataTableManager> DataTableManagerClass;
 
 	UTimeManager* GetTimeManager() const { return TimeManager; }
 	UGameEventManager* GetGameEventManager() const { return GameEventManager; }
 	ULandscapeManager* GetLandscapeManager() const { return LandscapeManager; }
 	UZoneManager* GetZoneManager() const { return ZoneManager; }
 	UAirplaneManager* GetAirplaneManager() const { return AirplaneManager; }
+	UDataTableManager* GetDataTableManager() const { return DataTableManager; }
 };
