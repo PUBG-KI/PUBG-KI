@@ -5,6 +5,8 @@
 
 #include "Character/PlayerCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
+#include "GameInstance/BaseGameInstance.h"
+#include "Manager/DataTableManager.h"
 
 AArmor_Base::AArmor_Base()
 {
@@ -39,8 +41,11 @@ void AArmor_Base::BeginPlay()
 	if (!Name.IsNone())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AArmor_Base::BeginPlay : %s"), *Name.ToString());
-		FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
-		UDataTable* ArmorTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *ArmorTablePath));
+		//FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
+		//UDataTable* ArmorTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *ArmorTablePath));
+
+		UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
+		UDataTable* ArmorTable = GI->GetDataTableManager()->GetDataTable(EDataTableType::ArmorData);
 		FArmorStruct* FoundData = ArmorTable->FindRow<FArmorStruct>(Name, TEXT("Fail Find Row"));
 		
 		if (FoundData) // nullptr 체크 필수

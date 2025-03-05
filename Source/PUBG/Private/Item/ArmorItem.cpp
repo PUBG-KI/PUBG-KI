@@ -6,6 +6,8 @@
 #include "Component/Equipped/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Component/ItemData/ItemDataComponent.h"
+#include "GameInstance/BaseGameInstance.h"
+#include "Manager/DataTableManager.h"
 
 AArmorItem::AArmorItem()
 {
@@ -20,8 +22,11 @@ void AArmorItem::BeginPlay()
 
 	if (ItemTableRowName.IsNone())
 	{
-		FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
-		UDataTable* ArmorTable = LoadObject<UDataTable>(nullptr, TEXT("ArmorTablePath"));
+		//FString ArmorTablePath = "/Game/Datatables/Armor/DT_Armor.DT_Armor";
+		//UDataTable* ArmorTable = LoadObject<UDataTable>(nullptr, TEXT("ArmorTablePath"));
+
+		UBaseGameInstance* GI = Cast<UBaseGameInstance>(GetGameInstance());
+		UDataTable* ArmorTable = GI->GetDataTableManager()->GetDataTable(EDataTableType::ArmorData);
 		FArmorStruct* FoundData = ArmorTable->FindRow<FArmorStruct>(ItemTableRowName, TEXT("Fail Find Row"));
 
 		if (FoundData) // nullptr 체크 필수

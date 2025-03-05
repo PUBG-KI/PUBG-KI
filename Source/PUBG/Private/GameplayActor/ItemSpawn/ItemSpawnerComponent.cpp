@@ -67,7 +67,7 @@ void UItemSpawnerComponent::SpawnItem(FName ItemID,FVector SpawnLocation,bool bA
 	case EItemCategory::Vest:
 	case EItemCategory::Bag:
 		{
-			SpawnedItem = World->SpawnActor<AWeaponItem>(ArmorItemClass, SpawnLocation, FRotator::ZeroRotator);
+			SpawnedItem = World->SpawnActor<AArmorItem>(ArmorItemClass, SpawnLocation, FRotator::ZeroRotator);
 			break;
 		}
 	default:
@@ -118,6 +118,7 @@ void UItemSpawnerComponent::SpawnItems(bool bAbleAttach , AActor* ParentActor)
 			{
 				SpawnItem(SpawnedItemName,FinalLocation,bAbleAttach,ParentActor);
 			}
+			
 			
 			//랜덤값이 무기인지 확인
 			if (IsWeapon(SpawnedItemName))
