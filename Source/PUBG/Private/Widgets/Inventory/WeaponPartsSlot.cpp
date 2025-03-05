@@ -47,6 +47,7 @@ FReply UWeaponPartsSlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, co
 			
  			Gun->GetWeaponParts()[PartsIndex].StaticMesh = nullptr;
  			Gun->GetWeaponParts()[PartsIndex].PartsName = NAME_None;
+			Gun->ServerSetParts(PartsIndex, NAME_None, -1.0f, EItemCategory::FullBody, nullptr);
 			 
 			InventoryComponent->ServerAddToInventory(NewPartsName, 1, Weight, Category);
 		}

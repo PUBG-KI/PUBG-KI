@@ -8,6 +8,7 @@
 #include "ItemStruct.generated.h"
 
 
+class AItemBase;
 enum class EItemCategory : uint8;
 enum class EItemType : uint8;
 
@@ -37,6 +38,8 @@ struct FItemStruct : public FTableRowBase
 	UStaticMesh* StaticMesh;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftClassPtr<AEquipableItem> BP_Item;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftClassPtr<AItemBase> BP_StaticItem;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D* Image;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
