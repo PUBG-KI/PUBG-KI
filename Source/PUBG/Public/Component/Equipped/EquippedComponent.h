@@ -114,7 +114,7 @@ public:
 	// 수류탄 장착
 	//UFUNCTION(Server, Reliable)
 	void EquipThrow(AItemBase* Item = nullptr, FItemSlotStruct* ItemSlot = nullptr);
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerEquipThrow(AItemBase* Item = nullptr, FItemSlotStruct ItemSlot = FItemSlotStruct());
 	
 	// 파츠 장착

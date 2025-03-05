@@ -3,6 +3,8 @@
 
 #include "Component/Equipped/EquippedComponent.h"
 
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
@@ -244,7 +246,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : MainWeapon Casting Fail"));
 	}
-	GetOwner()->SetNetDormancy(DORM_Awake);
+	// GetOwner()->SetNetDormancy(DORM_Awake);
 	GetOwner()->ForceNetUpdate();
 	Item->Destroy(true);
 	
@@ -787,7 +789,7 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 			FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			
 			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
-
+			
 			EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(GrenadeSlot);
 			Grenade->SetEquipSlot(EquippedItemCategory);
 			
@@ -831,6 +833,7 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 			FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			
 			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+			Grenade->OwningPlayerCharacter = PlayerCharacter;
 
 			EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(GrenadeSlot);
 			Grenade->SetEquipSlot(EquippedItemCategory);
@@ -925,7 +928,12 @@ void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemS
 			FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			
 			APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
+			Grenade->OwningPlayerCharacter = PlayerCharacter;
 
+			if (PlayerCharacter != nullptr)
+			{
+				Grenade->OwningPlayerCharacter = PlayerCharacter;
+			}
 			EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(GrenadeSlot);
 			Grenade->SetEquipSlot(EquippedItemCategory);
 			
@@ -937,6 +945,7 @@ void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemS
 			
 			Grenade->FinishSpawning(FTransform(FRotator(0), FVector(0)));
 
+			Grenade->SetOwner(PlayerCharacter);
 			GetOwner()->ForceNetUpdate();
 			//Item->Destroy(true);
 		}
