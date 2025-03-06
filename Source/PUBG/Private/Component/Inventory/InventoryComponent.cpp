@@ -385,9 +385,6 @@ void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, in
 void UInventoryComponent::ServerSetUsingItem_Implementation(FUsingItem OutUsingItem)
 {
 	SetUsingItem(OutUsingItem);
-
-	FUsingItem InUsingItem;
-	SetUsingItem(InUsingItem);
 }
 
 void UInventoryComponent::ServerRemoveItem_Implementation(int32 InIndex, int32 OutQuantity)
