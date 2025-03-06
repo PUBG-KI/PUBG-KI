@@ -385,6 +385,9 @@ void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, in
 void UInventoryComponent::ServerSetUsingItem_Implementation(FUsingItem OutUsingItem)
 {
 	SetUsingItem(OutUsingItem);
+
+	FUsingItem InUsingItem;
+	SetUsingItem(InUsingItem);
 }
 
 void UInventoryComponent::ServerRemoveItem_Implementation(int32 InIndex, int32 OutQuantity)
@@ -602,6 +605,11 @@ void UInventoryComponent::OnRep_Content()
 
 void UInventoryComponent::OnRep_UsingItem()
 {
+	if (UsingItem.Index == -1)
+	{
+		return;
+	}
+	
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 	if (PlayerCharacter)
 	{

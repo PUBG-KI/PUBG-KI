@@ -3,20 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "GameFramework/Actor.h"
 #include "SoundManager.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PUBG_API USoundManager : public UObject
+class PUBG_API ASoundManager : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
-	USoundManager();
-	
+	ASoundManager();
+
+	virtual void BeginDestroy() override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void Server_PlaySound2D(USoundBase* Sound, float VolumeMultiplier = 1.f, float PitchMultiplier = 1.f, float StartTime = 0.f,

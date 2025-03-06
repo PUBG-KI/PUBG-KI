@@ -33,14 +33,35 @@ void UBaseGameInstance::Init()
 	AirplaneManager->InitializeManager();
 	DataTableManager = NewObject<UDataTableManager>(this, DataTableManagerClass);
 	DataTableManager->InitializeManager();
-	SoundManager = NewObject<USoundManager>(this, USoundManager::StaticClass());
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	SoundManager = GetWorld()->SpawnActor<ASoundManager>(ASoundManager::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (SoundManager)
+	{
+		UE_LOG(LogTemp, Display, TEXT("SoundManager Created"));
+	}
 }
 
 void UBaseGameInstance::PlaySound2D(USoundBase* Sound, float VolumeMultiplier, float PitchMultiplier, float StartTime,
 	USoundConcurrency* ConcurrencySettings, const AActor* OwningActor, bool bIsUISound) const
 {
+	UE_LOG(LogTemp, Display, TEXT("PlaySound2D"));
+
+	if (SoundManager)
+	{
+		UE_LOG(LogTemp, Display, TEXT("PlaySound2D::SoundManager"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("PlaySound2D::SoundManager nullptr"));
+	}
+	
 	if (SoundManager && Sound)
-	{		
+	{
+		UE_LOG(LogTemp, Display, TEXT("PlaySound2DPlay"));
 		SoundManager->Server_PlaySound2D(Sound, VolumeMultiplier, PitchMultiplier, StartTime, ConcurrencySettings, OwningActor, bIsUISound);
 	}
 }

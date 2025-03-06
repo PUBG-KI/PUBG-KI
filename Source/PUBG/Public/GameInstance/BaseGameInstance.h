@@ -6,13 +6,14 @@
 #include "Engine/GameInstance.h"
 #include "BaseGameInstance.generated.h"
 
-class USoundManager;
+class ASoundManager;
 class UAirplaneManager;
 class UTimeManager;
 class UGameEventManager;
 class UZoneManager;
 class ULandscapeManager;
 class UDataTableManager;
+;
 
 /**
  * 
@@ -41,7 +42,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	UDataTableManager* DataTableManager;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
-	USoundManager* SoundManager;
+	ASoundManager* SoundManager;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UTimeManager> TimeManagerClass;
@@ -63,7 +64,7 @@ public:
 	UZoneManager* GetZoneManager() const { return ZoneManager; }
 	UAirplaneManager* GetAirplaneManager() const { return AirplaneManager; }
 	UDataTableManager* GetDataTableManager() const { return DataTableManager; }
-	USoundManager* GetSoundManager() const { return SoundManager; }
+	ASoundManager* GetSoundManager() const { return SoundManager; }
 
 	UFUNCTION(BlueprintCallable, Category = "Sound")
 	void PlaySound2D(USoundBase* Sound, float VolumeMultiplier = 1.f, float PitchMultiplier = 1.f, float StartTime = 0.f,
