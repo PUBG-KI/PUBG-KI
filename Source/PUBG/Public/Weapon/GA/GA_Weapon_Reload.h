@@ -33,4 +33,16 @@ public:
 
 	UFUNCTION()
 	FName CheckBulletTypeName(FName BulletName);
+
+	UFUNCTION(BlueprintPure)
+	bool CheckBullet_SG(AGun_Base* CurrentWeapon, float DT_BulletArmo, FName BulletName);
+
+	UFUNCTION(BlueprintCallable)
+	void ReloadLooping(AGun_Base* CurrentWeapon,  FName BulletName);
+
+	UFUNCTION(BlueprintCallable)
+	void ReloadEnd(AGun_Base* CurrentWeapon, FName BulletName);
+
+	UFUNCTION(BlueprintCallable)
+	void CheckMaxReloadBullet(AGun_Base* CurrentWeapon, float Maxbullet);
 };

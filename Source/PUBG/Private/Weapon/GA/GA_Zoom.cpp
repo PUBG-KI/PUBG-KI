@@ -44,6 +44,15 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 		{
 			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_CQBSS");
 			ActivateCamera->SetFieldOfView(FOV_Value);
+			
+			if (!(playercharacter->HasAuthority()))
+			{
+				FString MaterialPath = TEXT("/Game/PUBGAsset/Weapon_Assets/Parts/CQBSS/CQBSS1_Zoom_Inst.CQBSS1_Zoom_Inst");  // 경로를 정확히 입력하세요.
+				UMaterialInstance* NewMaterial = Cast<UMaterialInstance>(StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *MaterialPath));
+				
+				playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->getScopeMesh()->SetMaterialByName("CQBSS", NewMaterial);
+			}
+			
 		}
 		
 		DeActivateCamera->SetActive(false);
@@ -69,7 +78,26 @@ void UGA_Zoom::DeActivatedZoom(UCameraComponent* ActivateCamera, UCameraComponen
 		DeActivateCamera->AttachToComponent(GetPlayerCharacterFromActorInfo()->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "camera_fppSocket");
 		DeActivateCamera->SetFieldOfView(90.0f);
 
-
+		APlayerCharacter* playercharacter = GetPlayerCharacterFromActorInfo();
+		
+		FString ScopeName = playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->GetWeaponParts()[1].PartsName.ToString();
+		FString GunName = playercharacter->GetEquippedComponent()->GetCurrentWeapon()->GetWeaponDataAsset().GunName;
+		
+		ScopeName.ReplaceInline(*FString(TEXT("_") + GunName), TEXT(""));
+		FName NewPartsName = FName(*ScopeName);
+		
+		if (NewPartsName == "CQBSS")
+		{
+			if (!(playercharacter->HasAuthority()))
+			{
+				FString MaterialPath = TEXT("/Game/PUBGAsset/Weapon_Assets/Parts/CQBSS/CQBSS1__Inst.CQBSS1__Inst");  // 경로를 정확히 입력하세요.
+				UMaterialInstance* NewMaterial = Cast<UMaterialInstance>(StaticLoadObject(UMaterialInstance::StaticClass(), nullptr, *MaterialPath));
+				
+				playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->getScopeMesh()->SetMaterialByName("CQBSS", NewMaterial);
+			}
+		}
+		
+		
 		Movementcomponent->bUseControllerDesiredRotation = false;
 		
 		GetPlayerCharacterFromActorInfo()->IsZoom = false;

@@ -81,6 +81,9 @@ public:
 	UFUNCTION()
 	void CallCheckZoomAbility();
 	
+	UFUNCTION()
+	void CallCheckZoomOutAbility();
+	
 #pragma endregion
 
 #pragma region Animation

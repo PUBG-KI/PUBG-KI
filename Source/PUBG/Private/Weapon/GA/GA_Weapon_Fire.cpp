@@ -60,7 +60,25 @@ UAnimMontage* UGA_Weapon_Fire::PlayCurrentPose_recoilMontage(UAnimMontage* Stand
 	if (MovementComponent->RequestToStartProne) return ProneMontage;
 	if (MovementComponent->IsCrouching()) return  CrouchMontage;
 	return StandMontage;
-}                                                                                          
+}
+
+void UGA_Weapon_Fire::CheckZoomIn()
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	if (PlayerCharacter->HasAuthority())
+	{
+		PlayerCharacter->CallCheckZoomAbility();
+	}
+}
+
+void UGA_Weapon_Fire::CheckZoomOut()
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	if (PlayerCharacter->HasAuthority())
+	{
+		PlayerCharacter->CallCheckZoomOutAbility();
+	}
+}
 
 void UGA_Weapon_Fire::ApplyRecoil(float _RecoilAmount, float _RecoilDuration, float _YawRecoilAmount)
 {
