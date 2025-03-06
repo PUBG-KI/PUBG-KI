@@ -7,6 +7,7 @@
 #include "Manager/DataTableManager.h"
 #include "Manager/GameEventManager.h"
 #include "Manager/LandscapeManager.h"
+#include "Manager/SoundManager.h"
 #include "Manager/TimeManager.h"
 #include "Manager/ZoneManager.h"
 
@@ -32,4 +33,24 @@ void UBaseGameInstance::Init()
 	AirplaneManager->InitializeManager();
 	DataTableManager = NewObject<UDataTableManager>(this, DataTableManagerClass);
 	DataTableManager->InitializeManager();
+	SoundManager = NewObject<USoundManager>(this, USoundManager::StaticClass());
+}
+
+void UBaseGameInstance::PlaySound2D(USoundBase* Sound, float VolumeMultiplier, float PitchMultiplier, float StartTime,
+	USoundConcurrency* ConcurrencySettings, const AActor* OwningActor, bool bIsUISound) const
+{
+	if (SoundManager && Sound)
+	{		
+		SoundManager->Server_PlaySound2D(Sound, VolumeMultiplier, PitchMultiplier, StartTime, ConcurrencySettings, OwningActor, bIsUISound);
+	}
+}
+
+void UBaseGameInstance::PlaySoundAtLocation(USoundBase* Sound, FVector Location, float VolumeMultiplier,
+	float PitchMultiplier, float StartTime, class USoundAttenuation* AttenuationSettings,
+	USoundConcurrency* ConcurrencySettings, const UInitialActiveSoundParams* InitialParams) const
+{
+	if (SoundManager && Sound)
+	{
+		SoundManager->Server_PlaySoundAtLocation(Sound, Location, VolumeMultiplier, PitchMultiplier, StartTime, AttenuationSettings, ConcurrencySettings, InitialParams);
+	}
 }
