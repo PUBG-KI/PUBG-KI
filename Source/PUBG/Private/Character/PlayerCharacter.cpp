@@ -733,6 +733,8 @@ void APlayerCharacter::Die()
 		CharacterComp->DisableMovement();
 	}
 
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), DeadSound, GetActorLocation());
+
 	// 머리 메시의 물리 시뮬레이션을 활성화
 	// HeadMesh->SetSimulatePhysics(true);
 	// //

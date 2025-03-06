@@ -68,7 +68,7 @@ public:
 	// 캐릭터가 장착할 파츠들을 맵으로 저장, enum값으로 원하는 파츠 불러올 수 있게 설정
 	UPROPERTY(VisibleAnyWhere, BlueprintReadWrite, category = "Mesh", meta = (AllowPrivateAccess = "true"))
 	TMap<EPlayerMeshType, USkeletalMeshComponent*> CharacterEquipmentMap;
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
 	USkeletalMeshComponent* FindMeshComponent(EPlayerMeshType PlayerMeshType);
 	UFUNCTION(BlueprintCallable, Category = "Mesh")
@@ -173,6 +173,9 @@ public:
 	FVector2D MoveForwardVecter;
 
 	FGameplayTag DeadTag;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Sound")
+	USoundBase* DeadSound;
+
 	void RemoveCharacterAbilities();
 	void Die();
 
