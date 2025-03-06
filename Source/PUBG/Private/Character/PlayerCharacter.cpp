@@ -250,6 +250,15 @@ void APlayerCharacter::CallCheckZoomAbility()
 	}
 }
 
+void APlayerCharacter::CallCheckZoomOutAbility()
+{
+	if (!IsZoom)
+	{
+		GetAbilitySystemComponent()->TryActivateAbilitiesByTag(
+			FGameplayTagContainer(FGameplayTag::RequestGameplayTag("Player.Ability.Weapon.Zoom")));
+	}
+}
+
 
 void APlayerCharacter::UpdateRotationValues_Implementation()
 {

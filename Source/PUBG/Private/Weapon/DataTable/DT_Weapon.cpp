@@ -35,4 +35,6 @@ FWeaponData::FWeaponData()
 	Max_XRecoil = 0;
 	Min_YRecoil = 0;
 	Max_YRecoil = 0;
+
+	WeaponFire_Montage = nullptr;
 }

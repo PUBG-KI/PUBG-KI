@@ -110,11 +110,68 @@ bool UGA_Weapon_Reload::CheckCurrentBullet(AGun_Base* CurrentWeapon, float DT_Bu
 
 FName UGA_Weapon_Reload::CheckBulletTypeName(FName BulletName)
 {
-	UE_LOG(LogTemp, Error, TEXT("Check : %s"), *BulletName.ToString())
+
 	
 	if (BulletName == "EBulletType::B_7_62") return "7.62mm";
 	if (BulletName == "EBulletType::B_5_56") return "5.56mm";
 	if (BulletName == "EBulletType::B_9") return "9mm";
 	if (BulletName == "EBulletType::B_12G") return "12G";
 	return "none";
+}
+
+bool UGA_Weapon_Reload::CheckBullet_SG(AGun_Base* CurrentWeapon, float DT_BulletArmo, FName BulletName)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	FName BulletType = CheckBulletTypeName(BulletName);
+
+	if (PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType) == -1)
+	{
+		return false;
+	}
+
+	if (CurrentWeapon->GetBulletArmo() == DT_BulletArmo)
+	{
+		return false;
+	}
+	return true;
+}
+
+void UGA_Weapon_Reload::ReloadLooping(AGun_Base* CurrentWeapon, FName BulletName)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	FName BulletType = CheckBulletTypeName(BulletName);
+	
+	//UE_LOG(LogTemp, Error, TEXT("Check_bulletname : %s"), *BulletName.ToString())
+	//UE_LOG(LogTemp, Error, TEXT("Check_bulletType : %s"), *BulletType.ToString())
+	
+	if (PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType) != -1)
+	{
+		CurrentWeapon->SetBulletArom(CurrentWeapon->GetBulletArmo() + 1.0f);
+		PlayerCharacter->GetInventoryComponent()->ServerRemoveItem(	PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType),1);
+		UE_LOG(LogTemp, Error, TEXT("trueeeeeee"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("falseeeeeeeeeeeeeeeeeeeeeeee"));
+	}
+}
+
+void UGA_Weapon_Reload::ReloadEnd(AGun_Base* CurrentWeapon , FName BulletName)
+{
+	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
+	FName BulletType = CheckBulletTypeName(BulletName);
+	
+	if (PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType) != -1)
+	{
+		CurrentWeapon->SetBulletArom(CurrentWeapon->GetBulletArmo() + 1.0f);
+		PlayerCharacter->GetInventoryComponent()->ServerRemoveItem(	PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType),1);
+	}
+}
+
+void UGA_Weapon_Reload::CheckMaxReloadBullet(AGun_Base* CurrentWeapon, float Maxbullet)
+{
+	if (Maxbullet == (CurrentWeapon->GetBulletArmo() + 1.0f))
+	{
+		MontageJumpToSection("ReloadEnd");
+	}
 }

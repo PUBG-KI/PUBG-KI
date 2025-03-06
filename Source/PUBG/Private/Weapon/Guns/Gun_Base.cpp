@@ -113,6 +113,8 @@ void AGun_Base::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 	DOREPLIFETIME(AGun_Base, MuzzleMesh);
 
 	DOREPLIFETIME(AGun_Base, ActivateMag);
+	DOREPLIFETIME(AGun_Base, ActivateMuzzle);
+	DOREPLIFETIME(AGun_Base, ActivateScope);
 	DOREPLIFETIME(AGun_Base, Changevalue);
 
 

@@ -60,6 +60,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "GA_Weapon")
 	UAnimMontage* PlayCurrentPose_recoilMontage(UAnimMontage* StandMontage, UAnimMontage* ProneMontage, UAnimMontage* CrouchMontage);
 	
+	UFUNCTION(BlueprintCallable, Category = "GA_weapon")
+	void CheckZoomIn();
+	
+	UFUNCTION(BlueprintCallable, Category = "GA_weapon")
+	void CheckZoomOut();
 	
 	// timeline
 	UFUNCTION(BlueprintCallable)
