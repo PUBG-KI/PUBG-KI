@@ -5,6 +5,7 @@
 
 #include "BaseLibrary/BaseDebugHelper.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AInteractDoor::AInteractDoor()
@@ -47,12 +48,18 @@ void AInteractDoor::InteractWith_Implementation(APlayerCharacter* Character)
 	{		
 		SetDoorOnSameSide(Character);
 		TimeLine.Play();
+		
 		IsOpen = true;
 	}
 	else
 	{
 		TimeLine.Reverse();
 		IsOpen = false;
+	}
+
+	if (HasAuthority())
+	{
+		Multicast_PlayDoorSound();
 	}
 }
 
@@ -65,6 +72,14 @@ void AInteractDoor::OpenDoor(float Value)
 {
 	float Angle = bDoorOnSameSide ? -DoorRotateAngle : DoorRotateAngle;
 	DoorMesh->SetRelativeRotation(FRotator(0.0f, Angle * Value, 0.0f));
+}
+
+void AInteractDoor::Multicast_PlayDoorSound_Implementation()
+{
+	if (DoorSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), DoorSound, GetActorLocation(), 1.0f, 1.0f, 0.0f, DoorSoundAttenuation);
+	}
 }
 
 void AInteractDoor::SetDoorOnSameSide(APlayerCharacter* PlayerCharacter)

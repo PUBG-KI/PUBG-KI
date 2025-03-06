@@ -36,24 +36,34 @@ public:
 	virtual void InteractWith_Implementation(APlayerCharacter* Character) override;
 	virtual FText LookAt() override; 
 
-	bool IsOpen = false;
+	void SetDoorOnSameSide(APlayerCharacter* PlayerCharacter);
 
+	UFUNCTION()
+	void OpenDoor(float Value);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayDoorSound();
 	
 
 protected:
 	
 	FTimeline TimeLine;
-	
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* DoorSound;
+
 	UPROPERTY(EditAnywhere)
 	UCurveFloat* CurveFloat;
 
+private:
+	bool bDoorOnSameSide;
+	bool IsOpen = false;
+	
 	UPROPERTY(EditAnywhere)
 	float DoorRotateAngle = 90.0f;
 
-	bool bDoorOnSameSide;
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundAttenuation* DoorSoundAttenuation;
 
-	UFUNCTION()
-	void OpenDoor(float Value); 
 
-	void SetDoorOnSameSide(APlayerCharacter* PlayerCharacter);
 };
