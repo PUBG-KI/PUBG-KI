@@ -34,6 +34,8 @@ AGun_Base::AGun_Base()
 	ActivateMuzzle = false;
 	ActivateScope = false;
 
+	BulletArmo = 0;
+
 	Changevalue = 0.0f;
 	
 	// 이준수
@@ -212,7 +214,6 @@ bool AGun_Base::IsEquipParts(EPartsCategory PartsCategory)
 
 bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory ItemCategory)
 {
-
 	FString PartsString = PartsData.TypeName.ToString() + "_" + WeaponDataAsset.GunName;
 	FName PartsName = FName(*PartsString);
 	
