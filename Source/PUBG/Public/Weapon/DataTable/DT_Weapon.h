@@ -145,9 +145,6 @@ struct FWeaponData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FRecoilMontage RecoilMontage;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UAnimMontage* WeaponFire_Montage;
 	
 };
 

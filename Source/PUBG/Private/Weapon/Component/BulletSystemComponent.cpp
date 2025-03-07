@@ -87,7 +87,7 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 		ActorsToIgnore.Add(GetOwner());
 		ActorsToIgnore.Add(Projectile->PlayerCharacter);
 
-		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartLocation, EndLocation, TraceType, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FLinearColor(1, 0, 0, 0),
+		UKismetSystemLibrary::LineTraceSingle(GetWorld(), StartLocation, EndLocation, TraceType, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true, FLinearColor(1, 0, 0, 0),
 												  FLinearColor(0, 1, 0, 1), 0.05);
 		
 		// 충돌 판정
@@ -105,7 +105,7 @@ void UBulletSystemComponent::SpawnLineTrace_HitResult(float DeltaSecond)
 			Payload.Target = HitResult.GetActor();
 			Payload.EventMagnitude = CaclulateDamage;
 
-			UE_LOG(LogTemp, Error, TEXT("Hit_Actor : %s"), *HitResult.BoneName.ToString());
+			// UE_LOG(LogTemp, Error, TEXT("Hit_Actor : %s"), *HitResult.BoneName.ToString());
 
 			ABasePlayerController* Playercontroller = Cast<ABasePlayerController>(Projectile->PlayerCharacter->GetController());
 
@@ -141,7 +141,7 @@ float UBulletSystemComponent::FindHitLocation_Multiplier(FName _HitBodyName)
 	if (_HitBodyName == FName(TEXT("calf_l")) || _HitBodyName == FName(TEXT("calf_r"))) return 0.5f;
 	if (_HitBodyName == FName(TEXT("foot_l")) || _HitBodyName == FName(TEXT("foot_r"))) return 0.3f;
 	
-	UE_LOG(LogTemp, Error, TEXT("Hit body name not found!"));
+	// UE_LOG(LogTemp, Error, TEXT("Hit body name not found!"));
 	return 0.0f;
 }
 

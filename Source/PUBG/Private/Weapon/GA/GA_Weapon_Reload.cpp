@@ -94,7 +94,7 @@ bool UGA_Weapon_Reload::CheckCurrentBullet(AGun_Base* CurrentWeapon, float DT_Bu
 	float Changevalue = CurrentWeapon->GetWeaponParts()[2].ChangeValue;
 
 	FName BulletType = CheckBulletTypeName(BulletName);
-	UE_LOG(LogTemp, Error, TEXT("%s"), *BulletType.ToString())
+// 	UE_LOG(LogTemp, Error, TEXT("%s"), *BulletType.ToString())
 
 	if (PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType) == -1)
 	{
@@ -156,11 +156,11 @@ void UGA_Weapon_Reload::ReloadLooping(AGun_Base* CurrentWeapon, FName BulletName
 	{
 		CurrentWeapon->SetBulletArom(CurrentWeapon->GetBulletArmo() + 1.0f);
 		PlayerCharacter->GetInventoryComponent()->ServerRemoveItem(	PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType),1);
-		UE_LOG(LogTemp, Error, TEXT("trueeeeeee"));
+		// UE_LOG(LogTemp, Error, TEXT("trueeeeeee"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("falseeeeeeeeeeeeeeeeeeeeeeee"));
+	// 	UE_LOG(LogTemp, Error, TEXT("falseeeeeeeeeeeeeeeeeeeeeeee"));
 	}
 }
 

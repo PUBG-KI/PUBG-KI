@@ -42,9 +42,6 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 		}
 		else if (NewPartsName == "CQBSS")
 		{
-			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_CQBSS");
-			ActivateCamera->SetFieldOfView(FOV_Value);
-			
 			if (!(playercharacter->HasAuthority()))
 			{
 				FString MaterialPath = TEXT("/Game/PUBGAsset/Weapon_Assets/Parts/CQBSS/CQBSS1_Zoom_Inst.CQBSS1_Zoom_Inst");  // 경로를 정확히 입력하세요.
@@ -52,6 +49,9 @@ void UGA_Zoom::ActivatedZoom(USkeletalMeshComponent* GunMesh, UCameraComponent* 
 				
 				playercharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->getScopeMesh()->SetMaterialByName("CQBSS", NewMaterial);
 			}
+
+			ActivateCamera->AttachToComponent(GunMesh, FAttachmentTransformRules::KeepRelativeTransform, "AimSocket_CQBSS");
+			ActivateCamera->SetFieldOfView(FOV_Value);
 			
 		}
 		

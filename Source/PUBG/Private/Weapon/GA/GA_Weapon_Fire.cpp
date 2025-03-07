@@ -40,7 +40,7 @@ FVector UGA_Weapon_Fire::GetVelocityVector()
 	if (HitResult.bBlockingHit)
 	{
 		FVector VelocityVector = UKismetMathLibrary::GetDirectionUnitVector(Gun_Base->GetWeaponMagSocketLocation(), HitResult.ImpactPoint);
-		UKismetSystemLibrary::DrawDebugLine(GetWorld(), LineTraceStart, HitResult.ImpactPoint, FLinearColor::Green, 100.0f, 1.0f);
+		// UKismetSystemLibrary::DrawDebugLine(GetWorld(), LineTraceStart, HitResult.ImpactPoint, FLinearColor::Green, 100.0f, 1.0f);
 		
 		return VelocityVector;
 	}

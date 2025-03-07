@@ -28,16 +28,16 @@ void AGrenade_Base::BeginPlay()
 	}
   	else
   	{
-  		UE_LOG(LogTemp, Error, TEXT("No Collision"));
+  		// UE_LOG(LogTemp, Error, TEXT("No Collision"));
   	}
 
 	if (OwningPlayerCharacter != nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("%s"), *OwningPlayerCharacter->GetName());
+		// UE_LOG(LogTemp, Error, TEXT("%s"), *OwningPlayerCharacter->GetName());
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Owner"));
+	// 	UE_LOG(LogTemp, Error, TEXT("No Owner"));
 	}
 	
 }
