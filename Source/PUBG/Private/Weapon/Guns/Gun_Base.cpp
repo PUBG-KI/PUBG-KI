@@ -220,7 +220,7 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 	if (IsEquipParts(PartsData.PartsCategory))
 	{
 		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
-		UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
+		// UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
 
 		if (WeaponParts[PartsCategory_int].PartsName == NAME_None)
 		{
@@ -237,11 +237,11 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 				Server_SettingParts(PartsCategory_int);
 			}
 			else
-				UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
+			//	UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
 
 			
-			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
-			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
+			// UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
+			// UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
 			return true;
 		}
 		
@@ -269,18 +269,18 @@ void AGun_Base::PrintPartsSlot()
 {
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintPartsSlot"));
+		// UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintPartsSlot"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintPartsSlot"));
+		// UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintPartsSlot"));
 	}
 
 	for (int32 i = 0; i < WeaponParts.Num(); i++)
 	{
 		if (WeaponParts[i].PartsName != NAME_None)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
+			// UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
 		}
 	}
 }
@@ -289,18 +289,18 @@ void AGun_Base::ServerPrintPartsSlot_Implementation()
 {
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintPartsSlot_Implementation"));
+		// UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintPartsSlot_Implementation"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ServerPrintPartsSlot_Implementation"));
+		// UE_LOG(LogTemp, Warning, TEXT("Execute Client : ServerPrintPartsSlot_Implementation"));
 	}
 
 	for (int32 i = 0; i < PartsSlot.Num(); i++)
 	{
 		if (WeaponParts[i].PartsName != NAME_None)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
+			// UE_LOG(LogTemp, Warning, TEXT("WeaponParts[%d] = %s"), i, *WeaponParts[i].PartsName.ToString());
 		}
 	}
 }
