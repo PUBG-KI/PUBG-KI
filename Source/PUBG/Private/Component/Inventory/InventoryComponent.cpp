@@ -216,11 +216,6 @@ int32 UInventoryComponent::FindItemSlot(FName ItemID)
 		}
 	}
 
-	if (LastIndex != -1)
-	{
-		RemainAmmoDelegate.ExecuteIfBound(Content[LastIndex].Quantity);
-	}
-	
 	return LastIndex;
 }
 
@@ -359,8 +354,9 @@ void UInventoryComponent::ReplicateContent_Implementation()
 void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, int32 InQuantity)
 {
 	FName ItemID = Content[InIndex].ItemName;
+	UE_LOG(LogTemp, Warning, TEXT("Dongwook: ItemID : %s"), *ItemID.ToString());
 	int32 Quantity = Content[InIndex].Quantity;
-
+	UE_LOG(LogTemp, Warning, TEXT("Dongwook: Quantity : %d"), Quantity);
 	if (IsConsumed)
 	{
 		//Content[InIndex].Quantity = Quantity - 1; , 이것들은 능력 안에서 
@@ -374,7 +370,6 @@ void UInventoryComponent::RemoveFromInventory(int32 InIndex, bool IsConsumed, in
 		FUsingItem OutUsingItem;
 		OutUsingItem.Item = Content[InIndex];
 		OutUsingItem.Index = InIndex;
-		
 		// 능력 활성화
 		ServerSetUsingItem(OutUsingItem);
 	}
@@ -394,7 +389,8 @@ void UInventoryComponent::ServerSetUsingItem_Implementation(FUsingItem OutUsingI
 
 void UInventoryComponent::ServerRemoveItem_Implementation(int32 InIndex, int32 OutQuantity)
 {
-	Content[InIndex].Quantity -= OutQuantity;
+	
+	Content[InIndex].Quantity -= OutQuantity; //컨텐츠는 인벤토리에 들어간 먹은아이템
 	UE_LOG(LogTemp, Warning, TEXT("ServerDropItem_Implementation : InIndex = %d Quantity = %d"), InIndex, Content[InIndex].Quantity);
 
 	if (Content[InIndex].Quantity == 0)
@@ -587,7 +583,6 @@ void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
 void UInventoryComponent::OnRep_Content()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!"));
-
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 	if (PlayerCharacter)
 	{
@@ -607,11 +602,10 @@ void UInventoryComponent::OnRep_Content()
 
 void UInventoryComponent::OnRep_UsingItem()
 {
-	if (UsingItem.Index == -1)
-	{
-		return;
-	}
-	
+	 // if (UsingItem.Index ==-1)
+	 // {
+	 // 	return;
+	 // }
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 	if (PlayerCharacter)
 	{

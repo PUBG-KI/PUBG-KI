@@ -161,14 +161,17 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 			
 			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
 			{
+				UE_LOG(LogTemp, Warning, TEXT("Dongwook : InventoryComponent exists"));
 				// 카테고리로 다시 분류
 				EItemCategory Category = ItemCategory;
 				
 				if (Category == EItemCategory::Heal || Category == EItemCategory::Booster) // 힐, 부스터
 				{
+					UE_LOG(LogTemp, Warning, TEXT("Dongwook : category healorbooster"));
 					UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton = Category == 10, 11"));
 
-					InventoryComponent->RemoveFromInventory(Index, true);					
+					InventoryComponent->RemoveFromInventory(Index, true);
+					UE_LOG(LogTemp, Warning, TEXT("Dongwook : Index :%d"),Index);
 				}
 				else if (Category == EItemCategory::WeaponPart) // 파츠
 				{
