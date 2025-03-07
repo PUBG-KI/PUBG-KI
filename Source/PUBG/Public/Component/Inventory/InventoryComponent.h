@@ -56,7 +56,6 @@ private:
 	TArray<FItemSlotStruct> Content;
 	UPROPERTY(ReplicatedUsing = OnRep_UsingItem, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	FUsingItem UsingItem;
-	
 	UPROPERTY(ReplicatedUsing= OnRep_Item, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
 	AItemBase* Item;
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))
