@@ -51,34 +51,35 @@ void UPlayerStatusWidget::CurrentWeaponUIInit()
 
 	if (EquippedComponent->GetCurrentWeapon())
 	{
-		AGun_Base* CurrentGun = EquippedComponent->GetCurrentWeapon_GunBase();
-
-		UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
-
-		FWeaponData WeaponData = CurrentGun->GetWeaponDataAsset();
-		FString BulletName_String = SetBulletTypeTextBlock(WeaponData.BulletType);
-		FName BulletName_Name = FName(BulletName_String);
-		int32 BulletIndex = InventoryComponent->FindItemSlot(BulletName_Name);
-		
-		CurrentGun->CurrentAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_CurrentAmmo);
-		InventoryComponent->RemainAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_Ammo);
-		
-		SetText_CurrentAmmo(CurrentGun->GetBulletArmo());
-
-		if (BulletIndex >= 0)
+		if (AGun_Base* CurrentGun = EquippedComponent->GetCurrentWeapon_GunBase())
 		{
-			SetText_Ammo(InventoryComponent->GetContent()[BulletIndex].Quantity);
+			UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+
+			FWeaponData WeaponData = CurrentGun->GetWeaponDataAsset();
+			FString BulletName_String = SetBulletTypeTextBlock(WeaponData.BulletType);
+			FName BulletName_Name = FName(BulletName_String);
+			int32 BulletIndex = InventoryComponent->FindItemSlot(BulletName_Name);
+		
+			CurrentGun->CurrentAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_CurrentAmmo);
+			InventoryComponent->RemainAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_Ammo);
+		
+			SetText_CurrentAmmo(CurrentGun->GetBulletArmo());
+
+			if (BulletIndex >= 0)
+			{
+				SetText_Ammo(InventoryComponent->GetContent()[BulletIndex].Quantity);
+			}
+			else
+			{
+				SetText_Ammo(0);
+			}
 		}
 		else
 		{
-			SetText_Ammo(0);
+			Text_CurrentAmmo->SetVisibility(ESlateVisibility::Collapsed);
+			Text_Ammo->SetVisibility(ESlateVisibility::Collapsed);
 		}
-	}
-	else
-	{
-		Text_CurrentAmmo->SetVisibility(ESlateVisibility::Collapsed);
-		Text_Ammo->SetVisibility(ESlateVisibility::Collapsed);
-	}
+		}
 }
 
 FString UPlayerStatusWidget::SetBulletTypeTextBlock(EBulletType OutEBulletType)
