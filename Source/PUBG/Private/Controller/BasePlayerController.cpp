@@ -97,8 +97,7 @@ void ABasePlayerController::CreateHUD()
 	HudWidget->GetPlayerStatusWidget()->SetMaxHealth(PS->GetMaxHealth());
 	HudWidget->GetPlayerStatusWidget()->SetStamina(PS->GetStamina());
 	HudWidget->GetPlayerStatusWidget()->SetMaxStamina(PS->GetMaxStamina());
-	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);
-	
+	HudWidget->GetPlayerStatusWidget()->SetPlayerCharacter(PlayerCharacter);	
 }
 
 void ABasePlayerController::InputModeUI()

@@ -149,13 +149,13 @@ void UPlayerStatusWidget::SetProgressBar_Health(float OutHealth)
 		StopAnimation(Anim_ProgressBar_Health);
 	}
 	
-	ProgressBar_Health->SetPercent(Health / MaxHealth);
+	ProgressBar_Health->SetPercent(OutHealth / 100.F);
 }
 
 
 void UPlayerStatusWidget::SetProgressBar_Stamina(float OutStamina)
 {
-	ProgressBar_Stamina->SetPercent(Stamina / MaxStamina);
+	ProgressBar_Stamina->SetPercent(OutStamina / 100.F);
 }
 
 void UPlayerStatusWidget::SetText_CurrentAmmo(int32 CurrentAmmo)

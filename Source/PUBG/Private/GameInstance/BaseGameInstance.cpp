@@ -37,7 +37,7 @@ void UBaseGameInstance::Init()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	SoundManager = GetWorld()->SpawnActor<ASoundManager>(ASoundManager::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	//SoundManager = GetWorld()->SpawnActor<ASoundManager>(ASoundManager::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 
 	if (SoundManager)
 	{
