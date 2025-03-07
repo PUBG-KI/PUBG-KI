@@ -79,11 +79,7 @@ public:
 	EItemCategory GetEquippedItemCategory(AItemBase* Item);
 	// 3. 카테고리에 따라 인덱스에 할당
 	// 4. 이미 인덱스에 값이 있으면 스왑
-	void EquipItem(AItemBase* Item);
-	void UnEquipItem(AItemBase* Item);
 
-	void EquipMeleeWeapon();
-	void EquipThrow();
 
 	// 메인 무기 빈 슬롯 찾기
 	int32 FindSlotMainWeapon();

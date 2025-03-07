@@ -203,19 +203,7 @@ EItemCategory UEquippedComponent::GetEquippedItemCategory(AItemBase* Item)
 	return Row->Category;
 }
 
-void UEquippedComponent::EquipItem(AItemBase* Item)
-{
-	// 1. 아이템 카테고리 찾기
-	EItemCategory ItemCategory = GetEquippedItemCategory(Item);
-	//int32 ItemCategory = static_cast<int>(GetEquippedItemCategory(Item));
 
-	FName ItemID = Item->GetItemDataComponent()->GetItemRowName();
-	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
-		
-	AEquipableItem* EquipableItem = GetWorld()->SpawnActor<AEquipableItem>(Row->BP_Item.Get());
-	
-	
-}
 
 int32 UEquippedComponent::FindSlotMainWeapon()
 {
@@ -243,7 +231,7 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 
 	int32 MainWeaponSlot = static_cast<int32>(WeaponItem->GetEquippedItemCategory());
 	
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
+	UClass* GunClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
 	
 	
 	if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
@@ -450,7 +438,7 @@ void UEquippedComponent::ServerEquipSubWeapon_Implementation(AItemBase* Item)
 		DropSUbWeapon();
 	}
 
-	TSubclassOf<AGun_Base> GunClass = Cast<UClass>(Row->BP_Item.Get());
+	UClass* GunClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
 	if (AGun_Base* SubWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
 	{
 		//TempWeapon->SetTableIndex(RowIndex);
@@ -572,7 +560,7 @@ void UEquippedComponent::ServerEquiptHelmet_Implementation(AItemBase* Item)
 		DropArmor(HelmetSlot);
 	}
 
-	TSubclassOf<AArmor_Base> ArmorClass = Cast<UClass>(Row->BP_Item.Get());
+	UClass* ArmorClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
 	if (AArmor_Base* Armor = GetWorld()->SpawnActorDeferred<AArmor_Base>(ArmorClass, FTransform(FRotator(0), FVector(0))))
 	{
 		//TempWeapon->SetTableIndex(RowIndex);
@@ -829,7 +817,8 @@ void UEquippedComponent::EquipThrow(AItemBase* Item, FItemSlotStruct* ItemSlot)
 			InventoryComponent->AddToInventory(Name, 1, Weight, ItemCategory);
 		}
 
-		TSubclassOf<AGrenade_Base> GrenadeClass = Cast<UClass>(Row->BP_Item.Get());
+		UClass* GrenadeClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
+		
 		if (AGrenade_Base* Grenade = GetWorld()->SpawnActorDeferred<AGrenade_Base>(GrenadeClass, FTransform(FRotator(0), FVector(0))))
 		{
 			//TempWeapon->SetTableIndex(RowIndex);
