@@ -216,6 +216,11 @@ int32 UInventoryComponent::FindItemSlot(FName ItemID)
 		}
 	}
 
+	if (LastIndex != -1)
+	{
+		RemainAmmoDelegate.ExecuteIfBound(Content[LastIndex].Quantity);
+	}
+	
 	return LastIndex;
 }
 

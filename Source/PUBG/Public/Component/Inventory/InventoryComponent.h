@@ -13,6 +13,8 @@
 
 class AItemBase;
 
+DECLARE_DELEGATE_OneParam(FRemainAmmoDelegate, int32);
+
 USTRUCT(BlueprintType)
 struct FUsingItem
 {
@@ -39,6 +41,7 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
+	FRemainAmmoDelegate RemainAmmoDelegate;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

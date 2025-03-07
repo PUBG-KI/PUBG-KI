@@ -78,6 +78,14 @@ void UGA_Weapon_Reload::SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon,
 		CurrentWeapon->SetBulletArom(CurrentBullet);
 		//UE_LOG(LogTemp, Error, TEXT("assssssssssssssssssssssssss"));
 	}
+
+	if (PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType) != -1)
+	{
+		int32 Index = PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType);
+		int32 RemainQuantity = PlayerCharacter->GetInventoryComponent()->GetContent()[Index].Quantity;
+		PlayerCharacter->GetInventoryComponent()->RemainAmmoDelegate.ExecuteIfBound(RemainQuantity);
+	}
+	
 }
 
 bool UGA_Weapon_Reload::CheckCurrentBullet(AGun_Base* CurrentWeapon, float DT_BulletArmo, FName BulletName)

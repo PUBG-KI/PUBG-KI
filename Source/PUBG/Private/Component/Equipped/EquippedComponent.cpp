@@ -8,6 +8,7 @@
 #include "BaseLibrary/DataEnum/ItemEnum.h"
 #include "Component/ItemData/ItemDataComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Components/TextBlock.h"
 #include "Controller/BasePlayerController.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Item/ArmorItem.h"
@@ -16,6 +17,8 @@
 #include "Item/Armor/Armor_Base.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Weapon/DataTable/DT_PartsData.h"
+#include "Widgets/HUD/HudWidget.h"
+#include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 #include "Widgets/Inventory/InventoryWidget.h"
 
 // Sets default values for this component's properties
@@ -36,7 +39,9 @@ void UEquippedComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	//DOREPLIFETIME_CONDITION(UEquippedComponent, CurrentWeapon, COND_OwnerOnly);
 	DOREPLIFETIME(UEquippedComponent, CurrentWeapon);
+
 	DOREPLIFETIME(UEquippedComponent, LastCurrentWeapon);
 	DOREPLIFETIME(UEquippedComponent, PrimarySlot);
 	DOREPLIFETIME(UEquippedComponent, SecondarySlot);
@@ -130,6 +135,7 @@ void UEquippedComponent::OnRep_EquippedItems()
 			}
 		}
 	}
+	
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 	if (PlayerCharacter)
 	{
@@ -145,6 +151,47 @@ void UEquippedComponent::OnRep_EquippedItems()
 			}
 		}
 	}
+}
+
+void UEquippedComponent::OnRep_CurrentWeapon()
+{
+	// UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon"));
+	//
+	// if (APlayerCharacter* Character = Cast<APlayerCharacter>(GetOwner()))
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = Character"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = %s"), *Character->GetName());
+	// 	// UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = %s"), *Character->GetController()->GetName());
+	// 	if (Character->IsLocallyControlled() == false) return;
+	// 	
+	// 	if (ABasePlayerController* Controller = Cast<ABasePlayerController>(Character->GetController()))
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = Controller"));
+	//
+	// 		if (UHudWidget* HudWidget = Controller->GetHudWidget())
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = HudWidget"));
+	//
+	// 			if (CurrentWeapon)
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::OnRep_CurrentWeapon = CurrentWeapon"));
+	//
+	// 				AGun_Base* CurrentGun = GetCurrentWeapon_GunBase();
+	// 				HudWidget->GetPlayerStatusWidget()->SetText_CurrentAmmo(CurrentGun->GetBulletArmo());
+	// 			}
+	// 			else
+	// 			{
+	// 				HudWidget->GetPlayerStatusWidget()->GetText_CurrentAmmo()->SetVisibility(ESlateVisibility::Collapsed);
+	//
+	// 			}
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Warning, TEXT("controller not exist"));
+	// 	}
+	// }
+	
 }
 
 EItemCategory UEquippedComponent::GetEquippedItemCategory(AItemBase* Item)
@@ -1260,6 +1307,50 @@ void UEquippedComponent::PrintWeaponParts()
 	}
 }
 
+void UEquippedComponent::PrintCurrentWeapon()
+{
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintCurrentWeapon"));
+
+		if (IsValid(CurrentWeapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Server : PrintCurrentWeapon = %s"), *CurrentWeapon->GetActorNameOrLabel());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintCurrentWeapon"));
+
+		if (IsValid(CurrentWeapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Client : PrintCurrentWeapon = %s"), *CurrentWeapon->GetActorNameOrLabel());
+		}
+	}
+}
+
+void UEquippedComponent::ServerPrintCurrentWeapon_Implementation()
+{
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintCurrentWeapon_Implementation"));
+
+		if (IsValid(CurrentWeapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintCurrentWeapon_Implementation = %s"), *CurrentWeapon->GetActorNameOrLabel());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Execute Client : ServerPrintCurrentWeapon_Implementation"));
+
+		if (IsValid(CurrentWeapon))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Execute Server : ServerPrintCurrentWeapon_Implementation = %s"), *CurrentWeapon->GetActorNameOrLabel());
+		}
+	}
+}
+
 void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT)
 {
 	OutEquippedItem->GetSceneCaptureComponent()->TextureTarget = OutLoadedRT;
@@ -1292,7 +1383,20 @@ void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, 
 
 void UEquippedComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
 {
+	// if (GetOwner()->HasAuthority())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = Execute Server"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = %s"), *_CurrentWeapon->GetActorNameOrLabel());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = Execute Client"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = %s"), *_CurrentWeapon->GetActorNameOrLabel());
+	// }
+	
 	this->CurrentWeapon = _CurrentWeapon;
+	
+	CurrentWeaponDelegate.ExecuteIfBound();
 }
 
 void UEquippedComponent::SetLastCurrentWeapon(AWeapon_Base* _LastCurrentWeapon)

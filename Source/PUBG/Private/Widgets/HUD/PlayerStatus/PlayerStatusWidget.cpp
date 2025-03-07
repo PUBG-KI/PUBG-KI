@@ -6,34 +6,96 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Character/PlayerCharacter.h"
+#include "Component/Equipped/EquippedComponent.h"
+#include "Component/Inventory/InventoryComponent.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "PlayerState/BasePlayerState.h"
 
 void UPlayerStatusWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
 
-	// if(!PlayerCharacter)
-	// {
-	// 	return;
-	// }
-	//
-	// ABasePlayerState* PS = PlayerCharacter->GetPlayerState<ABasePlayerState>();
-	// if(!PS)
-	// {
-	// 	return;
-	// }
-	//
-	// UBaseAbilitySystemComponent* ASC = Cast<UBaseAbilitySystemComponent>(PlayerCharacter->GetAbilitySystemComponent());
-	// if(!ASC)
-	// {
-	// 	return;
-	// }
-	//
-	// TArray<FGameplayAttribute> Array;
-	//
-	
-	
+	if (!PlayerCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::NativePreConstruct PlayerCharacter None"));
+
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::NativePreConstruct PlayerCharacter"));
+
+}
+
+void UPlayerStatusWidget::SetPlayerCharacter(APlayerCharacter* OutPlayerCharacter)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::SetPlayerCharacter %s"), *OutPlayerCharacter->GetName());
+	PlayerCharacter = OutPlayerCharacter;
+
+	PlayerCharacter->GetEquippedComponent()->CurrentWeaponDelegate.BindUObject(this, &UPlayerStatusWidget::CurrentWeaponUIInit);
+}
+
+void UPlayerStatusWidget::CurrentWeaponUIInit()
+{
+	if (!IsValid(PlayerCharacter))
+	{
+		return;
+	}
+
+	UEquippedComponent* EquippedComponent = PlayerCharacter->GetEquippedComponent();
+
+	if (!IsValid(EquippedComponent))
+	{
+		return;
+	}
+
+	if (EquippedComponent->GetCurrentWeapon())
+	{
+		AGun_Base* CurrentGun = EquippedComponent->GetCurrentWeapon_GunBase();
+
+		UInventoryComponent* InventoryComponent = PlayerCharacter->GetInventoryComponent();
+
+		FWeaponData WeaponData = CurrentGun->GetWeaponDataAsset();
+		FString BulletName_String = SetBulletTypeTextBlock(WeaponData.BulletType);
+		FName BulletName_Name = FName(BulletName_String);
+		int32 BulletIndex = InventoryComponent->FindItemSlot(BulletName_Name);
+		
+		CurrentGun->CurrentAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_CurrentAmmo);
+		InventoryComponent->RemainAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_Ammo);
+		
+		SetText_CurrentAmmo(CurrentGun->GetBulletArmo());
+
+		if (BulletIndex >= 0)
+		{
+			SetText_Ammo(InventoryComponent->GetContent()[BulletIndex].Quantity);
+		}
+		else
+		{
+			SetText_Ammo(0);
+		}
+	}
+	else
+	{
+		Text_CurrentAmmo->SetVisibility(ESlateVisibility::Collapsed);
+		Text_Ammo->SetVisibility(ESlateVisibility::Collapsed);
+	}
+}
+
+FString UPlayerStatusWidget::SetBulletTypeTextBlock(EBulletType OutEBulletType)
+{
+	switch (OutEBulletType)
+	{
+	case EBulletType::B_7_62:
+		return TEXT("7.62mm");
+	case EBulletType::B_5_56:
+		return TEXT("5.56mm");
+	case EBulletType::B_9:
+		return TEXT("9mm");
+	case EBulletType::B_12G:
+		return TEXT("12G");
+	default:
+		return TEXT("None");
+	}
 }
 
 void UPlayerStatusWidget::SetHealth(float OutHealth)
@@ -94,5 +156,25 @@ void UPlayerStatusWidget::SetProgressBar_Stamina(float OutStamina)
 {
 	ProgressBar_Stamina->SetPercent(Stamina / MaxStamina);
 }
+
+void UPlayerStatusWidget::SetText_CurrentAmmo(int32 CurrentAmmo)
+{
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::SetText_CurrentAmmo"));
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::SetText_CurrentAmmo %d"), CurrentAmmo);
+
+	Text_CurrentAmmo->SetVisibility(ESlateVisibility::Visible);
+	Text_Ammo->SetVisibility(ESlateVisibility::Visible);
+	FString CurrentAmmo_String = FString::FromInt(CurrentAmmo);
+	FText CurrentAmmo_Text = FText::FromString(CurrentAmmo_String);
+	Text_CurrentAmmo->SetText(CurrentAmmo_Text);
+}
+
+void UPlayerStatusWidget::SetText_Ammo(int32 Ammo)
+{
+	FString Ammo_String = FString::FromInt(Ammo);
+	FText Ammo_Text = FText::FromString(Ammo_String);
+	Text_Ammo->SetText(Ammo_Text);
+}
+
 
 

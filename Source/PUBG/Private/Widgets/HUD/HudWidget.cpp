@@ -10,4 +10,6 @@ void UHudWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	WBP_DisplayMessageItem->SetVisibility(ESlateVisibility::Collapsed);
+
+	
 }

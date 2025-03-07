@@ -17,6 +17,10 @@ enum class EItemCategory : uint8;
 struct FItemSlotStruct;
 class AItemBase;
 
+DECLARE_DELEGATE_OneParam( FCurrentWeaponAmmoDelegate, int32);
+DECLARE_DELEGATE(FCurrentWeaponDelegate);
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PUBG_API UEquippedComponent : public UActorComponent
 {
@@ -28,6 +32,9 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+public:
+	FCurrentWeaponAmmoDelegate CurrentWeaponAmmoDelegate;
+	FCurrentWeaponDelegate CurrentWeaponDelegate;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -60,6 +67,8 @@ public:
 	// OnRep
 	UFUNCTION()
 	void OnRep_EquippedItems();
+	UFUNCTION()
+	void OnRep_CurrentWeapon();
 
 	// Getter
 	TArray<AEquipableItem*> &GetEquippedItems () { return EquippedItems; }
@@ -141,11 +150,15 @@ public:
 	void ServerPrintEquippedItems();
 	UFUNCTION(BlueprintCallable)
 	void PrintWeaponParts();
+	UFUNCTION(BlueprintCallable)
+	void PrintCurrentWeapon();
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void ServerPrintCurrentWeapon();
 	// 무기 장착 시 씬캡쳐 컴포넌트 연결
 	void EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT);
 	
 	// 재윤 ======================================
-	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentWeapon, visibleAnywhere, Category="Equipped")
 	AWeapon_Base* CurrentWeapon;	// 현재 장착 무기
 
 	UPROPERTY(visibleAnywhere, Replicated, Category="Equipped")

@@ -63,10 +63,9 @@ void UGA_Number_Equip_UnEquip::Attach_BackToHand_Weapon(FName _SocketName, AWeap
 		{
 			FAttachmentTransformRules Rules = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
 			_Weapon->AttachToComponent(PlayerCharacter->GetMesh(), Rules, _SocketName);
-
+			
 			PlayerCharacter->GetEquippedComponent()->SetCurrentWeapon(_Weapon);
 			PlayerCharacter->GetEquippedComponent()->SetLastCurrentWeapon(PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon());
-			
 		}
 	}
 }

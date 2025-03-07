@@ -22,6 +22,8 @@ enum class EFiremodes : uint8
 	Semi_Auto,
 };
 
+DECLARE_DELEGATE_OneParam(FCurrentAmmoDelegate, int32);
+
 UCLASS()
 class PUBG_API AGun_Base : public AWeapon_Base
 {
@@ -32,6 +34,8 @@ public:
 
 	// 이준수
 	virtual void BeginPlay() override;
+
+	FCurrentAmmoDelegate CurrentAmmoDelegate;
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Parts", replicated)
 	UStaticMeshComponent* ScopeMesh;
@@ -92,7 +96,11 @@ public:
 	void SetMagToHandSocekt();
 
 	UFUNCTION(BlueprintCallable, Category = "DataAsset")
-	float GetBulletArmo() const {return BulletArmo;}
+	float GetBulletArmo() const
+	{
+		CurrentAmmoDelegate.ExecuteIfBound(BulletArmo);
+		return BulletArmo;
+	}
 
 	UFUNCTION(BlueprintCallable, Category = "DataAsset")
 	void SetBulletArom(float Armo);
