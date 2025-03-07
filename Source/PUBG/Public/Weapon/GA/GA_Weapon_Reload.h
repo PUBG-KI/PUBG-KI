@@ -23,7 +23,7 @@ public:
 	void CheckZoom();
 
 	UFUNCTION(BlueprintPure)
-	float EquippedMagPart_BulletCalulate(AGun_Base* CurrentWeapon, float CurrentBullet, float IsMag_changed_BulletValue);
+	float EquippedMagPart_BulletCalulate(APlayerCharacter* PlayerCharacter,AGun_Base* CurrentWeapon, float CurrentBullet, float IsMag_changed_BulletValue, FName BulletName);
 
 	UFUNCTION(BlueprintCallable)
 	void SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon, float CurrentBullet, float IsMag_changed_BulletValue, FName BulletName);
