@@ -36,20 +36,15 @@ public:
 	virtual UTexture2D* SetKeyTexture() override;
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Smoke;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* DropMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite ,meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* Balloon;
-
 	
-	UPROPERTY(EditAnywhere, Category = "Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects",meta = (AllowPrivateAccess = "true"))
 	UParticleSystemComponent* ParticleComp;
 	
-	UPROPERTY(EditAnywhere, Category = "Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects",meta = (AllowPrivateAccess = "true"))
 	UParticleSystem* ParticleEffect;
 	
 	FTimerHandle StopEffectHandle;
