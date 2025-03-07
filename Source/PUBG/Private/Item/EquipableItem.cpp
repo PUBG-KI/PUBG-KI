@@ -12,20 +12,19 @@ AEquipableItem::AEquipableItem()
 {
 	bReplicates = true;
 	bReplicateUsingRegisteredSubObjectList = true;
-	
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem"));
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem %s"), *GetActorNameOrLabel());
-		
-		//ClientCreateMaterial_Implementation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client : AEquipableItem"));
-	}
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+
+	// if (HasAuthority())
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem"));
+	// 	UE_LOG(LogTemp, Warning, TEXT("Execute Server : AEquipableItem %s"), *GetActorNameOrLabel());
+	// 	
+	// 	//ClientCreateMaterial_Implementation();
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Execute Client : AEquipableItem"));
+	// }
 
 	SceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture->bCaptureEveryFrame = false; 

@@ -1160,11 +1160,12 @@ void APlayerCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp
 			LookAtActor = nullptr;
 			InventoryComponent->SetItem(nullptr);
 
-			ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetController());
-
-			if (PlayerController->GetHudWidget() != nullptr)
+			if (ABasePlayerController* PlayerController = Cast<ABasePlayerController>(GetController()))
 			{
-				PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+				if (PlayerController->GetHudWidget() != nullptr)
+				{
+					PlayerController->GetHudWidget()->GetDisplayMessageItemWidget()->SetVisibility(ESlateVisibility::Collapsed);
+				}
 			}
 			
 			GetWorldTimerManager().ClearTimer(BeginOverlapTimerHandle);

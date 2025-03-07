@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Weapon/DataTable/DT_Weapon.h"
 #include "Widgets/WidgetBase.h"
 #include "PlayerStatusWidget.generated.h"
 
+class UTextBlock;
 class APlayerCharacter;
 class UProgressBar;
 /**
@@ -32,6 +34,11 @@ private:
 	UPROPERTY(Transient, meta = (BindWidgetAnim), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	UWidgetAnimation* Anim_ProgressBar_Health;
 
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UTextBlock* Text_CurrentAmmo;
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, meta = (AllowPrivateAccess=true))
+	UTextBlock* Text_Ammo;
+	
 	// Variable
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess=true))
 	APlayerCharacter* PlayerCharacter;
@@ -46,7 +53,7 @@ private:
 public:
 	// Variable Setter
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerCharacter(APlayerCharacter* OutPlayerCharacter) { PlayerCharacter = OutPlayerCharacter; }
+	void SetPlayerCharacter(APlayerCharacter* OutPlayerCharacter);
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float OutHealth);
 	UFUNCTION(BlueprintCallable)
@@ -61,10 +68,26 @@ public:
 	UProgressBar* GetProgressBar_Health() const { return ProgressBar_Health; }
 	UFUNCTION()
 	UProgressBar* GetProgressBar_Stamina() const { return ProgressBar_Stamina; }
+	UFUNCTION(BlueprintCallable)
+	UTextBlock* GetText_CurrentAmmo() const { return Text_CurrentAmmo; }
+	UFUNCTION(BlueprintCallable)
+	UTextBlock* GetText_Ammo() const { return Text_Ammo; }
 
 	//Widget Setter
 	UFUNCTION(BlueprintCallable)
 	void SetProgressBar_Health(float OutHealth);
 	UFUNCTION(BlueprintCallable)
 	void SetProgressBar_Stamina(float OutStamina);
+	UFUNCTION(BlueprintCallable)
+	void SetText_CurrentAmmo(int32 CurrentAmmo);
+	UFUNCTION(BlueprintCallable)
+	void SetText_Ammo(int32 Ammo);
+
+	UFUNCTION(BlueprintCallable)
+	void CurrentWeaponUIInit();
+
+	UFUNCTION(BlueprintCallable)
+	FString SetBulletTypeTextBlock(EBulletType OutEBulletType);
 };
+
+
