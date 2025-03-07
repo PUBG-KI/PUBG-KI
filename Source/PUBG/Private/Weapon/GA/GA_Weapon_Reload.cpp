@@ -38,19 +38,28 @@ void UGA_Weapon_Reload::CheckZoom()
 	}
 }
 
-float UGA_Weapon_Reload::EquippedMagPart_BulletCalulate(AGun_Base* CurrentWeapon, float CurrentBullet,
-	float IsMag_changed_BulletValue)
+float UGA_Weapon_Reload::EquippedMagPart_BulletCalulate(APlayerCharacter* PlayerCharacter, AGun_Base* CurrentWeapon, float CurrentBullet,
+	float IsMag_changed_BulletValue, FName BulletName)
 {
 	float bulletArmo = CurrentWeapon->GetBulletArmo();
-	
+	float InventoryBulletQuantity = PlayerCharacter->GetInventoryComponent()->GetContent()[PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletName)].Quantity;
 	if (CurrentWeapon->GetEquippedMag())
 	{
+		if (InventoryBulletQuantity < CurrentBullet + IsMag_changed_BulletValue)
+		{
+			return InventoryBulletQuantity;
+		}
 		if (bulletArmo != 0.0f) return CurrentBullet + IsMag_changed_BulletValue - bulletArmo;
 		if (bulletArmo == 0.0f) return CurrentBullet + IsMag_changed_BulletValue;
+		
 		return 0;
 	}
 	else
 	{
+		if (InventoryBulletQuantity < CurrentBullet)
+		{
+			return InventoryBulletQuantity;
+		}
 		if (bulletArmo != 0.0f) return CurrentBullet - bulletArmo;
 		if (bulletArmo == 0.0f) return CurrentBullet;
 		return 0;
@@ -64,18 +73,19 @@ void UGA_Weapon_Reload::SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon,
 	FName BulletType = CheckBulletTypeName(BulletName);
 	float ChangeValue = PlayerCharacter->GetEquippedComponent()->GetCurrentWeapon_GunBase()->GetWeaponParts()[2].ChangeValue;
 
+	float GetArom = EquippedMagPart_BulletCalulate(PlayerCharacter, CurrentWeapon, CurrentBullet, ChangeValue, BulletType);
 	// 대탄 파츠 장착 여부 판탄 후 인벤에서 총알 감소
 	PlayerCharacter->GetInventoryComponent()->ServerRemoveItem(	PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType),
-		EquippedMagPart_BulletCalulate(CurrentWeapon, CurrentBullet, ChangeValue));
+		GetArom);
 
 	if (CurrentWeapon->GetEquippedMag())
 	{
-		CurrentWeapon->SetBulletArom(CurrentBullet + ChangeValue);
+		CurrentWeapon->SetBulletArom(CurrentWeapon->GetBulletArmo() + GetArom);
 		//UE_LOG(LogTemp, Error, TEXT("asdfffffffffffffffffff"));
 	}
 	else
 	{
-		CurrentWeapon->SetBulletArom(CurrentBullet);
+		CurrentWeapon->SetBulletArom(CurrentWeapon->GetBulletArmo() + GetArom);
 		//UE_LOG(LogTemp, Error, TEXT("assssssssssssssssssssssssss"));
 	}
 
