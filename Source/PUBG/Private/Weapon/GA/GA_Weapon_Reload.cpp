@@ -6,10 +6,13 @@
 #include "Component/Equipped/EquippedComponent.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "Component/Movement/PlayerMovementComponent.h"
+#include "Controller/BasePlayerController.h"
+#include "Widgets/HUD/HudWidget.h"
+#include "Widgets/HUD/PlayerStatus/PlayerStatusWidget.h"
 
 UAnimMontage* UGA_Weapon_Reload::selectCurrentMontage_isProne_Reload(UAnimMontage* ReloadCharge_TrueMontage,
-	UAnimMontage* ReloadCharge_falseMontage, UAnimMontage* ReloadTectical_TrueMontage, UAnimMontage* ReloadTectical_falseMontage,
-	bool Selectbool)
+                                                                     UAnimMontage* ReloadCharge_falseMontage, UAnimMontage* ReloadTectical_TrueMontage, UAnimMontage* ReloadTectical_falseMontage,
+                                                                     bool Selectbool)
 {
 	APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
 	UPlayerMovementComponent* MovementComponent = Cast<UPlayerMovementComponent>(PlayerCharacter->GetMovementComponent());
@@ -93,7 +96,14 @@ void UGA_Weapon_Reload::SetReloadBullet_CalulateBullet(AGun_Base* CurrentWeapon,
 	{
 		int32 Index = PlayerCharacter->GetInventoryComponent()->FindItemSlot(BulletType);
 		int32 RemainQuantity = PlayerCharacter->GetInventoryComponent()->GetContent()[Index].Quantity;
-		PlayerCharacter->GetInventoryComponent()->RemainAmmoDelegate.ExecuteIfBound(RemainQuantity);
+		UE_LOG(LogTemp, Warning, TEXT("RemainQuantity %d"), RemainQuantity);
+		
+		
+		// if (!PlayerCharacter->HasAuthority())
+		// {
+		// 	UE_LOG(LogTemp, Warning, TEXT("SetReloadBullet_CalulateBullet : Execute Client %d"), RemainQuantity);
+		//	GetPlayerControllerFromActorInfo()->GetHudWidget()->GetPlayerStatusWidget()->ClientSetText_Ammo(RemainQuantity);
+		// }
 	}
 	
 }

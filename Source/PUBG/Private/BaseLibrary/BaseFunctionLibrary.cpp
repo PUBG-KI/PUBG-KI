@@ -136,9 +136,9 @@ int32 UBaseFunctionLibrary::GetRowIndexByName(UDataTable* DataTable, FName Name)
 FVector UBaseFunctionLibrary::DropLocation(APlayerCharacter* PlayerCharacter)
 {
 	FVector Start = PlayerCharacter->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("Start Location : %f %f %f"), Start.X, Start.Y, Start.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("Start Location : %f %f %f"), Start.X, Start.Y, Start.Z);
 	FVector End = PlayerCharacter->GetActorLocation() - FVector(0.0f, 0.0f, 500.0f);
-	UE_LOG(LogTemp, Warning, TEXT("End Location : %f %f %f"), End.X, End.Y, End.Z);
+	//UE_LOG(LogTemp, Warning, TEXT("End Location : %f %f %f"), End.X, End.Y, End.Z);
 	ETraceTypeQuery TraceChannel = UEngineTypes::ConvertToTraceType(ECC_WorldDynamic);
 	TArray<AActor*> IgnoreActors;
 	IgnoreActors.Add(PlayerCharacter);
@@ -148,11 +148,11 @@ FVector UBaseFunctionLibrary::DropLocation(APlayerCharacter* PlayerCharacter)
 
 	if (UKismetSystemLibrary::LineTraceSingle(PlayerCharacter->GetWorld(), Start, End, TraceChannel, false, IgnoreActors, EDrawDebugTrace::Persistent, Hit, true, FLinearColor::Red, FLinearColor::Green))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Drop Location : %f %f %f"), Hit.Location.X, Hit.Location.Y, Hit.Location.Z);
+		//UE_LOG(LogTemp, Warning, TEXT("Drop Location : %f %f %f"), Hit.Location.X, Hit.Location.Y, Hit.Location.Z);
 		return Hit.Location;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Drop Location : 0"));
+	//UE_LOG(LogTemp, Warning, TEXT("Drop Location : 0"));
 	return FVector(0, 0, 0);
 }
 

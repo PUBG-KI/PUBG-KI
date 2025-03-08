@@ -28,7 +28,7 @@ void AGrenade_Base::BeginPlay()
 	}
   	else
   	{
-  		// UE_LOG(LogTemp, Error, TEXT("No Collision"));
+  		//UE_LOG(LogTemp, Error, TEXT("No Collision"));
   	}
 
 	if (OwningPlayerCharacter != nullptr)

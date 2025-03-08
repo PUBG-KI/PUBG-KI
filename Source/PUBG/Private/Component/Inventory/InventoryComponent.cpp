@@ -83,12 +83,12 @@ void UInventoryComponent::ServerSetNearItem_Implementation(AItemBase* OutNearIte
 
 void UInventoryComponent::Server_InteractItem_Implementation(AItemBase* OutItemBase)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Server_InteractItem_Implementation!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Server_InteractItem_Implementation!"));
 
 	
 	if (!Item && !NearItem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
+		//UE_LOG(LogTemp, Warning, TEXT("Item, NearItem None"));
 		return;
 	}
 	
@@ -108,7 +108,7 @@ void UInventoryComponent::Server_InteractItem_Implementation(AItemBase* OutItemB
 	if (NearItem != nullptr)
 	{
 		SetNearItem(NearItem);
-		UE_LOG(LogTemp, Warning, TEXT("NearItem"));
+		//UE_LOG(LogTemp, Warning, TEXT("NearItem"));
 		
 		UItemDataComponent* ItemDataComponent = NearItem->GetItemDataComponent();
 		//ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass());
@@ -132,11 +132,11 @@ void UInventoryComponent::ServerSetContents_Implementation(const TArray<FItemSlo
 {
 	if (GetOwner() && GetOwner()->HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Server : SetContents "));
+		//UE_LOG(LogTemp, Warning, TEXT("Execute Server : SetContents "));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Execute Client : SetContents "));
+		//UE_LOG(LogTemp, Warning, TEXT("Execute Client : SetContents "));
 	}
 	
 	SetContent(OutContnets);
@@ -255,8 +255,8 @@ void UInventoryComponent::CreateNewStack(FName ItemID, int32 Quantity, int32 Wei
 	
 	Content.Add(ItemSlot);
 	CurrentInventoryWeight += Weight;
-	UpdateInventory();
 	
+	UpdateInventory();
 }
 
 void UInventoryComponent::AddToLastIndexNewStack(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory)
@@ -290,7 +290,13 @@ int32 UInventoryComponent::GetMaxStackSize(FName ItemID)
 
 void UInventoryComponent::UpdateInventory()
 {
-		Content.Sort([](const FItemSlotStruct& LHS, const FItemSlotStruct& RHS)
+		Content.Sort([]
+			(
+				const FItemSlotStruct& LHS,
+				const FItemSlotStruct& RHS
+			)
+
+			
 	{
 			FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 			UDataTable* DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
@@ -307,23 +313,19 @@ void UInventoryComponent::UpdateInventory()
 			UE_LOG(LogTemp, Warning, TEXT("LHS.ItemName: %s, RHS.ItemName: %s"), *LHS.ItemName.ToString(), *RHS.ItemName.ToString());
 			
 			// LHSRow 또는 RHSRow가 nullptr인 경우를 처리
-		   if (!LHSRow || !RHSRow)
-		   {
-			   UE_LOG(LogTemp, Warning, TEXT("Row not found for one or both items!"));
+			if (!LHSRow || !RHSRow)
+		    {
 			   return false;
-		   }
-			
+		    }
 			if (LHSRow->Category != RHSRow->Category)
 			{
 				return LHSRow->Category < RHSRow->Category;
 			}
-				
 			if (LHS.ItemName != RHS.ItemName)
 			{
-				return LHS.ItemName.ToString() < RHS.ItemName.ToString();  // Name이 다르면 Name 순으로 오름차순 정렬
+				return LHS.ItemName.ToString() < RHS.ItemName.ToString();
 			}
-				
-			return LHS.Quantity > RHS.Quantity;  // Quantity가 다르면 Quantity 순으로 오름차순 정렬
+			return LHS.Quantity > RHS.Quantity;
 	});
 }
 
@@ -598,6 +600,7 @@ void UInventoryComponent::OnRep_Content()
 			}
 		}
 	}
+	
 }
 
 void UInventoryComponent::OnRep_UsingItem()

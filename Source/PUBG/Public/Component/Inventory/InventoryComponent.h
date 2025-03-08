@@ -109,10 +109,11 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerGetItem();
 
-	UFUNCTION(BlueprintCallable)
-	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
+	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerAddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
+	UFUNCTION(BlueprintCallable)
+	int32 AddToInventory(FName ItemID, int32 Quantity, int32 Weight, EItemCategory ItemCategory);
 	UFUNCTION(BlueprintCallable)
 	int32 FindItemSlot(FName ItemID);
 	UFUNCTION(BlueprintCallable)
@@ -127,6 +128,8 @@ public:
 	EItemCategory GetEquippedItemCategory(AItemBase* InItem);
 	void InteractionsByCategory(AItemBase* InItem);
 
+
+	
 	// 아이템 먹었을 때 정렬되는 거 
 	UFUNCTION(BlueprintCallable) 
 	void UpdateInventory();

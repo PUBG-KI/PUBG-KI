@@ -45,7 +45,7 @@ void ABasePlayerController::CreateHUD()
 {
 	if (!IsLocalPlayerController())
 	{		
-		UE_LOG(LogTemp, Warning, TEXT("!IsLocalPlayerController"));
+		//UE_LOG(LogTemp, Warning, TEXT("!IsLocalPlayerController"));
 		return;
 	}
 
@@ -73,13 +73,13 @@ void ABasePlayerController::CreateHUD()
 	if (IsValid(HudWidgetClass))
 	{
 		
-		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass Loaded"));
+		//UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass Loaded"));
 		HudWidget = CreateWidget<UHudWidget>(this, HudWidgetClass);
 		HudWidget->AddToViewport();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
+		//UE_LOG(LogTemp, Warning, TEXT("HudWidgetClass is NULL"));
 	}
 
 	InputModeGame();	
@@ -130,7 +130,7 @@ void ABasePlayerController::CreateInventoryWidget()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
 	{
-		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		//UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
 		return;
 	}
 
@@ -141,12 +141,12 @@ void ABasePlayerController::CreateInventoryWidget()
 	
 	if (IsValid(InventoryWidgetClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
 		
 		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
 		
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+		//UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
 		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
 		InventoryWidget->SetEquippedComponent(PlayerCharacter->GetEquippedComponent());
@@ -177,7 +177,7 @@ void ABasePlayerController::ToggleMapWidget()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
 	{
-		UE_LOG(LogTemp, Error, TEXT("ToggleMapWidget() - Only Local Player Controllers can create widgets!"));
+		//UE_LOG(LogTemp, Error, TEXT("ToggleMapWidget() - Only Local Player Controllers can create widgets!"));
 		return;
 	}
 
@@ -191,7 +191,7 @@ void ABasePlayerController::ClientCreateInventoryWidget_Implementation()
 {
 	if (!IsLocalController())  // 로컬 플레이어인지 확인
 	{
-		UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
+		//UE_LOG(LogTemp, Error, TEXT("CreateInventoryWidget() - Only Local Player Controllers can create widgets!"));
 		return;
 	}
 
@@ -202,12 +202,12 @@ void ABasePlayerController::ClientCreateInventoryWidget_Implementation()
 	
 	if (IsValid(InventoryWidgetClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
 		
 		InventoryWidget = CreateWidget<UInventoryWidget>(this, InventoryWidgetClass);
 		
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetPawn());
-		UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
+		//UE_LOG(LogTemp, Warning, TEXT("GetOwningPlayer"));
 		InventoryWidget->SetInventoryComponent(PlayerCharacter->GetInventoryComponent());
 		InventoryWidget->SetNearComponent(PlayerCharacter->GetNearComponent());
 		InventoryWidget->SetEquippedComponent(PlayerCharacter->GetEquippedComponent());

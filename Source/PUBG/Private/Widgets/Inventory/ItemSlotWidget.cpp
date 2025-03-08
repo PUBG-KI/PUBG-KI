@@ -49,7 +49,7 @@ void UItemSlotWidget::NativeConstruct()
 
 void UItemSlotWidget::UpdateItemSlotWidget()
 {
-	UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget"));
+	//UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget"));
 
 	FString DataTablePath = TEXT("/Game/Datatables/ItemTable.ItemTable");
 	DataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *DataTablePath));
@@ -69,12 +69,12 @@ void UItemSlotWidget::UpdateItemSlotWidget()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : Item name not found"));
+			//UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : Item name not found"));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : DataTable None"));
+		//UE_LOG(LogTemp, Warning, TEXT("UItemSlotWidget::UpdateItemSlotWidget : DataTable None"));
 	}
 }
 
@@ -157,7 +157,7 @@ FReply UItemSlotWidget::NativeOnPreviewMouseButtonDown(const FGeometry& InGeomet
 		}
 		else if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton) // 우클릭일 경우
 		{
-			UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton"));
+			//UE_LOG(LogTemp, Warning, TEXT("NativeOnPreviewMouseButtonDown : RightMouseButton"));
 			
 			if (InventoryComponent) // 인벤토리 컴포넌트가 있으면 인벤토리에서 우클릭을 한 것 
 			{
@@ -301,7 +301,6 @@ void UItemSlotWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FP
 				
 				if (InventoryComponent)
 				{
-					
 					DDInventorySlot->SetInventoryComponent(InventoryComponent);
 				}
 				else if (NearComponent)

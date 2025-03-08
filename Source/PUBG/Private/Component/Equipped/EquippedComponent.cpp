@@ -205,6 +205,7 @@ EItemCategory UEquippedComponent::GetEquippedItemCategory(AItemBase* Item)
 
 
 
+
 int32 UEquippedComponent::FindSlotMainWeapon()
 {
 	for (int i = 0; i < 2; i++)
@@ -1372,17 +1373,6 @@ void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, 
 
 void UEquippedComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
 {
-	// if (GetOwner()->HasAuthority())
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = Execute Server"));
-	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = %s"), *_CurrentWeapon->GetActorNameOrLabel());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = Execute Client"));
-	// 	UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::SetCurrentWeapon = %s"), *_CurrentWeapon->GetActorNameOrLabel());
-	// }
-	
 	this->CurrentWeapon = _CurrentWeapon;
 	
 	CurrentWeaponDelegate.ExecuteIfBound();

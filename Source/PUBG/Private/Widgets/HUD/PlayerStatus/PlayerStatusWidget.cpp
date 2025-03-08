@@ -60,8 +60,13 @@ void UPlayerStatusWidget::CurrentWeaponUIInit()
 			FName BulletName_Name = FName(BulletName_String);
 			int32 BulletIndex = InventoryComponent->FindItemSlot(BulletName_Name);
 		
-			CurrentGun->CurrentAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_CurrentAmmo);
 			InventoryComponent->RemainAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_Ammo);
+
+			UE_LOG(LogTemp, Warning, TEXT("Character used for binding: %s"), *PlayerCharacter->GetName());
+			UE_LOG(LogTemp, Warning, TEXT("Character used for binding: %p"), PlayerCharacter);
+			UE_LOG(LogTemp, Warning, TEXT("InventoryComponent used for binding: %p"), InventoryComponent);
+
+			CurrentGun->CurrentAmmoDelegate.BindUObject(this, &UPlayerStatusWidget::SetText_CurrentAmmo);
 		
 			SetText_CurrentAmmo(CurrentGun->GetBulletArmo());
 
@@ -74,12 +79,12 @@ void UPlayerStatusWidget::CurrentWeaponUIInit()
 				SetText_Ammo(0);
 			}
 		}
-		else
-		{
-			Text_CurrentAmmo->SetVisibility(ESlateVisibility::Collapsed);
-			Text_Ammo->SetVisibility(ESlateVisibility::Collapsed);
-		}
-		}
+	}
+	else
+	{
+		Text_CurrentAmmo->SetVisibility(ESlateVisibility::Collapsed);
+		Text_Ammo->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }
 
 FString UPlayerStatusWidget::SetBulletTypeTextBlock(EBulletType OutEBulletType)
@@ -172,10 +177,14 @@ void UPlayerStatusWidget::SetText_CurrentAmmo(int32 CurrentAmmo)
 
 void UPlayerStatusWidget::SetText_Ammo(int32 Ammo)
 {
+	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::SetText_Ammo %d"), Ammo);
 	FString Ammo_String = FString::FromInt(Ammo);
 	FText Ammo_Text = FText::FromString(Ammo_String);
 	Text_Ammo->SetText(Ammo_Text);
 }
 
-
+inline void UPlayerStatusWidget::ClientSetText_Ammo_Implementation(int32 Ammo)
+{
+	SetText_Ammo(Ammo);
+}
 
