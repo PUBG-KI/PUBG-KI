@@ -31,7 +31,7 @@ public:
 	UFUNCTION(blueprintPure)
 	bool CheckCurrentBullet(AGun_Base* CurrentWeapon, float DT_BulletArmo, FName BulletName);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	FName CheckBulletTypeName(FName BulletName);
 
 	UFUNCTION(BlueprintPure)

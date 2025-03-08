@@ -140,6 +140,7 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	// 이준수
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
+	
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
 	DetectionItem->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemBeginOverlap);
 	DetectionItem->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemEndOverlap);
@@ -212,11 +213,11 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 {
 	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Server"));
+		//UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Server"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Client"));
+		//UE_LOG(LogTemp, Warning, TEXT("APlayerCharacter::SetMeshComponent = Execute Client"));
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("SetMeshComponent =  %s"), *SkeletalMesh->GetName());
 
@@ -230,7 +231,7 @@ void APlayerCharacter::SetMeshComponent(EPlayerMeshType PlayerMeshType, USkeleta
 void APlayerCharacter::Multicast_SetMeshComponent_Implementation(EPlayerMeshType PlayerMeshType,
                                                                  USkeletalMesh* SkeletalMesh)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation"));
+	//UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation"));
 	//UE_LOG(LogTemp, Warning, TEXT("Multicast_SetMeshComponent_Implementation : %s"), *SkeletalMesh->GetName());
 	SetMeshComponent(PlayerMeshType, SkeletalMesh);
 }
@@ -1062,9 +1063,14 @@ void APlayerCharacter::OnRep_PlayerState()
 }
 
 
-void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                               const FHitResult& SweepResult)
+void APlayerCharacter::OnComponentBeginOverlap(
+	UPrimitiveComponent* OverlappedComponent,
+	AActor* OtherActor,
+	UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex,
+	bool bFromSweep,
+	const FHitResult& SweepResult)
+
 {
 	if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 	{
@@ -1103,9 +1109,11 @@ void APlayerCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 			if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 			{
-				UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, TraceType, false, ActorsToIgnore,
-				                                      EDrawDebugTrace::ForDuration, Hit, true, FLinearColor(1, 0, 0, 0),
-				                                      FLinearColor(0, 1, 0, 1));
+				UKismetSystemLibrary::LineTraceSingle(GetWorld(),
+					Start, End, TraceType, false, ActorsToIgnore,
+					EDrawDebugTrace::None, Hit, true,
+					FLinearColor(1, 0, 0, 0),
+					FLinearColor(0, 1, 0, 1));
 
 
 				if (Hit.GetActor() != nullptr)

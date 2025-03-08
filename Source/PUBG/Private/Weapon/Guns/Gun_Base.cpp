@@ -220,7 +220,7 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 	if (IsEquipParts(PartsData.PartsCategory))
 	{
 		int32 PartsCategory_int = static_cast<int32>(PartsData.PartsCategory);
-		UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
+		//UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts  PartsCategory_int = %d"), PartsCategory_int);
 
 		if (WeaponParts[PartsCategory_int].PartsName == NAME_None)
 		{
@@ -237,11 +237,11 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 				Server_SettingParts(PartsCategory_int);
 			}
 			else
-				UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
+				//UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
 
 			
-			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
-			UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
+			//UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
+			//UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
 			return true;
 		}
 		

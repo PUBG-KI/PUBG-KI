@@ -122,11 +122,17 @@ public:
 	USizeBox* GetSizeBox_1Slot() const { return SizeBox_1Slot; }
 
 	virtual bool NativeOnDragOver( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
-	virtual bool NativeOnDrop( const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation ) override;
+
+	EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
+
+	virtual bool NativeOnDrop(
+			const FGeometry& InGeometry, 
+			const FDragDropEvent& InDragDropEvent,
+			UDragDropOperation* InOperation ) override;
+	
 
 	// 드래그 시 영역 확인
 	EItemZoneType CheckItemZoneType(FPointerEvent InMousePoint);
-	EItemZoneType CheckItemZoneType(FDragDropEvent InDragDropEvent);
 
 	// 위젯들 파괴 및 초기화
 	void EquippedUIInit();

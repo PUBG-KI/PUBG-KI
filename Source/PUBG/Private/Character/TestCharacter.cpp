@@ -51,12 +51,12 @@ ATestCharacter::ATestCharacter()
 
 	if (InventoryWidgetAsset.Succeeded())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
 		PlayerInventoryClass = InventoryWidgetAsset.Class;
 	}
 	else
 	{
-			UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
 	}
 
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
@@ -93,7 +93,7 @@ void ATestCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInpu
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		//UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 	
 }
@@ -104,7 +104,7 @@ void ATestCharacter::BeginPlay()
 
 	if (IsValid(PlayerInventoryClass))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget Loaded"));
 		APlayerController* PlayerController = Cast<APlayerController>(GetController()); 
 		
 		InventoryWidget = Cast<UInventoryWidget>(CreateWidget(PlayerController, PlayerInventoryClass));
@@ -118,7 +118,7 @@ void ATestCharacter::BeginPlay()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inventory Widget not found"));
 	}
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATestCharacter::OnComponentBeginOverlap);
@@ -151,7 +151,7 @@ void ATestCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComp
 	if (OtherActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 	{
 		BeginOverlapCount +=1;
-		UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
+		//UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
 	}
 	
 	FTimerDelegate TimerDelegate;
@@ -202,7 +202,7 @@ void ATestCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompon
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	BeginOverlapCount -=1;
-	UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
+	//UE_LOG(LogTemp, Warning, TEXT("%d"), BeginOverlapCount);
 	LookAtActor = nullptr;
 	InventoryComponent->SetItem(nullptr);
 	if (BeginOverlapCount == 0)

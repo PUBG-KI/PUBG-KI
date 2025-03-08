@@ -82,6 +82,8 @@ public:
 	void SetText_CurrentAmmo(int32 CurrentAmmo);
 	UFUNCTION(BlueprintCallable)
 	void SetText_Ammo(int32 Ammo);
+	UFUNCTION(BlueprintCallable, Client, Reliable)
+	void ClientSetText_Ammo(int32 Ammo);
 
 	UFUNCTION(BlueprintCallable)
 	void CurrentWeaponUIInit();
@@ -89,5 +91,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FString SetBulletTypeTextBlock(EBulletType OutEBulletType);
 };
+
+
 
 

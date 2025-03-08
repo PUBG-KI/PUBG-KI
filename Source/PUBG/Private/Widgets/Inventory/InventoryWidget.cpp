@@ -64,7 +64,7 @@ void UInventoryWidget::UpdateInventoryWidget()
 	
 	if (!GetWrapBox_Inventory())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GetWrapBox_Inventory() is NULL"));
+		//UE_LOG(LogTemp, Warning, TEXT("GetWrapBox_Inventory() is NULL"));
 		return;
 	}
 	
@@ -89,7 +89,7 @@ void UInventoryWidget::UpdateInventoryWidget()
 				
 				if (Category == 12)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UpdateInventoryWidget = Category12"));
+					//UE_LOG(LogTemp, Warning, TEXT("UpdateInventoryWidget = Category12"));
 					ItemSlotWidget->SetEquippedComponent(EquippedComponent);
 				}
 				
@@ -104,7 +104,7 @@ void UInventoryWidget::UpdateInventoryWidget()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ItemSlot Widget not found"));
+			//UE_LOG(LogTemp, Warning, TEXT("ItemSlot Widget not found"));
 		}
 	}
 }
@@ -115,7 +115,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 	//NearComponent->ServerGetGroundItem();
 	TArray<AItemBase*> ItemSlot = NearComponent->GetGroundItems();
 	
-	UE_LOG(LogTemp, Warning, TEXT("ItemSlot Num : %d"), ItemSlot.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("ItemSlot Num : %d"), ItemSlot.Num());
 	//UE_LOG(LogTemp, Warning, TEXT("GroundItem[0] : %s"), *NearComponent->GetGroundItems()[0]->GetItemStruct().Name.ToString());
 	//UE_LOG(LogTemp, Warning, TEXT("ItemSlot : %d"), ItemSlot.Num());
 	
@@ -130,7 +130,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 				if (ItemSlot[i] != nullptr)
 				{
 					//UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemStruct().Name.ToString());
-					UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemDataComponent()->GetItemRowName().ToString());
+					//UE_LOG(LogTemp, Warning, TEXT("Name : %s"), *ItemSlot[i]->GetItemDataComponent()->GetItemRowName().ToString());
 					//NearItemSlotWidget->SetItemName(ItemSlot[i]->GetItemStruct().Name);
 					NearItemSlotWidget->SetItemName(ItemSlot[i]->GetItemDataComponent()->GetItemRowName());
 					//NearItemSlotWidget->SetQuantity(ItemSlot[i]->GetItemStruct().Quantity);
@@ -151,7 +151,7 @@ void UInventoryWidget::UpdateNearItemSlotWidget()
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ItemSlot Widget not found"));
+			//UE_LOG(LogTemp, Warning, TEXT("ItemSlot Widget not found"));
 		}
 	}
 	
@@ -162,13 +162,13 @@ void UInventoryWidget::UpdateEquippedWidget()
 {
 	if (!WeaponSlotWidgetBPClass1 &&!WeaponSlotWidgetBPClass2 && !WeaponSlotWidgetBPClass3 && !EquippedComponent && !WeaponSlotWidgetBPClass11)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidgetClass None Or EquippedComponent None"));
+		//UE_LOG(LogTemp, Warning, TEXT("WeaponSlotWidgetClass None Or EquippedComponent None"));
 		return;
 	}
 		
 	TArray<AEquipableItem*> EquippedItems = EquippedComponent->GetEquippedItems();
 
-	UE_LOG(LogTemp, Warning, TEXT("EquippedItems Num : %d"), EquippedItems.Num());
+	//UE_LOG(LogTemp, Warning, TEXT("EquippedItems Num : %d"), EquippedItems.Num());
 
 	FString PartsDataTablePath = "/Game/Blueprint/Weapon/Datatable/DT_PartsData.DT_PartsData";
 	UDataTable* PartsDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *PartsDataTablePath));
@@ -186,7 +186,7 @@ void UInventoryWidget::UpdateEquippedWidget()
 
 				if (Weapon11SlotWidget)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
+					//UE_LOG(LogTemp, Warning, TEXT("Weapon1SlotWidget"));
 					AGun_Base* Slot1Weapon = Cast<AGun_Base>(EquippedItems[i]); // GunBase로 캐스팅
 					Weapon11SlotWidget = EquippedWeaponUIUpdate(Weapon11SlotWidget, Slot1Weapon, i);
 
@@ -593,8 +593,9 @@ EItemZoneType UInventoryWidget::CheckItemZoneType(FDragDropEvent InDragDropEvent
 	// 주변 위젯 사이즈
 	FGeometry VerticalBox_NearGeometry = VerticalBox_Near->GetCachedGeometry();
 	FVector2D VerticalBox_NearPos = VerticalBox_NearGeometry.GetAbsolutePosition();
-	//UE_LOG(LogTemp, Warning, TEXT("NearPos : %f %f"), VerticalBox_NearPos.X, VerticalBox_NearPos.Y);
 	FVector2D VerticalBox_NearSize = VerticalBox_NearGeometry.GetAbsoluteSize();
+	
+	//UE_LOG(LogTemp, Warning, TEXT("NearPos : %f %f"), VerticalBox_NearPos.X, VerticalBox_NearPos.Y);
 	//UE_LOG(LogTemp, Warning, TEXT("NearSize : %f %f"), VerticalBox_NearSize.X, VerticalBox_NearSize.Y);
 
 	// 인벤 위젯 사이즈

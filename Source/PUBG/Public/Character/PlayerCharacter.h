@@ -366,5 +366,5 @@ inline void APlayerCharacter::OnRep_Controller()
 {
 	Super::OnRep_Controller();
 
-	UE_LOG(LogTemp, Warning, TEXT("OnRep_Controller"));
+	//UE_LOG(LogTemp, Warning, TEXT("OnRep_Controller"));
 }

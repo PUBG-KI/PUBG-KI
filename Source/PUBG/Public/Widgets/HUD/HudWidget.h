@@ -34,7 +34,7 @@ private:
 	UWorldMapWidget* WBP_WorldMap;
 
 public:
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	UPlayerStatusWidget* GetPlayerStatusWidget() const { return WBP_PlayerStatus; }
 	UFUNCTION()
 	UCurrentPlayerWidget* GetCurrentPlayerWidget() const { return WBP_CurrentPlayer; }

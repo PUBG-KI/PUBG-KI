@@ -52,8 +52,7 @@ private:
 	// 무기 5칸, 방어구(헬멧, 가방, 조끼, 길리슈트) 4칸, 의상 (머리, 안경, 마스크, 셔츠, 겉옷, 한벌 옷, 바지, 신발) 8칸 총 17칸
 	// 01 = 주무기, 2 = 보조무기 , 3 = 근접무기, 4 = 투척무기, 5 = 헬멧, 6 = 가방, 7 = 조끼, 8 = 길리, 9 ~ 16 의상
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedItems, BlueprintReadWrite, Category="Equipped", meta = (AllowPrivateAccess = true))
-	TArray<AEquipableItem*> EquippedItems; // 생성자에서 크기 지정
-	
+	TArray<AEquipableItem*> EquippedItems;
 	
 	
 	// //TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
@@ -80,7 +79,8 @@ public:
 	// 3. 카테고리에 따라 인덱스에 할당
 	// 4. 이미 인덱스에 값이 있으면 스왑
 
-
+	
+	
 	// 메인 무기 빈 슬롯 찾기
 	int32 FindSlotMainWeapon();
 	// 메인 무기 장착

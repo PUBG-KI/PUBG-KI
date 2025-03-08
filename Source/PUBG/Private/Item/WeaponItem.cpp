@@ -19,6 +19,15 @@ void AWeaponItem::BeginPlay()
 	Super::BeginPlay();
 }
 
+FText AWeaponItem::LookAt()
+{
+	FName Name = GetItemDataComponent()->GetItemRowName();
+	FString NewMessage = Name.ToString() + TEXT(" 장착");
+	FText Message = FText::FromString(NewMessage);
+	
+	return Message;
+}
+
 void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 {
 	//Super::InteractWith_Implementation(Character);

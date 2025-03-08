@@ -94,6 +94,9 @@ void AItemBase::BeginPlay()
 			}
 		}
 	}
+
+	InteractionComponent->SetVisibility(false);
+	BoxComponent->SetVisibility(false);
 }
 
 void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -201,7 +204,7 @@ void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
 
 void AItemBase::OnRep_ItemDataComponent()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
+	//UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent Replicate!"));
 }
 
 
@@ -225,7 +228,7 @@ void AItemBase::SetIsSupplyDrop(bool NewIsSupplyDrop)
 
 void AItemBase::OnRep_ItemTableRowName()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ItemTableRowName Replicate!"));
+	//UE_LOG(LogTemp, Warning, TEXT("ItemTableRowName Replicate!"));
 }
 
 void AItemBase::ServerSetItem_Implementation(FItemStruct const& OutItem)
@@ -255,9 +258,10 @@ FText AItemBase::LookAt()
 	
 	//UK2Node_GetDataTableRow()
 	ItemOfZ = this->GetActorLocation().Z;
-	UE_LOG(LogTemp, Warning, TEXT("ItemofZ : %f"), ItemOfZ);
+	//UE_LOG(LogTemp, Warning, TEXT("ItemofZ : %f"), ItemOfZ);
 
-	Message = FText::FromString(Name.ToString());
+	FString NewMessage = Name.ToString() + TEXT(" 줍기");
+	Message = FText::FromString(NewMessage);
 	return Message;
 }
 
@@ -267,7 +271,7 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 
 	if (HasAuthority()) // 서버
 	{
-		 UE_LOG(LogTemp, Warning, TEXT("Execute Server : ItemBase InteractWith_Implementation"));
+		 //UE_LOG(LogTemp, Warning, TEXT("Execute Server : ItemBase InteractWith_Implementation"));
 		
 		// UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
 		// //UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
@@ -289,9 +293,9 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 	}
 	else // 클라 
 	{
-		 UE_LOG(LogTemp, Warning, TEXT("Execute Client : ItemBase InteractWith_Implementation"));
+		 //UE_LOG(LogTemp, Warning, TEXT("Execute Client : ItemBase InteractWith_Implementation"));
 		
-		UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
+		//UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
 		//UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
 		
 		UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
