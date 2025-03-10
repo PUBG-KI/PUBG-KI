@@ -4,12 +4,14 @@
 #include "AbilitySystem/Ability/Player/GA_Pickup.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/BaseGameplayTag.h"
 #include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Component/Movement/PlayerMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Component/Inventory/InventoryComponent.h"
 #include "AbilitySystem/AbilityTask/PlayMontageAndWaitForEvent.h"
+#include "BaseLibrary/BaseFunctionLibrary.h"
 #include "Item/ItemBase.h"
 
 UGA_Pickup::UGA_Pickup()
@@ -63,7 +65,12 @@ void UGA_Pickup::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		return;
 	}
 	float ItemOfZ = Item->GetItemOfZ();
-	if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, FGameplayTag::RequestGameplayTag(FName("Weapon.Gun"))))
+	if (UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SR) ||
+			 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SG) ||
+			 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_DMR) ||
+			 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_SMG) ||
+			 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_Pistol)||
+			 UBaseFunctionLibrary::NativeActorHasTag(PUBGPlayer, BaseGameplayTag::Weapon_Gun_AR))
 	{
 		UPlayerMovementComponent* MovementComponent = Cast<
 			UPlayerMovementComponent>(PUBGPlayer->GetMovementComponent());
