@@ -45,8 +45,8 @@ void UEquippedComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(UEquippedComponent, LastCurrentWeapon);
 	DOREPLIFETIME(UEquippedComponent, PrimarySlot);
 	DOREPLIFETIME(UEquippedComponent, SecondarySlot);
-	
 	DOREPLIFETIME(UEquippedComponent, EquippedItems);
+	
 }
 
 
@@ -78,62 +78,44 @@ void UEquippedComponent::OnRep_EquippedItems()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnRep_EquippedItems!!"));
 
-	UTextureRenderTarget2D* LoadedRTSlot1 = nullptr;
-	UTextureRenderTarget2D* LoadedRTSlot2 = nullptr;
-	UTextureRenderTarget2D* LoadedRTSlot3 = nullptr;
 
 	for (int i = 0; i < EquippedItems.Num() || EquippedItems.Num() == 0; i++)
 	{
-		if (EquippedItems[i] != nullptr)
-		{
+		if (EquippedItems[i])
+		{			
+			UTextureRenderTarget2D* LoadedRTSlot = nullptr;
+			
 			switch (i)
-			{
+			{				
 			case 0:
-				LoadedRTSlot1 = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				LoadedRTSlot = Cast<UTextureRenderTarget2D>(StaticLoadObject(
 				UTextureRenderTarget2D::StaticClass(), 
 				nullptr, 
 				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/RT_1Slot.RT_1Slot")
 				));
 
-				EquippingWeaponUpdate(EquippedItems[i], LoadedRTSlot1);
-				// EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRTSlot1;
-				// EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
-				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
-				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureOnMovement = false;
-				//
-				// EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
 				break;
 			case 1:
-				LoadedRTSlot2 = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				LoadedRTSlot = Cast<UTextureRenderTarget2D>(StaticLoadObject(
 				UTextureRenderTarget2D::StaticClass(), 
 				nullptr, 
 				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/2Slot/RT_2Slot.RT_2Slot")
 				));
 
-				EquippingWeaponUpdate(EquippedItems[i], LoadedRTSlot2);
-				// EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRTSlot2;
-				// EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
-				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
-				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureOnMovement = false;
-				//
-				// EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
 				break;
 			case 2:
-				LoadedRTSlot3 = Cast<UTextureRenderTarget2D>(StaticLoadObject(
+				LoadedRTSlot = Cast<UTextureRenderTarget2D>(StaticLoadObject(
 				UTextureRenderTarget2D::StaticClass(), 
 				nullptr, 
 				TEXT("/Game/Blueprint/Widgets/Materials/RenderTarget/3Slot/RT_3Slot.RT_3Slot")
-				));
-
-				EquippingWeaponUpdate(EquippedItems[i], LoadedRTSlot3);
-				
-				// EquippedItems[i]->GetSceneCaptureComponent()->TextureTarget = LoadedRTSlot3;
-				// EquippedItems[i]->GetSceneCaptureComponent()->ShowOnlyActorComponents(EquippedItems[i], true);
-				// EquippedItems[i]->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
-				// EquippedItems[i]->GetSceneCaptureComponent()->CaptureScene();
+				));		
 				break;
+			default:
+				;
 			}
-		}
+			
+			EquippingWeaponUpdate(EquippedItems[i], LoadedRTSlot);
+		}		
 	}
 	
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
@@ -1343,32 +1325,21 @@ void UEquippedComponent::ServerPrintCurrentWeapon_Implementation()
 
 void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, UTextureRenderTarget2D* OutLoadedRT)
 {
-	OutEquippedItem->GetSceneCaptureComponent()->TextureTarget = OutLoadedRT;
+
+	OutEquippedItem->SetTextureRenderTarget(DuplicateObject<UTextureRenderTarget2D>(OutLoadedRT, this));
+	
+	OutEquippedItem->GetSceneCaptureComponent()->TextureTarget = OutEquippedItem->GetTextureRenderTarget();
 	OutEquippedItem->GetSceneCaptureComponent()->bCaptureEveryFrame = false;
 	OutEquippedItem->GetSceneCaptureComponent()->bCaptureOnMovement = false;
 	OutEquippedItem->GetSceneCaptureComponent()->bEnableClipPlane = false;
 	OutEquippedItem->GetSceneCaptureComponent()->bConsiderUnrenderedOpaquePixelAsFullyTranslucent = false;
 	OutEquippedItem->GetSceneCaptureComponent()->ShowOnlyActorComponents(OutEquippedItem, true);
 
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_ToneCurveAmount = true;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.ToneCurveAmount = 0.0f;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_BloomIntensity = true;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.BloomIntensity = 0.0f;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.bOverride_AmbientOcclusionIntensity = true;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessSettings.AmbientOcclusionIntensity = 0.0f;
-	// OutEquippedItem->GetSceneCaptureComponent()->PostProcessBlendWeight = 1.0f;
-	// OutEquippedItem->GetSceneCaptureComponent()->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-	// OutEquippedItem->GetSceneCaptureComponent()->ProjectionType = ECameraProjectionMode::Orthographic;
-	// OutEquippedItem->GetSceneCaptureComponent()->OrthoWidth = 110.0f;
-
-	
-
 	OutEquippedItem->GetSceneCaptureComponent()->ShowFlags.SetDynamicShadows(false);
 	OutEquippedItem->GetSceneCaptureComponent()->ShowFlags.SetStaticMeshes(true);
 	OutEquippedItem->GetSceneCaptureComponent()->ShowFlags.SetSkeletalMeshes(true);
 	
 	OutEquippedItem->GetSceneCaptureComponent()->CaptureScene();
-
 }
 
 void UEquippedComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)

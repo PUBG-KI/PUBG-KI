@@ -123,6 +123,7 @@ public:
 	
 	//Setter
 	void SetImage_RenderTargetWeapon(UImage* OutImage) { Image_RenderTargetWeapon = OutImage; }
+	void SetTextureParameter(UTextureRenderTarget2D* OutImage) const; 
 
 	UFUNCTION(BlueprintCallable)
 	FString SetBulletTypeTextBlock(EBulletType OutEBulletType);

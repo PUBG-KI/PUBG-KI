@@ -4,7 +4,9 @@
 #include "Widgets/Inventory/WeaponSlotWidget1.h"
 
 #include "Component/Equipped/EquippedComponent.h"
+#include "Components/Image.h"
 #include "Components/SizeBox.h"
+#include "Engine/TextureRenderTarget2D.h"
 #include "Weapon/DataTable/DT_Weapon.h"
 #include "Weapon/Guns/Gun_Base.h"
 #include "Widgets/Inventory/WeaponPartsSlot.h"
@@ -50,6 +52,14 @@ void UWeaponSlotWidget1::NativeOnInitialized()
 	WBP_WeaponPartsSlot_Sight->SetPartsIndex(1);
 	WBP_WeaponPartsSlot_Magazine->SetPartsIndex(2); 
 	WBP_WeaponPartsSlot_Barrel->SetPartsIndex(3);
+}
+
+void UWeaponSlotWidget1::SetTextureParameter(UTextureRenderTarget2D* OutImage) const
+{
+	UMaterialInstanceDynamic* MaterialInstanceDynamic = Image_RenderTargetWeapon->GetDynamicMaterial();
+
+	MaterialInstanceDynamic->SetTextureParameterValue(TEXT("RenderTarget"), OutImage);
+	Image_RenderTargetWeapon->SetBrushFromMaterial(MaterialInstanceDynamic);
 }
 
 FString UWeaponSlotWidget1::SetBulletTypeTextBlock(EBulletType OutEBulletType)
