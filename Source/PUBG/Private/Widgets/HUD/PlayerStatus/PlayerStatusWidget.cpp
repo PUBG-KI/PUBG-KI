@@ -27,6 +27,19 @@ void UPlayerStatusWidget::NativePreConstruct()
 
 }
 
+void UPlayerStatusWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (!PlayerCharacter)
+	{
+		if (APlayerCharacter* Player = Cast<APlayerCharacter>(GetOwningPlayer()->GetCharacter()))
+		{			
+			SetPlayerCharacter(Player);
+		}
+	}
+}
+
 void UPlayerStatusWidget::SetPlayerCharacter(APlayerCharacter* OutPlayerCharacter)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UPlayerStatusWidget::SetPlayerCharacter %s"), *OutPlayerCharacter->GetName());
@@ -183,8 +196,4 @@ void UPlayerStatusWidget::SetText_Ammo(int32 Ammo)
 	Text_Ammo->SetText(Ammo_Text);
 }
 
-inline void UPlayerStatusWidget::ClientSetText_Ammo_Implementation(int32 Ammo)
-{
-	SetText_Ammo(Ammo);
-}
 

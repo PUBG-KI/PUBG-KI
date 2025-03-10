@@ -62,13 +62,7 @@ void UInventoryComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME_CONDITION(UInventoryComponent, NearItem, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(UInventoryComponent, UsingItem, COND_OwnerOnly);
 	
-	DOREPLIFETIME(UInventoryComponent, Item);
-	
-	DOREPLIFETIME(UInventoryComponent, CurrentWeapon);
-	DOREPLIFETIME(UInventoryComponent, LastCurrentWeapon);
-	DOREPLIFETIME(UInventoryComponent, PrimarySlot);
-	DOREPLIFETIME(UInventoryComponent, SecondarySlot);
-	DOREPLIFETIME(UInventoryComponent, SideArmSlot);
+	DOREPLIFETIME(UInventoryComponent, Item);	
 	DOREPLIFETIME(UInventoryComponent, MaxInventoryWeight);
 	//DOREPLIFETIME(UInventoryComponent, CurrentInventoryWeight);
 	
@@ -633,42 +627,6 @@ void UInventoryComponent::ServerSetItem_Implementation(AItemBase* OutItem)
 	Item = OutItem;
 	GetOwner()->ForceNetUpdate();
 }
-
-void UInventoryComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
-{
-	this->CurrentWeapon = _CurrentWeapon;
-}
-
-void UInventoryComponent::SetLastCurrentWeapon(AWeapon_Base* _LastCurrentWeapon)
-{
-	this->LastCurrentWeapon = _LastCurrentWeapon;
-}
-
-void UInventoryComponent::SetPrimarySlotWeapon(AWeapon_Base* _PrimarySlot)
-{
-	this->PrimarySlot = _PrimarySlot;
-}
-
-void UInventoryComponent::SetSecondarySlotWeapon(AWeapon_Base* _Secondary)
-{
-	this->SecondarySlot = _Secondary;
-}
-
-void UInventoryComponent::SetSideArmSlotWeapon(AWeapon_Base* _SideArm)
-{
-	this->SideArmSlot = _SideArm;
-}
-
-void UInventoryComponent::SetMeleeSlotWeapon(AWeapon_Base* _Melee)
-{
-	this->MeleeSlot = _Melee;
-}
-
-void UInventoryComponent::SetThrowableSlotWeapon(AWeapon_Base* _Throwable)
-{
-	this->ThrowableSlot = _Throwable;
-}
-
 
 void UInventoryComponent::Server_Interact_Implementation()
 {

@@ -917,7 +917,7 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 			                                       FName("slot_secondarySocket"));
 			UE_LOG(LogTemp, Warning, TEXT("SecondarySocket"));
 		}
-		else if (CachedCurrentWeapon == GetInventoryComponent()->GetSideArmSlot())
+		else if (CachedCurrentWeapon == GetEquippedComponent()->GetSideArmSlot())
 		//지우지말것!!!!!!!!! 차탈때 총 슬롯(1슬롯,2슬롯,권총슬롯,밀리슬롯,수류탄슬롯)에 다시 넣어주는거임
 		{
 			CachedCurrentWeapon->AttachToComponent(
@@ -925,7 +925,7 @@ void APlayerCharacter::WeaponDisarmament() //무기장착해제 SWIM이랑 VEHIC
 				FName("SideArm"));
 		}
 
-		else if (CachedCurrentWeapon == GetInventoryComponent()->GetThrowableSlot())
+		else if (CachedCurrentWeapon == GetEquippedComponent()->GetThrowableSlot())
 		{
 			CachedCurrentWeapon->AttachToComponent(
 				GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale,

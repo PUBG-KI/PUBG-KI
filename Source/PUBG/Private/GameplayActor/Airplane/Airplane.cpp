@@ -45,12 +45,7 @@ AAirplane::AAirplane()
 	
 	TimelineComponent =CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
 
-
-	
-
-	SetReplicates(true);
-	//SetReplicateMovement(true);
-	//PlaneMesh->SetIsReplicated(true);
+	bReplicates = true;
 }
 
 void AAirplane::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

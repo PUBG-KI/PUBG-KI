@@ -61,9 +61,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Replicated)
 	float BulletArmo;
 
-	UPROPERTY(EditDefaultsOnly, Replicated)
-	FVector WeaponProjectileSocketLocation;
-
 	UPROPERTY(Replicated)
 	bool ActivateScope;
 
@@ -140,7 +137,7 @@ public:
 	UDataTable* WeaponDataTable;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TArray<FName> PartsSlot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, meta = (AllowPrivateAccess = "true"))
 	TArray<FWeaponPartsStruct> WeaponParts;

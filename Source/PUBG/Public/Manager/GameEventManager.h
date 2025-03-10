@@ -45,7 +45,9 @@ private:
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	FVector2D TimeRange;
+	FVector2D SupplyDropTimeRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	FVector2D RedZoneTimeRange;
 };
 
 

@@ -335,11 +335,11 @@ private:
 	bool OntheParachute = false;
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
 	float ActorRotate;
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
 	float RotateSpeed;
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
 	FVector RotateVector;
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parachute", meta = (AllowPrivateAccess = "true"))
 	bool OnTheFirstAirPlane = false;
 
 	UFUNCTION(server, Reliable, WithValidation)

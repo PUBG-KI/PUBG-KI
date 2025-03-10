@@ -20,6 +20,7 @@ class PUBG_API UPlayerStatusWidget : public UWidgetBase
 
 public:
 	virtual void NativePreConstruct() override;
+	virtual void NativeConstruct() override;
 
 private:
 	// Widget Variable
@@ -82,9 +83,6 @@ public:
 	void SetText_CurrentAmmo(int32 CurrentAmmo);
 	UFUNCTION(BlueprintCallable)
 	void SetText_Ammo(int32 Ammo);
-	UFUNCTION(BlueprintCallable, Client, Reliable)
-	void ClientSetText_Ammo(int32 Ammo);
-
 	UFUNCTION(BlueprintCallable)
 	void CurrentWeaponUIInit();
 
