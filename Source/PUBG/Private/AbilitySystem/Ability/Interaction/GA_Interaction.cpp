@@ -34,16 +34,21 @@ void UGA_Interaction::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	
 	if (AActor* LookAtActor = Cast<AActor>(GetPlayerCharacterFromActorInfo()->GetLookAtActor()))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *LookAtActor->GetActorLabel());
-
 		if (LookAtActor->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
 		{
 			IInteractInterface::Execute_InteractWith(LookAtActor, GetPlayerCharacterFromActorInfo());
-			//UE_LOG(LogTemp, Warning, TEXT("%s"), *LookAtActor->GetActorLabel());
 		}
 
-		// IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor);
-		// InteractInterface->InteractWith(GetPlayerCharacterFromActorInfo());
+		// if (AActor* LookAtActor = Cast<AActor>(GetPlayerCharacterFromActorInfo()->GetLookAtActor()))
+		// {
+		// 	// 인터페이스 구현이 있는지 확인
+		// 	if (IInteractInterface* InteractInterface = Cast<IInteractInterface>(LookAtActor))
+		// 	{
+		// 		// 인터페이스 메서드 호출
+		// 		InteractInterface->InteractWith(GetPlayerCharacterFromActorInfo());
+		// 	}
+		// }
+
 	}
 
 	EndAbility(Handle,ActorInfo, ActivationInfo, false, true);

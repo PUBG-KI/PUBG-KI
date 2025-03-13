@@ -271,33 +271,10 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 
 	if (HasAuthority()) // 서버
 	{
-		 //UE_LOG(LogTemp, Warning, TEXT("Execute Server : ItemBase InteractWith_Implementation"));
-		
-		// UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
-		// //UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
-		//
-		// UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
-		// InventoryComponent->SetItem(this);
-		// InventoryComponent->ServerSetItem(this);
-		// // ItemOfZ = this->GetActorLocation().Z;
-		//
-		// if (InventoryComponent->GetItem() != nullptr)
-		// {
-		// 	InventoryComponent->Server_Interact();
-		//
-		// 	// if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-		// 	// {
-		// 	// 	ItemDataComponent->InteractWith(Character);
-		// 	// }
-		// }
+		 
 	}
 	else // 클라 
 	{
-		 //UE_LOG(LogTemp, Warning, TEXT("Execute Client : ItemBase InteractWith_Implementation"));
-		
-		//UE_LOG(LogTemp, Warning, TEXT("ItemBase!"));
-		//UE_LOG(LogTemp, Display, TEXT("Interacting with %s"), *GetName());
-		
 		UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
 		InventoryComponent->SetItem(this); // 리플리케이트가 느림
 		InventoryComponent->ServerSetItem(this); // 이것만 있으면 클라이언트에서 아이템이 없다고 함 
@@ -306,11 +283,6 @@ void AItemBase::InteractWith_Implementation(APlayerCharacter* Character)
 		if (InventoryComponent->GetItem() != nullptr)
 		{
 			InventoryComponent->Server_Interact();
-		
-			// if (this->ItemDataComponent->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-			// {
-			// 	ItemDataComponent->InteractWith(Character);
-			// }
 		}
 	}
 	

@@ -413,44 +413,30 @@ bool UInventoryWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDrag
 	
 }
 
-bool UInventoryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent,
-	UDragDropOperation* InOperation)
+bool UInventoryWidget::NativeOnDrop
+(
+	const FGeometry& InGeometry,
+	const FDragDropEvent& InDragDropEvent,
+	UDragDropOperation* InOperation
+)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 	
 	UDDInventorySlot* DDInventorySlot = Cast<UDDInventorySlot>(InOperation);
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwningPlayer()->GetPawn());
 	
-	if (!DDInventorySlot || ItemZoneType == EItemZoneType::None || !PlayerCharacter)
+	if (ItemZoneType == EItemZoneType::NearArea && !DDInventorySlot->GetNearComponent()) // 놓는 위치 확인 및 시작 위치 컴포넌트 확인
 	{
-		return false;
-	}
-	
-	//UE_LOG(LogTemp, Warning, TEXT("Drop ItemZoneType : %d"), ItemZoneType);
-	
-	if (ItemZoneType == EItemZoneType::NoneArea)
-	{
-					
-		//UE_LOG(LogTemp, Warning, TEXT("Drag ItemZoneType : %d"), ItemZoneType);
-		return true;
-	}
-	else if (ItemZoneType == EItemZoneType::NearArea && !DDInventorySlot->GetNearComponent()) // 놓는 위치 확인 및 시작 위치 컴포넌트 확인
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Drop ItemZoneType : %d"), ItemZoneType);
-		
-		
-		// DDInventorySlot에 담긴 값을 NearComponent에 추가
 		switch (DDInventorySlot->GetHaveComponent())
 		{
 		case 2: // 시작이 인벤토리 도착이 바닥
-			UE_LOG(LogTemp, Warning, TEXT("Start : Inventory, End : Near"));
-			PlayerCharacter->GetInventoryComponent()->RemoveFromInventory(DDInventorySlot->GetContentIndex(),
-																			false,
-																			DDInventorySlot->GetInventoryComponent()->GetContent()[DDInventorySlot->GetContentIndex()].Quantity);
+			PlayerCharacter->GetInventoryComponent()->RemoveFromInventory
+			(DDInventorySlot->GetContentIndex(),
+			false,
+			DDInventorySlot->GetInventoryComponent()->GetContent()[DDInventorySlot->GetContentIndex()].Quantity);
 			return true;
 		case 3: // 시작이 장작된 장비 도착이 바닥 
 			return true;
-			
 		}
 		
 		return true;

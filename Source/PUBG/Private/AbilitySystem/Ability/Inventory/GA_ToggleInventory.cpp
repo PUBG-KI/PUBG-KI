@@ -26,23 +26,15 @@ void UGA_ToggleInventory::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {	
     Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	// if (!GetPlayerControllerFromActorInfo()->IsLocalPlayerController())
-	// {
-	// 	return;
-	// }
-	
-	// 1. 인벤토리 위젯 생성
 	if (GetPlayerControllerFromActorInfo()->GetInventoryWidget() == nullptr)
 	{
 		GetPlayerControllerFromActorInfo()->ClientCreateInventoryWidget();
 		UInventoryWidget* InventoryWidget = GetPlayerControllerFromActorInfo()->GetInventoryWidget();
-		//InventoryWidget->UpdateInventoryWidget();
-
+		
 		GetPlayerCharacterFromActorInfo()->GetDetectionItem()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		GetPlayerControllerFromActorInfo()->InputModeUI();
 		
 		APlayerCharacter* PlayerCharacter = GetPlayerCharacterFromActorInfo();
-		//PlayerCharacter->GetInventoryComponent()->ServerUpdateInventory();
 		InventoryWidget->UpdateInventoryWidget();
 		InventoryWidget->UpdateNearItemSlotWidget();
 		InventoryWidget->UpdateEquippedWidget();
