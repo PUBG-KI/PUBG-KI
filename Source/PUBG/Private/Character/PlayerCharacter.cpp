@@ -139,7 +139,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	// 이준수
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnComponentBeginOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic
+	(this, &APlayerCharacter::OnComponentBeginOverlap);
+
 	
 	GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &APlayerCharacter::OnComponentEndOverlap);
 	DetectionItem->OnComponentBeginOverlap.AddDynamic(this, &APlayerCharacter::OnDetectionItemBeginOverlap);
@@ -1195,21 +1197,14 @@ void APlayerCharacter::OnDetectionItemBeginOverlap(UPrimitiveComponent* Overlapp
                                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
                                                    bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hello~~~"));
 
 	if (AItemBase* ItemBase = Cast<AItemBase>(OtherActor))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *ItemBase->GetName());
 		if (NearComponent != nullptr)
 		{
-			//NearComponent->GetGroundItems().Add(ItemBase);
 			NearComponent->ServerAddGroundItem(ItemBase);
-			//UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"), *ItemBase->GetItemStruct().Name.ToString());
-			UE_LOG(LogTemp, Warning, TEXT("ItemBase : %s"),
-			       *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 
-			UE_LOG(LogTemp, Warning, TEXT("ItemDataComponent : %s"),
-			       *ItemBase->GetItemDataComponent()->GetItemRowName().ToString());
 			UE_LOG(LogTemp, Warning, TEXT("GroundItem Num : %d"), NearComponent->GetGroundItems().Num());
 			//NearComponent->UpdateNear();
 			NearComponent->ServerUpdateNear();

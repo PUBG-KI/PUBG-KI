@@ -22,7 +22,5 @@ public:
 
 	void InteractWith(APlayerCharacter* Character);
 	virtual void InteractWith_Implementation
-				(
-				APlayerCharacter* Character
-				) override;
+				(APlayerCharacter* Character) override;
 };

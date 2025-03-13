@@ -56,7 +56,7 @@ private:
 	float CurrentInventoryWeight;
 	
 	UPROPERTY(ReplicatedUsing = OnRep_Content, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
-	TArray<FItemSlotStruct> Content;
+	TArray<FItemSlotStruct> Content;                    
 	UPROPERTY(ReplicatedUsing = OnRep_UsingItem, EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = true))
 	FUsingItem UsingItem;
 	UPROPERTY(ReplicatedUsing= OnRep_Item, BlueprintReadWrite, Category="Inventory", meta=(AllowPrivateAccess=true))

@@ -30,22 +30,15 @@ FText AWeaponItem::LookAt()
 
 void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 {
-	//Super::InteractWith_Implementation(Character);
-
 	if (!HasAuthority()) // 클라
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WeaponItem : InteractWith_Implementation!!!!!!!!!!!!!"));
-
 		UInventoryComponent* InventoryComponent = Character->GetInventoryComponent();
-		InventoryComponent->SetItem(this); // 리플리케이트가 느림
-		InventoryComponent->ServerSetItem(this); // 
-
+		InventoryComponent->SetItem(this);
+		
 		UEquippedComponent* EquippedComponent = Character->GetEquippedComponent();
 
 		if (ItemDataTable != nullptr)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WeaponItem : ItemDataTable"));
-
 			FName ID = this->GetItemDataComponent()->GetItemRowName();
 			FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ID, TEXT("Find Row"));
 
@@ -59,16 +52,11 @@ void AWeaponItem::InteractWith_Implementation(APlayerCharacter* Character)
 			{
 				EquippedComponent->ServerEquipSubWeapon(InventoryComponent->GetItem());
 			}
-			// else if (ItemCategory == 4) // 수류탄
-			// {
-			// 	EquippedComponent->ServerEquiptThrow(InventoryComponent->GetItem());
-			// }
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("WeaponItem : ItemDataTable None"));
 		}
-		
 	}
 
 	

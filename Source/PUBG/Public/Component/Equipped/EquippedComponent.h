@@ -18,6 +18,7 @@ struct FItemSlotStruct;
 class AItemBase;
 
 DECLARE_DELEGATE_OneParam( FCurrentWeaponAmmoDelegate, int32);
+
 DECLARE_DELEGATE(FCurrentWeaponDelegate);
 
 
@@ -52,7 +53,7 @@ private:
 	// 무기 5칸, 방어구(헬멧, 가방, 조끼, 길리슈트) 4칸, 의상 (머리, 안경, 마스크, 셔츠, 겉옷, 한벌 옷, 바지, 신발) 8칸 총 17칸
 	// 01 = 주무기, 2 = 보조무기 , 3 = 근접무기, 4 = 투척무기, 5 = 헬멧, 6 = 가방, 7 = 조끼, 8 = 길리, 9 ~ 16 의상
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedItems, BlueprintReadWrite, Category="Equipped", meta = (AllowPrivateAccess = true))
-	TArray<AEquipableItem*> EquippedItems;
+	TArray<AEquipableItem*> EquippedItems;                   
 	
 	
 	// //TArray<AItemBase*> EquippedMainWeapon; // 현재 장착된 무기, 생성자에서 크기 지정 (2)
@@ -86,13 +87,20 @@ public:
 	// 메인 무기 장착
 	UFUNCTION(Server, Reliable)
 	void ServerEquipMainItem(AItemBase* Item);
+
+	
+	int32 DropMainWeapon
+	(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
+	
 	// 메인 무기 바닥에 버리기
-	int32 DropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
 	UFUNCTION(Server, Reliable)
-	void ServerDropMainWeapon(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
+	void ServerDropMainWeapon
+	(AGun_Base* OutCurrentWeapon = nullptr, int32 OutIndex = -1);
+	
 	// 스태틱 메인 무기 소환
 	UFUNCTION(Server, Reliable)
-	void ServerSpawnStaticMeshFromMainWeapon(AGun_Base* OutCurrentWeapon);
+	void ServerSpawnStaticMeshFromMainWeapon
+	(AGun_Base* OutCurrentWeapon);
 	
 	// 서브 무기 장착
 	UFUNCTION(Server, Reliable)
@@ -126,12 +134,12 @@ public:
 	//UFUNCTION(Server, Reliable)
 	bool EquipParts(AItemBase* PartsItem = nullptr, int32 Index = -1, FItemSlotStruct* ItemSlot = nullptr);
 
-	UFUNCTION()
 	TArray<EGunType> GetCompatibleWeaponType(FName Name) const; 
-	UFUNCTION()
-	bool IsCompatibleWeaponParts(FName Name, AGun_Base* Gun); // 그 무기에 파츠를 장착할 수 있는지 
-	UFUNCTION()
-	TArray<int32> CheckEquippedWeaponCompatibleParts(FName Name, TArray<int32> EquippedGunIndex); // 그 무기에 파츠를 장착할 수 있는지 
+	bool IsCompatibleWeaponParts(FName Name, AGun_Base* Gun); // 파츠가 무기에 장착될 수 있는지
+	TArray<int32> CheckEquippedWeaponCompatibleParts
+		(FName Name, TArray<int32> EquippedGunIndex); // 장비 창에 있는 무기에 파츠를 장착할 수 있는지
+
+	
 	UFUNCTION()
 	TArray<int32> GetEquippedGunIndex();
 	

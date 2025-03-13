@@ -525,7 +525,6 @@ void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
 			if (InIndex != -1)
 			{
 				//EquippedComponent->ServerEquipItem(InIndex, MainWeapon);
-				
 			}
 			
 			break;
@@ -582,13 +581,14 @@ void UInventoryComponent::InteractionsByCategory(AItemBase* InItem)
 	}
 }
 
-void UInventoryComponent::OnRep_Content()
+void UInventoryComponent::OnRep_Content() 
 {
-	UE_LOG(LogTemp, Warning, TEXT("Content Replicate!"));
 	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 	if (PlayerCharacter)
 	{
-		ABasePlayerController* PlayerController = Cast<ABasePlayerController>(PlayerCharacter->GetController());
+		ABasePlayerController* PlayerController =
+			Cast<ABasePlayerController>(PlayerCharacter->GetController());
+		
 		if (PlayerController)
 		{
 			if (PlayerController->GetInventoryWidget())
@@ -596,11 +596,9 @@ void UInventoryComponent::OnRep_Content()
 				PlayerController->GetInventoryWidget()->UpdateInventoryWidget();
 				PlayerController->GetInventoryWidget()->UpdateNearItemSlotWidget();
 				PlayerController->GetInventoryWidget()->UpdateEquippedWidget();
-				UE_LOG(LogTemp, Warning, TEXT("OnRep_Content : Widget Update!"));
 			}
 		}
 	}
-	
 }
 
 void UInventoryComponent::OnRep_UsingItem()

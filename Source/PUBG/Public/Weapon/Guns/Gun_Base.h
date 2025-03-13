@@ -158,6 +158,8 @@ public:
 	bool IsEquipParts(EPartsCategory PartsCategory); // 파츠가 들어왔을 때 장착할 수 있는지
 	UFUNCTION()
 	bool EquipParts(FPartsData& PartsData, float Weight, EItemCategory ItemCategory);
+
+	
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerSetParts(int32 NewIndex, FName NewName, float Weight, EItemCategory ItemCategory, UStaticMesh* NewStaticMesh, float _Changevalue);
 

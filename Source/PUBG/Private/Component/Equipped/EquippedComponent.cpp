@@ -224,33 +224,29 @@ int32 UEquippedComponent::FindSlotMainWeapon()
 void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 {
 	AWeaponItem* WeaponItem = Cast<AWeaponItem>(Item);
-
 	FName ItemID = WeaponItem->GetItemDataComponent()->GetItemRowName();
-	UE_LOG(LogTemp, Warning, TEXT("ServerEquipMainItem_Implementation : ItemId %s"), *ItemID.ToString());
-
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row"));
-
 	int32 MainWeaponSlot = static_cast<int32>(WeaponItem->GetEquippedItemCategory());
-	
 	UClass* GunClass = Cast<UClass>(Row->BP_Item.LoadSynchronous());
 	
-	
-	if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>(GunClass, FTransform(FRotator(0), FVector(0))))
+	if (AGun_Base* MainWeapon = GetWorld()->SpawnActorDeferred<AGun_Base>
+		(GunClass, FTransform(FRotator(0), FVector(0))))
 	{
-		//TempWeapon->SetTableIndex(RowIndex);
-		FAttachmentTransformRules Rule = FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepRelative, true);
+		FAttachmentTransformRules Rule = FAttachmentTransformRules
+		(EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepRelative,
+			true);
 		
 		APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetOwner());
 		
-
 		int32 RemainSlot = FindSlotMainWeapon();
-		UE_LOG(LogTemp, Warning, TEXT("RemainSlot : %d"), RemainSlot);
 
 		EEquippedItemCategory EquippedItemCategory = static_cast<EEquippedItemCategory>(MainWeaponSlot);
 		MainWeapon->SetEquipSlot(EquippedItemCategory);
 		MainWeaponSlot = static_cast<int32>(MainWeapon->GetEquipSlot()); // 장착될 슬롯값 가져오기
 	
-		if (RemainSlot == -1) // Main 무기 슬롯이 가득찬 것 
+		if (RemainSlot == -1)
 		{
 			int32 DropMainWeaponSlot = DropMainWeapon();
 			RemainSlot = DropMainWeaponSlot;
@@ -322,13 +318,11 @@ void UEquippedComponent::ServerEquipMainItem_Implementation(AItemBase* Item)
 
 int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon, int32 OutIndex)
 {
-	// 버리는 것은 무조건 UI에서만, 지정해서
-	// 교체할 때 쓰기 위해서는 버릴 아이템을 매개변수로 
-	
 	if (OutCurrentWeapon == nullptr) // 매개변수가 없다는 것은 교체할 때 쓰는 것 CurrentWeapon과 2번 슬롯의 무기 
 	{
-		
-		if (CurrentWeapon != nullptr && (CurrentWeapon->GetEquipSlot() == EEquippedItemCategory::PrimarySlot || CurrentWeapon->GetEquipSlot() == EEquippedItemCategory::SecondarySlot)) // 현재 손에 든 무기가 있으면 현재 무기와 교체
+		if (CurrentWeapon != nullptr &&
+			(CurrentWeapon->GetEquipSlot() == EEquippedItemCategory::PrimarySlot
+				|| CurrentWeapon->GetEquipSlot() == EEquippedItemCategory::SecondarySlot))
 		{
 			ServerSpawnStaticMeshFromMainWeapon(Cast<AGun_Base>(CurrentWeapon));
 			
@@ -336,7 +330,6 @@ int32 UEquippedComponent::DropMainWeapon(AGun_Base* OutCurrentWeapon, int32 OutI
 			UE_LOG(LogTemp, Warning, TEXT("Drop Index : %d"), DropIndex);
 
 			CurrentWeapon->Destroy();
-			// 능력과 레이어 뺴는 곳 
 			CurrentWeapon = nullptr;
 			return DropIndex;
 		}
@@ -384,25 +377,23 @@ void UEquippedComponent::ServerDropMainWeapon_Implementation(AGun_Base* OutCurre
 void UEquippedComponent::ServerSpawnStaticMeshFromMainWeapon_Implementation(AGun_Base* OutCurrentWeapon)
 {
 	FName ItemID = FName(OutCurrentWeapon->GetWeaponDataAsset().GunName); // RowName 가져오기
-	
 	FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(ItemID, TEXT("Find Row")); // 테이블 가져오기
 	int32 RowIndex = GetRowIndex(ItemDataTable, ItemID); // RowName에 해당하는 인덱스 가져오기 
 	UE_LOG(LogTemp, Warning, TEXT("Row Index : %d"), RowIndex);
-
-			
+	
 	FRotator SpawnRotation = FRotator(0, 0, 0);
 	FVector SpawnLocation = DropLocation();
 	UE_LOG(LogTemp, Warning, TEXT("SpawnLocation : %f %f %f"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 
-	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>(nullptr, TEXT("/Game/Blueprint/Item/Farming/BP_WeaponItem.BP_WeaponItem_C"));
+	UClass* MainWeaponItemBPClass = LoadClass<AWeaponItem>
+	(nullptr, TEXT("/Game/Blueprint/Item/Farming/BP_WeaponItem.BP_WeaponItem_C"));
 	if (MainWeaponItemBPClass) // nullptr 체크 추가
 	{
-		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
+		if (AWeaponItem* TempWeapon = GetWorld()->SpawnActorDeferred<AWeaponItem>
+			(MainWeaponItemBPClass, FTransform(SpawnRotation, SpawnLocation)))
 		{
-			//TempWeapon->SetTableIndex(RowIndex);
 			TempWeapon->SetItemTableRowName(ItemID);
 			UE_LOG(LogTemp, Warning, TEXT("TempWeapon ItemID : %s"), *ItemID.ToString());
-			//TempWeapon->SetTableIndex(-1); // 무기 버릴 때 자기 데이터를 넣어줘야 함
 
 			if (TempWeapon->GetItemDataComponent())
 			{
@@ -991,43 +982,20 @@ void UEquippedComponent::ServerEquipThrow_Implementation(AItemBase* Item, FItemS
 
 bool UEquippedComponent::EquipParts(AItemBase* PartsItem, int32 Index, FItemSlotStruct* ItemSlot)
 {
-	if (PartsItem != nullptr) // F로 장착
+	if (ItemSlot != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts PartsItem"));
-	}
-	else if (Index != -1) // UI로 장착 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Index"));
-
-		// FItemSlot이 들어오면 이름으로 데이터 테이블 접근 후
-	}
-	else if (ItemSlot != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts ItemSlot"));
-
 		FName Name = ItemSlot->ItemName;
 		FItemStruct* Row = ItemDataTable->FindRow<FItemStruct>(Name, TEXT("UEquippedComponent::ServerEquipParts Fail Row"));
 		if (Row)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts = Row"));
-
 			TArray<int32> EquippedGunIndex = GetEquippedGunIndex(); // 현재 장착된 무기 인덱스 반환
-
 			if (EquippedGunIndex.Num() > 0)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts EquippedGunIndex.Num = %d"), EquippedGunIndex.Num());
-
-				TArray<int32> CompatibleWeapon = CheckEquippedWeaponCompatibleParts(Name, EquippedGunIndex); // 현재 장착 중인 무기에 파츠를 낄 수 있는지
-				
+				TArray<int32> CompatibleWeapon = CheckEquippedWeaponCompatibleParts(Name, EquippedGunIndex);
+				// 현재 장착 중인 무기에 파츠를 낄 수 있는지
 				
 				if (CompatibleWeapon.Num() > 0) // 파츠 장착이 가능한 무기가 있다는 것 
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts CompatibleWeapon.Num = %d"), CompatibleWeapon.Num());
-
-					//FName PartsName = FName(*(Name.ToString() + "_" + );  
-					// 우선 순위를 결정
-					// 1. 빈 칸인지 (다 빈 칸이면 손에 들고 있는 무기 > 1번 슬롯 부터)
-
 					FString PartsDataTablePath = "/Game/Blueprint/Weapon/Datatable/DT_PartsData.DT_PartsData";
 					UDataTable* PartsDT = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, *PartsDataTablePath));
 					
@@ -1035,12 +1003,9 @@ bool UEquippedComponent::EquipParts(AItemBase* PartsItem, int32 Index, FItemSlot
 					{
 						if (PartsDT)
 						{
-							UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts CompatibleWeapon[i] = %d"), CompatibleWeapon[i]);
-
 							AGun_Base* Gun = Cast<AGun_Base>(EquippedItems[CompatibleWeapon[i]]);
 							if (Gun)
 							{
-								UE_LOG(LogTemp, Warning, TEXT("UEquippedComponent::ServerEquipParts Gun Casting"));
 								FString PartsString = Name.ToString() + "_" + Gun->GetWeaponDataAsset().GunName;
 								FName PartsName = FName(*PartsString);
 								FPartsData* PartsDataRow = PartsDT->FindRow<FPartsData>(PartsName, TEXT("Parts"));
@@ -1374,7 +1339,6 @@ void UEquippedComponent::EquippingWeaponUpdate(AEquipableItem* OutEquippedItem, 
 void UEquippedComponent::SetCurrentWeapon(AWeapon_Base* _CurrentWeapon)
 {
 	this->CurrentWeapon = _CurrentWeapon;
-	
 	CurrentWeaponDelegate.ExecuteIfBound();
 }
 

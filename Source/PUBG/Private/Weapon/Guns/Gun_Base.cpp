@@ -190,9 +190,12 @@ bool AGun_Base::Server_SettingParts_Validate(int32 partsIndex)
 TArray<EPartsCategory> AGun_Base::GetInstalledParts() const
 {
 	TArray<EPartsCategory> InstalledParts;
-	if (WeaponDataAsset.Installable_Parts.Scope) InstalledParts.Add(EPartsCategory::Scope);
-	if (WeaponDataAsset.Installable_Parts.Mag) InstalledParts.Add(EPartsCategory::Mag);
-	if (WeaponDataAsset.Installable_Parts.Muzzle) InstalledParts.Add(EPartsCategory::Muzzle);
+	if (WeaponDataAsset.Installable_Parts.Scope)
+		InstalledParts.Add(EPartsCategory::Scope);
+	if (WeaponDataAsset.Installable_Parts.Mag)
+		InstalledParts.Add(EPartsCategory::Mag);
+	if (WeaponDataAsset.Installable_Parts.Muzzle)
+		InstalledParts.Add(EPartsCategory::Muzzle);
 	
 	return InstalledParts;
 }
@@ -235,19 +238,17 @@ bool AGun_Base::EquipParts(FPartsData& PartsData, float Weight, EItemCategory It
 			if (PartsCategory_int)
 			{
 				Server_SettingParts(PartsCategory_int);
+				return true;
 			}
-			else
 			//	UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
-
 			
 			// UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
 			// UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
-				//UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
-
+			//UE_LOG(LogTemp, Warning, TEXT("artsCategory_int = null"));
 			
 			//UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts PartsCategory_int = %s"), *PartsString);
 			//UE_LOG(LogTemp, Warning, TEXT("Gun_Base::EquipParts = true"));
-			return true;
+			
 		}
 		
 		// if (PartsSlot[PartsCategory_int] == NAME_None)
