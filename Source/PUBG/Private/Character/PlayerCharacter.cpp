@@ -1113,7 +1113,7 @@ void APlayerCharacter::OnComponentBeginOverlap(
 			{
 				UKismetSystemLibrary::LineTraceSingle(GetWorld(),
 					Start, End, TraceType, false, ActorsToIgnore,
-					EDrawDebugTrace::None, Hit, true,
+					EDrawDebugTrace::ForOneFrame, Hit, true,
 					FLinearColor(1, 0, 0, 0),
 					FLinearColor(0, 1, 0, 1));
 

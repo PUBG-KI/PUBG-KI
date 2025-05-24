@@ -95,8 +95,8 @@ void AItemBase::BeginPlay()
 		}
 	}
 
-	InteractionComponent->SetVisibility(false);
-	BoxComponent->SetVisibility(false);
+	//InteractionComponent->SetVisibility(false);
+	//BoxComponent->SetVisibility(false);
 }
 
 void AItemBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

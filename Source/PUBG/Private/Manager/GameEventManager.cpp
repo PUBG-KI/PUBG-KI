@@ -110,4 +110,5 @@ void UGameEventManager::SpawnRedZone()
 			SpawnedActor->StartExplosions();
 		}
 	}
+	
 }
