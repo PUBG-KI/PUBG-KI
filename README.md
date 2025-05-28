@@ -8,8 +8,6 @@
 
 [![Gameplay](https://img.youtube.com/vi/dZC1ZdkHE30/0.jpg)](https://youtu.be/dZC1ZdkHE30)
 
-- 📄 [게임 설명 문서](https://docs.google.com/presentation/d/1Eupu8mlHH6DTHQU7PdZAy288OTyD6vvW/edit?usp=drive_link)
-
 ---
 
 ## 🛠 개발 도구
