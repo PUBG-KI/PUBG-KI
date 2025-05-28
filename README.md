@@ -2,16 +2,7 @@
 
 ## 🎮 게임 소개
 - **언리얼 엔진을 활용하여 제작한 PUBG 스타일의 배틀로얄 FPS 게임**
-
----
-## 🎬 Gameplay Video
-
-[![Gameplay](https://img.youtube.com/vi/dZC1ZdkHE30/0.jpg)](https://youtu.be/dZC1ZdkHE30)
-
----
-
-## 🛠 개발 도구
-
+ 
 ![Engine](https://img.shields.io/badge/Engine-Unreal%20Engine%205.4-purple)
 ![Server](https://img.shields.io/badge/Server-Dedicated-blueviolet)
 ![IDE](https://img.shields.io/badge/IDE-Rider-orange)
@@ -20,6 +11,11 @@
 ![Language](https://img.shields.io/badge/Language-C++-blue)
 ![Network](https://img.shields.io/badge/Network-Dedicated%20Multiplayer-brightgreen)
 ![GAS](https://img.shields.io/badge/System-GAS%20(Gameplay%20Ability%20System)-informational)
+
+---
+## 🎬 Gameplay Video
+
+[![Gameplay](https://img.youtube.com/vi/dZC1ZdkHE30/0.jpg)](https://youtu.be/dZC1ZdkHE30)
 
 ---
 
